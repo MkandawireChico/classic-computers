@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { formatMoney } from "@/lib/format/money";
 import { createDiscountAction, toggleDiscountActiveAction } from "@/app/admin/discounts/actions";
-import type { AdminDiscount } from "@/lib/services/admin/discounts";
+import type { AdminDiscount, DiscountProductOption } from "@/lib/services/admin/discounts";
 
 const emptyForm = {
   name: "",
@@ -19,9 +19,10 @@ const emptyForm = {
   maxDiscountAmount: "",
   startsAt: "",
   endsAt: "",
+  productIds: [] as string[],
 };
 
-export function DiscountsManager({ discounts }: { discounts: AdminDiscount[] }) {
+export function DiscountsManager({ discounts, products }: { discounts: AdminDiscount[]; products: DiscountProductOption[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +43,7 @@ export function DiscountsManager({ discounts }: { discounts: AdminDiscount[] }) 
         maxDiscountAmount: form.maxDiscountAmount ? Number(form.maxDiscountAmount) : null,
         startsAt: form.startsAt || null,
         endsAt: form.endsAt || null,
+        productIds: form.scope === "student" ? form.productIds : undefined,
         isActive: true,
       });
       if (!result.success) {
@@ -91,7 +93,12 @@ export function DiscountsManager({ discounts }: { discounts: AdminDiscount[] }) 
                     {d.type === "percentage" ? `${d.value}%` : formatMoney(d.value)}
                   </td>
                   <td className="p-3">
-                    <Badge variant="neutral">{d.scope}</Badge>
+                    <div>
+                      <Badge variant="neutral">{d.scope}</Badge>
+                      {d.scope === "student" && d.product_names.length > 0 ? (
+                        <p className="mt-1 text-xs text-gray-500">{d.product_names.join(", ")}</p>
+                      ) : null}
+                    </div>
                   </td>
                   <td className="p-3 text-xs text-gray-500">
                     {d.min_quantity ? `min qty ${d.min_quantity} · ` : ""}
@@ -166,6 +173,32 @@ export function DiscountsManager({ discounts }: { discounts: AdminDiscount[] }) 
               <option value="campaign">Campaign</option>
             </select>
           </div>
+          {form.scope === "student" ? (
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-medium text-gray-700">Eligible products</legend>
+              {products.length === 0 ? (
+                <p className="text-xs text-gray-500">No published products are available for student offers.</p>
+              ) : (
+                <div className="max-h-48 space-y-1 overflow-y-auto rounded-card border border-surface-border p-2">
+                  {products.map((product) => (
+                    <label key={product.id} className="flex items-center gap-2 py-1 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={form.productIds.includes(product.id)}
+                        onChange={(event) => setForm((current) => ({
+                          ...current,
+                          productIds: event.target.checked
+                            ? [...current.productIds, product.id]
+                            : current.productIds.filter((productId) => productId !== product.id),
+                        }))}
+                      />
+                      <span>{product.name} <span className="text-xs text-gray-500">({product.sku})</span></span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </fieldset>
+          ) : null}
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-700">Min quantity</label>

@@ -15,11 +15,25 @@ export function PurchasePanel({
   businessInfo,
   isAuthenticated,
   initialInWishlist,
+  rentalOffers = [],
 }: {
   product: ProductDetail;
   businessInfo: BusinessInfo | null;
   isAuthenticated: boolean;
   initialInWishlist: boolean;
+  rentalOffers?: Array<{
+    rentalProductId: string;
+    productId: string;
+    variantId: string | null;
+    productName: string;
+    variantName: string | null;
+    productSlug: string;
+    dailyRate: number | null;
+    weeklyRate: number | null;
+    monthlyRate: number | null;
+    depositAmount: number | null;
+    availableQuantity: number;
+  }>;
 }) {
   const hasVariants = product.variants.length > 0;
   const defaultVariant = product.variants.find((v) => v.is_default) ?? product.variants[0] ?? null;
@@ -45,6 +59,13 @@ export function PurchasePanel({
       : null
     : product.inventory_status;
   const canOrder = currentStatus === "in_stock" || currentStatus === "low_stock";
+  const rentalOffer = rentalOffers.find((offer) => {
+    if (selectedVariantId) {
+      return offer.variantId === selectedVariantId;
+    }
+    return offer.variantId === null || offer.variantId === undefined;
+  }) ?? null;
+  const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
 
   return (
     <div className="space-y-5">
@@ -83,26 +104,21 @@ export function PurchasePanel({
         </div>
       ) : null}
 
-      <BuyNowLink
-        businessInfo={businessInfo}
-        product={{
-          name: product.name,
-          sku: product.sku,
-          slug: product.slug,
-          variantName: selectedVariant?.name ?? null,
-          variantSku: selectedVariant?.sku ?? null,
-          unitPrice: salePrice ?? price,
-        }}
-      />
-
       <div className="flex flex-col gap-2 sm:flex-row">
         <AddToCartButton
           productId={product.id}
           variantId={selectedVariantId}
-          redirectTo={`/product/${product.slug}`}
-          isAuthenticated={isAuthenticated}
           disabled={!canOrder}
         />
+        <AddToCartButton
+          productId={product.id}
+          variantId={selectedVariantId}
+          disabled={!canOrder}
+          buyNow
+        />
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row">
         {isAuthenticated ? (
           <WishlistButton
             productId={product.id}
@@ -118,6 +134,43 @@ export function PurchasePanel({
           </Link>
         )}
       </div>
+
+      {rentalOffer ? (
+        <div className="rounded-panel border border-brand-200 bg-brand-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-700">Rental pricing</p>
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-lg font-bold text-slate-900">{rentalPrice ? formatMoney(rentalPrice) : "Quote on request"}</p>
+              <p className="text-xs text-slate-600">
+                {rentalOffer.dailyRate ? `${formatMoney(rentalOffer.dailyRate)}/day` : ""}
+                {rentalOffer.weeklyRate ? ` · ${formatMoney(rentalOffer.weeklyRate)}/week` : ""}
+                {rentalOffer.monthlyRate ? ` · ${formatMoney(rentalOffer.monthlyRate)}/month` : ""}
+              </p>
+            </div>
+            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-700">
+              {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
+            </span>
+          </div>
+          <Link
+            href={`/rentals?product=${encodeURIComponent(product.id)}&variant=${encodeURIComponent(selectedVariantId ?? rentalOffer.variantId ?? "")}`}
+            className="mt-3 inline-flex w-full items-center justify-center rounded-card border border-brand-600 bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+          >
+            Rent Now
+          </Link>
+        </div>
+      ) : null}
+
+      <BuyNowLink
+        businessInfo={businessInfo}
+        product={{
+          name: product.name,
+          sku: product.sku,
+          slug: product.slug,
+          variantName: selectedVariant?.name ?? null,
+          variantSku: selectedVariant?.sku ?? null,
+          unitPrice: salePrice ?? price,
+        }}
+      />
 
     </div>
   );

@@ -10,7 +10,7 @@ import { getPublicStorageUrl } from "@/lib/storage";
 import { uploadSiteMediaAction, toggleSiteMediaActiveAction, deleteSiteMediaAction } from "@/app/admin/site-media/actions";
 import type { AdminSiteMediaItem } from "@/lib/services/admin/site-media";
 
-const PLACEMENTS = ["homepage_hero", "homepage_banner", "store_photo", "rental_promo", "corporate_promo", "other"];
+const PLACEMENTS = ["logo", "homepage_hero", "homepage_banner", "store_photo", "rental_promo", "corporate_promo", "footer_logo", "other"];
 
 export function SiteMediaManager({ items }: { items: AdminSiteMediaItem[] }) {
   const router = useRouter();

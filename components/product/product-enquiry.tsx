@@ -3,9 +3,11 @@ import type { BusinessInfo } from "@/lib/data/site-settings";
 export function ProductEnquiry({
   product,
   businessInfo,
+  showWhatsApp = true,
 }: {
   product: { name: string; sku: string };
   businessInfo: BusinessInfo | null;
+  showWhatsApp?: boolean;
 }) {
   if (!businessInfo) return null;
 
@@ -16,7 +18,7 @@ export function ProductEnquiry({
 
   return (
     <div className="flex flex-wrap gap-3 border-t border-surface-border pt-4">
-      {businessInfo.whatsapp ? (
+      {showWhatsApp && businessInfo.whatsapp ? (
         <a
           href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}?text=${message}`}
           target="_blank"

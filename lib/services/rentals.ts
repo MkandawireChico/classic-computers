@@ -7,50 +7,26 @@ export type RentalBookingResult =
   | { success: false; error: string };
 
 /**
- * Sums the quantity of every booking for this rental product that is
- * still "in play" (requested/approved/ready/active — i.e. not yet
- * returned/cancelled/damaged/lost) and whose date range overlaps the
- * requested one, then compares against the underlying product's
- * inventory. This is a check-then-insert, not a locking transaction like
- * create_order() — reasonable for a staff-mediated, low-frequency flow,
- * but NOT the same atomicity guarantee against a genuine race between two
- * simultaneous bookings. Documented as a known limitation in the Phase 6
- * report rather than silently presented as equivalent to checkout's
- * locking behavior.
+ * Calls the narrowly scoped database function that subtracts overlapping
+ * pending bookings from current on-hand stock. Active rentals are already
+ * removed from on-hand inventory by the rental checkout movement.
  */
 async function getAvailableQuantity(
   rentalProductId: string,
   startDate: string,
   endDate: string,
-  excludeBookingId?: string,
 ): Promise<number> {
   const supabase = createClient();
-
-  const { data: rentalProduct } = await (supabase.from("rental_products") as any)
-    .select("product_id")
-    .eq("id", rentalProductId)
-    .maybeSingle();
-  if (!rentalProduct) return 0;
-
-  const { data: inventory } = await (supabase.from("inventory") as any)
-    .select("quantity_on_hand")
-    .eq("product_id", rentalProduct.product_id)
-    .is("variant_id", null)
-    .maybeSingle();
-  const totalStock = inventory?.quantity_on_hand ?? 0;
-
-  let overlapQuery = (supabase.from("rental_bookings") as any)
-    .select("quantity")
-    .eq("rental_product_id", rentalProductId)
-    .in("status", ["requested", "approved", "ready", "active"])
-    .lte("start_date", endDate)
-    .gte("end_date", startDate);
-  if (excludeBookingId) overlapQuery = overlapQuery.neq("id", excludeBookingId);
-
-  const { data: overlapping } = await overlapQuery;
-  const reserved = (overlapping ?? []).reduce((sum: number, b: any) => sum + b.quantity, 0);
-
-  return Math.max(0, totalStock - reserved);
+  const { data, error } = await (supabase.rpc as any)("get_rental_available_quantity", {
+    p_rental_product_id: rentalProductId,
+    p_start_date: startDate,
+    p_end_date: endDate,
+  });
+  if (error) {
+    console.error("getAvailableQuantity failed:", error.message);
+    return 0;
+  }
+  return Math.max(0, Number(data ?? 0));
 }
 
 export async function checkRentalAvailability(

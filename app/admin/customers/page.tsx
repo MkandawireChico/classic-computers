@@ -34,10 +34,11 @@ export default async function AdminCustomersPage({
       </form>
 
       <div className="overflow-x-auto rounded-card border border-surface-border">
-        <table className="w-full min-w-[600px] text-sm">
+        <table className="w-full min-w-[800px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
-              <th className="p-3">Customer</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Email</th>
               <th className="p-3">Phone</th>
               <th className="p-3">Orders</th>
               <th className="p-3">Total spent</th>
@@ -48,29 +49,33 @@ export default async function AdminCustomersPage({
           <tbody className="divide-y divide-surface-border">
             {result.items.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-gray-500">
+                <td colSpan={7} className="p-6 text-center text-gray-500">
                   No customers found.
                 </td>
               </tr>
             ) : (
-              result.items.map((c) => (
-                <tr key={c.id} className="hover:bg-surface-muted">
-                  <td className="p-3">
-                    <Link href={`/admin/customers/${c.id}`} className="font-medium text-brand-600 hover:underline">
-                      {c.full_name ?? "Unnamed customer"}
-                    </Link>
-                  </td>
-                  <td className="p-3 text-gray-600">{c.phone ?? "—"}</td>
-                  <td className="p-3 text-gray-900">{c.order_count}</td>
-                  <td className="p-3 text-gray-900">{formatMoney(c.total_spent)}</td>
-                  <td className="p-3">
-                    <Badge variant={c.student_status === "approved" ? "success" : "neutral"}>{c.student_status}</Badge>
-                  </td>
-                  <td className="p-3 text-gray-500">
-                    {new Date(c.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
-                  </td>
-                </tr>
-              ))
+              result.items.map((c) => {
+                const displayName = (c.full_name ?? "").trim() || c.email || "Unnamed customer";
+                return (
+                  <tr key={c.id} className="hover:bg-surface-muted">
+                    <td className="p-3">
+                      <Link href={`/admin/customers/${c.id}`} className="font-medium text-brand-600 hover:underline">
+                        {displayName}
+                      </Link>
+                    </td>
+                    <td className="p-3 text-gray-600">{c.email ?? "—"}</td>
+                    <td className="p-3 text-gray-600">{c.phone ?? "—"}</td>
+                    <td className="p-3 text-gray-900">{c.order_count}</td>
+                    <td className="p-3 text-gray-900">{formatMoney(c.total_spent)}</td>
+                    <td className="p-3">
+                      <Badge variant={c.student_status === "approved" ? "success" : "neutral"}>{c.student_status}</Badge>
+                    </td>
+                    <td className="p-3 text-gray-500">
+                      {new Date(c.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

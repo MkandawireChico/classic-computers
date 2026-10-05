@@ -11,15 +11,20 @@ export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
   const [query, setQuery] = useState(initialQuery);
 
   useEffect(() => {
-    setQuery(searchParams.get("q") ?? "");
+    setQuery(searchParams.get("q") ?? searchParams.get("query") ?? "");
   }, [searchParams]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
     const term = query.trim();
-    if (term) params.set("q", term);
-    else params.delete("q");
+    if (term) {
+      params.set("q", term);
+      params.delete("query");
+    } else {
+      params.delete("q");
+      params.delete("query");
+    }
     params.delete("page");
     const queryString = params.toString();
     router.push(queryString ? `${pathname}?${queryString}` : pathname);

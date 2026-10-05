@@ -19,7 +19,7 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
 
   return (
     <div>
-      <div className="relative aspect-square w-full overflow-hidden rounded-card bg-surface-muted">
+      <div className="relative aspect-square w-full overflow-hidden rounded-card bg-gradient-to-br from-surface-muted to-white shadow-inner">
         <Image
           key={active!.id}
           src={getPublicStorageUrl("product-images", active!.storage_path)}
@@ -27,12 +27,12 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain"
+          className="object-contain p-6 transition-transform duration-300"
         />
       </div>
 
       {images.length > 1 ? (
-        <div className="mt-3 flex gap-2 overflow-x-auto">
+        <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
           {images.map((image, index) => (
             <button
               key={image.id}
@@ -40,15 +40,15 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
               onClick={() => setActiveIndex(index)}
               aria-label={`Show image ${index + 1} of ${images.length}`}
               aria-current={index === activeIndex}
-              className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-card border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
-                index === activeIndex ? "border-brand-500 ring-1 ring-brand-500" : "border-surface-border"
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+                index === activeIndex ? "border-brand-500 shadow-md scale-105" : "border-surface-border hover:border-brand-300"
               }`}
             >
               <Image
                 src={getPublicStorageUrl("product-images", image.storage_path)}
                 alt=""
                 fill
-                sizes="64px"
+                sizes="80px"
                 className="object-cover"
               />
             </button>

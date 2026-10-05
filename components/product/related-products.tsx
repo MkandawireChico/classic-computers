@@ -5,8 +5,8 @@ export function RelatedProducts({ products }: { products: ProductListItem[] }) {
   if (products.length === 0) return null;
 
   return (
-    <section className="mt-12" aria-labelledby="related-heading">
-      <h2 id="related-heading" className="mb-4 text-lg font-semibold text-gray-900">
+    <section className="mt-16" aria-labelledby="related-heading">
+      <h2 id="related-heading" className="mb-6 text-2xl font-bold text-gray-900">
         You might also like
       </h2>
       <ProductGrid products={products} />

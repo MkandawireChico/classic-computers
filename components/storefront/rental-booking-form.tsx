@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { formatMoney } from "@/lib/format/money";
@@ -10,12 +11,14 @@ import type { RentableProduct } from "@/lib/data/rental-tracking";
 export function RentalBookingForm({
   products,
   isAuthenticated,
+  defaultRentalProductId,
 }: {
   products: RentableProduct[];
   isAuthenticated: boolean;
+  defaultRentalProductId?: string;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [rentalProductId, setRentalProductId] = useState(products[0]?.rentalProductId ?? "");
+  const [rentalProductId, setRentalProductId] = useState(defaultRentalProductId ?? products[0]?.rentalProductId ?? "");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -55,8 +58,10 @@ export function RentalBookingForm({
   if (products.length === 0) {
     return (
       <Alert variant="warning">
-        No products are currently set up for rental. Please contact us directly to ask about
-        availability.
+        <p>No rental products are currently listed. Contact us to ask about availability.</p>
+        <Link href="/contact" className="mt-2 inline-flex font-medium text-brand-700 underline underline-offset-2">
+          Contact Classic Computers
+        </Link>
       </Alert>
     );
   }
@@ -76,15 +81,16 @@ export function RentalBookingForm({
     );
   }
 
-  const selected = products.find((p) => p.rentalProductId === rentalProductId);
+  const selected = products.find((p) => p.rentalProductId === rentalProductId) ?? products[0] ?? null;
 
   return (
     <form action={handleSubmit} className="space-y-4">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">Product</label>
+        <label htmlFor="rental-product" className="text-sm font-medium text-gray-700">Product</label>
         <select
+          id="rental-product"
           value={rentalProductId}
           onChange={(e) => {
             setRentalProductId(e.target.value);
@@ -94,12 +100,13 @@ export function RentalBookingForm({
         >
           {products.map((p) => (
             <option key={p.rentalProductId} value={p.rentalProductId}>
-              {p.productName}
+              {p.productName}{p.variantName ? ` — ${p.variantName}` : ""}
             </option>
           ))}
         </select>
         {selected ? (
           <p className="text-xs text-gray-500">
+            {selected.variantName ? `${selected.variantName} · ` : ""}
             {selected.dailyRate ? `${formatMoney(selected.dailyRate)}/day` : ""}
             {selected.weeklyRate ? ` · ${formatMoney(selected.weeklyRate)}/week` : ""}
             {selected.monthlyRate ? ` · ${formatMoney(selected.monthlyRate)}/month` : ""}
@@ -107,14 +114,16 @@ export function RentalBookingForm({
             {!selected.dailyRate && !selected.weeklyRate && !selected.monthlyRate
               ? " · Pricing to be confirmed — this is a rental enquiry"
               : ""}
+            {selected.availableQuantity > 0 ? ` · ${selected.availableQuantity} available` : " · Currently unavailable"}
           </p>
         ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">Start date</label>
+          <label htmlFor="rental-start-date" className="text-sm font-medium text-gray-700">Start date</label>
           <input
+            id="rental-start-date"
             type="date"
             required
             value={startDate}
@@ -126,8 +135,9 @@ export function RentalBookingForm({
           />
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-700">End date</label>
+          <label htmlFor="rental-end-date" className="text-sm font-medium text-gray-700">End date</label>
           <input
+            id="rental-end-date"
             type="date"
             required
             value={endDate}
@@ -141,8 +151,9 @@ export function RentalBookingForm({
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">Quantity</label>
+        <label htmlFor="rental-quantity" className="text-sm font-medium text-gray-700">Quantity</label>
         <input
+          id="rental-quantity"
           type="number"
           min={1}
           max={10}
@@ -163,16 +174,16 @@ export function RentalBookingForm({
         <fieldset className="space-y-3">
           <legend className="text-sm font-semibold text-gray-900">Your details</legend>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <input name="guestName" required placeholder="Full name" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-            <input name="guestPhone" required placeholder="Phone" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
+            <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="rental-guest-name">Full name<input id="rental-guest-name" name="guestName" required autoComplete="name" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+            <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="rental-guest-phone">Phone<input id="rental-guest-phone" name="guestPhone" required type="tel" autoComplete="tel" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
           </div>
-          <input name="guestEmail" type="email" placeholder="Email (optional)" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+          <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="rental-guest-email">Email (optional)<input id="rental-guest-email" name="guestEmail" type="email" autoComplete="email" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
         </fieldset>
       ) : null}
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">Additional requirements (optional)</label>
-        <textarea name="notes" rows={2} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+        <label htmlFor="rental-notes" className="text-sm font-medium text-gray-700">Additional requirements (optional)</label>
+        <textarea id="rental-notes" name="notes" rows={2} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
       </div>
 
       <Button type="submit" isLoading={isPending}>

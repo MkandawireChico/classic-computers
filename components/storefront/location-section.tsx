@@ -44,7 +44,13 @@ export async function LocationSection() {
                 {businessInfo.phone ? (
                   <a href={`tel:${businessInfo.phone}`} aria-label={`Call ${businessInfo.phone}`} className="flex items-center gap-3 font-medium text-brand-600 hover:underline">
                     <PhoneIcon />
-                    <span>{businessInfo.phone}</span>
+                    <span><span className="block text-xs font-normal text-gray-500">Call</span>{businessInfo.phone}</span>
+                  </a>
+                ) : null}
+                {businessInfo.phone_alt && businessInfo.phone_alt !== businessInfo.phone ? (
+                  <a href={`tel:${businessInfo.phone_alt}`} aria-label={`Call ${businessInfo.phone_alt}`} className="flex items-center gap-3 font-medium text-brand-600 hover:underline">
+                    <PhoneIcon />
+                    <span><span className="block text-xs font-normal text-gray-500">Alternate phone</span>{businessInfo.phone_alt}</span>
                   </a>
                 ) : null}
                 {businessInfo.email ? (
@@ -63,7 +69,7 @@ export async function LocationSection() {
                       className="flex items-center gap-3 font-medium text-emerald-600 hover:underline"
                     >
                       <WhatsAppIcon />
-                      <span>{businessInfo.whatsapp}</span>
+                      <span><span className="block text-xs font-normal text-gray-500">WhatsApp</span>{businessInfo.whatsapp}</span>
                     </a>
                   </p>
                 ) : null}

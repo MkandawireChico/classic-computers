@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { AuthorizationError, requirePermission } from "@/lib/auth/permissions";
-import { getAdminProductById, getSpecDefinitionsForType } from "@/lib/data/admin/products";
+import { getAdminProductById, getAdminRentalConfigurations, getSpecDefinitionsForType } from "@/lib/data/admin/products";
+import { getMyPermissions } from "@/lib/auth/permissions";
 import { getBrands } from "@/lib/data/brands";
 import { getCategories } from "@/lib/data/categories";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { ProductForm } from "@/components/admin/product-form";
 import { VariantsManager } from "@/components/admin/variants-manager";
 import { SpecificationsManager } from "@/components/admin/specifications-manager";
 import { ImagesManager } from "@/components/admin/images-manager";
+import { RentalSettingsManager } from "@/components/admin/rental-settings-manager";
 
 export default async function EditProductPage({ params }: { params: { id: string } }) {
   try {
@@ -19,14 +21,34 @@ export default async function EditProductPage({ params }: { params: { id: string
     throw error;
   }
 
-  const [product, brands, categories] = await Promise.all([
+  const [product, brands, categories, permissions] = await Promise.all([
     getAdminProductById(params.id),
     getBrands(),
     getCategories(),
+    getMyPermissions(),
   ]);
   if (!product) notFound();
 
-  const specDefinitions = await getSpecDefinitionsForType(product.product_type);
+  const canManageRentals = permissions.has("products.write") && permissions.has("rentals.write");
+  const [specDefinitions, rentalConfigurations] = await Promise.all([
+    getSpecDefinitionsForType(product.product_type),
+    canManageRentals ? getAdminRentalConfigurations(product.id) : Promise.resolve([]),
+  ]);
+  const rentalTargets = product.variants.length > 0
+    ? product.variants.map((variant) => ({
+        variantId: variant.id,
+        label: variant.name,
+        status: variant.status,
+        inventoryQuantity: variant.inventory?.quantity_on_hand ?? 0,
+        isDefault: variant.is_default,
+      }))
+    : [{
+        variantId: null,
+        label: product.name,
+        status: product.status,
+        inventoryQuantity: product.inventory?.quantity_on_hand ?? 0,
+        isDefault: true,
+      }];
 
   return (
     <div className="space-y-6">
@@ -68,6 +90,18 @@ export default async function EditProductPage({ params }: { params: { id: string
           <CardTitle>Variants</CardTitle>
         </CardHeader>
         <VariantsManager product={product} />
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Rental Settings</CardTitle>
+        </CardHeader>
+        <RentalSettingsManager
+          productId={product.id}
+          targets={rentalTargets}
+          configurations={rentalConfigurations}
+          canManage={canManageRentals}
+        />
       </Card>
 
       <Card>

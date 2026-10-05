@@ -23,17 +23,30 @@ export function StudentVerificationForm() {
   return (
     <form action={handleSubmit} className="max-w-md space-y-3">
       {error ? <Alert variant="danger">{error}</Alert> : null}
-      <input name="fullName" required placeholder="Full name" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
-      <input name="institution" required placeholder="Institution" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
-      <input name="studentIdNumber" required placeholder="Student ID number" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
-      <input name="phone" required placeholder="Phone" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
       <div className="space-y-1">
-        <input name="email" type="email" required placeholder="Institution email" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <p className="text-xs text-gray-500">Use your MUBAS, MUST, CU, UNIMA, or LUANAR email. Verification is still confirmed by our team.</p>
+        <label htmlFor="student-full-name" className="text-sm font-medium text-gray-700">Full name</label>
+        <input id="student-full-name" name="fullName" required className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
       </div>
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">Supporting document (optional)</label>
-        <input name="document" type="file" accept="image/jpeg,image/png,application/pdf" className="text-sm" />
+        <label htmlFor="student-institution" className="text-sm font-medium text-gray-700">Institution</label>
+        <input id="student-institution" name="institution" required className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="student-id-number" className="text-sm font-medium text-gray-700">Student ID number</label>
+        <input id="student-id-number" name="studentIdNumber" required className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="student-phone" className="text-sm font-medium text-gray-700">Phone</label>
+        <input id="student-phone" name="phone" required className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="student-email" className="text-sm font-medium text-gray-700">Institution email</label>
+        <input id="student-email" name="email" type="email" required className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+        <p className="text-xs text-gray-500">Use an email address where our team can contact you. Verification is confirmed by our team.</p>
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="student-document" className="text-sm font-medium text-gray-700">Supporting document (optional)</label>
+        <input id="student-document" name="document" type="file" accept="image/jpeg,image/png,application/pdf" className="text-sm" />
         <p className="text-xs text-gray-500">JPEG, PNG, or PDF. Max 5MB. Kept private — only reviewed by authorized staff.</p>
       </div>
       <Button type="submit" isLoading={isPending}>

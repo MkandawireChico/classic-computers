@@ -11,8 +11,7 @@ import { parseShopSearchParams } from "@/lib/shop-params";
 
 export const metadata: Metadata = {
   title: "Shop",
-  description:
-    "Browse laptops, desktops, MacBooks, phones, tablets, monitors, printers and accessories at Classic Computers LLC, Blantyre.",
+  description: "Browse the products currently listed by Classic Computers LLC in Blantyre.",
 };
 
 export default async function ShopPage({

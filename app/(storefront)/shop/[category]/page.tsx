@@ -8,6 +8,7 @@ import { ShopFilters } from "@/components/storefront/shop-filters";
 import { SortSelect } from "@/components/storefront/sort-select";
 import { Pagination } from "@/components/storefront/pagination";
 import { parseShopSearchParams } from "@/lib/shop-params";
+import { formatCategoryName } from "@/lib/format/category";
 
 interface Params {
   category: string;
@@ -44,6 +45,7 @@ export default async function CategoryShopPage({
 
   const category = await getCategoryBySlug(normalizedCategory);
   if (!category) notFound();
+  const categoryName = formatCategoryName(category.name);
 
   const filters = parseShopSearchParams(searchParams, { categorySlug: category.slug });
   const [result, brands] = await Promise.all([searchShop(filters), getBrands()]);
@@ -54,9 +56,9 @@ export default async function CategoryShopPage({
         <a href="/shop" className="hover:text-brand-600">
           Shop
         </a>{" "}
-        / <span className="text-gray-700">{category.name}</span>
+        / <span className="text-gray-700">{categoryName}</span>
       </nav>
-      <h1 className="text-2xl font-semibold text-gray-900">{category.name}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">{categoryName}</h1>
 
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
         <aside aria-label="Filters">
@@ -71,7 +73,7 @@ export default async function CategoryShopPage({
             <SortSelect />
           </div>
 
-          <ProductGrid products={result.items} emptyMessage={`No ${category.name.toLowerCase()} available right now.`} />
+          <ProductGrid products={result.items} emptyMessage={`No ${categoryName.toLowerCase()} available right now.`} />
 
           <Pagination
             page={result.page}

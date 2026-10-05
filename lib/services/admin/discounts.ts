@@ -15,19 +15,44 @@ export interface AdminDiscount {
   starts_at: string | null;
   ends_at: string | null;
   is_active: boolean;
+  product_names: string[];
+}
+
+export interface DiscountProductOption {
+  id: string;
+  name: string;
+  sku: string;
 }
 
 export async function listDiscounts(): Promise<AdminDiscount[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("discounts")
-    .select("id, name, type, value, scope, min_quantity, min_order_total, max_discount_amount, starts_at, ends_at, is_active")
+    .select("id, name, type, value, scope, min_quantity, min_order_total, max_discount_amount, starts_at, ends_at, is_active, discount_products ( products ( name ) )")
     .order("created_at", { ascending: false });
   if (error) {
     console.error("listDiscounts failed:", error.message);
     return [];
   }
-  return (data ?? []) as AdminDiscount[];
+  return (data ?? []).map((discount: any) => ({
+    ...discount,
+    product_names: (discount.discount_products ?? [])
+      .map((link: any) => link.products?.name)
+      .filter((name: string | undefined): name is string => Boolean(name)),
+  })) as AdminDiscount[];
+}
+
+export async function listDiscountProductOptions(): Promise<DiscountProductOption[]> {
+  const supabase = createClient();
+  const { data, error } = await (supabase.from("products") as any)
+    .select("id, name, sku")
+    .eq("status", "published")
+    .order("name");
+  if (error) {
+    console.error("listDiscountProductOptions failed:", error.message);
+    return [];
+  }
+  return (data ?? []) as DiscountProductOption[];
 }
 
 export type ServiceResult = { success: true } | { success: false; error: string };
@@ -68,10 +93,14 @@ export async function createDiscount(input: unknown): Promise<ServiceResult> {
     .single();
   if (error) return { success: false, error: "Could not create discount." };
 
-  if (d.scope === "product" && d.productIds?.length) {
-    await (supabase.from("discount_products") as any).insert(
+  if ((d.scope === "product" || d.scope === "student") && d.productIds?.length) {
+    const { error: productLinkError } = await (supabase.from("discount_products") as any).insert(
       d.productIds.map((productId) => ({ discount_id: data.id, product_id: productId })),
     );
+    if (productLinkError) {
+      await (supabase.from("discounts") as any).delete().eq("id", data.id);
+      return { success: false, error: "Could not assign products to this discount." };
+    }
   }
   if (d.scope === "category" && d.categoryIds?.length) {
     await (supabase.from("discount_categories") as any).insert(

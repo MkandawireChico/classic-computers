@@ -11,10 +11,12 @@ export default async function AdminCustomerDetailPage({ params }: { params: { id
   const customer = await getAdminCustomerById(params.id);
   if (!customer) notFound();
 
+  const displayName = (customer.full_name ?? "").trim() || customer.email || "Unnamed customer";
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">{customer.full_name ?? "Unnamed customer"}</h1>
+        <h1 className="text-xl font-semibold text-gray-900">{displayName}</h1>
         <p className="text-sm text-gray-500">
           Customer since {new Date(customer.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
         </p>

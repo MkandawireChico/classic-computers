@@ -11,6 +11,7 @@ export interface ActiveStudentDiscount {
   max_discount_amount: number | null;
   starts_at: string | null;
   ends_at: string | null;
+  products: { id: string; name: string; slug: string }[];
 }
 
 export async function getActiveStudentDiscounts(): Promise<{
@@ -20,7 +21,7 @@ export async function getActiveStudentDiscounts(): Promise<{
   const supabase = createClient();
   const now = new Date().toISOString();
   const { data, error } = await (supabase.from("discounts") as any)
-    .select("id, name, type, value, min_quantity, min_order_total, max_discount_amount, starts_at, ends_at")
+    .select("id, name, type, value, min_quantity, min_order_total, max_discount_amount, starts_at, ends_at, discount_products!inner ( products!inner ( id, name, slug ) )")
     .eq("scope", "student")
     .eq("is_active", true)
     .or(`starts_at.is.null,starts_at.lte.${now}`)
@@ -38,6 +39,9 @@ export async function getActiveStudentDiscounts(): Promise<{
       value: Number(offer.value),
       min_order_total: offer.min_order_total === null ? null : Number(offer.min_order_total),
       max_discount_amount: offer.max_discount_amount === null ? null : Number(offer.max_discount_amount),
+      products: (offer.discount_products ?? [])
+        .map((link: any) => link.products)
+        .filter((product: any) => product?.id && product?.slug),
     })) as ActiveStudentDiscount[],
     unavailable: false,
   };

@@ -46,21 +46,21 @@ export function CorporateEnquiryForm() {
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <input name="organisationName" required placeholder="Organisation name" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <input name="contactPerson" required placeholder="Contact person" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <input name="phone" required placeholder="Phone" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <input name="email" type="email" required placeholder="Email" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-organisation">Organisation name<input id="corporate-organisation" name="organisationName" required autoComplete="organization" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-contact">Contact person<input id="corporate-contact" name="contactPerson" required autoComplete="name" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-phone">Phone<input id="corporate-phone" name="phone" required type="tel" autoComplete="tel" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-email">Email<input id="corporate-email" name="email" type="email" required autoComplete="email" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
       </div>
 
-      <textarea name="productsRequired" rows={3} placeholder="Equipment/products required" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+      <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-products">Equipment or products required<textarea id="corporate-products" name="productsRequired" rows={3} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <input name="quantity" type="number" min={1} placeholder="Quantity" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <input name="budget" type="number" min={0} placeholder="Budget (MWK, optional)" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-        <input name="deliveryLocation" placeholder="Delivery location" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-quantity">Quantity<input id="corporate-quantity" name="quantity" type="number" min={1} className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-budget">Budget (MWK, optional)<input id="corporate-budget" name="budget" type="number" min={0} className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-location">Delivery location<input id="corporate-location" name="deliveryLocation" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
       </div>
 
-      <textarea name="additionalRequirements" rows={2} placeholder="Additional requirements (optional)" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+      <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-additional">Additional requirements (optional)<textarea id="corporate-additional" name="additionalRequirements" rows={2} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
 
       <Button type="submit" isLoading={isPending}>
         Submit enquiry

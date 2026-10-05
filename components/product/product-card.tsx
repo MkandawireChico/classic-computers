@@ -5,6 +5,7 @@ import { getPublicStorageUrl } from "@/lib/storage";
 import { StockBadge } from "./stock-badge";
 import { CompareToggle } from "./compare-toggle";
 import { Badge } from "@/components/ui/badge";
+import { formatCategoryName } from "@/lib/format/category";
 import type { ProductListItem } from "@/types/catalog";
 
 export function ProductCard({
@@ -26,11 +27,12 @@ export function ProductCard({
     : null;
 
   return (
-    <Link
-      href={`/product/${product.slug}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-card border border-surface-border bg-white transition-colors duration-150 hover:border-brand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-    >
-      <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-surface-border bg-slate-50">
+    <div className="group relative h-full">
+      <Link
+        href={`/product/${product.slug}`}
+        className="flex h-full flex-col overflow-hidden rounded-panel border border-surface-border bg-white shadow-soft transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+      >
+      <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-surface-border bg-slate-100">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -54,17 +56,14 @@ export function ProductCard({
         )}
 
         <div className="absolute left-2 top-2 z-10 flex flex-col items-start gap-1 sm:left-3 sm:top-3">
-          {isCatalog && product.is_featured ? <Badge variant="info" className="text-[10px]">Featured</Badge> : null}
+          {isCatalog && product.is_featured ? <Badge variant="info" className="text-[10px] shadow-sm">Featured</Badge> : null}
           {onSale && discountPercent ? (
-            <Badge variant="danger" className="text-[10px]">
+            <Badge variant="danger" className="text-[10px] shadow-sm">
               Save {discountPercent}%
             </Badge>
           ) : null}
         </div>
 
-        <div className="absolute right-3 top-3 z-10">
-          <CompareToggle productId={product.id} isComparing={isComparing} />
-        </div>
       </div>
 
       <div className={`flex flex-1 flex-col ${isCatalog ? "gap-2 p-3 sm:p-4" : "gap-3 p-4"}`}>
@@ -75,7 +74,7 @@ export function ProductCard({
                 {product.brand.name}
               </span>
             ) : <span />}
-            {product.category ? <span className="truncate text-[10px] text-slate-400">{product.category.name}</span> : null}
+            {product.category ? <span className="truncate text-[10px] text-slate-400">{formatCategoryName(product.category.name)}</span> : null}
           </div>
         ) : product.brand ? (
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">{product.brand.name}</span>
@@ -100,7 +99,7 @@ export function ProductCard({
           </div>
 
           {product.condition !== "new" ? (
-              <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-600">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
               {product.condition}
             </span>
           ) : null}
@@ -113,6 +112,10 @@ export function ProductCard({
           </span>
         </div>
       </div>
-    </Link>
+      </Link>
+      <div className="absolute right-3 top-3 z-10 rounded-full border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur-sm">
+        <CompareToggle productId={product.id} isComparing={isComparing} />
+      </div>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ export default async function AccountRentalsPage() {
     <div>
       <h1 className="mb-4 text-xl font-semibold text-gray-900">Rentals</h1>
       {rentals.length === 0 ? (
-        <p className="empty-state">
+        <p className="text-sm text-gray-500">
           No rentals yet.{" "}
           <Link href="/rentals" className="text-brand-600 hover:underline">
             Request a rental
@@ -23,7 +23,7 @@ export default async function AccountRentalsPage() {
               <div>
                 <p className="font-medium text-gray-900">{r.product_name ?? "Rental"}</p>
                 <p className="text-xs text-gray-500">
-                  <a className="text-brand-600 hover:underline">{r.start_date} – {r.end_date}</a> · Qty {r.quantity}
+                  <span>{r.start_date} – {r.end_date}</span> · Qty {r.quantity}
                 </p>
               </div>
               <Badge variant="info">{r.status}</Badge>

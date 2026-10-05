@@ -23,6 +23,10 @@ export const discountSchema = discountBaseSchema
   .refine((d) => !d.startsAt || !d.endsAt || new Date(d.endsAt) > new Date(d.startsAt), {
     message: "End date must be after start date",
     path: ["endsAt"],
+  })
+  .refine((d) => d.scope !== "student" || (d.productIds?.length ?? 0) > 0, {
+    message: "Select at least one product for a student offer",
+    path: ["productIds"],
   });
 
 export const discountUpdateSchema = discountBaseSchema.extend({ id: z.string().uuid() });

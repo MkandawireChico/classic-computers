@@ -25,7 +25,7 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
       {groups.map((group, index) => (
         <div key={group.label ?? `group-${index}`}>
           {group.label ? (
-            <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
               {group.label}
             </p>
           ) : null}
@@ -37,8 +37,8 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`rounded-card px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
-                    active ? "bg-brand-50 text-brand-800" : "text-gray-700 hover:bg-surface-muted"
+                  className={`rounded-card px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+                    active ? "bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-100" : "text-slate-700 hover:bg-surface-muted hover:text-slate-900"
                   }`}
                 >
                   {item.label}

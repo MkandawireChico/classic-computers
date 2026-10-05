@@ -56,21 +56,21 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
         <fieldset className="space-y-3">
           <legend className="text-sm font-semibold text-gray-900">Your details</legend>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <input name="guestName" required placeholder="Full name" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-            <input name="guestPhone" required placeholder="Phone" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
+            <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-guest-name">Full name<input id="repair-guest-name" name="guestName" required autoComplete="name" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+            <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-guest-phone">Phone<input id="repair-guest-phone" name="guestPhone" required type="tel" autoComplete="tel" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
           </div>
-          <input name="guestEmail" type="email" placeholder="Email (optional)" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+          <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-guest-email">Email (optional)<input id="repair-guest-email" name="guestEmail" type="email" autoComplete="email" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
         </fieldset>
       ) : null}
 
       <fieldset className="space-y-3">
         <legend className="text-sm font-semibold text-gray-900">Device</legend>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <input name="deviceType" required placeholder="Device type (e.g. Laptop)" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-          <input name="brand" placeholder="Brand" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
-          <input name="model" placeholder="Model" className="rounded-card border border-surface-border px-3 py-2 text-sm" />
+          <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-device-type">Device type<input id="repair-device-type" name="deviceType" required placeholder="e.g. Laptop" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+          <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-brand">Brand<input id="repair-brand" name="brand" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+          <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-model">Model<input id="repair-model" name="model" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
         </div>
-        <input name="serialNumber" placeholder="Serial number (optional)" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm" />
+        <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="repair-serial">Serial number (optional)<input id="repair-serial" name="serialNumber" className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
       </fieldset>
 
       <div className="space-y-1">

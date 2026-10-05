@@ -9,15 +9,13 @@ import { addToCartAction } from "@/app/(storefront)/cart/actions";
 export function AddToCartButton({
   productId,
   variantId,
-  redirectTo,
-  isAuthenticated,
   disabled,
+  buyNow = false,
 }: {
   productId: string;
   variantId: string | null;
-  redirectTo: string;
-  isAuthenticated: boolean;
   disabled?: boolean;
+  buyNow?: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -25,15 +23,15 @@ export function AddToCartButton({
   const [added, setAdded] = useState(false);
 
   function handleClick() {
-    if (!isAuthenticated) {
-      router.push(`/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`);
-      return;
-    }
     setError(null);
     setAdded(false);
     startTransition(async () => {
       const result = await addToCartAction({ productId, variantId, quantity: 1 });
       if (result.success) {
+        if (buyNow) {
+          router.push("/checkout");
+          return;
+        }
         setAdded(true);
         router.refresh();
       } else {
@@ -44,8 +42,14 @@ export function AddToCartButton({
 
   return (
     <div className="flex-1">
-      <Button variant="outline" className="w-full" onClick={handleClick} isLoading={isPending} disabled={disabled}>
-        {added ? "Added to cart" : "Add to cart"}
+      <Button
+        variant={buyNow ? "outline" : "primary"}
+        className="w-full"
+        onClick={handleClick}
+        isLoading={isPending}
+        disabled={disabled}
+      >
+        {buyNow ? "Buy now" : added ? "Added to cart" : "Add to cart"}
       </Button>
       {error ? (
         <Alert variant="danger" className="mt-2">

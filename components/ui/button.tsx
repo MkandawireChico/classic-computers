@@ -12,18 +12,18 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 focus-visible:ring-brand-500",
+    "bg-brand-600 text-white shadow-[0_14px_26px_-18px_rgba(31,86,240,0.9)] hover:bg-brand-700 active:bg-brand-800 focus-visible:ring-brand-500 disabled:bg-brand-300",
   secondary:
-    "bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 focus-visible:ring-slate-700",
+    "bg-slate-900 text-white shadow-[0_14px_26px_-20px_rgba(15,23,42,0.8)] hover:bg-slate-800 active:bg-slate-950 focus-visible:ring-slate-700",
   outline:
-    "border border-slate-300 bg-white text-slate-800 hover:border-slate-400 hover:bg-slate-50 focus-visible:ring-brand-500",
-  ghost: "bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200 focus-visible:ring-brand-500",
-  danger: "bg-status-danger text-white hover:bg-red-800 active:bg-red-900 focus-visible:ring-status-danger",
+    "border border-surface-border bg-white text-slate-800 shadow-sm hover:border-brand-300 hover:bg-brand-50 focus-visible:ring-brand-500",
+  ghost: "bg-slate-100 text-slate-700 hover:bg-slate-200 active:bg-slate-300 focus-visible:ring-brand-500",
+  danger: "bg-status-danger text-white shadow-[0_14px_26px_-18px_rgba(180,35,24,0.8)] hover:bg-red-800 active:bg-red-900 focus-visible:ring-status-danger",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
+  sm: "h-9 px-3 text-xs md:text-sm",
+  md: "h-11 px-4 text-sm",
   lg: "h-12 px-6 text-base",
 };
 
@@ -39,9 +39,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-card font-semibold transition-colors duration-150",
+          "inline-flex items-center justify-center gap-2 rounded-card font-semibold tracking-[0.01em] transition-all duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          "disabled:cursor-not-allowed disabled:opacity-60",
+          "disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none",
           variantStyles[variant],
           sizeStyles[size],
           className,

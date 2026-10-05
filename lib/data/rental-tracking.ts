@@ -49,13 +49,17 @@ export async function trackRentalAsGuest(input: unknown): Promise<TrackedRental 
 export interface RentableProduct {
   rentalProductId: string;
   productId: string;
+  variantId: string | null;
   productName: string;
+  variantName: string | null;
   productSlug: string;
   dailyRate: number | null;
   weeklyRate: number | null;
   monthlyRate: number | null;
   depositAmount: number | null;
   imagePath: string | null;
+  availableQuantity: number;
+  inventoryStatus: string | null;
 }
 
 /** Public listing — real rentable products only, never hard-coded. RLS
@@ -65,31 +69,77 @@ export async function getRentableProducts(): Promise<RentableProduct[]> {
   const supabase = createClient();
   const { data, error } = await (supabase.from("rental_products") as any)
     .select(`
-      id, daily_rate, weekly_rate, monthly_rate, deposit_amount,
-      products ( id, name, slug, product_images ( storage_path, is_primary, variant_id ) )
+      id, product_id, variant_id, is_available, daily_rate, weekly_rate, monthly_rate, deposit_amount,
+      products!inner (
+        id, name, slug, status,
+        product_images ( id, storage_path, alt_text, display_order, is_primary, variant_id ),
+        product_variants ( id, name, is_default, status )
+      )
     `)
-    .eq("is_available", true);
+    .eq("is_available", true)
+    .eq("products.status", "published");
 
   if (error || !data) {
     if (error) console.error("getRentableProducts failed:", error.message);
     return [];
   }
 
-  return (data as any[])
+  const candidates = (data as any[])
     .filter((row) => row.products)
     .map((row) => {
-      const images = (row.products.product_images ?? []).filter((i: any) => i.variant_id === null);
-      const primary = images.find((i: any) => i.is_primary) ?? images[0] ?? null;
+      const product = row.products;
+      const variantRows: any[] = Array.isArray(product.product_variants) ? product.product_variants : [];
+      const selectedVariant = row.variant_id
+        ? variantRows.find((variant: any) => variant.id === row.variant_id) ?? null
+        : null;
+      if (row.variant_id && (!selectedVariant || selectedVariant.status !== "active")) return null;
+      if (!row.variant_id && variantRows.length > 0) return null;
+
+      const images: any[] = Array.isArray(product.product_images) ? product.product_images : [];
+      const relevantImages = selectedVariant
+        ? images.filter((image: any) => image.variant_id === selectedVariant.id)
+        : [];
+      const genericImages = images.filter((image: any) => image.variant_id === null);
+      const primary =
+        relevantImages.find((image: any) => image.is_primary) ??
+        relevantImages[0] ??
+        genericImages.find((image: any) => image.is_primary) ??
+        genericImages[0] ??
+        null;
+
       return {
         rentalProductId: row.id,
-        productId: row.products.id,
-        productName: row.products.name,
-        productSlug: row.products.slug,
-        dailyRate: row.daily_rate ? Number(row.daily_rate) : null,
-        weeklyRate: row.weekly_rate ? Number(row.weekly_rate) : null,
-        monthlyRate: row.monthly_rate ? Number(row.monthly_rate) : null,
-        depositAmount: row.deposit_amount ? Number(row.deposit_amount) : null,
+        productId: product.id,
+        variantId: selectedVariant?.id ?? null,
+        productName: product.name,
+        variantName: selectedVariant?.name ?? null,
+        productSlug: product.slug,
+        dailyRate: row.daily_rate === null ? null : Number(row.daily_rate),
+        weeklyRate: row.weekly_rate === null ? null : Number(row.weekly_rate),
+        monthlyRate: row.monthly_rate === null ? null : Number(row.monthly_rate),
+        depositAmount: row.deposit_amount === null ? null : Number(row.deposit_amount),
         imagePath: primary?.storage_path ?? null,
       };
+    })
+    .filter(Boolean) as Omit<RentableProduct, "availableQuantity" | "inventoryStatus">[];
+
+  const withAvailability = await Promise.all(candidates.map(async (product) => {
+    const { data: quantity, error: availabilityError } = await (supabase.rpc as any)("get_rental_available_quantity", {
+      p_rental_product_id: product.rentalProductId,
     });
+    if (availabilityError) {
+      console.error("getRentableProducts availability failed:", availabilityError.message);
+      return null;
+    }
+    const availableQuantity = Number(quantity ?? 0);
+    if (availableQuantity <= 0) return null;
+    return { ...product, availableQuantity, inventoryStatus: "in_stock" };
+  }));
+
+  return withAvailability.filter(Boolean) as RentableProduct[];
+}
+
+export async function getRentableProductsForProduct(productId: string): Promise<RentableProduct[]> {
+  const products = await getRentableProducts();
+  return products.filter((product) => product.productId === productId);
 }

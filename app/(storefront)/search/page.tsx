@@ -16,7 +16,10 @@ export default async function SearchPage({
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const query = typeof searchParams.q === "string" ? searchParams.q : "";
+  const query =
+    (typeof searchParams.q === "string" ? searchParams.q : undefined) ??
+    (typeof searchParams.query === "string" ? searchParams.query : undefined) ??
+    "";
   const filters = parseShopSearchParams(searchParams, { query });
   const result = query.trim() ? await searchShop(filters) : { items: [], total: 0, page: 1, pageSize: 24 };
 

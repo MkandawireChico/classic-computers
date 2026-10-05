@@ -11,7 +11,8 @@ html {
 }
 
 body {
-  @apply bg-surface-muted text-slate-900 antialiased;
+  @apply bg-surface-muted text-slate-800 antialiased;
+  background-image: radial-gradient(circle at top, rgba(31, 86, 240, 0.08), transparent 35%);
 }
 
 ::selection {
@@ -19,26 +20,46 @@ body {
 }
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-surface-muted text-slate-800 antialiased;
+    background-image: radial-gradient(circle at top, rgba(31, 86, 240, 0.08), transparent 32%);
+  }
+
+  a {
+    @apply transition-colors duration-150;
+  }
+
+  img {
+    @apply block max-w-full;
+  }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply tracking-tight text-slate-900;
+    @apply tracking-[-0.04em] text-slate-900;
+  }
+
+  p {
+    @apply text-slate-700;
   }
 
   input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]),
   select,
   textarea {
-    @apply rounded-card border border-surface-border bg-white text-slate-900 placeholder:text-slate-400;
+    @apply rounded-card border border-surface-border bg-white px-3 py-2.5 text-slate-900 shadow-sm transition-colors placeholder:text-slate-400;
   }
 
   input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    outline: 2px solid #1f56f0;
-    outline-offset: 2px;
+    @apply border-brand-400 outline-none ring-4 ring-brand-100;
   }
 }
 
@@ -55,15 +76,29 @@ body {
     @apply rounded-card border border-dashed border-surface-border bg-surface-muted px-4 py-5 text-sm text-slate-600;
   }
 
+  .admin-content table {
+    @apply min-w-full border-separate border-spacing-0 overflow-hidden rounded-panel border border-surface-border bg-white;
+  }
+
+  .admin-content table thead th {
+    @apply sticky top-0 z-10 bg-slate-100 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-600;
+  }
+
+  .admin-content table tbody td {
+    @apply border-t border-slate-200 px-3 py-2.5 align-middle text-sm text-slate-700;
+  }
+
   .admin-content table tbody tr:nth-child(even) {
-    @apply bg-slate-50/70;
+    @apply bg-slate-50/80;
   }
 
   .admin-content table tbody tr:hover {
     @apply bg-brand-50/70;
   }
+}
 
-  .admin-content table thead {
-    @apply sticky top-0 z-10 bg-surface-muted text-slate-600;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

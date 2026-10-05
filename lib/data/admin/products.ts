@@ -206,6 +206,36 @@ export async function getAdminProductById(id: string): Promise<AdminProductDetai
   };
 }
 
+export interface AdminRentalConfiguration {
+  id: string;
+  variant_id: string | null;
+  is_available: boolean;
+  daily_rate: number | null;
+  weekly_rate: number | null;
+  monthly_rate: number | null;
+  deposit_amount: number | null;
+}
+
+export async function getAdminRentalConfigurations(productId: string): Promise<AdminRentalConfiguration[]> {
+  const supabase = createClient();
+  const { data, error } = await (supabase.from("rental_products") as any)
+    .select("id, variant_id, is_available, daily_rate, weekly_rate, monthly_rate, deposit_amount")
+    .eq("product_id", productId);
+
+  if (error) {
+    console.error("getAdminRentalConfigurations failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((row: any) => ({
+    ...row,
+    daily_rate: row.daily_rate === null ? null : Number(row.daily_rate),
+    weekly_rate: row.weekly_rate === null ? null : Number(row.weekly_rate),
+    monthly_rate: row.monthly_rate === null ? null : Number(row.monthly_rate),
+    deposit_amount: row.deposit_amount === null ? null : Number(row.deposit_amount),
+  }));
+}
+
 export async function getSpecDefinitionsForType(productType: string) {
   const supabase = createClient();
   const { data } = await supabase

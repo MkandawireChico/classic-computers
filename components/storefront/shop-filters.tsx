@@ -6,16 +6,19 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import type { BrandSummary } from "@/types/catalog";
 import type { CategorySummary } from "@/types/catalog";
+import { formatCategoryName } from "@/lib/format/category";
 
 export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[]; categories?: CategorySummary[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(searchParams.get("min") ?? "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("max") ?? "");
   const selectedBrands = new Set(searchParams.getAll("brand"));
   const availableOnly = searchParams.get("available") === "1";
+  const activeQuery = searchParams.get("q") ?? searchParams.get("query") ?? "";
 
   useEffect(() => {
     setMinPrice(searchParams.get("min") ?? "");
@@ -25,7 +28,11 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
     selectedBrands.size +
     Number(Boolean(searchParams.get("min") || searchParams.get("max"))) +
     Number(availableOnly) +
-    Number(Boolean(searchParams.get("q")));
+    Number(Boolean(activeQuery));
+  const selectedFacetCount =
+    selectedBrands.size +
+    Number(Boolean(searchParams.get("min") || searchParams.get("max"))) +
+    Number(availableOnly);
 
   function updateParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
@@ -80,6 +87,9 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       } else if (key === "price") {
         params.delete("min");
         params.delete("max");
+      } else if (key === "q") {
+        params.delete("q");
+        params.delete("query");
       } else {
         params.delete(key);
       }
@@ -102,7 +112,24 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-gray-900">Filters</h2>
+        <h2 className="hidden text-base font-semibold text-gray-900 lg:block">Filters</h2>
+        <button
+          type="button"
+          aria-expanded={filtersOpen}
+          aria-controls="shop-filter-controls"
+          onClick={() => setFiltersOpen((open) => !open)}
+          className="flex min-h-11 flex-1 items-center justify-between rounded-md border border-surface-border bg-white px-3 text-sm font-semibold text-gray-900 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 lg:hidden"
+        >
+          <span>Filters{selectedFacetCount > 0 ? ` (${selectedFacetCount})` : ""}</span>
+          <svg
+            className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         {activeFilterCount > 0 ? (
           <button
             type="button"
@@ -114,12 +141,13 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
         ) : null}
       </div>
 
+      <div id="shop-filter-controls" className={`${filtersOpen ? "block" : "hidden"} space-y-4 lg:block`}>
       {activeFilterCount > 0 ? (
         <div className="space-y-2 border-b border-surface-border pb-4">
           <p className="text-xs font-medium text-gray-500">Active filters</p>
           <div className="flex flex-wrap gap-2">
-            {searchParams.get("q") ? (
-              <FilterChip label={`Search: ${searchParams.get("q")}`} onRemove={() => removeParam("q")} />
+            {activeQuery ? (
+              <FilterChip label={`Search: ${activeQuery}`} onRemove={() => removeParam("q")} />
             ) : null}
             {Array.from(selectedBrands).map((slug) => {
               const brand = brands.find((item) => item.slug === slug);
@@ -150,7 +178,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       </fieldset>
 
       {categories.length > 0 ? (
-        <details className="border-b border-surface-border pb-4">
+        <details open className="border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Category <span aria-hidden="true" className="text-gray-400">+</span></span>
           </summary>
@@ -161,7 +189,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
                 href={`/shop/${category.slug}`}
                 className="block rounded px-2 py-1.5 text-sm text-gray-700 hover:bg-surface-muted hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
-                {category.name}
+                {formatCategoryName(category.name)}
               </Link>
             ))}
           </nav>
@@ -169,7 +197,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       ) : null}
 
       {brands.length > 0 ? (
-        <details className="border-b border-surface-border pb-4">
+        <details open className="border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Brand <span aria-hidden="true" className="text-gray-400">+</span></span>
           </summary>
@@ -190,7 +218,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
         </details>
       ) : null}
 
-      <details className="pb-2">
+      <details open className="pb-2">
         <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
           <span className="flex items-center justify-between">Price (MWK) <span aria-hidden="true" className="text-gray-400">+</span></span>
         </summary>
@@ -224,6 +252,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
           <Button type="submit" size="sm" variant="outline" className="w-full">Apply price</Button>
         </form>
       </details>
+      </div>
     </div>
   );
 }

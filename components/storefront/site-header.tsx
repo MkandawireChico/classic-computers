@@ -1,12 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search-box";
 import { getCartItemCount } from "@/lib/data/cart";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 const NAV_LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/shop/laptop-computers", label: "Laptops" },
-  { href: "/shop?q=phone", label: "Phones" },
   { href: "/rentals", label: "Rentals" },
   { href: "/repairs", label: "Repairs" },
   { href: "/corporate", label: "Corporate" },
@@ -14,16 +16,25 @@ const NAV_LINKS = [
 ];
 
 export async function SiteHeader() {
-  const cartCount = await getCartItemCount();
+  const [cartCount, logoMedia] = await Promise.all([getCartItemCount(), getSiteMedia("logo" as any, 1)]);
+  const logo = logoMedia[0] ?? null;
+  const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
+
   return (
     <header className="sticky top-0 z-30 border-b border-surface-border bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white shadow-sm">
-            CC
-          </span>
-          <span className="leading-none">
-            <span className="block text-base font-semibold text-gray-900">Classic Computers</span>
+      <div className="flex h-20 w-full items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex min-w-0 flex-1 items-center gap-3">
+          {logoUrl ? (
+            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill className="object-contain" />
+            </div>
+          ) : (
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-lg font-bold text-white shadow-sm">
+              CC
+            </span>
+          )}
+          <span className="min-w-0 leading-none">
+            <span className="block truncate text-xl font-black uppercase tracking-[-0.04em] text-gray-900 sm:text-2xl">Classic Computers</span>
             <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-gray-500">Blantyre</span>
           </span>
         </Link>
@@ -46,7 +57,7 @@ export async function SiteHeader() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/cart"
             aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}

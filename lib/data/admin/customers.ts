@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/server-admin";
 export interface AdminCustomerListItem {
   id: string;
   full_name: string | null;
+  email: string | null;
   phone: string | null;
   student_status: string;
   created_at: string;
@@ -33,9 +34,14 @@ export async function listAdminCustomers(query?: string, page = 1, pageSize = 25
     return { items: [] as AdminCustomerListItem[], total: 0, page, pageSize };
   }
 
+  const admin = createAdminClient();
+  const { data: authData } = await admin.auth.admin.listUsers({ perPage: 200 });
+  const emailByUser = new Map<string, string | null>((authData?.users ?? []).map((user) => [user.id, user.email ?? null]));
+
   let items: AdminCustomerListItem[] = (data ?? []).map((row: any) => ({
     id: row.id,
     full_name: row.profiles?.full_name ?? null,
+    email: emailByUser.get(row.id) ?? null,
     phone: row.profiles?.phone ?? null,
     student_status: row.student_status,
     created_at: row.created_at,
@@ -45,7 +51,10 @@ export async function listAdminCustomers(query?: string, page = 1, pageSize = 25
 
   if (query && query.trim()) {
     const term = query.trim().toLowerCase();
-    items = items.filter((c) => (c.full_name ?? "").toLowerCase().includes(term) || (c.phone ?? "").includes(term));
+    items = items.filter((c) => {
+      const displayName = (c.full_name ?? c.email ?? "").toLowerCase();
+      return displayName.includes(term) || (c.phone ?? "").toLowerCase().includes(term) || (c.email ?? "").toLowerCase().includes(term);
+    });
   }
 
   // Order counts/spend fetched separately per visible page only — avoids

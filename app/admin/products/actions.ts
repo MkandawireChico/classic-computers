@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as productService from "@/lib/services/admin/products";
+import * as rentalService from "@/lib/services/admin/rentals";
 
 export async function createProductAction(input: unknown) {
   const result = await productService.createProduct(input);
@@ -14,6 +15,17 @@ export async function updateProductAction(input: unknown) {
   if (result.success && typeof input === "object" && input && "id" in input) {
     revalidatePath(`/admin/products/${(input as any).id}`);
     revalidatePath("/admin/products");
+  }
+  return result;
+}
+
+export async function saveRentalConfigurationAction(input: unknown) {
+  const result = await rentalService.saveRentalConfiguration(input);
+  if (result.success && input && typeof input === "object" && "productId" in input) {
+    const productId = String((input as any).productId);
+    revalidatePath(`/admin/products/${productId}`);
+    revalidatePath("/rentals");
+    revalidatePath(`/product/${result.data.productSlug}`);
   }
   return result;
 }

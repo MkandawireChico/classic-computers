@@ -22,7 +22,7 @@ export function MobileNav({ links }: { links: { href: string; label: string }[] 
       {open ? (
         <div
           id="mobile-nav-panel"
-          className="absolute inset-x-0 top-16 z-20 border-b border-surface-border bg-surface px-4 py-4 shadow-soft"
+          className="absolute inset-x-0 top-[calc(100%+1px)] z-20 border-b border-surface-border bg-surface px-4 py-4 shadow-soft"
         >
           <nav aria-label="Mobile" className="flex flex-col gap-1">
             {links.map((link) => (

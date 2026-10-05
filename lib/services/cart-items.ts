@@ -1,6 +1,5 @@
 import "server-only";
 import { getCartClient, getOrCreateCartId, getCartIdReadOnly } from "./cart";
-import { createClient } from "@/lib/supabase/server";
 import { addToCartSchema, updateCartItemSchema, removeCartItemSchema } from "@/schemas/cart";
 
 export type CartActionResult = { success: true } | { success: false; error: string };
@@ -24,10 +23,6 @@ async function assertOwnsCartItem(client: any, cartItemId: string): Promise<stri
 }
 
 export async function addToCart(input: unknown): Promise<CartActionResult> {
-  const supabase = createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return { success: false, error: "Sign in before adding items to your cart." };
-
   const parsed = addToCartSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid request." };

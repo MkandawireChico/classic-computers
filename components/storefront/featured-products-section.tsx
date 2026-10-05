@@ -13,27 +13,27 @@ export async function FeaturedProductsSection() {
   if (products.length === 0) return null;
 
   return (
-    <section aria-labelledby="featured-products-heading" className="border-t border-slate-200 bg-slate-50/60">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <section aria-labelledby="featured-products-heading" className="border-t border-surface-border bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-600">Shop</p>
-            <h2 id="featured-products-heading" className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Shop</p>
+            <h2 id="featured-products-heading" className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
               Shop our latest products
             </h2>
           </div>
 
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 self-start text-sm font-semibold text-brand-700 transition hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 self-start rounded-card border-2 border-brand-200 bg-brand-50 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-all hover:border-brand-400 hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             View all products
-            <span aria-hidden="true">→</span>
+            <span aria-hidden="true" className="text-lg">→</span>
           </Link>
         </div>
 
-        <p className="mb-6 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          Browse the products our customers are looking for most right now.
+        <p className="mb-8 max-w-2xl text-base leading-7 text-slate-600">
+          Browse products currently listed by Classic Computers.
         </p>
 
         <div className="relative">

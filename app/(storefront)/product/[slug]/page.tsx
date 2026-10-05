@@ -6,11 +6,13 @@ import { getBusinessInfo } from "@/lib/data/site-settings";
 import { getPublicStorageUrl } from "@/lib/storage";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getWishlistProductIds } from "@/lib/services/wishlist";
+import { getRentableProductsForProduct } from "@/lib/data/rental-tracking";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { PurchasePanel } from "@/components/product/purchase-panel";
 import { SpecificationsTable } from "@/components/product/specifications-table";
 import { ProductEnquiry } from "@/components/product/product-enquiry";
 import { RelatedProducts } from "@/components/product/related-products";
+import { formatCategoryName } from "@/lib/format/category";
 
 interface Params {
   slug: string;
@@ -52,11 +54,12 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   void logProductView(product.id);
 
-  const [related, businessInfo, wishlistEntries, user] = await Promise.all([
+  const [related, businessInfo, wishlistEntries, user, rentalOffers] = await Promise.all([
     product.category ? getRelatedProducts(product.category.id, product.id, 4) : Promise.resolve([]),
     getBusinessInfo(),
     getWishlistProductIds(),
     getCurrentUser(),
+    getRentableProductsForProduct(product.id),
   ]);
   const isAuthenticated = Boolean(user);
   const initialInWishlist = wishlistEntries.some((w) => w.productId === product.id && w.variantId === null);
@@ -101,7 +104,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         ? {
             "@type": "ListItem",
             position: 2,
-            name: product.category.name,
+            name: formatCategoryName(product.category.name),
             item: `https://classiccomputers.mw/shop/${product.category.slug}`,
           }
         : undefined,
@@ -121,15 +124,15 @@ export default async function ProductPage({ params }: { params: Params }) {
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm text-gray-500">
-        <Link href="/shop" className="hover:text-brand-600">
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500">
+        <Link href="/shop" className="hover:text-brand-600 transition-colors">
           Shop
         </Link>
         {product.category ? (
           <>
             {" / "}
-            <Link href={`/shop/${product.category.slug}`} className="hover:text-brand-600">
-              {product.category.name}
+            <Link href={`/shop/${product.category.slug}`} className="hover:text-brand-600 transition-colors">
+              {formatCategoryName(product.category.name)}
             </Link>
           </>
         ) : null}
@@ -137,47 +140,50 @@ export default async function ProductPage({ params }: { params: Params }) {
         <span className="text-gray-700">{product.name}</span>
       </nav>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
         <ProductGallery images={product.images} productName={product.name} />
 
-        <div>
+        <div className="flex flex-col">
           {product.brand ? (
-            <p className="text-sm font-medium uppercase tracking-wide text-gray-500">{product.brand.name}</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">{product.brand.name}</p>
           ) : null}
-          <h1 className="mt-1 text-2xl font-bold text-gray-900">{product.name}</h1>
-          <p className="mt-1 text-sm text-gray-500">SKU: {product.sku}</p>
+          <h1 className="mt-2 text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
+          <p className="mt-2 text-sm text-gray-500">SKU: {product.sku}</p>
 
-          <div className="mt-4">
+          <div className="mt-6">
             <PurchasePanel
               product={product}
               businessInfo={businessInfo}
               isAuthenticated={isAuthenticated}
               initialInWishlist={initialInWishlist}
+              rentalOffers={rentalOffers}
             />
           </div>
 
           {product.warranty_text ? (
-            <p className="mt-4 text-sm text-gray-600">
-              <span className="font-medium text-gray-800">Warranty:</span> {product.warranty_text}
-            </p>
+            <div className="mt-6 rounded-panel bg-brand-50 border border-brand-100 p-4">
+              <p className="text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Warranty:</span> {product.warranty_text}
+              </p>
+            </div>
           ) : null}
 
-          <div className="mt-4">
-            <ProductEnquiry product={product} businessInfo={businessInfo} />
+          <div className="mt-6">
+            <ProductEnquiry product={product} businessInfo={businessInfo} showWhatsApp={false} />
           </div>
         </div>
       </div>
 
       {product.description ? (
-        <section className="mt-10">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Description</h2>
-          <p className="whitespace-pre-line text-sm text-gray-700">{product.description}</p>
+        <section className="mt-12 rounded-panel border border-surface-border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-xl font-bold text-gray-900">Description</h2>
+          <p className="whitespace-pre-line text-sm text-gray-700 leading-relaxed">{product.description}</p>
         </section>
       ) : null}
 
       {product.specifications.length > 0 ? (
         <section className="mt-10">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Specifications</h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">Specifications</h2>
           <SpecificationsTable specifications={product.specifications} />
         </section>
       ) : null}
