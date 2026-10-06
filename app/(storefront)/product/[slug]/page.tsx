@@ -161,10 +161,19 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
 
           {product.warranty_text ? (
-            <div className="mt-6 rounded-panel bg-brand-50 border border-brand-100 p-4">
-              <p className="text-sm text-gray-700">
-                <span className="font-semibold text-gray-900">Warranty:</span> {product.warranty_text}
-              </p>
+            <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm ring-1 ring-emerald-200">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M12 3.5 5.5 6v4.5c0 3.7 2.3 7.1 6.5 9.5 4.2-2.4 6.5-5.8 6.5-9.5V6L12 3.5Z" />
+                    <path d="m9.5 12 1.5 1.5 3.5-4" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Warranty</p>
+                  <p className="text-sm font-semibold text-slate-800">{product.warranty_text}</p>
+                </div>
+              </div>
             </div>
           ) : null}
 

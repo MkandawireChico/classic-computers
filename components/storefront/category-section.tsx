@@ -26,7 +26,7 @@ export async function CategorySection() {
               key={category.id}
               href={`/shop/${category.slug}`}
               aria-label={`Browse ${categoryName}`}
-              className="group flex min-h-[132px] items-center justify-center rounded-card border border-slate-200 bg-slate-50/60 px-3 py-5 text-center transition-colors duration-150 hover:border-brand-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              className="group flex min-h-[120px] items-center justify-center rounded-card border border-slate-200 bg-slate-50/60 px-3 py-4 text-center transition-colors duration-150 hover:border-brand-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
               <div className="flex flex-col items-center gap-3">
                 <CategoryIcon name={categoryName} />

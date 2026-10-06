@@ -50,17 +50,35 @@ export class AuthorizationError extends Error {
   }
 }
 
+async function getRoleAssignmentsForUser(userId: string) {
+  const supabase = createClient();
+  const { data, error } = await (supabase.from("user_roles") as any)
+    .select("role_id, roles ( name, role_permissions ( permissions ( key ) ) )")
+    .eq("user_id", userId);
+
+  if (error || !data) return [];
+  return data as any[];
+}
+
+export async function getPermissionsForUser(userId: string): Promise<Set<string>> {
+  const assignments = await getRoleAssignmentsForUser(userId);
+  const keys = new Set<string>();
+
+  for (const row of assignments) {
+    for (const rolePermission of row.roles?.role_permissions ?? []) {
+      const key = rolePermission.permissions?.key;
+      if (key) keys.add(key);
+    }
+  }
+
+  return keys;
+}
+
 export const getMyRoleAssignments = cache(async function getMyRoleAssignments() {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const supabase = createClient();
-  const { data, error } = await (supabase.from("user_roles") as any)
-    .select("role_id, roles ( name, role_permissions ( permissions ( key ) ) )")
-    .eq("user_id", user.id);
-
-  if (error || !data) return [];
-  return data as any[];
+  return getRoleAssignmentsForUser(user.id);
 });
 
 /**
@@ -73,16 +91,9 @@ export const getMyRoleAssignments = cache(async function getMyRoleAssignments() 
  * rendered so they can't get here."
  */
 export const getMyPermissions = cache(async function getMyPermissions(): Promise<Set<string>> {
-  const assignments = await getMyRoleAssignments();
-
-  const keys = new Set<string>();
-  for (const row of assignments) {
-    for (const rp of row.roles?.role_permissions ?? []) {
-      const key = rp.permissions?.key;
-      if (key) keys.add(key);
-    }
-  }
-  return keys;
+  const user = await getCurrentUser();
+  if (!user) return new Set<string>();
+  return getPermissionsForUser(user.id);
 });
 
 export const getMyRoleNames = cache(async function getMyRoleNames(): Promise<Set<string>> {

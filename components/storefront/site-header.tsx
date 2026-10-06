@@ -22,20 +22,20 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-surface-border bg-white/95 backdrop-blur-sm">
-      <div className="flex h-20 w-full items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="flex h-16 w-full items-center justify-between gap-2 px-4 sm:px-6 lg:h-20 lg:px-8">
+        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           {logoUrl ? (
-            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg sm:h-12 sm:w-12">
               <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill className="object-contain" />
             </div>
           ) : (
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-lg font-bold text-white shadow-sm">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-base font-bold text-white shadow-sm sm:h-12 sm:w-12 sm:text-lg">
               CC
             </span>
           )}
           <span className="min-w-0 leading-none">
-            <span className="block truncate text-xl font-black uppercase tracking-[-0.04em] text-gray-900 sm:text-2xl">Classic Computers</span>
-            <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-gray-500">Blantyre</span>
+            <span className="block truncate text-lg font-black uppercase tracking-[-0.04em] text-gray-900 sm:text-xl lg:text-2xl">Classic Computers</span>
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.18em] text-gray-500 sm:block">Blantyre</span>
           </span>
         </Link>
 

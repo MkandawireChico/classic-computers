@@ -11,7 +11,7 @@ export async function Hero() {
   return (
     <section aria-labelledby="hero-heading" className="border-b border-surface-border bg-gradient-to-br from-brand-50 via-white to-surface-muted/30">
       <div className="section-shell">
-        <div className="grid items-center gap-10 py-16 md:py-20 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:py-24">
+        <div className="grid items-center gap-10 py-10 md:py-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:py-24">
           <div className="max-w-xl">
             <p className="mb-5 inline-flex items-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-md sm:px-5 sm:py-2.5 sm:text-base">
               CLASSIC COMPUTERS

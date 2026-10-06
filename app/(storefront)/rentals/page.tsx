@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { getRentableProducts } from "@/lib/data/rental-tracking";
-import { RentalBookingForm } from "@/components/storefront/rental-booking-form";
 import { RentalTrackingWidget } from "@/components/storefront/rental-tracking-widget";
 import { formatMoney } from "@/lib/format/money";
 import { getPublicStorageUrl } from "@/lib/storage";
@@ -13,22 +12,16 @@ export const metadata: Metadata = {
   description: "Laptop rentals from Classic Computers LLC, Blantyre.",
 };
 
-export default async function RentalsPage({
-  searchParams,
-}: {
-  searchParams?: { product?: string; variant?: string };
-}) {
+export default async function RentalsPage() {
   const supabase = createClient();
-  const [{ data: { user } }, products] = await Promise.all([supabase.auth.getUser(), getRentableProducts()]);
-  const selectedProductId = searchParams?.product ?? products[0]?.productId ?? null;
-  const selectedVariantId = searchParams?.variant ?? products.find((product) => product.productId === selectedProductId)?.variantId ?? null;
+  const [, products] = await Promise.all([supabase.auth.getUser(), getRentableProducts()]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
       <h1 className="text-3xl font-bold text-gray-900">Laptop Rentals</h1>
       <p className="mt-3 max-w-2xl text-gray-700">
         Classic Computers LLC offers laptop rentals in Blantyre for individuals and businesses.
-        Choose a rentable configuration below and submit a request for review.
+        Browse our rentable configurations below and click Rent Now to book.
       </p>
 
       {products.length > 0 ? (
@@ -64,8 +57,13 @@ export default async function RentalsPage({
 
                   <div className="mt-4 flex gap-2">
                     <Link
-                      href={`/rentals?product=${encodeURIComponent(product.productId)}&variant=${encodeURIComponent(product.variantId ?? "")}`}
-                      className="inline-flex flex-1 items-center justify-center rounded-card bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                      href={`/rentals/book?product=${encodeURIComponent(product.productId)}&variant=${encodeURIComponent(product.variantId ?? "")}`}
+                      className={`inline-flex flex-1 items-center justify-center rounded-card px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+                        product.availableQuantity > 0
+                          ? "bg-brand-500 text-white hover:bg-brand-600"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                      aria-disabled={product.availableQuantity <= 0}
                     >
                       Rent Now
                     </Link>
@@ -81,21 +79,12 @@ export default async function RentalsPage({
             );
           })}
         </div>
-      ) : null}
-
-      <div className="mt-10">
-        <RentalBookingForm
-          products={products}
-          isAuthenticated={Boolean(user)}
-          defaultRentalProductId={
-            products.find(
-              (product) =>
-                product.productId === selectedProductId &&
-                (product.variantId === selectedVariantId || (!selectedVariantId && !product.variantId)),
-            )?.rentalProductId ?? products[0]?.rentalProductId ?? ""
-          }
-        />
-      </div>
+      ) : (
+        <div className="mt-8 rounded-panel border border-surface-border bg-surface-muted/50 p-8 text-center">
+          <p className="text-lg font-medium text-gray-900">No rentals available</p>
+          <p className="mt-2 text-sm text-gray-600">Check back later or contact us for rental availability.</p>
+        </div>
+      )}
 
       <div className="mt-10">
         <RentalTrackingWidget />

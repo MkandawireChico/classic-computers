@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/schemas/auth";
 import { mergeGuestCartIntoCustomerCart } from "@/lib/services/cart";
+import { getPermissionsForUser } from "@/lib/auth/permissions";
 
 export type AuthActionState = {
   error: string | null;
@@ -15,6 +16,11 @@ function getSafeRedirectTo(value: FormDataEntryValue | null, fallback = "/accoun
     return fallback;
   }
   return value;
+}
+
+async function getPostLoginRedirectTarget(userId: string): Promise<string> {
+  const permissions = await getPermissionsForUser(userId);
+  return permissions.size > 0 ? "/admin" : "/account";
 }
 
 export async function signIn(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
@@ -39,7 +45,20 @@ export async function signIn(_prevState: AuthActionState, formData: FormData): P
     await mergeGuestCartIntoCustomerCart(data.user.id);
   }
 
-  redirect(getSafeRedirectTo(formData.get("redirectTo")));
+  const target = data.user ? await getPostLoginRedirectTarget(data.user.id) : "/account";
+  const explicitRedirect = formData.get("redirectTo");
+  if (typeof explicitRedirect === "string" && explicitRedirect.trim().length > 0) {
+    const safeRedirect = getSafeRedirectTo(explicitRedirect);
+    const redirectsToAdmin = safeRedirect === "/admin" || safeRedirect.startsWith("/admin/");
+    const redirectsToAccount = safeRedirect === "/account" || safeRedirect.startsWith("/account/");
+    const roleRedirectConflicts =
+      (target === "/admin" && redirectsToAccount) ||
+      (target === "/account" && redirectsToAdmin);
+
+    redirect(roleRedirectConflicts ? target : safeRedirect);
+  }
+
+  redirect(target);
 }
 
 export async function signUp(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { submitCorporateEnquiryAction } from "./actions";
@@ -34,37 +35,164 @@ export function CorporateEnquiryForm() {
 
   if (submitted) {
     return (
-      <Alert variant="success">
-        Thank you — your corporate enquiry has been received. Our team will follow up with you
-        directly.
-      </Alert>
+      <div className="space-y-4">
+        <Alert variant="success" className="space-y-3">
+          <p className="font-medium">Corporate enquiry submitted</p>
+          <p className="text-sm">
+            Thank you — your corporate enquiry has been received. Our team will follow up with you directly within 1-2 business days.
+          </p>
+        </Alert>
+        <Link
+          href="/corporate"
+          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
+        >
+          Back to corporate
+        </Link>
+      </div>
     );
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form action={handleSubmit} className="space-y-6">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-organisation">Organisation name<input id="corporate-organisation" name="organisationName" required autoComplete="organization" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-contact">Contact person<input id="corporate-contact" name="contactPerson" required autoComplete="name" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-phone">Phone<input id="corporate-phone" name="phone" required type="tel" autoComplete="tel" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-email">Email<input id="corporate-email" name="email" type="email" required autoComplete="email" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+      {/* Organisation Information Section */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-gray-900">Organisation information</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label htmlFor="corporate-organisation" className="text-sm font-medium text-gray-700">
+              Organisation name
+            </label>
+            <input
+              id="corporate-organisation"
+              name="organisationName"
+              required
+              autoComplete="organization"
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="corporate-contact" className="text-sm font-medium text-gray-700">
+              Contact person
+            </label>
+            <input
+              id="corporate-contact"
+              name="contactPerson"
+              required
+              autoComplete="name"
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="corporate-phone" className="text-sm font-medium text-gray-700">
+              Phone
+            </label>
+            <input
+              id="corporate-phone"
+              name="phone"
+              required
+              type="tel"
+              autoComplete="tel"
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="corporate-email" className="text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              id="corporate-email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+        </div>
       </div>
 
-      <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-products">Equipment or products required<textarea id="corporate-products" name="productsRequired" rows={3} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-quantity">Quantity<input id="corporate-quantity" name="quantity" type="number" min={1} className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-budget">Budget (MWK, optional)<input id="corporate-budget" name="budget" type="number" min={0} className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
-        <label className="space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-location">Delivery location<input id="corporate-location" name="deliveryLocation" className="block w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+      {/* Requirements Section */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-gray-900">Requirements</h3>
+        <div className="space-y-1">
+          <label htmlFor="corporate-products" className="text-sm font-medium text-gray-700">
+            Equipment or products required
+          </label>
+          <textarea
+            id="corporate-products"
+            name="productsRequired"
+            rows={3}
+            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="space-y-1">
+            <label htmlFor="corporate-quantity" className="text-sm font-medium text-gray-700">
+              Quantity
+            </label>
+            <input
+              id="corporate-quantity"
+              name="quantity"
+              type="number"
+              min={1}
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="corporate-budget" className="text-sm font-medium text-gray-700">
+              Budget (MWK, optional)
+            </label>
+            <input
+              id="corporate-budget"
+              name="budget"
+              type="number"
+              min={0}
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="corporate-location" className="text-sm font-medium text-gray-700">
+              Delivery location
+            </label>
+            <input
+              id="corporate-location"
+              name="deliveryLocation"
+              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
+        </div>
       </div>
 
-      <label className="block space-y-1 text-sm font-medium text-gray-700" htmlFor="corporate-additional">Additional requirements (optional)<textarea id="corporate-additional" name="additionalRequirements" rows={2} className="w-full rounded-card border border-surface-border px-3 py-2 text-sm font-normal" /></label>
+      {/* Additional Information Section */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-gray-900">Additional information</h3>
+        <div className="space-y-1">
+          <label htmlFor="corporate-additional" className="text-sm font-medium text-gray-700">
+            Additional requirements (optional)
+          </label>
+          <textarea
+            id="corporate-additional"
+            name="additionalRequirements"
+            rows={3}
+            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </div>
+      </div>
 
-      <Button type="submit" isLoading={isPending}>
-        Submit enquiry
-      </Button>
+      {/* Actions */}
+      <div className="space-y-3">
+        <Button type="submit" isLoading={isPending} className="w-full" disabled={isPending}>
+          Submit Enquiry
+        </Button>
+        <Link
+          href="/corporate"
+          className="block w-full text-center text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+        >
+          Cancel and return to corporate
+        </Link>
+      </div>
     </form>
   );
 }

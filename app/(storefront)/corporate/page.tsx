@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getBusinessInfo } from "@/lib/data/site-settings";
-import { CorporateEnquiryForm } from "@/components/storefront/corporate-enquiry-form";
 import { ProductEnquiry } from "@/components/product/product-enquiry";
 
 export const metadata: Metadata = {
@@ -26,7 +26,12 @@ export default async function CorporatePage() {
           <h2 className="text-xl font-bold text-gray-900">Submit your requirements</h2>
           <p className="mt-2 text-sm text-gray-600">Fill in the details below and we'll get back to you within 1-2 business days.</p>
         </div>
-        <CorporateEnquiryForm />
+        <Link
+          href="/corporate/enquire"
+          className="inline-flex w-full items-center justify-center rounded-card bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600 transition-colors sm:w-auto"
+        >
+          Start Enquiry
+        </Link>
       </div>
 
       {businessInfo ? (
