@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { updatePassword, type AuthActionState } from "../actions";
@@ -18,6 +19,23 @@ function SubmitButton() {
 
 export function UpdatePasswordForm() {
   const [state, formAction] = useFormState(updatePassword, initialState);
+
+  if (state.success) {
+    return (
+      <div className="space-y-4">
+        <Alert variant="success" className="space-y-2">
+          <p className="font-medium">Password updated successfully</p>
+          <p className="text-sm">Your password has been changed. You can now sign in with your new password.</p>
+        </Alert>
+        <Link
+          href="/sign-in"
+          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
+        >
+          Go to sign in
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <form action={formAction} className="space-y-4" noValidate>

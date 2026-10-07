@@ -25,6 +25,14 @@ declare
   v_referral_code text;
   v_referrer_id uuid;
 begin
+  -- The trigger runs as part of auth.users insert processing, not as the
+  -- newly-created customer. Referral rows are intentionally write-restricted
+  -- to staff/admin, so the function must run with definer privileges and a
+  -- stable public search path to insert safely during signup.
+  if new.id is null or new.raw_user_meta_data is null then
+    return new;
+  end if;
+
   v_referral_code := new.raw_user_meta_data ->> 'referral_code';
   if v_referral_code is null or trim(v_referral_code) = '' then
     return new;

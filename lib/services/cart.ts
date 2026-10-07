@@ -83,7 +83,15 @@ export async function getOrCreateCartId(): Promise<string> {
       .insert({ customer_id: customerId })
       .select("id")
       .single();
-    if (error || !created) throw new Error("Could not create cart.");
+    if (error || !created) {
+      console.error("Could not create authenticated cart:", error ? {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      } : { message: "Insert returned no cart row." });
+      throw new Error("Could not create cart.");
+    }
     return created.id;
   }
 
@@ -105,7 +113,15 @@ export async function getOrCreateCartId(): Promise<string> {
     .insert({ session_token: token })
     .select("id")
     .single();
-  if (error || !created) throw new Error("Could not create guest cart.");
+  if (error || !created) {
+    console.error("Could not create guest cart:", error ? {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    } : { message: "Insert returned no cart row." });
+    throw new Error("Could not create guest cart.");
+  }
 
   cookieStore.set(GUEST_CART_COOKIE, token, {
     httpOnly: true,

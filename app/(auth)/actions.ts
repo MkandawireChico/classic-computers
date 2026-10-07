@@ -9,6 +9,8 @@ import { getPermissionsForUser } from "@/lib/auth/permissions";
 export type AuthActionState = {
   error: string | null;
   success?: boolean;
+  message?: string;
+  email?: string;
 };
 
 function getSafeRedirectTo(value: FormDataEntryValue | null, fallback = "/account") {
@@ -73,13 +75,16 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   }
 
   const referralCode = formData.get("referralCode")?.toString().trim();
-  const redirectTo = getSafeRedirectTo(formData.get("redirectTo"));
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const requestedRedirect = formData.get("redirectTo");
+  const safeRedirect = getSafeRedirectTo(requestedRedirect, "/sign-in");
 
   const supabase = createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(safeRedirect)}`,
       // full_name is read by handle_new_user() (0004); referral_code is
       // read by handle_referral_signup() (0041) — both are separate
       // triggers on the same auth.users insert.
@@ -88,10 +93,29 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   });
 
   if (error) {
-    return { error: "Could not create account. Please try again." };
+    // Log the exact error for debugging
+    console.error("Supabase signUp error:", error.message, error);
+    return { error: error.message || "Could not create account. Please try again." };
   }
 
-  redirect(`/sign-in?verify=1&redirectTo=${encodeURIComponent(redirectTo)}`);
+  // If user is returned but session is null, email confirmation is required
+  if (data.user && !data.session) {
+    return {
+      error: null,
+      success: true,
+      message: "We have sent a verification link to your email. Please check your inbox or spam folder.",
+      email: parsed.data.email,
+    };
+  }
+
+  // If session exists, user is automatically signed in
+  if (data.user && data.session) {
+    await mergeGuestCartIntoCustomerCart(data.user.id);
+    const target = await getPostLoginRedirectTarget(data.user.id);
+    redirect(target);
+  }
+
+  return { error: "Could not create account. Please try again." };
 }
 
 export async function signOut() {
@@ -119,7 +143,7 @@ export async function requestPasswordReset(
     redirectTo: `${siteUrl}/auth/callback?next=/update-password`,
   });
 
-  return { error: null, success: true };
+  return { error: null, success: true, email: parsed.data };
 }
 
 export async function updatePassword(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
@@ -135,5 +159,5 @@ export async function updatePassword(_prevState: AuthActionState, formData: Form
     return { error: "Could not update your password. The reset link may have expired — request a new one." };
   }
 
-  redirect("/account");
+  return { error: null, success: true };
 }

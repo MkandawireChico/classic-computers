@@ -1,28 +1,62 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import React, { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { signUp, type AuthActionState } from "../actions";
-
-const initialState: AuthActionState = { error: null };
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" isLoading={pending} className="w-full">
-      Create account
-    </Button>
-  );
-}
+import { signUp } from "../actions";
 
 export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferralCode?: string; redirectTo?: string }) {
-  const [state, formAction] = useFormState(signUp, initialState);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [successEmail, setSuccessEmail] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const res = await signUp({ error: null }, formData);
+
+      if (res?.error) {
+        setError(res.error);
+      } else if (res?.success && res?.message) {
+        setSuccessMessage(res.message);
+        setSuccessEmail(res.email || null);
+      }
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (successMessage) {
+    const email = successEmail || "your email";
+    return (
+      <div className="space-y-4">
+        <Alert variant="success" className="space-y-2">
+          <p className="font-medium">Account created successfully</p>
+          <p className="text-sm">We've sent a confirmation link to <span className="font-semibold">{email}</span>. Please check your inbox and confirm your email before signing in.</p>
+        </Alert>
+        <Link
+          href="/sign-in"
+          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
+        >
+          Go to sign in
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <form action={formAction} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
-      {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
+      {error ? <Alert variant="danger">{error}</Alert> : null}
 
       <div className="space-y-1">
         <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
@@ -81,7 +115,9 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         />
       </div>
 
-      <SubmitButton />
+      <Button type="submit" isLoading={loading} className="w-full">
+        {loading ? "Creating account..." : "Create account"}
+      </Button>
     </form>
   );
 }

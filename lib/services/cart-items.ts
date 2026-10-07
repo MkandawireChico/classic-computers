@@ -72,13 +72,23 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
   // Upsert-by-hand: cart_items has a UNIQUE(cart_id, product_id, variant_id)
   // constraint, so we check for an existing row and add to its quantity
   // rather than risk a constraint violation or a silent duplicate.
-  const { data: existing } = await (client
+  const { data: existing, error: lookupError } = await (client
     .from("cart_items") as any)
     .select("id, quantity")
     .eq("cart_id", cartId)
     .eq("product_id", productId)
     .is("variant_id", variantId ?? null)
     .maybeSingle();
+
+  if (lookupError) {
+    console.error("addToCart existing item lookup failed:", {
+      code: lookupError.code,
+      message: lookupError.message,
+      details: lookupError.details,
+      hint: lookupError.hint,
+    });
+    return { success: false, error: "Could not add to your cart. Please try again." };
+  }
 
   if (existing) {
     const newQuantity = Math.min(existing.quantity + quantity, 20);
@@ -99,7 +109,42 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
     quantity,
   });
   if (insertError) {
-    console.error("addToCart insert failed:", insertError.message);
+    if (insertError.code === "23505") {
+      const { data: racedItem, error: retryLookupError } = await (client
+        .from("cart_items") as any)
+        .select("id, quantity")
+        .eq("cart_id", cartId)
+        .eq("product_id", productId)
+        .is("variant_id", variantId ?? null)
+        .maybeSingle();
+
+      if (racedItem && !retryLookupError) {
+        const { error: retryUpdateError } = await (client.from("cart_items") as any)
+          .update({ quantity: Math.min(racedItem.quantity + quantity, 20) })
+          .eq("id", racedItem.id);
+        if (!retryUpdateError) return { success: true };
+        console.error("addToCart duplicate-item recovery update failed:", {
+          code: retryUpdateError.code,
+          message: retryUpdateError.message,
+          details: retryUpdateError.details,
+          hint: retryUpdateError.hint,
+        });
+      } else if (retryLookupError) {
+        console.error("addToCart duplicate-item recovery lookup failed:", {
+          code: retryLookupError.code,
+          message: retryLookupError.message,
+          details: retryLookupError.details,
+          hint: retryLookupError.hint,
+        });
+      }
+    }
+
+    console.error("addToCart insert failed:", {
+      code: insertError.code,
+      message: insertError.message,
+      details: insertError.details,
+      hint: insertError.hint,
+    });
     return { success: false, error: "Could not add to your cart. Please try again." };
   }
   return { success: true };

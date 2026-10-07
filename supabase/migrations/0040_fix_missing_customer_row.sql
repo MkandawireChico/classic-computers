@@ -38,8 +38,13 @@ as $$
 declare
   customer_role_id uuid;
 begin
+  if new.id is null then
+    return new;
+  end if;
+
   insert into public.profiles (id, full_name)
-  values (new.id, new.raw_user_meta_data ->> 'full_name');
+  values (new.id, new.raw_user_meta_data ->> 'full_name')
+  on conflict (id) do update set full_name = excluded.full_name;
 
   -- THE FIX: every authenticated user needs a customers row — it's what
   -- carts/orders/reviews/student_verifications/referrals/rentals/repairs/
