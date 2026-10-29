@@ -6,75 +6,76 @@ import { getPublicStorageUrl } from "@/lib/storage";
 export async function Hero() {
   const [hero] = await getSiteMedia("homepage_hero", 1);
   const imageUrl = hero ? getPublicStorageUrl("site-media", hero.storage_path) : null;
-  const heroAlt = hero?.alt_text ?? "Classic Computers storefront";
+  const heroAlt = hero?.alt_text ?? "Technology products available from Classic Computers";
 
   return (
-    <section aria-labelledby="hero-heading" className="border-b border-surface-border bg-gradient-to-br from-brand-50 via-white to-surface-muted/30">
-      <div className="section-shell">
-        <div className="grid items-center gap-10 py-10 md:py-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:py-24">
-          <div className="max-w-xl">
-            <p className="mb-5 inline-flex items-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-md sm:px-5 sm:py-2.5 sm:text-base">
-              CLASSIC COMPUTERS
-            </p>
-            <h1 id="hero-heading" className="text-h1 font-bold text-slate-900 leading-tight">
-              Laptops and technology for work, business and everyday life.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-8 text-slate-700">
-              Shop laptops and ICT products from Classic Computers in Blantyre, with options for individuals, students and businesses.
-            </p>
+    <section aria-labelledby="hero-heading" className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-emerald-50/70">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-200/35 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-200/30 via-transparent to-transparent" />
 
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+      <div className="section-shell relative">
+        <div className="grid items-center gap-10 py-14 sm:gap-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24">
+          <div className="max-w-2xl space-y-7 sm:space-y-9">
+            <div className="space-y-4 sm:space-y-5">
+              <p className="inline-flex rounded-full border border-emerald-200 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-emerald-800 shadow-sm sm:text-sm">
+                Classic Computers · Blantyre, Malawi
+              </p>
+              <h1 id="hero-heading" className="text-display font-extrabold leading-[1.05] tracking-tight text-slate-900">
+                Technology for <span className="text-emerald-700">work</span>, <span className="text-amber-700">business</span> and everyday life.
+              </h1>
+              <p className="max-w-xl text-lg leading-relaxed text-slate-700 sm:text-xl">
+                Shop laptops and ICT equipment from Classic Computers in Blantyre, Malawi. Find technology for personal use,
+                education and business, or request a quotation for your organisation.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <Link
-                href="/shop"
-                className="inline-flex h-14 items-center justify-center rounded-card bg-brand-500 px-8 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-brand-600 hover:shadow-xl hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                href="/shop/laptop-computers"
+                className="inline-flex min-h-14 items-center justify-center rounded-xl bg-brand-700 px-7 py-4 text-base font-bold text-white shadow-lg shadow-brand-900/15 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-800 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:px-8 sm:text-lg"
               >
                 Shop Laptops
               </Link>
               <Link
-                href="/contact"
-                className="inline-flex h-14 items-center justify-center rounded-card border-2 border-slate-200 bg-white px-8 text-base font-semibold text-slate-800 shadow-md transition-all duration-200 hover:border-brand-400 hover:bg-brand-50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                href="/corporate"
+                className="inline-flex min-h-14 items-center justify-center rounded-xl border border-amber-300 bg-white/90 px-7 py-4 text-base font-bold text-amber-900 shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:ring-offset-2 sm:px-8 sm:text-lg"
               >
-                Contact Us
+                Request a Business Quote
               </Link>
             </div>
-
-            <ul className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600" aria-label="Store highlights">
-              <li className="rounded-full bg-white px-4 py-2 font-medium shadow-sm ring-1 ring-slate-200">Laptops</li>
-              <li className="rounded-full bg-white px-4 py-2 font-medium shadow-sm ring-1 ring-slate-200">ICT products</li>
-              <li className="rounded-full bg-white px-4 py-2 font-medium shadow-sm ring-1 ring-slate-200">Business supply</li>
-            </ul>
           </div>
 
-          <div className="relative">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 to-slate-50 shadow-2xl">
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt={heroAlt}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-brand-600">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <rect x="3" y="3" width="18" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-                      <path d="M8 20h8M12 16v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                    </svg>
-                  </div>
-                  <p className="text-base font-semibold text-slate-600">Shop photograph not yet added</p>
-                  <p className="max-w-xs text-sm leading-6 text-slate-500">
-                    Upload the approved Classic Computers storefront photo via site media settings when it is ready.
-                  </p>
-                </div>
-              )}
+          {imageUrl ? (
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-2xl shadow-emerald-950/10 ring-1 ring-white">
+              <div className="absolute inset-0 z-[1] bg-gradient-to-br from-amber-100/20 via-transparent to-emerald-900/10" />
+              <Image
+                src={imageUrl}
+                alt={heroAlt}
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 45vw"
+                className="object-cover"
+              />
             </div>
-            <div className="pointer-events-none absolute -bottom-4 left-6 rounded-xl border border-slate-200 bg-white/95 backdrop-blur-sm px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg">
-              Blantyre, Malawi
+          ) : (
+            <div
+              aria-hidden="true"
+              className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-3xl border border-emerald-300/50 bg-gradient-to-br from-emerald-800 via-teal-700 to-brand-800 p-8 text-white shadow-2xl shadow-emerald-950/20 sm:p-14"
+            >
+              <div className="absolute -right-20 -top-24 h-96 w-96 rounded-full border border-white/10" />
+              <div className="absolute -bottom-40 -left-16 h-[28rem] w-[28rem] rounded-full border border-white/10" />
+              <div className="relative flex max-w-sm flex-col items-center gap-8 text-center">
+                <svg width="96" height="80" viewBox="0 0 68 58" fill="none" className="text-amber-200">
+                  <rect x="8" y="4" width="52" height="38" rx="3" stroke="currentColor" strokeWidth="2.5" />
+                  <path d="M3 50h62l-5-8H8l-5 8Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+                  <path d="M27 50h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+                <p className="text-2xl font-bold leading-snug sm:text-3xl">
+                  Laptops and ICT equipment for your next step.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

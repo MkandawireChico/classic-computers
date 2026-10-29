@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/schemas/auth";
 import { mergeGuestCartIntoCustomerCart } from "@/lib/services/cart";
 import { getPermissionsForUser } from "@/lib/auth/permissions";
+import { getPublicSiteOrigin } from "@/lib/auth/site-url";
+import { getAuthRedirectUrl } from "@/lib/auth/site-url";
 
 export type AuthActionState = {
   error: string | null;
@@ -75,7 +77,7 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   }
 
   const referralCode = formData.get("referralCode")?.toString().trim();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getPublicSiteOrigin();
   const requestedRedirect = formData.get("redirectTo");
   const safeRedirect = getSafeRedirectTo(requestedRedirect, "/sign-in");
 
@@ -84,7 +86,7 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(safeRedirect)}`,
+      emailRedirectTo: `${siteUrl}/auth/confirm?next=${encodeURIComponent(safeRedirect)}`,
       // full_name is read by handle_new_user() (0004); referral_code is
       // read by handle_referral_signup() (0041) — both are separate
       // triggers on the same auth.users insert.
@@ -135,7 +137,7 @@ export async function requestPasswordReset(
   }
 
   const supabase = createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getPublicSiteOrigin();
   // Errors are intentionally not surfaced here beyond a generic message —
   // confirming or denying whether an email is registered via this form
   // would let someone enumerate customer accounts.
@@ -160,4 +162,23 @@ export async function updatePassword(_prevState: AuthActionState, formData: Form
   }
 
   return { error: null, success: true };
+}
+
+export async function signInWithOAuth(provider: "google" | "github" | "apple" | "azure", redirectTo?: string) {
+  const supabase = createClient();
+  const safeRedirect = getSafeRedirectTo(redirectTo || null, "/account");
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: getAuthRedirectUrl(`/auth/callback?next=${encodeURIComponent(safeRedirect)}`),
+    },
+  });
+
+  if (error) {
+    console.error("OAuth sign-in error:", error);
+    redirect(`/sign-in?error=${encodeURIComponent("Failed to sign in with " + provider)}`);
+  }
+
+  redirect(data.url);
 }

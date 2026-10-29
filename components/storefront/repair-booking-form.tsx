@@ -9,7 +9,9 @@ import { submitRepairBookingAction } from "./actions";
 export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ ticketNumber: string; trackingToken: string } | null>(null);
+  const [result, setResult] = useState<{ ticketNumber: string; trackingToken: string } | null>(
+    null,
+  );
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -44,22 +46,20 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               : "Save your tracking code to check status later — we can't recover it for you:"}
           </p>
           {!isAuthenticated ? (
-            <p className="rounded bg-white/60 p-3 font-mono text-xs break-all">{result.trackingToken}</p>
+            <p className="break-all rounded bg-white/60 p-3 font-mono text-xs">
+              {result.trackingToken}
+            </p>
           ) : null}
-          <p className="text-xs text-gray-600">Our team will review your ticket and follow up with next steps.</p>
+          <p className="text-xs text-gray-600">
+            Our team will review your ticket and follow up with next steps.
+          </p>
         </Alert>
-        <Link
-          href="/repairs"
-          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
-        >
-          Back to repairs
-        </Link>
       </div>
     );
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Your Information Section */}
@@ -81,7 +81,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
             </div>
             <div className="space-y-1">
               <label htmlFor="repair-guest-phone" className="text-sm font-medium text-gray-700">
-                Phone
+                Phone number
               </label>
               <input
                 id="repair-guest-phone"
@@ -89,19 +89,21 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 required
                 type="tel"
                 autoComplete="tel"
+                placeholder="+265..."
                 className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
             </div>
           </div>
           <div className="space-y-1">
             <label htmlFor="repair-guest-email" className="text-sm font-medium text-gray-700">
-              Email (optional)
+              Email address (optional)
             </label>
             <input
               id="repair-guest-email"
               name="guestEmail"
               type="email"
               autoComplete="email"
+              placeholder="your@email.com"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -131,6 +133,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
             <input
               id="repair-brand"
               name="brand"
+              placeholder="e.g. Dell, HP"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -141,6 +144,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
             <input
               id="repair-model"
               name="model"
+              placeholder="e.g. Latitude 7420"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -152,6 +156,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
           <input
             id="repair-serial"
             name="serialNumber"
+            placeholder="e.g. 8-character service tag"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -170,6 +175,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
             required
             rows={4}
             minLength={10}
+            placeholder="Describe what's wrong with your device..."
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -185,7 +191,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
           <input
             id="accessoriesReceived"
             name="accessoriesReceived"
-            placeholder="e.g. charger, bag"
+            placeholder="e.g. charger, bag, cables"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -202,7 +208,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
         </Button>
         <Link
           href="/repairs"
-          className="block w-full text-center text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+          className="block w-full text-center text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
         >
           Cancel and return to repairs
         </Link>

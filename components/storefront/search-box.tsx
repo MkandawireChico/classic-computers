@@ -20,9 +20,9 @@ export function SearchBox({ initialQuery = "" }: { initialQuery?: string }) {
       </label>
       <div className="relative">
         <svg
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          width="16"
-          height="16"
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-700"
+          width="18"
+          height="18"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
@@ -36,7 +36,7 @@ export function SearchBox({ initialQuery = "" }: { initialQuery?: string }) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search laptops, phones, printers…"
-          className="w-full rounded-full border border-surface-border bg-surface/80 py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm transition-all placeholder:text-gray-400 focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="w-full rounded-full border border-amber-200 bg-white/90 py-2.5 pl-11 pr-4 text-sm text-slate-800 shadow-sm transition-all placeholder:text-slate-500 hover:border-emerald-300 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100"
         />
       </div>
     </form>

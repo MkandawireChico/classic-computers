@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { signUp } from "../actions";
+import { AuthProviderButtons } from "@/components/auth-provider-buttons";
+import { signUp, signInWithOAuth } from "../actions";
 
 export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferralCode?: string; redirectTo?: string }) {
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,10 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
     }
   };
 
+  const handleOAuthSignIn = (provider: "google" | "apple" | "azure") => {
+    signInWithOAuth(provider, redirectTo);
+  };
+
   if (successMessage) {
     const email = successEmail || "your email";
     return (
@@ -54,9 +59,21 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
-      {error ? <Alert variant="danger">{error}</Alert> : null}
+    <div className="space-y-6">
+      <AuthProviderButtons onProviderSelect={handleOAuthSignIn} />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-surface-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">Or continue with email</span>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
+        {error ? <Alert variant="danger">{error}</Alert> : null}
 
       <div className="space-y-1">
         <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
@@ -119,5 +136,6 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         {loading ? "Creating account..." : "Create account"}
       </Button>
     </form>
+    </div>
   );
 }

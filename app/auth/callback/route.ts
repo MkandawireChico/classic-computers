@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { type EmailOtpType } from "@supabase/supabase-js";
+import { getAuthRedirectUrl } from "@/lib/auth/site-url";
+
+const SIGNUP_CONFIRMATION_ERROR =
+  "Your email confirmation link is invalid or has expired. Please request a new confirmation email.";
+const PASSWORD_RESET_ERROR = "Your password reset link is invalid or has expired. Please request a new one.";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
@@ -17,22 +22,20 @@ export async function GET(request: Request) {
 
   const supabase = await createClient();
 
-  // 2. Handle OAuth & Authorization Code Flow
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       const isEmailVerificationFlow = type === "signup" || type === "email" || type === "magiclink" || type === "otp";
       if (isEmailVerificationFlow) {
-        return NextResponse.redirect(`${origin}/auth/verified?next=${encodeURIComponent(next)}`);
+        return NextResponse.redirect(getAuthRedirectUrl(`/auth/verified?next=${encodeURIComponent(next)}`));
       }
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(getAuthRedirectUrl(next));
     }
-    // Log the error to server logs for debugging
-    console.error("exchangeCodeForSession error:", error?.message);
-    return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent(error?.message || "oauth_failed")}`);
+
+    console.error("exchangeCodeForSession error:", { message: error?.message, type });
+    return NextResponse.redirect(getAuthRedirectUrl(`/sign-in?error=${encodeURIComponent(error?.message || "oauth_failed")}`));
   }
 
-  // 3. Handle Email Confirmation, Password Recovery & Magic Links
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({
       type,
@@ -42,15 +45,19 @@ export async function GET(request: Request) {
     if (!error) {
       const isEmailVerificationFlow = type === "signup" || type === "email" || type === "magiclink" || type === "otp";
       if (isEmailVerificationFlow) {
-        return NextResponse.redirect(`${origin}/auth/verified?next=${encodeURIComponent(next)}`);
+        return NextResponse.redirect(getAuthRedirectUrl(`/auth/verified?next=${encodeURIComponent(next)}`));
       }
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(getAuthRedirectUrl(next));
     }
 
-    // Log the error to server logs for debugging
-    console.error("verifyOtp error:", error?.message);
-    return NextResponse.redirect(`${origin}/reset-password?error=${encodeURIComponent(error?.message || "invalid_token")}`);
+    console.error("verifyOtp error:", { message: error?.message, type });
+
+    if (type === "recovery") {
+      return NextResponse.redirect(getAuthRedirectUrl(`/reset-password?error=${encodeURIComponent(PASSWORD_RESET_ERROR)}`));
+    }
+
+    return NextResponse.redirect(getAuthRedirectUrl(`/sign-in?error=${encodeURIComponent(SIGNUP_CONFIRMATION_ERROR)}`));
   }
 
-  return NextResponse.redirect(`${origin}/reset-password?error=missing_token`);
+  return NextResponse.redirect(getAuthRedirectUrl(`/sign-in?error=${encodeURIComponent(SIGNUP_CONFIRMATION_ERROR)}`));
 }

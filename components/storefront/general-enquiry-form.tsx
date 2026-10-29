@@ -43,21 +43,17 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
           <p className="font-medium">Message sent</p>
           <p className="text-sm">
             Thanks — we've received your message
-            {isAuthenticated ? " and you can see it any time under Enquiries in your account." : "."}
+            {isAuthenticated
+              ? " and you can see it any time under Enquiries in your account."
+              : "."}
           </p>
         </Alert>
-        <Link
-          href="/contact"
-          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
-        >
-          Back to contact
-        </Link>
       </div>
     );
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Your Information Section */}
@@ -86,6 +82,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
               type="tel"
               autoComplete="tel"
               aria-describedby="enquiry-contact-requirement"
+              placeholder="+265..."
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -100,6 +97,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             type="email"
             autoComplete="email"
             aria-describedby="enquiry-contact-requirement"
+            placeholder="your@email.com"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
           <p id="enquiry-contact-requirement" className="text-xs text-gray-500">
@@ -120,12 +118,12 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             name="topic"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           >
-            <option value="product">Product</option>
-            <option value="stock">Stock</option>
-            <option value="pricing">Pricing</option>
-            <option value="rental">Rental</option>
-            <option value="repair">Repair</option>
-            <option value="corporate">Corporate</option>
+            <option value="product">Product enquiry</option>
+            <option value="stock">Stock availability</option>
+            <option value="pricing">Pricing information</option>
+            <option value="rental">Rental enquiry</option>
+            <option value="repair">Repair enquiry</option>
+            <option value="corporate">Corporate supply</option>
             <option value="other">Other</option>
           </select>
         </div>
@@ -138,6 +136,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             name="message"
             required
             rows={4}
+            placeholder="How can we help you?"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -150,7 +149,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
         </Button>
         <Link
           href="/"
-          className="block w-full text-center text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+          className="block w-full text-center text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
         >
           Cancel and return to homepage
         </Link>

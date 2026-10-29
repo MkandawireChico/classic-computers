@@ -18,7 +18,9 @@ export function RentalBookingForm({
   defaultRentalProductId?: string;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [rentalProductId, setRentalProductId] = useState(defaultRentalProductId ?? products[0]?.rentalProductId ?? "");
+  const [rentalProductId, setRentalProductId] = useState(
+    defaultRentalProductId ?? products[0]?.rentalProductId ?? "",
+  );
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -59,7 +61,10 @@ export function RentalBookingForm({
     return (
       <Alert variant="warning">
         <p>No rental products are currently listed. Contact us to ask about availability.</p>
-        <Link href="/contact" className="mt-2 inline-flex font-medium text-brand-700 underline underline-offset-2">
+        <Link
+          href="/contact"
+          className="mt-2 inline-flex font-medium text-brand-700 underline underline-offset-2"
+        >
           Contact Classic Computers
         </Link>
       </Alert>
@@ -77,24 +82,23 @@ export function RentalBookingForm({
               : "Save this tracking code to check status later — we can't recover it for you:"}
           </p>
           {!isAuthenticated ? (
-            <p className="rounded bg-white/60 p-3 font-mono text-xs break-all">{result.trackingToken}</p>
+            <p className="break-all rounded bg-white/60 p-3 font-mono text-xs">
+              {result.trackingToken}
+            </p>
           ) : null}
-          <p className="text-xs text-gray-600">This is a request — our team will confirm availability and approve it.</p>
+          <p className="text-xs text-gray-600">
+            This is a request — our team will confirm availability and approve it.
+          </p>
         </Alert>
-        <Link
-          href="/rentals"
-          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
-        >
-          Back to rentals
-        </Link>
       </div>
     );
   }
 
-  const selected = products.find((p) => p.rentalProductId === rentalProductId) ?? products[0] ?? null;
+  const selected =
+    products.find((p) => p.rentalProductId === rentalProductId) ?? products[0] ?? null;
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Rental Item Section */}
@@ -115,7 +119,8 @@ export function RentalBookingForm({
           >
             {products.map((p) => (
               <option key={p.rentalProductId} value={p.rentalProductId}>
-                {p.productName}{p.variantName ? ` — ${p.variantName}` : ""}
+                {p.productName}
+                {p.variantName ? ` — ${p.variantName}` : ""}
               </option>
             ))}
           </select>
@@ -129,7 +134,9 @@ export function RentalBookingForm({
               {!selected.dailyRate && !selected.weeklyRate && !selected.monthlyRate
                 ? " · Pricing to be confirmed — this is a rental enquiry"
                 : ""}
-              {selected.availableQuantity > 0 ? ` · ${selected.availableQuantity} available` : " · Currently unavailable"}
+              {selected.availableQuantity > 0
+                ? ` · ${selected.availableQuantity} available`
+                : " · Currently unavailable"}
             </p>
           ) : null}
         </div>
@@ -183,11 +190,14 @@ export function RentalBookingForm({
             max={10}
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
+            placeholder="e.g. 1"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
         {availability !== null ? (
-          <p className={`text-sm ${availability >= quantity ? "text-status-success" : "text-status-danger"}`}>
+          <p
+            className={`text-sm ${availability >= quantity ? "text-status-success" : "text-status-danger"}`}
+          >
             {availability} unit(s) available for those dates.{" "}
             <span className="text-xs text-gray-400">(re-checked when you submit)</span>
           </p>
@@ -213,7 +223,7 @@ export function RentalBookingForm({
             </div>
             <div className="space-y-1">
               <label htmlFor="rental-guest-phone" className="text-sm font-medium text-gray-700">
-                Phone
+                Phone number
               </label>
               <input
                 id="rental-guest-phone"
@@ -221,19 +231,21 @@ export function RentalBookingForm({
                 required
                 type="tel"
                 autoComplete="tel"
+                placeholder="+265..."
                 className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
             </div>
           </div>
           <div className="space-y-1">
             <label htmlFor="rental-guest-email" className="text-sm font-medium text-gray-700">
-              Email (optional)
+              Email address (optional)
             </label>
             <input
               id="rental-guest-email"
               name="guestEmail"
               type="email"
               autoComplete="email"
+              placeholder="your@email.com"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -251,6 +263,7 @@ export function RentalBookingForm({
             id="rental-notes"
             name="notes"
             rows={3}
+            placeholder="Any special requirements or notes"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -263,7 +276,7 @@ export function RentalBookingForm({
         </Button>
         <Link
           href="/rentals"
-          className="block w-full text-center text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+          className="block w-full text-center text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
         >
           Cancel and return to rentals
         </Link>

@@ -68,15 +68,15 @@ export function PurchasePanel({
   const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
       <div className="flex items-baseline gap-2">
         {onSale ? (
           <>
-            <span className="text-2xl font-bold text-status-danger">{formatMoney(salePrice as number)}</span>
-            <span className="text-base text-gray-400 line-through">{formatMoney(price)}</span>
+            <span className="text-3xl font-extrabold text-rose-700">{formatMoney(salePrice as number)}</span>
+            <span className="text-base font-medium text-slate-500 line-through">{formatMoney(price)}</span>
           </>
         ) : (
-            <span className="text-2xl font-bold text-slate-900">{formatMoney(price)}</span>
+            <span className="text-3xl font-extrabold text-emerald-800">{formatMoney(price)}</span>
         )}
       </div>
 
@@ -104,7 +104,7 @@ export function PurchasePanel({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <AddToCartButton
           productId={product.id}
           variantId={selectedVariantId}
@@ -128,7 +128,7 @@ export function PurchasePanel({
         ) : (
           <Link
             href="/sign-in"
-            className="inline-flex h-10 items-center justify-center rounded-card border border-surface-border px-4 text-sm font-medium text-slate-800 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 px-4 text-sm font-semibold text-violet-900 transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
           >
             Sign in to save
           </Link>
@@ -136,18 +136,18 @@ export function PurchasePanel({
       </div>
 
       {rentalOffer ? (
-        <div className="rounded-panel border border-brand-200 bg-brand-50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-700">Rental pricing</p>
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-900">Rental pricing</p>
           <div className="mt-2 flex items-center justify-between gap-3">
             <div>
-              <p className="text-lg font-bold text-slate-900">{rentalPrice ? formatMoney(rentalPrice) : "Quote on request"}</p>
-              <p className="text-xs text-slate-600">
+              <p className="text-lg font-bold text-amber-950">{rentalPrice ? formatMoney(rentalPrice) : "Quote on request"}</p>
+              <p className="text-xs text-slate-700">
                 {rentalOffer.dailyRate ? `${formatMoney(rentalOffer.dailyRate)}/day` : ""}
                 {rentalOffer.weeklyRate ? ` · ${formatMoney(rentalOffer.weeklyRate)}/week` : ""}
                 {rentalOffer.monthlyRate ? ` · ${formatMoney(rentalOffer.monthlyRate)}/month` : ""}
               </p>
             </div>
-            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-700">
+            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
               {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
             </span>
           </div>

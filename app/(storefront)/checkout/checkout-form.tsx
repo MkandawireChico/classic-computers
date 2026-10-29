@@ -2,18 +2,51 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { formatMoney } from "@/lib/format/money";
 import { submitCheckoutAction } from "./actions";
 import type { AddressRecord } from "@/lib/services/addresses";
 import type { PaymentMethodsSetting } from "@/lib/data/site-settings";
+import {
+  BANK_PROVIDERS,
+  MOBILE_MONEY_PROVIDERS,
+  type BankProviderId,
+  type ManualPaymentProviderId,
+  type MobileMoneyProviderId,
+} from "@/lib/payments/manual-payment";
+import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
 
-const PAYMENT_LABELS: Record<string, string> = {
+const PAYMENT_PROVIDER_LOGOS: Record<ManualPaymentProviderId, string> = {
+  national_bank: "/payment-providers/national-bank-malawi.png",
+  fdh_bank: "/payment-providers/fdh-bank.webp",
+  standard_bank: "/payment-providers/standard-bank-malawi.png",
+  first_capital_bank: "/payment-providers/first-capital-bank.jpg",
+  airtel_money: "/payment-providers/airtel-money.png",
+  tnm_mpamba: "/payment-providers/tnm-mpamba.png",
+};
+
+const PAYMENT_LABELS = {
   pay_at_shop: "Pay at shop",
   bank_transfer: "Bank transfer",
   mobile_money: "Mobile money",
   cash_on_delivery: "Cash on delivery",
+} as const;
+type PaymentMethod = keyof typeof PAYMENT_LABELS;
+
+const PAYMENT_DESCRIPTIONS: Record<PaymentMethod, string> = {
+  pay_at_shop: "Pay in person at our shop.",
+  bank_transfer: "Choose a bank and transfer to our account.",
+  mobile_money: "Choose Airtel Money or TNM Mpamba.",
+  cash_on_delivery: "Pay when your order is delivered.",
+};
+
+const PAYMENT_ACCENTS: Record<PaymentMethod, string> = {
+  pay_at_shop: "border-violet-300 bg-violet-50 text-violet-900",
+  bank_transfer: "border-emerald-300 bg-emerald-50 text-emerald-900",
+  mobile_money: "border-rose-300 bg-rose-50 text-rose-900",
+  cash_on_delivery: "border-amber-300 bg-amber-50 text-amber-950",
 };
 
 export function CheckoutForm({
@@ -36,9 +69,18 @@ export function CheckoutForm({
   const [error, setError] = useState<string | null>(null);
   const [fulfillmentType, setFulfillmentType] = useState<"pickup" | "delivery">("pickup");
   const defaultAddressId = addresses.find((a) => a.is_default)?.id ?? addresses[0]?.id;
-
-  const enabledMethods = (Object.keys(PAYMENT_LABELS) as Array<keyof typeof PAYMENT_LABELS>).filter(
+  const enabledMethods = (Object.keys(PAYMENT_LABELS) as PaymentMethod[]).filter(
     (key) => paymentMethods[key as keyof PaymentMethodsSetting],
+  );
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(
+    enabledMethods[0] ?? "pay_at_shop",
+  );
+  const [selectedProvider, setSelectedProvider] = useState<
+    BankProviderId | MobileMoneyProviderId | null
+  >(null);
+  const selectedBank = BANK_PROVIDERS.find((bank) => bank.id === selectedProvider);
+  const selectedMobileProvider = MOBILE_MONEY_PROVIDERS.find(
+    (provider) => provider.id === selectedProvider,
   );
 
   function handleSubmit(formData: FormData) {
@@ -47,6 +89,8 @@ export function CheckoutForm({
       const result = await submitCheckoutAction({
         fulfillmentType,
         paymentMethod: formData.get("paymentMethod")?.toString(),
+        paymentProvider: selectedProvider ?? undefined,
+        paymentReference: formData.get("paymentReference")?.toString() || undefined,
         notes: formData.get("notes")?.toString() || undefined,
         deliveryAddressId: formData.get("deliveryAddressId")?.toString() || undefined,
         guestName: formData.get("guestName")?.toString() || undefined,
@@ -75,79 +119,93 @@ export function CheckoutForm({
   }
 
   return (
-    <form action={handleSubmit} className="mt-6 space-y-6">
+    <form action={handleSubmit} className="space-y-6 sm:space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
-      <div className="rounded-card border border-surface-border bg-surface p-4">
-        <p className="text-sm text-gray-700">
-          {itemCount} item{itemCount === 1 ? "" : "s"} — subtotal {formatMoney(subtotal)}
+      <div className="rounded-3xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 via-white to-amber-50/50 p-6 shadow-lg shadow-amber-900/5 sm:p-8">
+        <p className="text-lg font-extrabold text-slate-900 sm:text-xl">
+          <span className="text-emerald-800">
+            {itemCount} item{itemCount === 1 ? "" : "s"}
+          </span>
+          <span className="mx-2 text-amber-600" aria-hidden="true">
+            ·
+          </span>
+          subtotal {formatMoney(subtotal)}
         </p>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-2 text-base leading-relaxed text-slate-600 sm:text-lg">
           Discounts (if applicable) and the final total are calculated when your order is placed.
         </p>
       </div>
 
       {!isAuthenticated ? (
-        <fieldset className="space-y-3">
-          <legend className="text-sm font-semibold text-gray-900">Your details</legend>
-          <div className="space-y-1">
-            <label htmlFor="guestName" className="text-sm font-medium text-gray-700">
-              Full name
-            </label>
-            <input
-              id="guestName"
-              name="guestName"
-              required
-              className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="guestPhone" className="text-sm font-medium text-gray-700">
-              Phone
-            </label>
-            <input
-              id="guestPhone"
-              name="guestPhone"
-              required
-              className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="guestEmail" className="text-sm font-medium text-gray-700">
-              Email (optional)
-            </label>
-            <input
-              id="guestEmail"
-              name="guestEmail"
-              type="email"
-              className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-            />
+        <fieldset className="space-y-5 rounded-3xl border-2 border-violet-200 bg-gradient-to-br from-violet-50/50 via-white to-violet-50/30 p-6 shadow-lg shadow-violet-900/5 sm:p-8">
+          <legend className="px-3 text-lg font-extrabold text-violet-900">Your details</legend>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label htmlFor="guestName" className="text-sm font-bold text-slate-700">
+                Full name
+              </label>
+              <input
+                id="guestName"
+                name="guestName"
+                required
+                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="guestPhone" className="text-sm font-bold text-slate-700">
+                Phone
+              </label>
+              <input
+                id="guestPhone"
+                name="guestPhone"
+                required
+                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <label htmlFor="guestEmail" className="text-sm font-bold text-slate-700">
+                Email (optional)
+              </label>
+              <input
+                id="guestEmail"
+                name="guestEmail"
+                type="email"
+                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+              />
+            </div>
           </div>
         </fieldset>
       ) : (
-        <p className="text-sm text-gray-600">Ordering as {userEmail}</p>
+        <p className="rounded-3xl border-2 border-violet-200 bg-gradient-to-r from-violet-50/50 to-white p-6 text-base text-slate-700 shadow-lg shadow-violet-900/5 sm:p-8">
+          Ordering as <span className="font-extrabold text-violet-900">{userEmail}</span>
+        </p>
       )}
 
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-gray-900">Fulfillment</legend>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+      <fieldset className="space-y-4 rounded-3xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/30 p-6 shadow-lg shadow-emerald-900/5 sm:p-8">
+        <legend className="px-3 text-lg font-extrabold text-emerald-900">Fulfillment</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-emerald-500 bg-emerald-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+          >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "pickup"}
               onChange={() => setFulfillmentType("pickup")}
-              className="h-4 w-4 text-brand-500 focus:ring-brand-500"
+              className="h-5 w-5 accent-emerald-700 focus:ring-emerald-500"
             />
             Pickup in-store
           </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-emerald-500 bg-emerald-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+          >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "delivery"}
               onChange={() => setFulfillmentType("delivery")}
-              className="h-4 w-4 text-brand-500 focus:ring-brand-500"
+              className="h-5 w-5 accent-emerald-700 focus:ring-emerald-500"
             />
             Delivery
           </label>
@@ -156,15 +214,15 @@ export function CheckoutForm({
         {fulfillmentType === "delivery" ? (
           isAuthenticated ? (
             addresses.length > 0 ? (
-              <div className="space-y-1">
-                <label htmlFor="deliveryAddressId" className="text-sm font-medium text-gray-700">
+              <div className="space-y-2">
+                <label htmlFor="deliveryAddressId" className="text-sm font-bold text-slate-700">
                   Delivery address
                 </label>
                 <select
                   id="deliveryAddressId"
                   name="deliveryAddressId"
                   defaultValue={defaultAddressId}
-                  className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 >
                   {addresses.map((address) => (
                     <option key={address.id} value={address.id}>
@@ -184,48 +242,51 @@ export function CheckoutForm({
               </Alert>
             )
           ) : (
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <label htmlFor="guestDeliveryLine1" className="text-sm font-medium text-gray-700">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="guestDeliveryLine1" className="text-sm font-bold text-slate-700">
                   Address line 1
                 </label>
                 <input
                   id="guestDeliveryLine1"
                   name="guestDeliveryLine1"
                   required
-                  className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 />
               </div>
-              <div className="space-y-1">
-                <label htmlFor="guestDeliveryLine2" className="text-sm font-medium text-gray-700">
+              <div className="space-y-2">
+                <label htmlFor="guestDeliveryLine2" className="text-sm font-bold text-slate-700">
                   Address line 2 (optional)
                 </label>
                 <input
                   id="guestDeliveryLine2"
                   name="guestDeliveryLine2"
-                  className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label htmlFor="guestDeliveryCity" className="text-sm font-medium text-gray-700">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="guestDeliveryCity" className="text-sm font-bold text-slate-700">
                     City
                   </label>
                   <input
                     id="guestDeliveryCity"
                     name="guestDeliveryCity"
                     required
-                    className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label htmlFor="guestDeliveryDistrict" className="text-sm font-medium text-gray-700">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="guestDeliveryDistrict"
+                    className="text-sm font-bold text-slate-700"
+                  >
                     District (optional)
                   </label>
                   <input
                     id="guestDeliveryDistrict"
                     name="guestDeliveryDistrict"
-                    className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                   />
                 </div>
               </div>
@@ -234,38 +295,297 @@ export function CheckoutForm({
         ) : null}
       </fieldset>
 
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-gray-900">Payment method</legend>
-        {enabledMethods.map((key, index) => (
-          <label key={key} className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value={key}
-              defaultChecked={index === 0}
-              required
-              className="h-4 w-4 text-brand-500 focus:ring-brand-500"
-            />
-            {PAYMENT_LABELS[key]}
-          </label>
-        ))}
+      <fieldset className="space-y-5 rounded-3xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 p-6 shadow-lg shadow-amber-900/5 sm:p-8">
+        <legend className="px-3 text-lg font-extrabold text-amber-900">Payment method</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {enabledMethods.map((method) => (
+            <label
+              key={method}
+              className={`flex min-h-[100px] cursor-pointer items-start gap-4 rounded-2xl border-2 p-5 transition-all duration-300 focus-within:ring-4 focus-within:ring-amber-500 focus-within:ring-offset-2 ${
+                selectedMethod === method
+                  ? PAYMENT_ACCENTS[method] + " shadow-lg shadow-slate-900/5 hover:-translate-y-0.5"
+                  : "border-slate-200 bg-white text-slate-800 hover:border-amber-300 hover:shadow-md"
+              }`}
+            >
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={method}
+                checked={selectedMethod === method}
+                onChange={() => {
+                  setSelectedMethod(method);
+                  setSelectedProvider(null);
+                }}
+                required
+                className="mt-1 h-5 w-5 shrink-0 accent-amber-700 focus:ring-amber-500"
+              />
+              <span>
+                <span className="block text-base font-extrabold">{PAYMENT_LABELS[method]}</span>
+                <span className="mt-1 block text-sm leading-relaxed text-slate-600">
+                  {PAYMENT_DESCRIPTIONS[method]}
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+
+        {selectedMethod === "bank_transfer" ? (
+          <ProviderPanel title="Choose a bank" accent="emerald">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {BANK_PROVIDERS.map((bank) => (
+                <ProviderChoice
+                  key={bank.id}
+                  name={bank.name}
+                  logo={PAYMENT_PROVIDER_LOGOS[bank.id]}
+                  selected={selectedProvider === bank.id}
+                  onClick={() => setSelectedProvider(bank.id)}
+                  accent="emerald"
+                />
+              ))}
+            </div>
+            {selectedBank ? (
+              <BankDetails provider={selectedBank} subtotal={subtotal} key={selectedProvider} />
+            ) : (
+              <p className="text-base text-slate-600">
+                Select a bank to view its account details and transfer instructions.
+              </p>
+            )}
+          </ProviderPanel>
+        ) : null}
+
+        {selectedMethod === "mobile_money" ? (
+          <ProviderPanel title="Choose a mobile-money provider" accent="rose">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {MOBILE_MONEY_PROVIDERS.map((provider) => (
+                <ProviderChoice
+                  key={provider.id}
+                  name={provider.name}
+                  logo={PAYMENT_PROVIDER_LOGOS[provider.id]}
+                  selected={selectedProvider === provider.id}
+                  onClick={() => setSelectedProvider(provider.id)}
+                  accent="rose"
+                />
+              ))}
+            </div>
+            {selectedMobileProvider ? (
+              <MobileMoneyDetails
+                provider={selectedMobileProvider}
+                subtotal={subtotal}
+                key={selectedProvider}
+              />
+            ) : (
+              <p className="text-base text-slate-600">
+                Select a provider to view the correct wallet details and instructions.
+              </p>
+            )}
+          </ProviderPanel>
+        ) : null}
       </fieldset>
 
-      <div className="space-y-1">
-        <label htmlFor="notes" className="text-sm font-medium text-gray-700">
+      <div className="space-y-2 rounded-3xl border-2 border-rose-200 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/30 p-6 shadow-lg shadow-rose-900/5 sm:p-8">
+        <label htmlFor="notes" className="text-sm font-bold text-rose-900">
           Order notes (optional)
         </label>
         <textarea
           id="notes"
           name="notes"
-          rows={2}
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          rows={3}
+          className="w-full rounded-2xl border-2 border-rose-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-100"
         />
       </div>
 
-      <Button type="submit" isLoading={isPending} className="w-full">
+      <Button
+        type="submit"
+        isLoading={isPending}
+        disabled={
+          (selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
+          !selectedProvider
+        }
+        className="min-h-14 w-full rounded-2xl bg-emerald-700 px-8 py-4 text-lg font-extrabold text-white shadow-xl shadow-emerald-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-2xl"
+      >
         Place order
       </Button>
     </form>
+  );
+}
+
+function ProviderPanel({
+  title,
+  accent,
+  children,
+}: {
+  title: string;
+  accent: "emerald" | "rose";
+  children: React.ReactNode;
+}) {
+  const styles =
+    accent === "emerald"
+      ? "border-emerald-300 bg-gradient-to-br from-emerald-50/80 to-white"
+      : "border-rose-300 bg-gradient-to-br from-rose-50/80 to-white";
+
+  return (
+    <div className={`space-y-5 rounded-3xl border-2 p-6 shadow-lg ${styles} sm:p-7`}>
+      <h3 className="text-base font-extrabold text-slate-900">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+function ProviderChoice({
+  name,
+  logo,
+  selected,
+  onClick,
+  accent,
+}: {
+  name: string;
+  logo: string;
+  selected: boolean;
+  onClick: () => void;
+  accent: "emerald" | "rose";
+}) {
+  const selectedStyle =
+    accent === "emerald"
+      ? "border-emerald-500 bg-white text-emerald-950 ring-2 ring-emerald-200 shadow-md shadow-emerald-900/10"
+      : "border-rose-500 bg-white text-rose-950 ring-2 ring-rose-200 shadow-md shadow-rose-900/10";
+
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={`flex min-h-16 items-center justify-between gap-4 rounded-2xl border-2 px-5 py-4 text-left text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-700 focus-visible:ring-offset-2 ${
+        selected
+          ? selectedStyle + " hover:-translate-y-0.5"
+          : "border-slate-200 bg-white/90 text-slate-800 hover:border-slate-300 hover:shadow-md"
+      }`}
+    >
+      <span className="flex min-w-0 items-center gap-3">
+        <span className="relative flex h-12 w-20 shrink-0 items-center justify-center rounded-xl bg-white p-2">
+          <Image src={logo} alt="" fill sizes="80px" className="object-contain p-2" />
+        </span>
+        <span className="min-w-0">{name}</span>
+      </span>
+      {selected ? (
+        <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700">
+          Selected
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
+function BankDetails({
+  provider,
+  subtotal,
+}: {
+  provider: (typeof BANK_PROVIDERS)[number];
+  subtotal: number;
+}) {
+  const paymentDetails = [
+    provider.name,
+    `Account holder: ${provider.accountHolder}`,
+    `Account number: ${provider.accountNumber}`,
+    `Branch: ${provider.branch}`,
+    `Current cart subtotal: ${formatMoney(subtotal)}`,
+  ].join("\n");
+
+  return (
+    <div className="space-y-4 rounded-2xl border border-emerald-200 bg-white p-4 sm:p-5">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">
+          Bank transfer details
+        </p>
+        <h4 className="mt-1 text-lg font-extrabold text-slate-900">{provider.name}</h4>
+      </div>
+      <dl className="grid gap-3 text-sm sm:grid-cols-2">
+        <PaymentDetail label="Account holder" value={provider.accountHolder} />
+        <PaymentDetail label="Account number" value={provider.accountNumber} />
+        <PaymentDetail label="Branch" value={provider.branch} />
+        <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
+      </dl>
+      <p className="rounded-xl bg-emerald-50 p-3 text-sm leading-relaxed text-emerald-950">
+        Place your order first. Then transfer the exact final total shown on the order confirmation
+        and keep your bank transaction reference. Your order remains unpaid until the transfer is
+        verified.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <CopyPaymentValue value={provider.accountNumber} label="account number" />
+        <CopyPaymentValue value={paymentDetails} label="payment details" />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="paymentReference" className="text-sm font-semibold text-slate-700">
+          Transaction reference (optional, if already transferred)
+        </label>
+        <input
+          id="paymentReference"
+          name="paymentReference"
+          maxLength={120}
+          autoComplete="off"
+          className="w-full rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+        />
+      </div>
+    </div>
+  );
+}
+
+function MobileMoneyDetails({
+  provider,
+  subtotal,
+}: {
+  provider: (typeof MOBILE_MONEY_PROVIDERS)[number];
+  subtotal: number;
+}) {
+  const paymentDetails = [
+    provider.name,
+    `Wallet number: ${provider.walletNumber}`,
+    `Account holder: ${provider.accountHolder}`,
+    `Current cart subtotal: ${formatMoney(subtotal)}`,
+  ].join("\n");
+
+  return (
+    <div className="space-y-4 rounded-2xl border border-rose-200 bg-white p-4 sm:p-5">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-rose-800">
+          Mobile-money details
+        </p>
+        <h4 className="mt-1 text-lg font-extrabold text-slate-900">{provider.name}</h4>
+      </div>
+      <dl className="grid gap-3 text-sm sm:grid-cols-2">
+        <PaymentDetail label="Wallet number" value={provider.walletNumber} />
+        <PaymentDetail label="Account holder" value={provider.accountHolder} />
+        <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
+      </dl>
+      <p className="rounded-xl bg-rose-50 p-3 text-sm leading-relaxed text-rose-950">
+        Place your order, then use your provider&apos;s normal transfer process to send the exact
+        final total shown on the confirmation page. Keep your transaction ID. Your order remains
+        unpaid until the payment is verified.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <CopyPaymentValue value={provider.walletNumber} label="wallet number" />
+        <CopyPaymentValue value={paymentDetails} label="payment details" />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="paymentReference" className="text-sm font-semibold text-slate-700">
+          Transaction ID (optional, if already transferred)
+        </label>
+        <input
+          id="paymentReference"
+          name="paymentReference"
+          maxLength={120}
+          autoComplete="off"
+          className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-100"
+        />
+      </div>
+    </div>
+  );
+}
+
+function PaymentDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-lg bg-slate-50 p-3">
+      <dt className="text-xs font-medium text-slate-500">{label}</dt>
+      <dd className="mt-1 break-words font-bold text-slate-900">{value}</dd>
+    </div>
   );
 }

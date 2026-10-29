@@ -3,7 +3,8 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { signIn, type AuthActionState } from "../actions";
+import { AuthProviderButtons } from "@/components/auth-provider-buttons";
+import { signIn, signInWithOAuth, type AuthActionState } from "../actions";
 
 const initialState: AuthActionState = { error: null };
 
@@ -19,45 +20,62 @@ function SubmitButton() {
 export function SignInForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction] = useFormState(signIn, initialState);
 
+  const handleOAuthSignIn = (provider: "google" | "apple" | "azure") => {
+    signInWithOAuth(provider, redirectTo);
+  };
+
   return (
-    <form action={formAction} className="space-y-4" noValidate>
-      {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
-      {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
+    <div className="space-y-6">
+      <AuthProviderButtons onProviderSelect={handleOAuthSignIn} />
 
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
-      </div>
-
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <label htmlFor="password" className="text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <a href="/reset-password" className="text-xs font-medium text-brand-600 hover:underline">
-            Forgot password?
-          </a>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-surface-border" />
         </div>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">Or continue with email</span>
+        </div>
       </div>
 
-      <SubmitButton />
-    </form>
+      <form action={formAction} className="space-y-4" noValidate>
+        {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
+        {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
+
+        <div className="space-y-1">
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <a href="/reset-password" className="text-xs font-medium text-brand-600 hover:underline">
+              Forgot password?
+            </a>
+          </div>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </div>
+
+        <SubmitButton />
+      </form>
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import { getMyPermissions } from "@/lib/auth/permissions";
 import { getMyAdminNotifications } from "@/lib/data/admin/notifications";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { BackButton } from "@/components/navigation/back-button";
 
 /**
  * This layout is the FIRST checkpoint for every /admin/* page, but — same
@@ -35,6 +36,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="flex flex-1">
         <AdminSidebar permissions={Array.from(permissions)} />
         <main className="admin-content flex-1 overflow-x-auto p-4 sm:p-6 [&_table]:text-slate-700 [&_table_th]:border-b [&_table_th]:border-surface-border [&_table_th]:font-semibold">
+          <BackButton className="mb-5 px-0 pt-0 sm:px-0 lg:px-0" />
           {children}
         </main>
       </div>

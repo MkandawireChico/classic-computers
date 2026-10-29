@@ -118,86 +118,97 @@ export default async function ProductPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-white to-emerald-50/40">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500">
-        <Link href="/shop" className="hover:text-brand-600 transition-colors">
-          Shop
-        </Link>
-        {product.category ? (
-          <>
-            {" / "}
-            <Link href={`/shop/${product.category.slug}`} className="hover:text-brand-600 transition-colors">
-              {formatCategoryName(product.category.name)}
-            </Link>
-          </>
-        ) : null}
-        {" / "}
-        <span className="text-gray-700">{product.name}</span>
-      </nav>
-
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
-        <ProductGallery images={product.images} productName={product.name} />
-
-        <div className="flex flex-col">
-          {product.brand ? (
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">{product.brand.name}</p>
+      <div className="section-shell py-6 sm:py-8 lg:py-10">
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <Link href="/shop" className="rounded px-1 font-semibold text-emerald-800 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600">
+            Shop
+          </Link>
+          {product.category ? (
+            <>
+              <span aria-hidden="true" className="text-amber-600">/</span>
+              <Link href={`/shop/${product.category.slug}`} className="rounded px-1 font-semibold text-emerald-800 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600">
+                {formatCategoryName(product.category.name)}
+              </Link>
+            </>
           ) : null}
-          <h1 className="mt-2 text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
-          <p className="mt-2 text-sm text-gray-500">SKU: {product.sku}</p>
+          <span aria-hidden="true" className="text-amber-600">/</span>
+          <span aria-current="page" className="min-w-0 text-slate-600">{product.name}</span>
+        </nav>
 
-          <div className="mt-6">
-            <PurchasePanel
-              product={product}
-              businessInfo={businessInfo}
-              isAuthenticated={isAuthenticated}
-              initialInWishlist={initialInWishlist}
-              rentalOffers={rentalOffers}
-            />
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-8">
+          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-3 shadow-lg shadow-emerald-950/5 sm:p-5">
+            <ProductGallery images={product.images} productName={product.name} />
           </div>
 
-          {product.warranty_text ? (
-            <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-3 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm ring-1 ring-emerald-200">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <div className="rounded-3xl border border-amber-100 bg-white/95 p-5 shadow-lg shadow-amber-950/5 sm:p-7 lg:p-8">
+            <div className="mb-5">
+              {product.brand ? (
+                <p className="mb-3 inline-flex rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-violet-800">
+                  {product.brand.name}
+                </p>
+              ) : null}
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">{product.name}</h1>
+              <p className="mt-3 inline-flex rounded-md bg-slate-100 px-2.5 py-1 font-mono text-xs font-medium text-slate-700">
+                SKU: {product.sku}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/70 to-white p-4 sm:p-5">
+              <PurchasePanel
+                product={product}
+                businessInfo={businessInfo}
+                isAuthenticated={isAuthenticated}
+                initialInWishlist={initialInWishlist}
+                rentalOffers={rentalOffers}
+              />
+            </div>
+
+            {product.warranty_text ? (
+              <div className="mt-4 flex min-h-11 items-center justify-center gap-2.5 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 text-sm">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-violet-700" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M12 3.5 5.5 6v4.5c0 3.7 2.3 7.1 6.5 9.5 4.2-2.4 6.5-5.8 6.5-9.5V6L12 3.5Z" />
                     <path d="m9.5 12 1.5 1.5 3.5-4" />
                   </svg>
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Warranty</p>
-                  <p className="text-sm font-semibold text-slate-800">{product.warranty_text}</p>
-                </div>
+                  <span className="whitespace-nowrap font-bold text-violet-900">Warranty</span>
+                  <span aria-hidden="true" className="h-4 w-px bg-violet-300" />
+                  <span className="whitespace-nowrap font-semibold text-slate-800">{product.warranty_text}</span>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          <div className="mt-6">
-            <ProductEnquiry product={product} businessInfo={businessInfo} showWhatsApp={false} />
+            <div className="mt-4">
+              <ProductEnquiry product={product} businessInfo={businessInfo} showWhatsApp={false} />
+            </div>
           </div>
         </div>
+
+        {product.description ? (
+          <section className="mt-8 rounded-3xl border border-amber-100 bg-gradient-to-br from-amber-50/70 via-white to-rose-50/50 p-5 shadow-sm sm:mt-10 sm:p-7">
+            <div className="mb-4 flex items-center gap-3">
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
+              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Description</h2>
+            </div>
+            <p className="whitespace-pre-line text-sm leading-7 text-slate-700 sm:text-base">{product.description}</p>
+          </section>
+        ) : null}
+
+        {product.specifications.length > 0 ? (
+          <section className="mt-8 sm:mt-10">
+            <div className="mb-4 flex items-center gap-3">
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-emerald-500" />
+              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Specifications</h2>
+            </div>
+            <SpecificationsTable specifications={product.specifications} />
+          </section>
+        ) : null}
+
+        <RelatedProducts products={related} />
       </div>
-
-      {product.description ? (
-        <section className="mt-12 rounded-panel border border-surface-border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">Description</h2>
-          <p className="whitespace-pre-line text-sm text-gray-700 leading-relaxed">{product.description}</p>
-        </section>
-      ) : null}
-
-      {product.specifications.length > 0 ? (
-        <section className="mt-10">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">Specifications</h2>
-          <SpecificationsTable specifications={product.specifications} />
-        </section>
-      ) : null}
-
-      <RelatedProducts products={related} />
     </div>
   );
 }

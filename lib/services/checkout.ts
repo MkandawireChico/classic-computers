@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/server-admin";
 import { getCartIdReadOnly, clearGuestCartCookie } from "./cart";
 import { checkoutSchema } from "@/schemas/checkout";
+import { appendManualPaymentSelection } from "@/lib/payments/manual-payment";
 
 const GUEST_ORDER_COOKIE_PREFIX = "cc_order_";
 
@@ -58,7 +59,16 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   // Guest delivery address is now passed as structured fields directly to
   // create_order() (migration 0033), which builds orders.delivery_snapshot
   // itself — notes stays plain, no more address-in-notes folding.
-  const notes = data.notes ?? null;
+  const notes =
+    data.paymentProvider &&
+    (data.paymentMethod === "bank_transfer" || data.paymentMethod === "mobile_money")
+      ? appendManualPaymentSelection(
+          data.notes ?? null,
+          data.paymentMethod,
+          data.paymentProvider,
+          data.paymentReference,
+        )
+      : data.notes ?? null;
 
   // Authenticated: the normal RLS-bound client carries the user's session,
   // so auth.uid() inside create_order() resolves correctly and the

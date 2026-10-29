@@ -6,7 +6,7 @@ import { SignInForm } from "./sign-in-form";
 export default function SignInPage({
   searchParams,
 }: {
-  searchParams: { verify?: string; redirectTo?: string };
+  searchParams: { verify?: string; redirectTo?: string; error?: string };
 }) {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
@@ -19,6 +19,12 @@ export default function SignInPage({
         {searchParams.verify ? (
           <Alert variant="info" className="mb-4">
             Check your email to confirm your account before signing in.
+          </Alert>
+        ) : null}
+
+        {searchParams.error ? (
+          <Alert variant="danger" className="mb-4">
+            {searchParams.error}
           </Alert>
         ) : null}
 

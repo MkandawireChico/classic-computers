@@ -198,12 +198,13 @@ export async function mergeGuestCartIntoCustomerCart(customerId: string): Promis
     if (!customerCart) return;
 
     for (const item of guestItems) {
-      const { data: existing } = await (supabase.from("cart_items") as any)
+      const existingItemQuery = (supabase.from("cart_items") as any)
         .select("id, quantity")
         .eq("cart_id", customerCart.id)
-        .eq("product_id", item.product_id)
-        .is("variant_id", item.variant_id)
-        .maybeSingle();
+        .eq("product_id", item.product_id);
+      const { data: existing } = await (
+        item.variant_id ? existingItemQuery.eq("variant_id", item.variant_id) : existingItemQuery.is("variant_id", null)
+      ).maybeSingle();
 
       if (existing) {
         await (supabase.from("cart_items") as any)

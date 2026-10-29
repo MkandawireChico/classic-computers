@@ -11,7 +11,7 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square items-center justify-center rounded-card bg-surface-muted text-sm text-gray-400">
+      <div className="flex aspect-square items-center justify-center rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-emerald-50 text-sm font-medium text-slate-500">
         No image yet
       </div>
     );
@@ -19,7 +19,7 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
 
   return (
     <div>
-      <div className="relative aspect-square w-full overflow-hidden rounded-card bg-gradient-to-br from-surface-muted to-white shadow-inner">
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-white bg-gradient-to-br from-amber-50 via-white to-emerald-50 shadow-inner">
         <Image
           key={active!.id}
           src={getPublicStorageUrl("product-images", active!.storage_path)}
@@ -40,8 +40,8 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
               onClick={() => setActiveIndex(index)}
               aria-label={`Show image ${index + 1} of ${images.length}`}
               aria-current={index === activeIndex}
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
-                index === activeIndex ? "border-brand-500 shadow-md scale-105" : "border-surface-border hover:border-brand-300"
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 ${
+                index === activeIndex ? "border-emerald-500 shadow-md scale-105" : "border-amber-100 hover:border-amber-400"
               }`}
             >
               <Image

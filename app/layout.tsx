@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getBusinessInfo } from "@/lib/data/site-settings";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -22,10 +23,55 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const businessInfo = await getBusinessInfo();
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ComputerStore",
+    name: businessInfo?.name ?? "Classic Computers LLC",
+    image: `${siteUrl}/logo.png`,
+    "@id": siteUrl,
+    url: siteUrl,
+    telephone: businessInfo?.phone ?? "+265995837735",
+    email: businessInfo?.email ?? "info@classiccomputers.mw",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: businessInfo?.address ?? "Shree Satyanarayan Building, Shop No. 4, Glyn Jones Road, Opposite First Capital Bank",
+      addressLocality: "Blantyre Town",
+      addressRegion: "Southern Region",
+      addressCountry: "MW",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: -15.7861,
+      longitude: 35.0058,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "08:00",
+        closes: "18:00",
+      },
+    ],
+    areaServed: [
+      { "@type": "City", name: "Blantyre" },
+      { "@type": "City", name: "Lilongwe" },
+      { "@type": "City", name: "Mzuzu" },
+      { "@type": "Country", name: "Malawi" },
+    ],
+    sameAs: ["https://www.facebook.com/classiccomputersmw"],
+    priceRange: "MWK",
+  };
+
   return (
     <html lang="en">
-      <body className="min-h-screen font-sans antialiased">{children}</body>
+      <body className="min-h-screen font-sans antialiased">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+        {children}
+      </body>
     </html>
   );
 }

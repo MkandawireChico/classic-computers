@@ -12,7 +12,6 @@ const ACCOUNT_LINKS = [
   { href: "/account/referrals", label: "Referrals" },
   { href: "/account/notifications", label: "Notifications" },
   { href: "/account/wishlist", label: "Wishlist" },
-  { href: "/compare", label: "Compare" },
   { href: "/account/addresses", label: "Addresses" },
   { href: "/account/profile", label: "Profile" },
   { href: "/account/settings", label: "Settings" },

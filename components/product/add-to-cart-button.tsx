@@ -44,7 +44,7 @@ export function AddToCartButton({
     <div className="flex-1">
       <Button
         variant={buyNow ? "outline" : "primary"}
-        className="w-full"
+        className={`min-h-12 w-full rounded-xl font-bold shadow-sm transition-all hover:-translate-y-0.5 ${buyNow ? "border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100" : "bg-emerald-700 text-white shadow-emerald-900/10 hover:bg-emerald-800"}`}
         onClick={handleClick}
         isLoading={isPending}
         disabled={disabled}

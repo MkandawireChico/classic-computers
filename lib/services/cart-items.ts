@@ -72,20 +72,24 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
   // Upsert-by-hand: cart_items has a UNIQUE(cart_id, product_id, variant_id)
   // constraint, so we check for an existing row and add to its quantity
   // rather than risk a constraint violation or a silent duplicate.
-  const { data: existing, error: lookupError } = await (client
-    .from("cart_items") as any)
+  const existingItemQuery = (client.from("cart_items") as any)
     .select("id, quantity")
     .eq("cart_id", cartId)
-    .eq("product_id", productId)
-    .is("variant_id", variantId ?? null)
-    .maybeSingle();
+    .eq("product_id", productId);
+  const { data: existing, error: lookupError } = await (
+    variantId ? existingItemQuery.eq("variant_id", variantId) : existingItemQuery.is("variant_id", null)
+  ).maybeSingle();
 
   if (lookupError) {
     console.error("addToCart existing item lookup failed:", {
+      operation: "cart_items.lookup",
       code: lookupError.code,
       message: lookupError.message,
       details: lookupError.details,
       hint: lookupError.hint,
+      productId,
+      variantId,
+      cartId,
     });
     return { success: false, error: "Could not add to your cart. Please try again." };
   }
@@ -110,13 +114,13 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
   });
   if (insertError) {
     if (insertError.code === "23505") {
-      const { data: racedItem, error: retryLookupError } = await (client
-        .from("cart_items") as any)
+      const duplicateItemQuery = (client.from("cart_items") as any)
         .select("id, quantity")
         .eq("cart_id", cartId)
-        .eq("product_id", productId)
-        .is("variant_id", variantId ?? null)
-        .maybeSingle();
+        .eq("product_id", productId);
+      const { data: racedItem, error: retryLookupError } = await (
+        variantId ? duplicateItemQuery.eq("variant_id", variantId) : duplicateItemQuery.is("variant_id", null)
+      ).maybeSingle();
 
       if (racedItem && !retryLookupError) {
         const { error: retryUpdateError } = await (client.from("cart_items") as any)
@@ -124,26 +128,38 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
           .eq("id", racedItem.id);
         if (!retryUpdateError) return { success: true };
         console.error("addToCart duplicate-item recovery update failed:", {
+          operation: "cart_items.update",
           code: retryUpdateError.code,
           message: retryUpdateError.message,
           details: retryUpdateError.details,
           hint: retryUpdateError.hint,
+          productId,
+          variantId,
+          cartId,
         });
       } else if (retryLookupError) {
         console.error("addToCart duplicate-item recovery lookup failed:", {
+          operation: "cart_items.lookup",
           code: retryLookupError.code,
           message: retryLookupError.message,
           details: retryLookupError.details,
           hint: retryLookupError.hint,
+          productId,
+          variantId,
+          cartId,
         });
       }
     }
 
     console.error("addToCart insert failed:", {
+      operation: "cart_items.insert",
       code: insertError.code,
       message: insertError.message,
       details: insertError.details,
       hint: insertError.hint,
+      productId,
+      variantId,
+      cartId,
     });
     return { success: false, error: "Could not add to your cart. Please try again." };
   }

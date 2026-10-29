@@ -1,0 +1,14 @@
+Payment provider marks
+
+The following brand images are served from their respective providers' official websites:
+- National Bank of Malawi: https://www.natbank.co.mw/assets/nbm-logo.png
+- FDH Bank: https://www.fdh.co.mw/img/FDHLogo.webp
+- Standard Bank Malawi: https://www.standardbank.co.mw/static_file/assets/favicons/favicon-96x96.png
+- Airtel Malawi: https://www.airtel.mw/favicon.ico (converted to PNG for browser compatibility)
+- TNM: https://www.tnm.co.mw/favicon.png
+
+First Capital Bank logo:
+- Source: https://commons.wikimedia.org/wiki/File:First_Capital_Bank_logo.jpg
+- Creator: Bluesky874
+- License: Creative Commons Attribution-ShareAlike 4.0 International
+- License text: https://creativecommons.org/licenses/by-sa/4.0/

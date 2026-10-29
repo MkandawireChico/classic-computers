@@ -39,21 +39,16 @@ export function CorporateEnquiryForm() {
         <Alert variant="success" className="space-y-3">
           <p className="font-medium">Corporate enquiry submitted</p>
           <p className="text-sm">
-            Thank you — your corporate enquiry has been received. Our team will follow up with you directly within 1-2 business days.
+            Thank you — your corporate enquiry has been received. Our team will follow up with you
+            directly within 1-2 business days.
           </p>
         </Alert>
-        <Link
-          href="/corporate"
-          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
-        >
-          Back to corporate
-        </Link>
       </div>
     );
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Organisation Information Section */}
@@ -86,7 +81,7 @@ export function CorporateEnquiryForm() {
           </div>
           <div className="space-y-1">
             <label htmlFor="corporate-phone" className="text-sm font-medium text-gray-700">
-              Phone
+              Phone number
             </label>
             <input
               id="corporate-phone"
@@ -99,7 +94,7 @@ export function CorporateEnquiryForm() {
           </div>
           <div className="space-y-1">
             <label htmlFor="corporate-email" className="text-sm font-medium text-gray-700">
-              Email
+              Email address
             </label>
             <input
               id="corporate-email"
@@ -124,6 +119,7 @@ export function CorporateEnquiryForm() {
             id="corporate-products"
             name="productsRequired"
             rows={3}
+            placeholder="e.g. 10 laptops, 5 printers, networking equipment"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -137,6 +133,7 @@ export function CorporateEnquiryForm() {
               name="quantity"
               type="number"
               min={1}
+              placeholder="e.g. 10"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -149,6 +146,7 @@ export function CorporateEnquiryForm() {
               name="budget"
               type="number"
               min={0}
+              placeholder="e.g. 5000000"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -159,6 +157,7 @@ export function CorporateEnquiryForm() {
             <input
               id="corporate-location"
               name="deliveryLocation"
+              placeholder="e.g. Blantyre"
               className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
@@ -176,6 +175,7 @@ export function CorporateEnquiryForm() {
             id="corporate-additional"
             name="additionalRequirements"
             rows={3}
+            placeholder="Any other requirements or specifications"
             className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
@@ -188,7 +188,7 @@ export function CorporateEnquiryForm() {
         </Button>
         <Link
           href="/corporate"
-          className="block w-full text-center text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+          className="block w-full text-center text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
         >
           Cancel and return to corporate
         </Link>

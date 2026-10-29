@@ -1,5 +1,4 @@
 import { ProductCard } from "./product-card";
-import { getCompareIdsReadOnly } from "@/lib/services/compare";
 import type { ProductListItem } from "@/types/catalog";
 
 export function ProductGrid({
@@ -11,8 +10,6 @@ export function ProductGrid({
   emptyMessage?: string;
   mode?: "default" | "catalog";
 }) {
-  const compareIds = getCompareIdsReadOnly();
-
   if (products.length === 0) {
     return (
       <div className={mode === "catalog" ? "flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-surface-border bg-white px-5 py-12 text-center" : "flex flex-col items-center justify-center gap-2 rounded-card border border-dashed border-surface-border py-16 text-center"}>
@@ -33,7 +30,7 @@ export function ProductGrid({
   return (
     <div className={mode === "catalog" ? "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" : "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} isComparing={compareIds.includes(product.id)} variant={mode} />
+        <ProductCard key={product.id} product={product} variant={mode} />
       ))}
     </div>
   );
