@@ -9,19 +9,24 @@ import { createClient } from "@/lib/supabase/server";
  * staff-only settings key.
  */
 const getPublicSettingValue = cache(async (key: string): Promise<unknown | null> => {
-  const supabase = createClient();
-  const { data, error } = await (supabase
-    .from("site_settings") as any)
-    .select("value")
-    .eq("key", key)
-    .eq("is_public", true)
-    .maybeSingle();
+  try {
+    const supabase = createClient();
+    const { data, error } = await (supabase
+      .from("site_settings") as any)
+      .select("value")
+      .eq("key", key)
+      .eq("is_public", true)
+      .maybeSingle();
 
-  if (error) {
-    console.error(`getPublicSetting(${key}) failed:`, error.message);
+    if (error) {
+      console.error(`getPublicSetting(${key}) failed:`, error.message);
+      return null;
+    }
+    return data?.value ?? null;
+  } catch (err) {
+    console.error(`getPublicSetting(${key}) failed:`, err instanceof Error ? err.message : String(err));
     return null;
   }
-  return data?.value ?? null;
 });
 
 export async function getPublicSetting<T = Record<string, unknown>>(key: string): Promise<T | null> {

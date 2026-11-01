@@ -23,13 +23,18 @@ export interface CartSummary {
 }
 
 export async function getCartItemCount(): Promise<number> {
-  const cartId = await getCartIdReadOnly();
-  if (!cartId) return 0;
+  try {
+    const cartId = await getCartIdReadOnly();
+    if (!cartId) return 0;
 
-  const client = await getCartClient();
-  const { data, error } = await (client.from("cart_items") as any).select("quantity").eq("cart_id", cartId);
-  if (error || !data) return 0;
-  return data.reduce((sum: number, row: any) => sum + row.quantity, 0);
+    const client = await getCartClient();
+    const { data, error } = await (client.from("cart_items") as any).select("quantity").eq("cart_id", cartId);
+    if (error || !data) return 0;
+    return data.reduce((sum: number, row: any) => sum + row.quantity, 0);
+  } catch (err) {
+    console.error("getCartItemCount failed:", err instanceof Error ? err.message : String(err));
+    return 0;
+  }
 }
 
 export async function getCartSummary(): Promise<CartSummary> {

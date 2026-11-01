@@ -8,18 +8,23 @@ export const getSiteMedia = cache(async function getSiteMedia(
   placement: SiteMediaRow["placement"],
   limit = 1,
 ): Promise<SiteMediaItem[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("site_media")
-    .select("id, storage_path, alt_text, title")
-    .eq("placement", placement)
-    .eq("is_active", true)
-    .order("display_order", { ascending: true })
-    .limit(limit);
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("site_media")
+      .select("id, storage_path, alt_text, title")
+      .eq("placement", placement)
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .limit(limit);
 
-  if (error) {
-    console.error(`getSiteMedia(${placement}) failed:`, error.message);
+    if (error) {
+      console.error(`getSiteMedia(${placement}) failed:`, error.message);
+      return [];
+    }
+    return data ?? [];
+  } catch (err) {
+    console.error(`getSiteMedia(${placement}) failed:`, err instanceof Error ? err.message : String(err));
     return [];
   }
-  return data ?? [];
 });
