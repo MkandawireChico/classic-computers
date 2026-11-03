@@ -1,42 +1,65 @@
 import { getMyReferralInfo } from "@/lib/data/account-referrals";
 import { Badge } from "@/components/ui/badge";
+import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
 import { formatMoney } from "@/lib/format/money";
 
 export default async function AccountReferralsPage() {
   const { referralCode, referrals } = await getMyReferralInfo();
 
   return (
-    <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Referrals</h1>
+    <div className="space-y-6">
+      <div className="border-b border-slate-200 pb-5">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My benefits</p>
+        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Referrals</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">Share your referral code. Referrals and any configured rewards appear here.</p>
+      </div>
 
       {referralCode ? (
-        <div className="mb-6 rounded-card border border-surface-border p-4">
-          <p className="text-xs font-medium uppercase text-gray-500">Your referral code</p>
-          <p className="mt-1 font-mono text-lg text-gray-900">{referralCode}</p>
-          <p className="mt-1 text-xs text-gray-500">
-            Share this code — people who use it when signing up will be linked to your account
-            here.
-          </p>
+        <div className="flex flex-col gap-4 rounded-xl border border-emerald-200 bg-emerald-50/60 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-900">Your referral code</p>
+            <p className="mt-2 font-mono text-2xl font-extrabold text-slate-950">{referralCode}</p>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-700">Share this code with friends. Referrals that use it when signing up are listed below.</p>
+          </div>
+          <CopyPaymentValue value={referralCode} label="referral code" />
         </div>
       ) : null}
 
       {referrals.length === 0 ? (
-        <p className="empty-state">No referrals yet.</p>
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <h3 className="text-lg font-semibold text-slate-900">No referrals yet</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">Your referral activity will appear here when someone signs up using your code.</p>
+        </div>
       ) : (
-        <div className="divide-y divide-surface-border rounded-card border border-surface-border">
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-900">Referral History</h2>
           {referrals.map((r) => (
-            <div key={r.id} className="flex items-center justify-between p-3 text-sm">
-              <span className="text-gray-600">
-                {new Date(r.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
-              </span>
-              <Badge variant="info">{r.status}</Badge>
-              {r.reward_amount ? (
-                <span className="text-gray-900">
-                  {formatMoney(r.reward_amount)} ({r.reward_status})
-                </span>
-              ) : (
-                <span className="text-xs text-gray-400">No reward configured</span>
-              )}
+            <div key={r.id} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm text-slate-600">
+                    {new Date(r.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="info" className="text-xs">
+                    {r.status}
+                  </Badge>
+                  {r.reward_amount ? (
+                    <span className="text-sm font-bold text-slate-900">
+                      {formatMoney(r.reward_amount)} <span className="text-xs font-normal text-slate-500">({r.reward_status})</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-400">No reward configured</span>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>

@@ -17,13 +17,17 @@ function value(payload: AdminEmailPayload, key: string): string {
 }
 
 function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  })[character] ?? character);
+  return text.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character] ?? character,
+  );
 }
 
 function formatField(label: string, fieldValue: string): { label: string; value: string } | null {
@@ -56,8 +60,14 @@ export function buildAdminRequestEmail(
 
   switch (type) {
     case "general_enquiry": {
-      const topic = value(payload, "subject") || "General";
-      title = `New ${topic.toLowerCase()} enquiry`;
+      const topicValue = value(payload, "subject");
+      const topic =
+        topicValue === "order_assistance"
+          ? "Order assistance"
+          : topicValue === "other"
+            ? "General enquiry"
+            : topicValue || "General enquiry";
+      title = `New ${topic.toLowerCase()}`;
       fields = [
         formatField("Enquiry reference", reference),
         formatField("Customer", value(payload, "name")),
@@ -128,11 +138,14 @@ export function buildAdminRequestEmail(
     case "order_placed": {
       title = "New customer order";
       const items = Array.isArray(payload.items)
-        ? payload.items.map((item) => {
-            if (!item || typeof item !== "object") return "";
-            const orderItem = item as Record<string, unknown>;
-            return `${String(orderItem.quantity ?? "")} × ${String(orderItem.product_name_snapshot ?? "")}`.trim();
-          }).filter(Boolean).join("\n")
+        ? payload.items
+            .map((item) => {
+              if (!item || typeof item !== "object") return "";
+              const orderItem = item as Record<string, unknown>;
+              return `${String(orderItem.quantity ?? "")} × ${String(orderItem.product_name_snapshot ?? "")}`.trim();
+            })
+            .filter(Boolean)
+            .join("\n")
         : "";
       fields = [
         formatField("Order reference", reference),
@@ -140,7 +153,10 @@ export function buildAdminRequestEmail(
         formatField("Email", value(payload, "email")),
         formatField("Phone", value(payload, "phone")),
         formatField("Items", items),
-        formatField("Total", [value(payload, "currency"), value(payload, "total")].filter(Boolean).join(" ")),
+        formatField(
+          "Total",
+          [value(payload, "currency"), value(payload, "total")].filter(Boolean).join(" "),
+        ),
         formatField("Payment method", value(payload, "payment_method")),
         formatField("Payment status", value(payload, "payment_status")),
         formatField("Fulfillment", value(payload, "fulfillment_type")),
@@ -162,13 +178,19 @@ export function buildAdminRequestEmail(
       break;
   }
 
-  const visibleFields = fields.filter((field): field is { label: string; value: string } => field !== null);
+  const visibleFields = fields.filter(
+    (field): field is { label: string; value: string } => field !== null,
+  );
   const textFields = visibleFields.map((field) => `${field.label}:\n${field.value}`).join("\n\n");
-  const htmlRows = visibleFields.map((field) => `
+  const htmlRows = visibleFields
+    .map(
+      (field) => `
     <tr>
       <th align="left" valign="top" style="padding:11px 12px;border-bottom:1px solid #e6ece8;color:#52635a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${escapeHtml(field.label)}</th>
       <td style="padding:11px 12px;border-bottom:1px solid #e6ece8;color:#17221e;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(field.value)}</td>
-    </tr>`).join("");
+    </tr>`,
+    )
+    .join("");
   const replyTo = value(payload, "email") || value(payload, "student_email");
 
   return {

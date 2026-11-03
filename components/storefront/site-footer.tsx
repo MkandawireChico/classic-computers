@@ -4,8 +4,8 @@ import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
 const FOOTER_COLUMNS = [
   {
     title: "Shop",
-    color: "text-amber-300",
-    hover: "hover:bg-amber-300/10 hover:text-amber-200 focus-visible:ring-amber-300",
+    color: "text-amber-400",
+    hover: "hover:text-amber-300 hover:translate-x-1 focus-visible:ring-amber-400",
     links: [
       { href: "/shop", label: "All products" },
       { href: "/shop/laptop-computers", label: "Laptops" },
@@ -15,8 +15,8 @@ const FOOTER_COLUMNS = [
   },
   {
     title: "Services",
-    color: "text-emerald-300",
-    hover: "hover:bg-emerald-300/10 hover:text-emerald-200 focus-visible:ring-emerald-300",
+    color: "text-emerald-400",
+    hover: "hover:text-emerald-300 hover:translate-x-1 focus-visible:ring-emerald-400",
     links: [
       { href: "/rentals", label: "Rentals" },
       { href: "/repairs", label: "Repairs" },
@@ -26,8 +26,8 @@ const FOOTER_COLUMNS = [
   },
   {
     title: "Information",
-    color: "text-violet-300",
-    hover: "hover:bg-violet-300/10 hover:text-violet-200 focus-visible:ring-violet-300",
+    color: "text-violet-400",
+    hover: "hover:text-violet-300 hover:translate-x-1 focus-visible:ring-violet-400",
     links: [
       { href: "/about", label: "About us" },
       { href: "/contact", label: "Contact" },
@@ -43,60 +43,219 @@ export async function SiteFooter() {
   const [businessInfo, hours] = await Promise.all([getBusinessInfo(), getHours()]);
 
   return (
-    <footer className="border-t border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-200">
-      <div className="section-shell py-8 sm:py-10">
-        <div className="grid grid-cols-3 gap-3 sm:gap-6 lg:gap-10">
-          {FOOTER_COLUMNS.map((column) => (
-            <FooterColumn key={column.title} {...column} />
-          ))}
-        </div>
+    <footer className="border-t-2 border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-300">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4 lg:gap-12">
+          {/* Navigation Columns */}
+          <div className="contents">
+            {FOOTER_COLUMNS.map((column) => (
+              <FooterColumn key={column.title} {...column} />
+            ))}
+          </div>
 
-        <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:mt-8 sm:p-5">
-          <h3 className="mb-3 text-sm font-bold text-amber-200">Visit us</h3>
-          <address className="grid min-w-0 gap-4 text-sm not-italic leading-relaxed text-slate-200 sm:grid-cols-2 lg:grid-cols-4">
-            {businessInfo?.address ? <p className="break-words">{businessInfo.address}</p> : null}
-            {businessInfo?.address ? (
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-md text-sm font-semibold text-emerald-300 transition-colors hover:text-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-              >
-                <span>Get directions in Google Maps</span>
-                <span aria-hidden="true">↗</span>
-              </a>
-            ) : null}
-            {businessInfo?.phone ? (
-              <p>
-                <a href={`tel:${businessInfo.phone}`} className="font-medium text-slate-100 transition-colors hover:text-amber-200">
-                  {businessInfo.phone}
+          {/* Contact Section */}
+          <div className="min-w-0 space-y-5">
+            <h3 className="text-base font-extrabold text-white">Contact us</h3>
+
+            <div className="space-y-4">
+              {businessInfo?.address ? (
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-500/20 text-brand-400">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                        Address
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                        {businessInfo.address}
+                      </p>
+                    </div>
+                  </div>
+                  {businessInfo.address ? (
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-bold text-emerald-400 transition-colors hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <polyline
+                          points="15 3 21 3 21 9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <line
+                          x1="10"
+                          y1="14"
+                          x2="21"
+                          y2="3"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Get directions
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {hours?.enabled && hours.schedule ? (
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                      <path
+                        d="M12 6v6l4 2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Hours
+                    </p>
+                    <p className="mt-1 text-sm text-slate-300">{hours.schedule}</p>
+                  </div>
+                </div>
+              ) : null}
+
+              {businessInfo?.phone ? (
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Phone
+                    </p>
+                    <a
+                      href={`tel:${businessInfo.phone}`}
+                      className="mt-1 block text-sm font-bold text-white transition-colors hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                      {businessInfo.phone}
+                    </a>
+                  </div>
+                </div>
+              ) : null}
+
+              {businessInfo?.email ? (
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path
+                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 6l-10 7L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Email
+                    </p>
+                    <a
+                      href={`mailto:${businessInfo.email}`}
+                      className="mt-1 block break-all text-sm font-bold text-white transition-colors hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                      {businessInfo.email}
+                    </a>
+                  </div>
+                </div>
+              ) : null}
+
+              {businessInfo?.whatsapp ? (
+                <a
+                  href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Message us on WhatsApp"
+                  className="group flex items-start gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64.001 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.89c-.001 2.096.547 4.142 1.588 5.946L.057 24l6.304-1.654a11.88 11.88 0 0 0 5.684 1.447h.005c6.554 0 11.89-5.335 11.893-11.89a11.82 11.82 0 0 0-3.48-8.414Z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      WhatsApp
+                    </p>
+                    <span className="mt-1 block break-words text-sm font-bold text-white transition-colors group-hover:text-emerald-300">
+                      {businessInfo.whatsapp}
+                    </span>
+                  </div>
                 </a>
-              </p>
-            ) : null}
-            {businessInfo?.email ? (
-              <p>
-                <a href={`mailto:${businessInfo.email}`} className="break-all font-medium text-slate-100 transition-colors hover:text-violet-200">
-                  {businessInfo.email}
-                </a>
-              </p>
-            ) : null}
-            {hours?.enabled && hours.schedule ? <p>{hours.schedule}</p> : null}
-          </address>
-          {businessInfo?.whatsapp ? (
-            <a
-              href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-md text-sm font-semibold text-emerald-300 transition-colors hover:text-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-            >
-              Chat on WhatsApp
-            </a>
-          ) : null}
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-slate-400 sm:px-6 lg:px-8">
-        © {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.
+      {/* Copyright Bar */}
+      <div className="border-t border-slate-800 bg-slate-950/50 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <div className="mx-auto max-w-7xl text-center text-xs text-slate-500 sm:text-sm">
+          © {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.
+        </div>
       </div>
     </footer>
   );
@@ -115,11 +274,14 @@ function FooterColumn({
 }) {
   return (
     <div className="min-w-0">
-      <h3 className={`mb-3 text-sm font-bold ${color}`}>{title}</h3>
-      <ul className="space-y-0.5 sm:space-y-1">
+      <h3 className={`mb-4 text-sm font-extrabold uppercase tracking-wider ${color}`}>{title}</h3>
+      <ul className="space-y-3">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className={`inline-flex min-h-8 items-center rounded-md px-1.5 -ml-1.5 text-xs text-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-2 sm:min-h-9 sm:px-2 sm:text-sm ${hover}`}>
+            <Link
+              href={link.href}
+              className={`inline-flex min-h-8 items-center text-sm text-slate-400 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${hover}`}
+            >
               {link.label}
             </Link>
           </li>

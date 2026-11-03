@@ -20,12 +20,12 @@ export function ChangePasswordForm() {
   const [state, formAction] = useFormState(changePassword, initialState);
 
   return (
-    <form action={formAction} className="max-w-sm space-y-4">
+    <form action={formAction} className="mt-5 max-w-xl space-y-5">
       {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
       {state.success ? <Alert variant="success">Password updated.</Alert> : null}
 
       <div className="space-y-1">
-        <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
+        <label htmlFor="currentPassword" className="text-sm font-semibold text-slate-700">
           Current password
         </label>
         <input
@@ -38,7 +38,7 @@ export function ChangePasswordForm() {
         />
       </div>
       <div className="space-y-1">
-        <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+        <label htmlFor="newPassword" className="text-sm font-semibold text-slate-700">
           New password
         </label>
         <input

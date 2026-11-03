@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 export interface MyRentalListItem {
   id: string;
@@ -37,6 +38,7 @@ export interface MyRentalDetail extends MyRentalListItem {
   daily_rate: number | null;
   deposit_amount: number | null;
   statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
+  image_url: string | null;
 }
 
 export async function getMyRentalById(id: string): Promise<MyRentalDetail | null> {
@@ -45,7 +47,7 @@ export async function getMyRentalById(id: string): Promise<MyRentalDetail | null
   const { data: booking, error } = await (supabase.from("rental_bookings") as any)
     .select(`
       id, status, start_date, end_date, quantity, total_charge, notes, created_at,
-      rental_products ( daily_rate, deposit_amount, products ( name ) )
+      rental_products ( daily_rate, deposit_amount, products ( name, product_images(storage_path, alt_text, is_primary, display_order, variant_id) ) )
     `)
     .eq("id", id)
     .maybeSingle();
@@ -55,6 +57,12 @@ export async function getMyRentalById(id: string): Promise<MyRentalDetail | null
     .select("from_status, to_status, created_at")
     .eq("booking_id", id)
     .order("created_at", { ascending: true });
+
+  const productImages = booking.rental_products?.products?.product_images ?? [];
+  const primaryImage = productImages.find((image: any) => image.is_primary && image.variant_id === null)
+    ?? productImages.find((image: any) => image.variant_id === null)
+    ?? productImages.find((image: any) => image.is_primary)
+    ?? productImages[0];
 
   return {
     id: booking.id,
@@ -68,6 +76,7 @@ export async function getMyRentalById(id: string): Promise<MyRentalDetail | null
     daily_rate: booking.rental_products?.daily_rate ? Number(booking.rental_products.daily_rate) : null,
     deposit_amount: booking.rental_products?.deposit_amount ? Number(booking.rental_products.deposit_amount) : null,
     product_name: booking.rental_products?.products?.name ?? null,
+    image_url: primaryImage ? getPublicStorageUrl("product-images", primaryImage.storage_path) : null,
     statusHistory: history ?? [],
   };
 }

@@ -99,7 +99,7 @@ export function BackButton({ className = "" }: { className?: string }) {
     }
   }, [pathname]);
 
-  if (pathname === "/") return null;
+  if (pathname === "/" || pathname.startsWith("/account")) return null;
 
   function handleBack() {
     const previousPath = previousPathRef.current ?? getSameOriginReferrerPath();

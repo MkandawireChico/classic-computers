@@ -66,13 +66,13 @@ export async function LocationSection() {
                 {businessInfo.phone ? (
                   <a href={`tel:${businessInfo.phone}`} aria-label={`Call ${businessInfo.phone}`} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><PhoneIcon /></span>
-                    <span><span className="mb-0.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">Call</span>{businessInfo.phone}</span>
+                    <span>{businessInfo.phone}</span>
                   </a>
                 ) : null}
                 {businessInfo.phone_alt && businessInfo.phone_alt !== businessInfo.phone ? (
-                  <a href={`tel:${businessInfo.phone_alt}`} aria-label={`Call ${businessInfo.phone_alt}`} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
+                  <a href={`tel:${businessInfo.phone_alt}`} aria-label={businessInfo.phone_alt} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><PhoneIcon /></span>
-                    <span><span className="mb-0.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">Or call</span>{businessInfo.phone_alt}</span>
+                    <span>{businessInfo.phone_alt}</span>
                   </a>
                 ) : null}
                 {businessInfo.email ? (
@@ -91,7 +91,7 @@ export async function LocationSection() {
                       className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
                     >
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"><WhatsAppIcon /></span>
-                      <span><span className="mb-0.5 block text-[11px] font-bold uppercase tracking-wider text-emerald-700">WhatsApp</span>{businessInfo.whatsapp}</span>
+                      <span>{businessInfo.whatsapp}</span>
                     </a>
                   </p>
                 ) : null}

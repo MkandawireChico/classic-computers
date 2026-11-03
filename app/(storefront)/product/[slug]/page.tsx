@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getRelatedProducts, logProductView } from "@/lib/data/products";
+import { getProductBySlug, getRelatedProducts } from "@/lib/data/products";
 import { getBusinessInfo } from "@/lib/data/site-settings";
 import { getPublicStorageUrl } from "@/lib/storage";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getWishlistProductIds } from "@/lib/services/wishlist";
 import { getRentableProductsForProduct } from "@/lib/data/rental-tracking";
+import { getProductReviews, getProductRatingSummary } from "@/lib/data/reviews";
+import { RatingBreakdown } from "@/components/storefront/rating-breakdown";
+import { ReviewPhotos } from "@/components/storefront/review-photos";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { PurchasePanel } from "@/components/product/purchase-panel";
 import { SpecificationsTable } from "@/components/product/specifications-table";
 import { ProductEnquiry } from "@/components/product/product-enquiry";
 import { RelatedProducts } from "@/components/product/related-products";
 import { formatCategoryName } from "@/lib/format/category";
+import { ProductInterestTracker } from "@/components/storefront/analytics-page-tracker";
 
 interface Params {
   slug: string;
@@ -52,14 +56,14 @@ export default async function ProductPage({ params }: { params: Params }) {
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
-  void logProductView(product.id);
-
-  const [related, businessInfo, wishlistEntries, user, rentalOffers] = await Promise.all([
+  const [related, businessInfo, wishlistEntries, user, rentalOffers, reviews, ratingSummary] = await Promise.all([
     product.category ? getRelatedProducts(product.category.id, product.id, 4) : Promise.resolve([]),
     getBusinessInfo(),
     getWishlistProductIds(),
     getCurrentUser(),
     getRentableProductsForProduct(product.id),
+    getProductReviews(product.id, 5),
+    getProductRatingSummary(product.id),
   ]);
   const isAuthenticated = Boolean(user);
   const initialInWishlist = wishlistEntries.some((w) => w.productId === product.id && w.variantId === null);
@@ -143,7 +147,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-8">
           <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-3 shadow-lg shadow-emerald-950/5 sm:p-5">
-            <ProductGallery images={product.images} productName={product.name} />
+            <ProductGallery images={product.images} productName={product.name} productId={product.id} />
           </div>
 
           <div className="rounded-3xl border border-amber-100 bg-white/95 p-5 shadow-lg shadow-amber-950/5 sm:p-7 lg:p-8">
@@ -206,6 +210,98 @@ export default async function ProductPage({ params }: { params: Params }) {
             <SpecificationsTable specifications={product.specifications} />
           </section>
         ) : null}
+
+        <section className="mt-8 sm:mt-10">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
+                <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Customer Reviews</h2>
+              </div>
+              <Link
+                href="/reviews"
+                className="rounded-sm text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+              >
+                View all reviews
+              </Link>
+            </div>
+            <div className="rounded-3xl border border-amber-100 bg-gradient-to-br from-amber-50/70 via-white to-rose-50/50 p-5 shadow-sm sm:p-7">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <div className="text-4xl font-extrabold text-slate-900">{ratingSummary.averageRating}</div>
+                    <div className="flex text-amber-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <span key={i} aria-hidden="true">
+                          {i < Math.round(ratingSummary.averageRating) ? "★" : "☆"}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="h-12 w-px bg-slate-200" />
+                  <div>
+                    <ProductInterestTracker productId={product.id} categoryId={product.category?.id ?? null} />
+                    <div className="text-sm text-slate-600">
+                      {ratingSummary.count} approved review{ratingSummary.count === 1 ? "" : "s"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-6 max-w-md">
+                <RatingBreakdown distribution={ratingSummary.distribution} total={ratingSummary.count} />
+              </div>
+              {reviews.length > 0 && (
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <article key={review.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-amber-500">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} aria-hidden="true">
+                              {i < review.rating ? "★" : "☆"}
+                            </span>
+                          ))}
+                        </div>
+                        {review.verified_purchase && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                            Verified
+                          </span>
+                        )}
+                      </div>
+                      {review.title && (
+                        <h3 className="mt-2 text-sm font-semibold text-slate-900">{review.title}</h3>
+                      )}
+                      {review.comment && (
+                        <p className="mt-1 text-sm text-slate-600">{review.comment}</p>
+                      )}
+                      <ReviewPhotos images={review.images} />
+                      {review.admin_response && (
+                        <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
+                          <p className="font-semibold text-slate-900">Response from Classic Computers:</p>
+                          <p className="mt-1 text-slate-600">{review.admin_response}</p>
+                        </div>
+                      )}
+                      <p className="mt-2 text-xs text-slate-400">
+                        {new Date(review.created_at).toLocaleDateString("en-MW", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              )}
+              {ratingSummary.count === 0 ? (
+                <div className="rounded-xl border border-dashed border-slate-300 bg-white p-5">
+                  <p className="font-semibold text-slate-900">No approved reviews for this product yet</p>
+                  <p className="mt-1 text-sm text-slate-600">Completed purchasers can share an honest review from their account.</p>
+                  <Link href={isAuthenticated ? "/account/reviews/write" : "/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite"} className="mt-3 inline-flex text-sm font-semibold text-emerald-800 underline underline-offset-4">
+                    {isAuthenticated ? "Write a review" : "Sign in to write a review"}
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+          </section>
 
         <RelatedProducts products={related} />
       </div>

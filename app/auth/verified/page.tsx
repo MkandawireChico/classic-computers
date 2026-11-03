@@ -10,7 +10,7 @@ export default function AuthVerifiedPage({
   const next =
     requestedNext && requestedNext.startsWith("/") && !requestedNext.startsWith("//") && requestedNext !== "/"
       ? requestedNext
-      : "/sign-in";
+      : "/account";
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
@@ -18,7 +18,7 @@ export default function AuthVerifiedPage({
         <CardHeader className="space-y-3 text-center">
           <CardTitle className="text-2xl">Email verified</CardTitle>
           <CardDescription className="text-base">
-            Your email has been confirmed. Continue to your account to finish signing in.
+            Your email has been confirmed. Your account is ready to use.
           </CardDescription>
         </CardHeader>
 
@@ -27,7 +27,7 @@ export default function AuthVerifiedPage({
             href={next}
             className="inline-flex items-center justify-center rounded-card bg-brand-600 px-5 py-3 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
           >
-            Continue to account
+            Go to your account
           </Link>
         </div>
       </Card>

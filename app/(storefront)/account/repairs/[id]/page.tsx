@@ -1,60 +1,130 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMyRepairById } from "@/lib/data/account-repairs";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
+import { getMyReviewStatuses } from "@/lib/data/customer-reviews";
+import { CustomerReviewAction } from "@/components/storefront/customer-review-action";
+
+const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
+  checked_in: "warning",
+  diagnosing: "info",
+  quoted: "info",
+  awaiting_approval: "warning",
+  in_progress: "info",
+  ready_for_pickup: "info",
+  completed: "success",
+  cancelled: "danger",
+};
+
+function formatDate(value: string): string {
+  return new Date(value).toLocaleDateString("en-MW", {
+    timeZone: "Africa/Blantyre",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export default async function AccountRepairDetailPage({ params }: { params: { id: string } }) {
   const repair = await getMyRepairById(params.id);
   if (!repair) notFound();
+  const reviewStatuses = await getMyReviewStatuses({ repairIds: [repair.id] });
 
   return (
-    <div>
-      <h1 className="text-xl font-semibold text-gray-900">{repair.ticket_number}</h1>
-      <Badge variant="info" className="mt-2">
-        {repair.status.replace(/_/g, " ")}
-      </Badge>
-
-      <div className="mt-4 space-y-1 text-sm text-gray-700">
-        <p>
-          <span className="font-medium text-gray-900">Device:</span> {repair.device_type}
-          {repair.brand ? ` · ${repair.brand}` : ""} {repair.model ?? ""}
-        </p>
-        {repair.serial_number ? (
-          <p>
-            <span className="font-medium text-gray-900">Serial:</span> {repair.serial_number}
-          </p>
-        ) : null}
-        <p>
-          <span className="font-medium text-gray-900">Problem:</span> {repair.problem_description}
-        </p>
-        {repair.accessories_received ? (
-          <p>
-            <span className="font-medium text-gray-900">Accessories:</span> {repair.accessories_received}
-          </p>
-        ) : null}
-        {repair.quote_amount ? (
-          <p>
-            <span className="font-medium text-gray-900">Quote:</span> {formatMoney(repair.quote_amount)}
-            {repair.quote_approved_at ? " (approved)" : " (awaiting your approval)"}
-          </p>
-        ) : null}
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link href="/account/repairs" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+            ← Back to repairs
+          </Link>
+          <h1 className="mt-2 text-2xl font-extrabold text-slate-900">{repair.ticket_number}</h1>
+          <p className="mt-1 text-sm text-slate-600">Submitted {formatDate(repair.created_at)}</p>
+          <CustomerReviewAction
+            type="repair"
+            transactionId={repair.id}
+            eligible={repair.status === "completed"}
+            review={reviewStatuses.repairs[repair.id]}
+            label="repair"
+          />
+        </div>
+        <Badge variant={STATUS_VARIANT[repair.status] ?? "neutral"} className="px-3 py-1.5 text-sm">
+          {repair.status.replace(/_/g, " ")}
+        </Badge>
       </div>
 
-      {repair.updates.length > 0 ? (
-        <div className="mt-6">
-          <h2 className="mb-2 text-sm font-semibold text-gray-900">Updates</h2>
-          <ol className="space-y-2 border-l border-surface-border pl-4">
-            {repair.updates.map((u, i) => (
-              <li key={i} className="text-sm text-gray-600">
-                {u.note}
-                <span className="ml-2 text-xs text-gray-400">
-                  {new Date(u.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
-                </span>
-              </li>
-            ))}
-          </ol>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Device information</h2>
+            <dl className="mt-4 space-y-3">
+              <div className="flex justify-between">
+                <dt className="text-sm text-slate-600">Device type</dt>
+                <dd className="text-sm font-semibold text-slate-900">{repair.device_type}</dd>
+              </div>
+              {repair.brand && (
+                <div className="flex justify-between">
+                  <dt className="text-sm text-slate-600">Brand</dt>
+                  <dd className="text-sm font-semibold text-slate-900">{repair.brand}</dd>
+                </div>
+              )}
+              {repair.model && (
+                <div className="flex justify-between">
+                  <dt className="text-sm text-slate-600">Model</dt>
+                  <dd className="text-sm font-semibold text-slate-900">{repair.model}</dd>
+                </div>
+              )}
+              {repair.serial_number && (
+                <div className="flex justify-between">
+                  <dt className="text-sm text-slate-600">Serial number</dt>
+                  <dd className="text-sm font-semibold text-slate-900">{repair.serial_number}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Problem description</h2>
+            <p className="mt-4 text-sm text-slate-700">{repair.problem_description}</p>
+            {repair.accessories_received && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <p className="text-xs text-slate-600">Accessories included: {repair.accessories_received}</p>
+              </div>
+            )}
+          </div>
+
+          {repair.quote_amount ? (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Quote</h2>
+              <div className="mt-4">
+                <p className="text-2xl font-extrabold text-slate-900">{formatMoney(repair.quote_amount)}</p>
+                <p className="mt-2 text-sm text-slate-600">
+                  {repair.quote_approved_at ? "Approved" : "Awaiting your approval"}
+                </p>
+              </div>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Repair updates</h2>
+          {repair.updates.length > 0 ? (
+            <ol className="mt-4 space-y-4 border-l-2 border-slate-200 pl-4">
+              {repair.updates.map((u, i) => (
+                <li key={i} className="relative">
+                  <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white" />
+                  <p className="text-sm text-slate-900">{u.note}</p>
+                  <p className="mt-1 text-xs text-slate-500">{formatDate(u.created_at)}</p>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="mt-4 text-center">
+              <p className="text-sm text-slate-600">No updates have been posted yet. Our team will add updates as your repair progresses.</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

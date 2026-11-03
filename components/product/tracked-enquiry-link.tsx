@@ -9,6 +9,7 @@ export function TrackedEnquiryLink({
   productId,
   target,
   rel,
+  ariaLabel,
   className,
   children,
 }: {
@@ -17,6 +18,7 @@ export function TrackedEnquiryLink({
   productId?: string;
   target?: string;
   rel?: string;
+  ariaLabel?: string;
   className: string;
   children: ReactNode;
 }) {
@@ -26,6 +28,7 @@ export function TrackedEnquiryLink({
       onClick={() => trackInterestEvent({ name: eventName, productId })}
       target={target}
       rel={rel}
+      aria-label={ariaLabel}
       className={className}
     >
       {children}

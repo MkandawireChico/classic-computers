@@ -9,6 +9,7 @@ import { SortSelect } from "@/components/storefront/sort-select";
 import { Pagination } from "@/components/storefront/pagination";
 import { parseShopSearchParams } from "@/lib/shop-params";
 import { formatCategoryName } from "@/lib/format/category";
+import { CategoryInterestTracker } from "@/components/storefront/analytics-page-tracker";
 
 interface Params {
   category: string;
@@ -52,6 +53,7 @@ export default async function CategoryShopPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <CategoryInterestTracker categoryId={category.id} />
       <nav aria-label="Breadcrumb" className="mb-2 text-sm text-gray-500">
         <a href="/shop" className="hover:text-brand-600">
           Shop

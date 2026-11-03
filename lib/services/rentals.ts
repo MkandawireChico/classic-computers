@@ -1,10 +1,14 @@
 import "server-only";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server-admin";
 import { rentalBookingSchema } from "@/schemas/rental";
+import { deliverAdminEmailForRequest, findNotificationRequestId } from "@/lib/services/admin-email-outbox";
 
 export type RentalBookingResult =
-  | { success: true; trackingToken: string }
+  | { success: true; trackingToken: string; requestId: string }
   | { success: false; error: string };
+const submissionKeySchema = z.string().uuid();
 
 /**
  * Calls the narrowly scoped database function that subtracts overlapping
@@ -37,11 +41,13 @@ export async function checkRentalAvailability(
   return getAvailableQuantity(rentalProductId, startDate, endDate);
 }
 
-export async function submitRentalBooking(input: unknown): Promise<RentalBookingResult> {
+export async function submitRentalBooking(input: unknown, submissionKey: string): Promise<RentalBookingResult> {
   const parsed = rentalBookingSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Please check the form and try again." };
   }
+  const parsedKey = submissionKeySchema.safeParse(submissionKey);
+  if (!parsedKey.success) return { success: false, error: "Please refresh the form and try again." };
   const d = parsed.data;
 
   const supabase = createClient();
@@ -68,10 +74,12 @@ export async function submitRentalBooking(input: unknown): Promise<RentalBooking
     return { success: false, error: `Only ${available} unit(s) available for those dates.` };
   }
 
-  const { data, error } = await (supabase.from("rental_bookings") as any)
+  const writer = user ? supabase : createAdminClient();
+  const { data, error } = await (writer.from("rental_bookings") as any)
     .insert({
       rental_product_id: d.rentalProductId,
       customer_id: user?.id ?? null,
+      submission_key: parsedKey.data,
       guest_name: user ? null : d.guestName,
       guest_phone: user ? null : d.guestPhone,
       guest_email: user ? null : d.guestEmail || null,
@@ -80,13 +88,28 @@ export async function submitRentalBooking(input: unknown): Promise<RentalBooking
       quantity: d.quantity,
       notes: d.notes || null,
     })
-    .select("tracking_token")
+    .select("id, tracking_token")
     .single();
 
   if (error) {
+    if (error.code === "23505") {
+      const requestId = await findNotificationRequestId("rental_booking", parsedKey.data);
+      if (requestId) {
+        const admin = createAdminClient();
+        const { data: existing } = await (admin.from("rental_bookings") as any)
+          .select("id, tracking_token")
+          .eq("id", requestId)
+          .maybeSingle();
+        if (existing) {
+          await deliverAdminEmailForRequest("rental_booking", requestId);
+          return { success: true, requestId, trackingToken: existing.tracking_token };
+        }
+      }
+    }
     console.error("submitRentalBooking failed:", error.message);
     return { success: false, error: "Could not submit your rental request. Please try again." };
   }
 
-  return { success: true, trackingToken: data.tracking_token };
+  await deliverAdminEmailForRequest("rental_booking", data.id);
+  return { success: true, requestId: data.id, trackingToken: data.tracking_token };
 }

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getMyOrders } from "@/lib/data/orders";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
+import { getMyReviewStatuses } from "@/lib/data/customer-reviews";
+import { CustomerReviewAction } from "@/components/storefront/customer-review-action";
 
 const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
   pending: "warning",
@@ -16,40 +18,79 @@ const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger
 
 export default async function OrdersPage() {
   const orders = await getMyOrders();
+  const reviewStatuses = await getMyReviewStatuses({ orderIds: orders.map((order) => order.id) });
 
   return (
-    <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Orders</h1>
+    <div className="space-y-6">
+      <div className="border-b border-slate-200 pb-5">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My activity</p>
+        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My orders</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">Review purchases, payment status and order progress.</p>
+      </div>
 
       {orders.length === 0 ? (
-        <p className="empty-state">
-          No orders yet.{" "}
-          <Link href="/shop" className="text-brand-600 hover:underline">
-            Start shopping
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          <h3 className="text-lg font-semibold text-slate-900">No orders yet</h3>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">Your order history will appear here after your first purchase.</p>
+          <Link
+            href="/shop"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            Start Shopping
           </Link>
-          .
-        </p>
+        </div>
       ) : (
-        <div className="divide-y divide-surface-border rounded-card border border-surface-border">
+        <div className="space-y-3">
           {orders.map((order) => (
-            <Link
+            <article
               key={order.id}
-              href={`/account/orders/${order.id}`}
-              className="flex items-center justify-between p-4 hover:bg-surface-muted"
+              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
             >
-              <div>
-                <p className="text-sm font-medium text-gray-900">{order.order_number}</p>
-                <p className="text-xs text-gray-500">
-                  {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-900">{formatMoney(order.total)}</span>
-                <Badge variant={STATUS_VARIANT[order.order_status] ?? "neutral"}>
-                  {order.order_status.replace(/_/g, " ")}
-                </Badge>
-              </div>
-            </Link>
+              <Link href={`/account/orders/${order.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="break-all text-base font-bold text-slate-950">{order.order_number}</p>
+                    <Badge variant={STATUS_VARIANT[order.order_status] ?? "neutral"} className="text-xs">
+                      {order.order_status.replace(/_/g, " ")}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })} · Payment {order.payment_status.replace(/_/g, " ")}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-base font-bold text-slate-950 sm:text-lg">{formatMoney(order.total)}</p>
+                  <p className="mt-1 text-xs font-semibold text-brand-700 transition-colors group-hover:text-brand-900">View details</p>
+                </div>
+              </Link>
+              {order.items.length > 0 ? (
+                <ul className="mt-4 divide-y divide-slate-100 border-t border-slate-100">
+                  {Array.from(new Map(order.items.map((item) => [item.product_id, item])).values()).map((item) => (
+                    <li key={item.product_id} className="py-3">
+                      <p className="text-sm font-semibold text-slate-900">{item.product_name_snapshot}</p>
+                      <CustomerReviewAction
+                        type="product"
+                        transactionId={order.id}
+                        productId={item.product_id}
+                        eligible={order.order_status === "completed"}
+                        review={reviewStatuses.products[`${order.id}:${item.product_id}`]}
+                        label="product"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </article>
           ))}
         </div>
       )}

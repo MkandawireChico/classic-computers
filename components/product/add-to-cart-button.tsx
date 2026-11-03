@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { addToCartAction } from "@/app/(storefront)/cart/actions";
+import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 
 export function AddToCartButton({
   productId,
@@ -28,6 +29,7 @@ export function AddToCartButton({
     startTransition(async () => {
       const result = await addToCartAction({ productId, variantId, quantity: 1 });
       if (result.success) {
+        trackInterestEvent({ name: "add_to_cart", productId });
         if (buyNow) {
           router.push("/checkout");
           return;

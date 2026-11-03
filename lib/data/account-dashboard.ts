@@ -3,13 +3,17 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { createClient } from "@/lib/supabase/server";
 
 export interface AccountDashboardSummary {
-  recentOrders: Array<{ id: string; order_number: string; order_status: string; total: number }>;
-  activeRepairs: Array<{ id: string; ticket_number: string; status: string }>;
-  activeRentals: Array<{ id: string; status: string; product_name: string | null }>;
+  displayName: string | null;
+  totalOrderCount: number | null;
+  activeRepairCount: number | null;
+  activeRentalCount: number | null;
+  recentOrders: Array<{ id: string; order_number: string; order_status: string; payment_status: string; created_at: string; total: number }>;
+  activeRepairs: Array<{ id: string; ticket_number: string; device_type: string; status: string; created_at: string }>;
+  activeRentals: Array<{ id: string; status: string; product_name: string | null; start_date: string; end_date: string; quantity: number; created_at: string }>;
   studentStatus: string | null;
-  recentEnquiries: Array<{ id: string; topic: string; status: string }>;
+  recentEnquiries: Array<{ id: string; topic: string; status: string; created_at: string }>;
   referralCode: string | null;
-  unreadNotificationCount: number;
+  unreadNotificationCount: number | null;
 }
 
 const REPAIR_ACTIVE_STATUSES = ["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup"];
@@ -27,36 +31,53 @@ export async function getAccountDashboardSummary(): Promise<AccountDashboardSumm
   const user = await getCurrentUser();
   if (!user) {
     return {
+      displayName: null,
+      totalOrderCount: null,
+      activeRepairCount: null,
+      activeRentalCount: null,
       recentOrders: [],
       activeRepairs: [],
       activeRentals: [],
       studentStatus: null,
       recentEnquiries: [],
       referralCode: null,
-      unreadNotificationCount: 0,
+      unreadNotificationCount: null,
     };
   }
 
-  const [orders, repairs, rentals, customer, enquiries, notifications] = await Promise.all([
-    (supabase.from("orders") as any).select("id, order_number, order_status, total").order("created_at", { ascending: false }).limit(3),
-    (supabase.from("repair_tickets") as any).select("id, ticket_number, status").in("status", REPAIR_ACTIVE_STATUSES).order("created_at", { ascending: false }).limit(5),
+  const [orders, repairs, rentals, customer, enquiries, notifications, profile] = await Promise.all([
+    (supabase.from("orders") as any).select("id, order_number, order_status, payment_status, created_at, total", { count: "exact" }).order("created_at", { ascending: false }).limit(3),
+    (supabase.from("repair_tickets") as any).select("id, ticket_number, device_type, status, created_at", { count: "exact" }).in("status", REPAIR_ACTIVE_STATUSES).order("created_at", { ascending: false }).limit(5),
     (supabase.from("rental_bookings") as any)
-      .select("id, status, rental_products ( products ( name ) )")
+      .select("id, status, start_date, end_date, quantity, created_at, rental_products ( products ( name ) )", { count: "exact" })
       .in("status", RENTAL_ACTIVE_STATUSES)
       .order("created_at", { ascending: false })
       .limit(5),
     (supabase.from("customers") as any).select("student_status, referral_code").eq("id", user.id).maybeSingle(),
-    (supabase.from("enquiries") as any).select("id, topic, status").order("created_at", { ascending: false }).limit(3),
-    (supabase.from("notifications") as any).select("id").eq("recipient_user_id", user.id).eq("is_read", false),
+    (supabase.from("enquiries") as any).select("id, topic, status, created_at").order("created_at", { ascending: false }).limit(3),
+    (supabase.from("notifications") as any).select("id", { count: "exact", head: true }).eq("recipient_user_id", user.id).eq("is_read", false),
+    (supabase.from("profiles") as any).select("full_name").eq("id", user.id).maybeSingle(),
   ]);
 
   return {
+    displayName: profile.data?.full_name ?? null,
+    totalOrderCount: orders.count ?? null,
+    activeRepairCount: repairs.count ?? null,
+    activeRentalCount: rentals.count ?? null,
     recentOrders: (orders.data ?? []).map((o: any) => ({ ...o, total: Number(o.total) })),
     activeRepairs: repairs.data ?? [],
-    activeRentals: (rentals.data ?? []).map((r: any) => ({ id: r.id, status: r.status, product_name: r.rental_products?.products?.name ?? null })),
+    activeRentals: (rentals.data ?? []).map((r: any) => ({
+      id: r.id,
+      status: r.status,
+      start_date: r.start_date,
+      end_date: r.end_date,
+      quantity: r.quantity,
+      created_at: r.created_at,
+      product_name: r.rental_products?.products?.name ?? null,
+    })),
     studentStatus: customer.data?.student_status ?? null,
     recentEnquiries: enquiries.data ?? [],
     referralCode: customer.data?.referral_code ?? null,
-    unreadNotificationCount: notifications.data?.length ?? 0,
+    unreadNotificationCount: notifications.count ?? null,
   };
 }

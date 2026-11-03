@@ -56,8 +56,8 @@ export async function CategorySection() {
                 <span className="mt-4 flex min-h-10 items-center text-sm font-bold leading-snug text-slate-800 transition-colors group-hover:text-slate-950 sm:text-base">
                   {categoryName}
                 </span>
-                <span className={`mt-3 inline-flex items-center gap-1 text-xs font-bold sm:text-sm ${style.link}`}>
-                  Browse <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+                <span className={`mt-3 inline-flex items-center text-xs font-bold sm:text-sm ${style.link}`}>
+                  Browse
                 </span>
               </Link>
             );

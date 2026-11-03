@@ -16,17 +16,17 @@ function SubmitButton() {
   );
 }
 
-export function ResetPasswordForm() {
+export function ResetPasswordForm({ initialError }: { initialError?: string }) {
   const [state, formAction] = useFormState(requestPasswordReset, initialState);
 
   if (state.success && state.email) {
     return (
       <div className="space-y-4">
         <Alert variant="success" className="space-y-2">
-          <p className="font-medium">Password reset link sent</p>
+          <p className="font-medium">Password reset request accepted</p>
           <p className="text-sm">
-            We've sent a password reset link to <span className="font-semibold">{state.email}</span>
-            . Check your inbox and follow the link to create a new password.
+            {state.message} If an email arrives, check the inbox and spam folder for{" "}
+            <span className="font-semibold">{state.email}</span>.
           </p>
         </Alert>
       </div>
@@ -35,7 +35,7 @@ export function ResetPasswordForm() {
 
   return (
     <form action={formAction} className="space-y-4" noValidate>
-      {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
+      {state.error || initialError ? <Alert variant="danger">{state.error ?? initialError}</Alert> : null}
       <div className="space-y-1">
         <label htmlFor="email" className="text-sm font-medium text-gray-700">
           Email

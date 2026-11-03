@@ -5,10 +5,12 @@ export function ProductGrid({
   products,
   emptyMessage,
   mode = "default",
+  searchResults = false,
 }: {
   products: ProductListItem[];
   emptyMessage?: string;
   mode?: "default" | "catalog";
+  searchResults?: boolean;
 }) {
   if (products.length === 0) {
     return (
@@ -30,7 +32,7 @@ export function ProductGrid({
   return (
     <div className={mode === "catalog" ? "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" : "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} variant={mode} />
+        <ProductCard key={product.id} product={product} variant={mode} searchResult={searchResults} />
       ))}
     </div>
   );

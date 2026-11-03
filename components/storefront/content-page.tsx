@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export function ContentPage({
   eyebrow,
@@ -13,33 +13,93 @@ export function ContentPage({
   children: ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
-      <header className="border-b border-surface-border pb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-700">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">{title}</h1>
-        {description ? <p className="mt-3 max-w-2xl text-base leading-7 text-gray-600">{description}</p> : null}
-      </header>
-      <div className="mt-7 space-y-5">{children}</div>
+    <div className="bg-gradient-to-b from-brand-50/70 via-white to-slate-50">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+        <nav aria-label="Breadcrumb" className="mb-5 text-sm text-slate-500">
+          <Link
+            href="/"
+            className="rounded-sm font-medium hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+          >
+            Home
+          </Link>
+          <span aria-hidden="true" className="mx-2 text-slate-400">
+            /
+          </span>
+          <span aria-current="page" className="font-semibold text-slate-700">
+            {title}
+          </span>
+        </nav>
+        <header className="relative overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50 to-emerald-50 p-6 shadow-sm sm:p-9 lg:p-12">
+          <div
+            aria-hidden="true"
+            className="absolute -right-20 -top-24 h-64 w-64 rounded-full border-[32px] border-white/60"
+          />
+          <div className="relative max-w-3xl">
+            <p className="inline-flex rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
+              {eyebrow}
+            </p>
+            <h1 className="mt-4 text-3xl font-black leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+              {title}
+            </h1>
+            {description ? (
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+                {description}
+              </p>
+            ) : null}
+          </div>
+        </header>
+        <div className="mt-7 space-y-6 sm:mt-9 sm:space-y-8">{children}</div>
+      </div>
     </div>
   );
 }
 
-export function ContentPending({
-  title = "Content pending",
-  detail,
-  legalReview = false,
+export function ContentSection({
+  id,
+  title,
+  children,
+  className = "",
 }: {
-  title?: string;
-  detail: string;
-  legalReview?: boolean;
+  id?: string;
+  title: string;
+  children: ReactNode;
+  className?: string;
 }) {
   return (
-    <section className="rounded-card border border-amber-200 bg-amber-50/70 p-5 sm:p-6" aria-label={title}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        <Badge variant="warning">{legalReview ? "Pending legal review" : "Awaiting business input"}</Badge>
-      </div>
-      <p className="mt-3 text-sm leading-6 text-gray-700">{detail}</p>
+    <section
+      id={id}
+      aria-labelledby={id ? `${id}-heading` : undefined}
+      className={`scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${className}`}
+    >
+      <h2
+        id={id ? `${id}-heading` : undefined}
+        className="text-xl font-extrabold text-slate-900 sm:text-2xl"
+      >
+        {title}
+      </h2>
+      <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600 sm:text-base">{children}</div>
     </section>
+  );
+}
+
+export function ContentCallout({
+  title,
+  children,
+  tone = "brand",
+}: {
+  title: string;
+  children: ReactNode;
+  tone?: "brand" | "amber";
+}) {
+  const styles =
+    tone === "amber"
+      ? "border-amber-200 bg-amber-50 text-amber-950"
+      : "border-brand-200 bg-brand-50 text-brand-950";
+
+  return (
+    <aside className={`rounded-2xl border p-5 sm:p-6 ${styles}`}>
+      <h2 className="font-extrabold">{title}</h2>
+      <div className="mt-2 text-sm leading-6">{children}</div>
+    </aside>
   );
 }

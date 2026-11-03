@@ -52,7 +52,7 @@ insert into site_settings (key, value, is_public) values
      "name": "Classic Computers LLC",
      "address": "Shree Satyanarayan Building, Shop No. 4, Glyn Jones Road, Opposite First Capital Bank, Blantyre Town, Malawi",
      "phone": "+265 995 837 735",
-     "phone_alt": "+265 880 287 483",
+     "phone_alt": "+265 884 482 088",
      "whatsapp": "+265 995 837 735",
      "email": "info@classiccomputers.mw"
    }'::jsonb, true),

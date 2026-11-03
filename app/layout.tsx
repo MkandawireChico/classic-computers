@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getBusinessInfo } from "@/lib/data/site-settings";
+import { AnalyticsConsentBanner } from "@/components/storefront/analytics-consent";
+import { AnalyticsPageTracker } from "@/components/storefront/analytics-page-tracker";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -70,6 +72,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className="min-h-screen font-sans antialiased">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+        <AnalyticsPageTracker />
+        <AnalyticsConsentBanner />
         {children}
       </body>
     </html>

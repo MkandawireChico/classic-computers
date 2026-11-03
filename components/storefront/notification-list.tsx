@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { markMyNotificationReadAction, markAllMyNotificationsReadAction } from "./actions";
 
 export type MyNotification = {
@@ -54,36 +55,56 @@ export function NotificationList({ notifications }: { notifications: MyNotificat
   }
 
   if (notifications.length === 0) {
-    return <p className="text-sm text-gray-500">No notifications yet.</p>;
+    return (
+      <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+        <h3 className="text-lg font-bold text-slate-950">No notifications yet</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">Important order, service and account updates will appear here.</p>
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       {unreadCount > 0 ? (
-        <button type="button" disabled={isPending} onClick={markAllRead} className="mb-3 text-xs text-brand-600 hover:underline">
-          Mark all as read
-        </button>
+        <Button
+          type="button"
+          disabled={isPending}
+          onClick={markAllRead}
+          variant="outline"
+          size="sm"
+          className="min-h-10 rounded-lg"
+        >
+          Mark all as read ({unreadCount})
+        </Button>
       ) : null}
-      <div className="divide-y divide-surface-border rounded-card border border-surface-border">
+      <div className="space-y-3">
         {notifications.map((n) => {
           const href = notificationLink(n);
           const content = (
-            <div className={`p-3 ${n.is_read ? "" : "bg-brand-50"}`}>
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                {!n.is_read ? <Badge variant="info">New</Badge> : null}
+            <div className={`rounded-xl border p-4 transition-colors sm:p-5 ${n.is_read ? "border-slate-200 bg-white" : "border-emerald-200 bg-emerald-50/60"}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <p className="text-base font-bold text-slate-950">{n.title}</p>
+                    {!n.is_read ? <Badge variant="info" className="text-xs">Unread</Badge> : null}
+                  </div>
+                  {n.body ? <p className="mt-2 text-sm text-slate-600">{n.body}</p> : null}
+                  <time dateTime={n.created_at} className="mt-3 block text-xs text-slate-500">
+                    {new Date(n.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  </time>
+                </div>
               </div>
-              {n.body ? <p className="mt-0.5 text-sm text-gray-600">{n.body}</p> : null}
-              <p className="mt-1 text-xs text-gray-400">
-                {new Date(n.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
-              </p>
             </div>
           );
 
           return (
-            <div key={n.id} className="flex items-stretch">
+            <div key={n.id} className="flex items-stretch gap-2">
               {href ? (
-                <Link href={href} className="flex-1 hover:bg-surface-muted" onClick={() => !n.is_read && markRead(n.id)}>
+                <Link href={href} className="flex-1" onClick={() => !n.is_read && markRead(n.id)}>
                   {content}
                 </Link>
               ) : (
@@ -95,9 +116,11 @@ export function NotificationList({ notifications }: { notifications: MyNotificat
                   disabled={isPending}
                   onClick={() => markRead(n.id)}
                   aria-label="Mark as read"
-                  className="px-3 text-xs text-gray-400 hover:text-brand-600"
+                  className="min-h-11 min-w-11 shrink-0 self-start rounded-lg border border-slate-200 bg-white p-3 text-slate-600 transition-colors hover:bg-slate-50 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:opacity-50"
                 >
-                  ✓
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                 </button>
               ) : null}
             </div>

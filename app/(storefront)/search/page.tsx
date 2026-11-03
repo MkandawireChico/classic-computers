@@ -5,6 +5,7 @@ import { SearchBox } from "@/components/storefront/search-box";
 import { SortSelect } from "@/components/storefront/sort-select";
 import { Pagination } from "@/components/storefront/pagination";
 import { parseShopSearchParams } from "@/lib/shop-params";
+import { SearchInterestTracker } from "@/components/storefront/analytics-page-tracker";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -32,6 +33,7 @@ export default async function SearchPage({
 
       {query.trim() ? (
         <>
+          <SearchInterestTracker searchTerm={query} resultCount={result.total} />
           <div className="mt-6 flex items-center justify-between">
             <p className="text-sm text-gray-600" aria-live="polite">
               {result.total} result{result.total === 1 ? "" : "s"} for &ldquo;{query}&rdquo;
@@ -41,6 +43,7 @@ export default async function SearchPage({
           <div className="mt-4">
             <ProductGrid
               products={result.items}
+              searchResults
               emptyMessage={`No products found for "${query}". Try a different search term, or contact us — we may still be able to help.`}
             />
           </div>

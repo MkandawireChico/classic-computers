@@ -17,6 +17,7 @@ import {
   type MobileMoneyProviderId,
 } from "@/lib/payments/manual-payment";
 import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
+import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 
 const PAYMENT_PROVIDER_LOGOS: Record<ManualPaymentProviderId, string> = {
   national_bank: "/payment-providers/national-bank-malawi.png",
@@ -103,6 +104,10 @@ export function CheckoutForm({
       });
 
       if (result.success) {
+        trackInterestEvent({ name: "order_placed" });
+        for (const productId of result.productIds) {
+          trackInterestEvent({ name: "order_product_placed", productId });
+        }
         router.push(`/checkout/confirmation/${result.orderNumber}`);
       } else {
         setError(result.error);
@@ -315,6 +320,7 @@ export function CheckoutForm({
                 onChange={() => {
                   setSelectedMethod(method);
                   setSelectedProvider(null);
+                  trackInterestEvent({ name: "payment_method_selected", paymentMethod: method });
                 }}
                 required
                 className="mt-1 h-5 w-5 shrink-0 accent-amber-700 focus:ring-amber-500"

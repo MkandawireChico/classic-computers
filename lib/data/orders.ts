@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 export interface OrderListItem {
   id: string;
@@ -8,16 +9,19 @@ export interface OrderListItem {
   order_status: string;
   payment_status: string;
   total: number;
+  items: Array<{ product_id: string; product_name_snapshot: string }>;
 }
 
 export interface OrderItemDetail {
   id: string;
+  product_id: string;
   product_name_snapshot: string;
   sku_snapshot: string;
   unit_price: number;
   quantity: number;
   discount_amount: number;
   line_total: number;
+  image_url: string | null;
 }
 
 export interface OrderStatusEvent {
@@ -64,14 +68,14 @@ export async function getMyOrders(): Promise<OrderListItem[]> {
   // throughout lib/data/ and lib/services/ for tables Phase 3's type file
   // didn't cover.
   const { data, error } = await (supabase.from("orders") as any)
-    .select("id, order_number, created_at, order_status, payment_status, total")
+    .select("id, order_number, created_at, order_status, payment_status, total, order_items(product_id, product_name_snapshot)")
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("getMyOrders failed:", error.message);
     return [];
   }
-  return data ?? [];
+  return (data ?? []).map((order: any) => ({ ...order, items: order.order_items ?? [] }));
 }
 
 /**
@@ -95,7 +99,7 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
 
   const [{ data: items }, { data: history }] = await Promise.all([
     (supabase.from("order_items") as any)
-      .select("id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total")
+      .select("id, product_id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total, product:products(product_images(storage_path, alt_text, is_primary, display_order, variant_id))")
       .eq("order_id", orderId),
     (supabase.from("order_status_history") as any)
       .select("from_status, to_status, created_at")
@@ -103,5 +107,16 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
       .order("created_at", { ascending: true }),
   ]);
 
-  return { ...order, items: items ?? [], statusHistory: history ?? [] };
+  const orderItems = (items ?? []).map((item: any) => {
+    const images = item.product?.product_images ?? [];
+    const productImage = images.find((image: any) => image.is_primary && image.variant_id === null)
+      ?? images.find((image: any) => image.variant_id === null)
+      ?? images.find((image: any) => image.is_primary)
+      ?? images[0];
+    return {
+      ...item,
+      image_url: productImage ? getPublicStorageUrl("product-images", productImage.storage_path) : null,
+    };
+  });
+  return { ...order, items: orderItems, statusHistory: history ?? [] };
 }

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { UpdatePasswordForm } from "./update-password-form";
 
-export default async function UpdatePasswordPage() {
+export default async function UpdatePasswordPage({ searchParams }: { searchParams: { error?: string } }) {
   const supabase = createClient();
   const {
     data: { user },
@@ -12,7 +12,7 @@ export default async function UpdatePasswordPage() {
   // No session means this page was reached without a valid reset link
   // (expired, already used, or navigated to directly) — send back to
   // request a fresh one rather than showing a form that will just fail.
-  if (!user) redirect("/reset-password");
+  if (!user) redirect(`/reset-password?error=${encodeURIComponent(searchParams.error ?? "Your password reset link is invalid or has expired. Request a new one.")}`);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4">

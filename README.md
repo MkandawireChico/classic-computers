@@ -1,150 +1,235 @@
-# Classic Computers LLC Website
+# Classic Computers LLC
 
-Classic Computers LLC is an ICT and electronics retailer based in Blantyre,
-Malawi. This full-stack web platform brings together online product discovery
-and ordering with business services such as corporate supply, laptop rentals,
-and computer repairs.
+Classic Computers LLC is a Malawi-based electronics retailer and technology
+services business in Blantyre. This repository contains its full-stack retail
+and business operations platform: customers can discover products, submit
+orders and service requests, and manage an account, while authorized staff use
+the administration area to manage the related business records.
 
-[Visit the website](https://classiccomputers.mw/) · [View the GitHub
-repository](https://github.com/MkandawireChico/classic-computers)
+- **Website:** [classiccomputers.mw](https://classiccomputers.mw/)
+- **Repository:** [MkandawireChico/classic-computers](https://github.com/MkandawireChico/classic-computers)
 
 ## Contents
 
 - [Project overview](#project-overview)
-- [Features](#features)
+- [Features and implementation status](#features-and-implementation-status)
 - [Technology stack](#technology-stack)
-- [Screenshots](#screenshots)
+- [Architecture](#architecture)
 - [Project structure](#project-structure)
 - [Prerequisites](#prerequisites)
-- [Getting started](#getting-started)
-- [Environment configuration](#environment-configuration)
-- [Database and Supabase setup](#database-and-supabase-setup)
-- [Available scripts](#available-scripts)
-- [Testing and quality checks](#testing-and-quality-checks)
-- [Payment and checkout workflow](#payment-and-checkout-workflow)
+- [Local development](#local-development)
+- [Environment variables](#environment-variables)
+- [Database, security and storage](#database-security-and-storage)
+- [Orders and payments](#orders-and-payments)
+- [Email and notifications](#email-and-notifications)
+- [Administration and customer accounts](#administration-and-customer-accounts)
+- [Quality checks](#quality-checks)
 - [Deployment](#deployment)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [Business information and contact](#business-information-and-contact)
-- [License](#license)
+- [Business information and license](#business-information-and-license)
 
 ## Project overview
 
-This repository contains the customer-facing website and a role-protected
-administration area. Product, order, inventory, account, and service data are
-managed through Supabase. Public-facing business details and payment-method
-availability are read from the database, so the information shown on the site
-depends on the connected Supabase project.
+The application combines a public storefront with account, service-request and
+staff administration workflows. Product, inventory, order, customer and service
+data are stored in Supabase. The platform supports product discovery and manual
+payment orders as well as requests for rentals, repairs and corporate ICT
+supply.
 
-## Features
+The application is implemented with Next.js App Router and Supabase. The
+repository does not contain production credentials or a checked-in deployment
+pipeline. Production database, authentication email and SMTP state must be
+verified in the relevant Supabase and hosting environments.
 
-### Shopping and product discovery
+## Features and implementation status
 
-- Browse products by category and brand.
-- Search, sort, filter, and paginate the catalogue.
-- View product pages with images, specifications, variants, and availability.
-- Add products to a cart and review it before checkout.
+The following describes behavior implemented in the application and database
+migrations in this repository. A route or workflow still depends on the
+connected Supabase project having the corresponding migrations and settings.
 
-### Checkout and payments
+### Storefront and product discovery
 
-- Check out as a guest or signed-in customer.
-- Choose pickup or delivery and submit contact and order details.
-- Select from the payment methods enabled in site settings: pay at the shop,
-  bank transfer, mobile money, or cash on delivery.
-- For bank transfer and mobile money, select a provider to view its account or
-  wallet details maintained by the application, along with transfer
-  instructions.
-- Copy account details and optionally supply a transaction reference.
+- Public product catalogue with product categories and brands.
+- Product search, category and brand filters, price and availability filters,
+  sorting and pagination.
+- Product detail pages with images, specifications, variants, stock status and
+  customer reviews where available.
+- Cart for signed-in customers and guests.
+- Product comparison and signed-in customer wishlists.
+- Product enquiries and direct phone or WhatsApp contact links.
 
-Bank transfers and mobile-money payments use manual instructions. The
-repository does not implement a payment-gateway integration or automatic
-payment confirmation. Orders using manual payment remain unpaid until a
-payment is verified.
-
-### Business and customer services
-
-- Submit a corporate or bulk-supply enquiry.
-- Browse available laptop rentals, request a booking, and view rental records.
-- Book and track computer repairs.
-- Review student deals and submit student verification information.
+Only published products are exposed to public product queries. Database
+policies enforce this in addition to the application query filters.
 
 ### Customer accounts
 
-- Register, sign in, reset or update a password, and manage account settings.
-- Manage a profile and saved delivery addresses.
-- Review orders, notifications, wishlist items, referrals, enquiries, rentals,
-  repairs, and student-verification status.
+Customers can register, confirm their email, sign in, reset or update a
+password, and manage their profile and saved addresses. The account area
+provides:
 
-### Administration
+- Order history, order details, payment and fulfilment status, and order-status
+  history.
+- Rental and repair request history and status.
+- Enquiries, notifications, saved products, referrals and student-verification
+  status.
+- Reviews for eligible completed product, rental or repair transactions.
 
-The permission-aware admin area includes workflows for the product catalogue,
-brands and categories, inventory, orders, customers, discounts, reviews,
-enquiries, referrals, rentals, repairs, student verification, site settings,
-site media, and staff users. Available pages and actions depend on the signed-in
-staff member's permissions.
+Guest checkout provides a confirmation page protected by a temporary
+HTTP-only cookie. Persistent order history is available through a customer
+account.
+
+### Business services
+
+- Rental equipment catalogue, rate information where configured, availability
+  checks and rental requests. A request is not a confirmed booking; staff
+  review availability and follow up.
+- Repair request submission and repair tracking using the ticket reference and
+  tracking code. Signed-in customers can also view their requests in their
+  account.
+- General and corporate supply/quotation enquiries.
+- Student verification submissions and eligible student offers.
+
+These are request and management workflows; they do not imply automatic
+approval, confirmed rental availability, or an automated repair assessment.
+
+### Staff administration
+
+The permission-aware `/admin` area contains modules for:
+
+- Dashboard summaries and recent business activity.
+- Products, brands, categories, variants, product media and inventory.
+- Orders, customers and customer records.
+- Rental requests and repair tickets.
+- General and corporate enquiries.
+- Student verification and discounts.
+- Reviews and moderation.
+- Referrals, site settings and site media.
+- Staff accounts, roles and permissions.
+- Internal email notification outbox and customer-interest analytics.
+
+Admin pages and actions check permissions. The database also enforces
+role/permission-based access with Row Level Security (RLS). Analytics requires
+the analytics migration and consented events; event cleanup has a database
+function but no scheduled job is configured by this repository.
 
 ## Technology stack
 
-| Technology                                  | Role                                                                       |
-| ------------------------------------------- | -------------------------------------------------------------------------- |
-| Next.js 14 App Router                       | Web application, server-rendered pages, route handlers, and server actions |
-| React 18                                    | User interface components                                                  |
-| TypeScript                                  | Application and database-client types                                      |
-| Tailwind CSS                                | Utility-first styling                                                      |
-| Supabase                                    | PostgreSQL database, authentication, and object storage                    |
-| `@supabase/ssr` and `@supabase/supabase-js` | Supabase clients for server-rendered and browser contexts                  |
-| Zod                                         | Input and data validation                                                  |
-| Supabase CLI                                | Local Supabase development and database migrations                         |
-| ESLint and Prettier                         | Linting and formatting                                                     |
+Versions below are from the checked-in `package.json`; dependency ranges are
+resolved by `package-lock.json`.
 
-## Screenshots
+| Technology                                         | Use                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------- |
+| Next.js `14.2.15`                                  | App Router, server rendering, Route Handlers and Server Actions      |
+| React `18.3.1`                                     | UI and interactive client components                                 |
+| TypeScript `5.5.2`                                 | Application and database-client types                                |
+| Tailwind CSS `3.4.4`                               | Styling                                                              |
+| Supabase JS `^2.45.4` and `@supabase/ssr` `^0.5.2` | Database, Auth, Storage and cookie-aware clients                     |
+| PostgreSQL                                         | Application database; local Supabase config targets major version 17 |
+| Zod `^3.23.8`                                      | Input validation                                                     |
+| Nodemailer `^10.3.1`                               | Server-side SMTP delivery for internal request notifications         |
+| Supabase CLI `^2.117.0`                            | Local Supabase development and migration commands                    |
+| ESLint `^8.57.0` and Prettier `^3.3.2`             | Linting and formatting                                               |
 
-There are no verified application screenshots in the repository yet. To add
-them later, commit approved screenshots and link them in this section using
-their repository-relative paths and descriptive alt text.
+`package.json` declares Node.js `>=22.0.0`. See the [deployment](#deployment)
+section for the discrepancy with the supplied cPanel Node.js 20 environment.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Browser[Customer or staff browser]
+    Next[Next.js App Router]
+    Pages[Server Components and Client Components]
+    Actions[Server Actions]
+    Routes[Route Handlers]
+    RLSClient[Cookie-aware Supabase client]
+    AdminClient[Server-only service-role client]
+    Auth[Supabase Auth]
+    DB[(Supabase PostgreSQL)]
+    Storage[Supabase Storage]
+    SMTP[SMTP provider]
+
+    Browser --> Pages
+    Pages --> Next
+    Browser --> Actions
+    Browser --> Routes
+    Actions --> RLSClient
+    Routes --> RLSClient
+    Pages --> RLSClient
+    RLSClient --> Auth
+    RLSClient --> DB
+    RLSClient --> Storage
+    Actions --> AdminClient
+    AdminClient --> DB
+    AdminClient --> Storage
+    Actions --> SMTP
+```
+
+Server Components perform most page data reads through `lib/data`. Interactive
+forms and controls use Client Components and call Server Actions or Route
+Handlers. Server Actions validate input and delegate business operations to
+`lib/services`; Zod schemas live under `schemas`.
+
+The normal Supabase server client carries the current user's cookies and remains
+subject to RLS. The separate `server-admin.ts` client uses the service-role key
+and bypasses RLS; it is server-only and should only be used for operations that
+need it after application-level authorization. Permission checks are enforced
+in server code as well as by database policies.
+
+The application exposes a health Route Handler at `/api/health`, a consent-aware
+customer-interest event Route Handler at `/api/analytics/events`, and Supabase
+Auth callback/confirmation routes. It is not a general-purpose public REST API.
 
 ## Project structure
 
 ```text
 app/
-  (auth)/                 Sign-in, sign-up, and password pages
-  (storefront)/           Storefront, account, checkout, and service pages
-  admin/                  Permission-aware administration pages
-  api/                    Route handlers, including the health endpoint
-  auth/                   Authentication callback and verification pages
+  (auth)/                 Sign-in, sign-up and password forms
+  (storefront)/           Storefront, checkout, account and service pages
+  admin/                  Permission-protected administration pages
+  api/                    Health and analytics Route Handlers
+  auth/                   Supabase Auth callback and confirmation routes
 components/
-  admin/                  Admin interface components
-  product/                Product and catalogue components
-  storefront/             Storefront forms, navigation, and sections
-  ui/                     Shared interface primitives
+  admin/                  Staff interface
+  navigation/             Shared navigation controls
+  product/                Product cards, galleries, grids and controls
+  storefront/             Storefront, account and service components
+  ui/                     Shared UI primitives
 lib/
-  auth/                   Authentication and permissions helpers
-  data/                   Database-backed read functions
-  payments/               Manual payment-provider details and parsing
+  auth/                   User, site URL and permission helpers
+  data/                   Supabase-backed read operations
+  email/                  Internal notification email templates
+  payments/               Manual payment provider details
   services/               Server-side business workflows
-  supabase/               Supabase client setup
-schemas/                  Zod validation schemas
+  supabase/                Browser, server, middleware and admin clients
+schemas/                  Zod request schemas
 supabase/
-  migrations/             Ordered SQL schema and policy migrations
-  seed.sql                Local development seed data
+  migrations/              Ordered PostgreSQL, RLS and Storage changes
+  templates/               Local Supabase Auth email templates
+  config.toml              Local Supabase configuration
+  seed.sql                 Development-only local seed data
 types/
-  supabase.ts             Supabase database types
+  catalog.ts               Product and storefront domain types
+  supabase.ts              Supabase database types
 ```
+
+Root configuration includes `package.json`, `package-lock.json`,
+`tsconfig.json`, `next.config.mjs`, `tailwind.config.ts`,
+`postcss.config.mjs`, `.eslintrc.json` and `.prettierrc`. The repository does
+not include a `Dockerfile`, CI workflow, cPanel startup file or production
+deployment manifest.
 
 ## Prerequisites
 
-- Node.js 18.18 or newer.
+- Node.js `>=22.0.0`, as required by `package.json`.
 - npm and Git.
-- A Supabase project, either the local Supabase stack or a development project.
-- Docker Desktop or another Docker-compatible runtime when running Supabase
-  locally.
+- A Supabase project for shared development, or Docker Desktop and the
+  Supabase CLI for the local Supabase stack.
 
-The repository does not pin a separate npm version or Node.js version file.
-`package.json` declares the minimum Node.js version.
+## Local development
 
-## Getting started
-
-Clone the repository and install the locked dependencies:
+Clone the repository and install the locked dependency tree:
 
 ```bash
 git clone https://github.com/MkandawireChico/classic-computers.git
@@ -152,25 +237,20 @@ cd classic-computers
 npm ci
 ```
 
-Create a local environment file from the example. Use the command for your
-shell:
-
-**Bash**
+Copy `.env.example` to `.env.local` and supply the values for your development
+environment. `.env.local` is ignored by Git.
 
 ```bash
+# macOS / Linux
 cp .env.example .env.local
 ```
 
-**Windows PowerShell**
-
 ```powershell
+# Windows PowerShell
 Copy-Item .env.example .env.local
 ```
 
-Configure the Supabase values as described in
-[Environment configuration](#environment-configuration).
-
-To run against the local Supabase stack:
+For local Supabase development, start Docker, then run:
 
 ```bash
 npx supabase start
@@ -178,79 +258,186 @@ npx supabase db reset
 npm run dev
 ```
 
-`supabase db reset` recreates the local database from the migrations and runs
-the configured seed script. It resets local database data. Open
-<http://localhost:3000> after the development server starts.
+Use the local Supabase URL and keys printed by `supabase start` in `.env.local`.
+`supabase db reset` recreates the local database by applying the migrations and
+configured seed; it deletes local database contents. The seed contains sample
+categories and brands plus a draft development product, not production
+inventory.
 
-## Environment configuration
+The development server is available at <http://localhost:3000>. Local Auth
+emails are captured by Supabase's local mail testing service; they are not sent
+to real customer addresses.
 
-The application reads the following variables. `.env.example` is the template;
-put local values in `.env.local`, which is ignored by Git.
+For a hosted Supabase development project, use its project URL and anon key.
+Apply migrations only to a database you are authorized to change.
 
-| Variable                        | Purpose                                                                                                                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL. Required by browser and server clients.                                                                       |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key. Required by browser and server clients.                                                                          |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server-only key required for privileged server operations, including guest cart and checkout flows. Never expose it to the browser. |
-| `NEXT_PUBLIC_SITE_URL`          | Public site origin for metadata and authentication redirects. Set it to the correct origin for the environment.                     |
+## Environment variables
 
-Example values below are placeholders, not working credentials:
+The following variables are referenced by application code or the checked-in
+Supabase configuration. Set public variables before building; keep secrets in
+server-side environment configuration only.
 
-```dotenv
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=replace-with-your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=replace-with-your-server-only-service-role-key
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+| Variable                        | Required?                            | Runtime / visibility              | Purpose                                                                                                                                              |
+| ------------------------------- | ------------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Yes                                  | Public; build and runtime         | Supabase project API URL used by browser, server and middleware clients.                                                                             |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes                                  | Public; build and runtime         | Supabase anon/publishable client key. Access remains constrained by RLS.                                                                             |
+| `NEXT_PUBLIC_SITE_URL`          | Recommended; optional in development | Public; build and runtime         | Canonical site origin, metadata, sitemap and auth redirect URL. Defaults to `http://localhost:3000`.                                                 |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Conditional                          | Server-only runtime secret        | Privileged server operations, including guest checkout and internal notification outbox operations. It bypasses RLS; never expose it to the browser. |
+| `SMTP_HOST`                     | Required for internal email delivery | Server-only runtime secret/config | SMTP server hostname.                                                                                                                                |
+| `SMTP_PORT`                     | Optional; defaults to `587`          | Server-only runtime config        | SMTP port. Port `465` uses implicit TLS; other configured ports require STARTTLS.                                                                    |
+| `SMTP_USER`                     | Required for internal email delivery | Server-only runtime secret/config | SMTP account username.                                                                                                                               |
+| `SMTP_PASSWORD`                 | Required for internal email delivery | Server-only runtime secret        | SMTP account password or provider-issued credential.                                                                                                 |
+| `SMTP_FROM_EMAIL`               | Optional; default is fixed           | Server-only runtime config        | If set, must be `notifications@classiccomputers.mw`.                                                                                                 |
+| `ADMIN_NOTIFICATION_EMAIL`      | Optional; default is fixed           | Server-only runtime config        | If set, must be `sales@classiccomputers.mw`.                                                                                                         |
+| `OPENAI_API_KEY`                | Optional                             | Supabase CLI / local Studio only  | Supabase Studio AI configuration in `supabase/config.toml`; not used by the Next.js application.                                                     |
+
+The public Supabase URL and anon key are required for normal application
+operation. The service-role key is not a browser key and is not required for
+every page, but privileged workflows such as guest checkout require it.
+Internal notification records can be saved without SMTP delivery; configure
+SMTP to deliver and retry those messages.
+
+Example variable names and placeholder values are available in
+[`.env.example`](./.env.example). The checked-in example contains no working
+credentials. The commented `PAYMENT_PROVIDER_API_KEY` and
+`WHATSAPP_BUSINESS_API_TOKEN` lines are placeholders only; the application does
+not currently read them. `NODE_ENV` is supplied by the Next.js runtime, not
+configured as an application secret.
+
+Never copy a production service-role key, SMTP password, or other secret into
+README examples, source code, client-side variables or version control.
+
+## Database, security and storage
+
+### Supabase setup and migrations
+
+Database schema changes are maintained as ordered SQL files in
+[`supabase/migrations`](./supabase/migrations). `supabase/config.toml` enables
+migrations and configures `supabase/seed.sql` for local database resets.
+Database objects cover customers and addresses, roles and permissions,
+products, variants and specifications, inventory, carts, orders, discounts,
+reviews, student verification, referrals, rentals, repairs, enquiries,
+notifications, site settings, media, audit logs and email outbox records.
+
+For a local database, `npx supabase db reset` applies migrations and seed data.
+For a linked remote project, review the SQL and deployment plan, take an
+appropriate backup, and use the Supabase CLI's migration workflow. For example:
+
+```bash
+npx supabase link --project-ref <project-ref>
+npx supabase db push
 ```
 
-For local development, start the Supabase stack and use the local API URL and
-keys printed by the CLI. For a hosted Supabase project, use that project's API
-URL and keys. Keep the service-role key only in trusted server-side
-configuration. Never add real credentials to documentation, source control, or
-browser code.
+Confirm the target project and migration status before running remote commands.
+Do not use a local reset against a production database. Production schema
+changes require review, a recovery plan and a verified backup.
 
-## Database and Supabase setup
+The local Supabase configuration targets PostgreSQL major version 17. Confirm
+the hosted database version and migration history before applying changes.
+The deployment state of any hosted database cannot be determined from this
+repository.
 
-The database schema and policies are defined by the ordered SQL files in
-[`supabase/migrations`](./supabase/migrations). Supabase CLI is a project
-dependency, and [`supabase/config.toml`](./supabase/config.toml) enables
-migrations and the local seed file.
+### Authentication, authorization and RLS
 
-The local workflow is:
+Supabase Auth provides email/password registration, confirmation, sign-in and
+password recovery. Server and middleware clients use the user's session from
+cookies. Roles, permissions and helper functions such as `has_permission`
+support staff access. Server Actions check permissions for privileged
+operations; RLS policies are the database enforcement layer for user and staff
+data. The admin navigation is not itself a security boundary.
 
-1. Start Docker and run `npx supabase start`.
-2. Copy the local API URL and keys shown by the CLI into `.env.local`.
-3. Run `npx supabase db reset` to apply migrations and seed the local database.
+The service-role client bypasses RLS. It is marked server-only and should be
+limited to operations that need privileged access, after authorization and
+ownership checks.
 
-[`supabase/seed.sql`](./supabase/seed.sql) is for local development. It creates
-sample categories and brands plus a clearly labeled draft sample product; it
-is not a production catalogue. The Supabase configuration runs this seed as
-part of a local database reset. The application does not create or populate a
-Supabase project automatically.
+### Storage
 
-Before applying schema changes to any shared or production database, review the
-migrations and coordinate with the project owner. No hosted database project or
-production migration procedure is configured in this repository.
+Migrations define these Supabase Storage buckets:
 
-## Available scripts
+| Bucket              | Access                                                                                                                                                                                          |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `product-images`    | Public read; writes require the product-management permission.                                                                                                                                  |
+| `site-media`        | Public read; writes require the settings-management permission.                                                                                                                                 |
+| `repair-documents`  | Private; staff reads and writes require repair permissions.                                                                                                                                     |
+| `student-documents` | Private; customer uploads are restricted to the customer's own storage path. Staff reads require student-verification permission; customer access is brokered through an authorized signed URL. |
 
-| Command                | Description                                           |
-| ---------------------- | ----------------------------------------------------- |
-| `npm run dev`          | Start the Next.js development server.                 |
-| `npm run build`        | Create a production build.                            |
-| `npm run start`        | Run the production server; run `npm run build` first. |
-| `npm run lint`         | Run the Next.js ESLint checks.                        |
-| `npm run typecheck`    | Run TypeScript without emitting build output.         |
-| `npm run format`       | Format project files with Prettier.                   |
-| `npm run format:check` | Check project formatting without writing changes.     |
+Do not make private documents public to work around an access error. Check the
+bucket policy, caller permission and server-side signed-URL workflow.
 
-## Testing and quality checks
+### Database functions and triggers
 
-The project provides lint, type-check, build, and formatting scripts. It does
-not currently define an automated unit- or integration-test script, and no
-test/spec files are maintained in the repository.
+The migrations define PostgreSQL functions and triggers for permission checks,
+updated timestamps, audit records, signup/profile/customer setup, inventory
+status, order creation and status history, rental status history, referrals,
+notifications and the email outbox. The `create_order` function performs the
+database-side order workflow. The customer-interest analytics migration
+includes `purge_customer_interest_events()`; the repository does not configure
+a scheduler to run it.
 
-Before submitting a change, run the checks relevant to it:
+## Orders and payments
+
+Checkout supports guest and signed-in customers, pickup or delivery, and the
+payment methods enabled in Supabase site settings:
+
+- Pay at the shop.
+- Bank transfer.
+- Mobile money (Airtel Money or TNM Mpamba).
+- Cash on delivery.
+
+For bank transfer and mobile money, the checkout displays configured manual
+provider/account details and instructions. Customers can enter a transaction
+reference. Placing an order or entering a reference does **not** confirm
+payment.
+
+There is no integrated payment gateway, card processor, payment-initiation
+flow or automatic payment reconciliation in this repository. Staff review
+orders and verify manual payments through the administration workflow before
+marking them paid. Availability, final totals and order creation are checked
+server-side and in the database; an order is not accepted solely on the basis
+of client-submitted prices.
+
+## Email and notifications
+
+Customer account notifications are stored in the database and shown in the
+account area. Internal request emails use a database outbox for general and
+corporate enquiries, rental bookings, repairs, student-verification
+applications, orders and review submissions.
+
+The server-side Nodemailer dispatcher sends from
+`notifications@classiccomputers.mw` to `sales@classiccomputers.mw`. These
+addresses are enforced by the application; if corresponding environment
+variables are set, they must match. SMTP host, port, user and password come
+from the mailbox provider and are not included in the repository. Failed or
+pending messages can be reviewed and retried by appropriately authorized staff
+from the admin Email notifications page.
+
+Supabase Auth confirmation and recovery emails are separate from the
+application's internal SMTP outbox. Local Auth email is captured by the local
+Supabase mail testing service. Hosted Auth SMTP, allowed redirect URLs, sender
+identity and templates must be configured in the Supabase project; the app's
+`SMTP_*` variables do not configure Supabase Auth.
+
+## Administration and customer accounts
+
+The main customer routes are under `app/(storefront)`. They include the
+storefront, shop and category views, search, product detail, cart, checkout,
+comparison, reviews, contact, corporate enquiries, rentals, repairs, student
+deals, informational policies and the customer account.
+
+The account includes profile and address management; order, rental and repair
+history; enquiries and notifications; wishlists; reviews; referrals; and
+student-verification status.
+
+The staff routes under `app/admin` include dashboard, analytics, brands,
+categories, customers, discounts, email notifications, enquiries, inventory,
+orders, products, referrals, rentals, repairs, reviews, site settings, site
+media, student verification and staff/role management. Visibility and actions
+depend on assigned permissions.
+
+## Quality checks
+
+The repository defines lint, type-check, formatting and production-build
+scripts:
 
 ```bash
 npm run lint
@@ -259,88 +446,124 @@ npm run format:check
 npm run build
 ```
 
-The production build may require the same Supabase configuration as the
-application, depending on which routes and data sources are evaluated.
-
-## Payment and checkout workflow
-
-Checkout supports pay at the shop, bank transfer, mobile money, and cash on
-delivery when enabled in site settings. Bank-transfer and mobile-money
-selections show the provider-specific details maintained in the application's
-manual-payment records and the transfer instructions. Customers can provide a
-transaction reference, but placing an order or entering a reference does not
-confirm payment.
-
-There is no integrated card processor, payment-initiation link, or automatic
-payment reconciliation in the repository. Staff must verify a manual payment
-before treating the order as paid.
-
-## Deployment
-
-The repository provides a Next.js production build and start workflow:
+Run the production server after a successful build with:
 
 ```bash
-npm run build
 npm run start
 ```
 
-No hosting-provider configuration, container deployment, or CI/CD deployment
-workflow is present. Choose a hosting environment that supports the project's
-Next.js version. Configure the `NEXT_PUBLIC_` variables in the environment used
-to build the application and set the required server-side variables for the
-running application. Arrange Supabase database migrations separately before
-deployment; this repository does not define a production migration procedure.
+There is no automated unit- or integration-test script configured in
+`package.json`, and no maintained test suite is present in the repository.
+Manual verification of account, order, service, email and admin flows requires
+a configured Supabase environment.
+
+## Deployment
+
+The production hosting context supplied for this project is cPanel with
+Node.js 20. However, the checked-in `package.json` declares
+`"node": ">=22.0.0"`. These requirements do not match. Confirm the production
+runtime with the hosting owner and align it with the package engine before
+deploying; this README does not claim that the current Node.js 20 environment
+has been verified against the application.
+
+The repository provides the Next.js commands `npm run build` and
+`npm run start`, but contains no cPanel/Passenger configuration, startup file,
+deployment script, CI workflow or hosting-specific restart procedure. The
+exact cPanel application root, application runner and restart steps therefore
+need confirmation from the hosting configuration; they should not be inferred
+from the source tree.
+
+For a deployment using a supported Node version, the application needs:
+
+1. The repository and locked dependencies installed with `npm ci`.
+2. `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and the
+   production `NEXT_PUBLIC_SITE_URL` available to the build/runtime as
+   appropriate.
+3. Server-only service-role and SMTP variables configured in the hosting
+   environment when those workflows are enabled.
+4. A successful `npm run build`, then the production process started with the
+   configured application runner using the `npm start` script.
+5. A separately reviewed and applied Supabase migration plan.
+
+Set public variables before building so the production bundle uses the
+intended Supabase project and site origin. Configure secrets only in the
+hosting environment. Verify Auth redirect URLs, Auth email settings, Storage
+policies, SMTP delivery and health status after deployment. Do not copy
+production credentials into this repository.
 
 ## Troubleshooting
 
-### Supabase configuration errors
+### Dependency installation or Node version errors
 
-Check that `.env.local` exists and contains the URL and anon key for the
-intended Supabase project. Restart `npm run dev` after changing environment
-variables. The `GET /api/health` endpoint reports whether the Supabase URL,
-anon key, and service-role key are configured; it does not verify database
-connectivity.
+Check `node --version`; the project requires Node.js `>=22.0.0` according to
+`package.json`. Install with `npm ci` to use the lockfile. If npm reports an
+engine mismatch, align the runtime rather than changing the dependency lockfile
+without review.
 
-### Local Supabase does not start
+### Supabase configuration or connection issues
 
-Ensure Docker is running, then retry `npx supabase start`. If the local
-database schema or seed data is out of sync, `npx supabase db reset` reapplies
-the migrations and seed, but resets local database contents.
+Check that `.env.local` contains the Supabase URL and anon key for the intended
+project, and restart the development server after changing environment
+variables. `GET /api/health` reports whether the Supabase URL and anon key are
+present; it does not prove that the database is reachable or that migrations
+are current.
 
-### Dependency installation fails
+For local Supabase, confirm Docker is running and use `npx supabase status` to
+inspect the local services. A local `npx supabase db reset` reapplies
+migrations and seed data but deletes local database contents.
 
-Use the Node.js version declared in `package.json` or newer, and install from
-the checked-in lockfile with `npm ci`. If installation still fails, review the
-first npm error for network, registry, or platform-specific causes.
+### Sign-in, confirmation or password recovery
 
-### Production build fails
+Check the Supabase Auth Site URL and allowed redirect URLs, email confirmation
+settings and Auth SMTP configuration. The application SMTP settings are for
+internal request notifications only. For local development, inspect the local
+Supabase email testing service rather than expecting mail to reach an external
+inbox.
 
-Run `npm run typecheck` and `npm run lint` to surface code issues. Confirm the
-required environment variables are configured for the build environment and
-review the first build error; a missing Supabase connection or schema mismatch
-may cause database-backed pages to fail.
+### Migration or database permission errors
+
+Confirm the linked Supabase project, migration history, PostgreSQL version and
+whether all required migrations have been applied. Review RLS and grants for
+the affected operation. Back up shared or production data before applying a
+schema change; do not use `db reset` on production.
+
+### Storage access or upload failures
+
+Verify the bucket name, whether it is public or private, accepted file limits,
+RLS policy and the caller's permission. Private repair and student documents
+must use the authorized server-side access/signed-URL flow.
+
+### Internal email delivery
+
+Check `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` and `SMTP_PASSWORD` in the
+server-side environment, the provider's TLS requirements, and sender
+authorization for `notifications@classiccomputers.mw`. The configured sender
+and recipient must match the enforced addresses. Review the admin Email
+notifications outbox and provider delivery logs; do not assume a saved request
+failed just because email delivery failed.
+
+### Production build or cPanel startup
+
+Run `npm run typecheck`, `npm run lint` and `npm run build`, and inspect the
+first failing error. Confirm the build environment contains the correct public
+Supabase configuration. For cPanel, first resolve the Node.js 20 versus
+Node.js 22+ engine mismatch and confirm the configured app root, startup method
+and restart procedure with the hosting setup; no cPanel startup file is
+provided here.
 
 ## Contributing
 
-1. Create a focused branch for the change.
-2. Follow the existing App Router, component, service, and validation patterns.
-3. Keep secrets and local environment files out of commits.
-4. Update the relevant documentation when application behavior or setup
-   changes.
-5. Run the applicable lint, type, formatting, build, and manual checks.
-6. Submit a pull request with a concise summary and verification notes.
+1. Make a focused change using the existing App Router, data-access, service
+   and validation patterns.
+2. Keep secrets and local environment files out of commits.
+3. Represent database changes as reviewed migrations.
+4. Update documentation when verified behavior or setup changes.
+5. Run the relevant lint, type-check, formatting and build commands.
 
-Database changes should be represented by reviewed migration files rather than
-undocumented manual schema changes.
+## Business information and license
 
-## Business information and contact
+Public business contact details, hours and payment methods are managed through
+Supabase site settings. The website is [classiccomputers.mw](https://classiccomputers.mw/).
 
-Classic Computers LLC is based in Blantyre, Malawi. The storefront's public
-business contact details are managed in Supabase site settings rather than
-maintained as static values in this repository.
-
-- Website: [classiccomputers.mw](https://classiccomputers.mw/)
-
-## License
-
-No license has been specified in the repository.
+No license file or license declaration was found in the repository. All rights
+and reuse terms should be confirmed with the project owner.

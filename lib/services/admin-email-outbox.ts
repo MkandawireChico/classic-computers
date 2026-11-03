@@ -26,7 +26,7 @@ type OutboxRow = {
 };
 
 const REQUIRED_FROM = "notifications@classiccomputers.mw";
-const REQUIRED_TO = "admin@classiccomputers.mw";
+const REQUIRED_TO = "sales@classiccomputers.mw";
 const VIEW_PERMISSIONS: Record<AdminEmailRequestType, string> = {
   general_enquiry: "customers.read",
   corporate_enquiry: "customers.read",

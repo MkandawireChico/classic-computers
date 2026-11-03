@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import { getPublicStorageUrl } from "@/lib/storage";
+import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 import type { ProductImage } from "@/types/catalog";
 
-export function ProductGallery({ images, productName }: { images: ProductImage[]; productName: string }) {
+export function ProductGallery({ images, productName, productId }: { images: ProductImage[]; productName: string; productId: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = images[Math.min(activeIndex, Math.max(images.length - 1, 0))] ?? null;
 
@@ -37,7 +38,10 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
             <button
               key={image.id}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={() => {
+                if (index !== activeIndex) trackInterestEvent({ name: "product_gallery_opened", productId });
+                setActiveIndex(index);
+              }}
               aria-label={`Show image ${index + 1} of ${images.length}`}
               aria-current={index === activeIndex}
               className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 ${

@@ -17,7 +17,11 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
   // own requirePermission()/RLS regardless of what's shown here.
   const groups = ADMIN_NAV_GROUPS.map((group) => ({
     ...group,
-    items: group.items.filter((item) => item.permission === null || permSet.has(item.permission)),
+    items: group.items.filter((item) =>
+      item.permission === null ||
+      permSet.has(item.permission) ||
+      item.anyPermissions?.some((permission) => permSet.has(permission))
+    ),
   })).filter((group) => group.items.length > 0);
 
   const navContent = (

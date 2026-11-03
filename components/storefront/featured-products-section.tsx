@@ -33,7 +33,6 @@ export async function FeaturedProductsSection() {
             className="inline-flex min-h-12 items-center justify-center gap-2 self-start rounded-xl bg-rose-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-rose-900/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-rose-800 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:ring-offset-2 sm:self-auto"
           >
             View all products
-            <span aria-hidden="true" className="text-lg">→</span>
           </Link>
         </div>
 

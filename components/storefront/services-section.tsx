@@ -65,8 +65,8 @@ export function ServicesSection() {
               </div>
               <h3 className="text-xl font-bold leading-snug text-slate-900">{service.title}</h3>
               <p className="mt-3 flex-1 text-base leading-relaxed text-slate-600">{service.description}</p>
-              <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-emerald-800">
-                Explore service <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+              <span className="mt-5 inline-flex items-center text-sm font-bold text-emerald-800">
+                Explore service
               </span>
             </Link>
           ))}

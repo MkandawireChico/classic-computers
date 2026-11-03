@@ -83,13 +83,49 @@ export interface BrandSummary {
   slug: string;
 }
 
+export type ReviewType = "product" | "rental" | "repair";
+export type ReviewStatus = "pending" | "approved" | "rejected" | "hidden";
+
 export interface ApprovedReview {
   id: string;
+  review_type: ReviewType;
   rating: number;
   title: string | null;
   comment: string | null;
+  verified_purchase: boolean;
   created_at: string;
+  updated_at: string;
   product: { name: string; slug: string } | null;
+  admin_response: string | null;
+  images: ReviewImage[];
+}
+
+export interface ReviewWithDetails extends ApprovedReview {
+  status: ReviewStatus;
+  customer_id: string;
+  customer_name: string | null;
+  order_id: string | null;
+  rental_booking_id: string | null;
+  repair_ticket_id: string | null;
+  images: ReviewImage[];
+}
+
+export interface ReviewImage {
+  id: string;
+  image_url: string;
+  alt_text: string | null;
+}
+
+export interface ReviewSubmissionInput {
+  review_type: ReviewType;
+  product_id?: string;
+  order_id?: string;
+  rental_booking_id?: string;
+  repair_ticket_id?: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  images?: string[];
 }
 
 export interface SiteMediaItem {

@@ -2,6 +2,7 @@ import { requirePermission } from "@/lib/auth/permissions";
 import { listAdminReviews } from "@/lib/data/admin/reviews";
 import { ReviewRow } from "@/components/admin/review-row";
 import { Pagination } from "@/components/storefront/pagination";
+import { getMyPermissions } from "@/lib/auth/permissions";
 
 export default async function AdminReviewsPage({
   searchParams,
@@ -9,6 +10,7 @@ export default async function AdminReviewsPage({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   await requirePermission("reviews.read");
+  const permissions = await getMyPermissions();
   const status = typeof searchParams.status === "string" ? searchParams.status : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
 
@@ -35,7 +37,7 @@ export default async function AdminReviewsPage({
         {result.items.length === 0 ? (
           <p className="p-6 text-center text-sm text-gray-500">No reviews found.</p>
         ) : (
-          result.items.map((review) => <ReviewRow key={review.id} review={review} />)
+          result.items.map((review) => <ReviewRow key={review.id} review={review} canModerate={permissions.has("reviews.moderate")} />)
         )}
       </div>
 

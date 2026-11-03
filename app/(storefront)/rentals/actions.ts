@@ -3,8 +3,8 @@
 import { submitRentalBooking, checkRentalAvailability } from "@/lib/services/rentals";
 import { trackRentalAsGuest } from "@/lib/data/rental-tracking";
 
-export async function submitRentalBookingAction(input: unknown) {
-  return submitRentalBooking(input);
+export async function submitRentalBookingAction(input: unknown, submissionKey: string) {
+  return submitRentalBooking(input, submissionKey);
 }
 
 export async function checkAvailabilityAction(rentalProductId: string, startDate: string, endDate: string) {

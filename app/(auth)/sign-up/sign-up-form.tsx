@@ -1,17 +1,56 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { AuthProviderButtons } from "@/components/auth-provider-buttons";
-import { signUp, signInWithOAuth } from "../actions";
+import { resendSignupConfirmation, signUp } from "../actions";
+import { createBrowserClient } from "@supabase/ssr";
+import { getAuthRedirectUrl } from "@/lib/auth/site-url";
+
+function maskEmail(email: string): string {
+  const [localPart, domain] = email.split("@");
+  if (!localPart || !domain) return email;
+  return `${localPart.slice(0, 1)}***@${domain}`;
+}
 
 export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferralCode?: string; redirectTo?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [successEmail, setSuccessEmail] = useState<string | null>(null);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const [resendError, setResendError] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resending, setResending] = useState(false);
+
+  useEffect(() => {
+    if (resendCooldown === 0) return;
+    const timer = window.setTimeout(() => setResendCooldown((value) => value - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [resendCooldown]);
+
+  const handleResend = async () => {
+    if (!successEmail || resendCooldown > 0 || resending) return;
+    setResending(true);
+    setResendError(null);
+    setResendMessage(null);
+    setResendCooldown(30);
+
+    try {
+      const result = await resendSignupConfirmation(successEmail, redirectTo);
+      if (result.error) {
+        setResendError(result.error);
+      } else {
+        setResendMessage(result.message ?? "The request was accepted; email delivery is not confirmed.");
+      }
+    } catch {
+      setResendError("Could not request another confirmation link. Check your connection and try again.");
+    } finally {
+      setResending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,18 +75,52 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
     }
   };
 
-  const handleOAuthSignIn = (provider: "google" | "apple" | "azure") => {
-    signInWithOAuth(provider, redirectTo);
+  const handleOAuthSignIn = async (provider: "google" | "azure" | "apple") => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const safeRedirect = redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : "/account";
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: getAuthRedirectUrl(`/auth/callback?next=${encodeURIComponent(safeRedirect)}`),
+      },
+    });
+
+    if (error) {
+      console.error("OAuth sign-in error:", error);
+      window.location.href = `/sign-up?error=${encodeURIComponent("Failed to sign in with " + provider)}`;
+      return;
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
   };
 
   if (successMessage) {
-    const email = successEmail || "your email";
+    const email = successEmail ? maskEmail(successEmail) : "your email address";
     return (
       <div className="space-y-4">
         <Alert variant="success" className="space-y-2">
-          <p className="font-medium">Account created successfully</p>
-          <p className="text-sm">We've sent a confirmation link to <span className="font-semibold">{email}</span>. Please check your inbox and confirm your email before signing in.</p>
+          <p className="font-medium">Registration request accepted</p>
+          <p className="text-sm">{successMessage} Address: <span className="font-semibold">{email}</span></p>
         </Alert>
+        <p className="text-sm text-slate-600">If an email arrives, check your inbox and spam folder. Confirmation links expire; you can request another below.</p>
+        {resendError ? <Alert variant="danger">{resendError}</Alert> : null}
+        {resendMessage ? <Alert variant="info">{resendMessage}</Alert> : null}
+        <Button
+          type="button"
+          onClick={handleResend}
+          disabled={resending || resendCooldown > 0 || !successEmail}
+          isLoading={resending}
+          className="w-full"
+        >
+          {resendCooldown > 0 ? `Resend link in ${resendCooldown}s` : "Resend confirmation link"}
+        </Button>
         <Link
           href="/sign-in"
           className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
@@ -64,19 +137,19 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-surface-border" />
+          <span className="w-full border-t-2 border-slate-200" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">Or continue with email</span>
+          <span className="bg-white px-3 text-sm font-bold text-slate-500">Or continue with email</span>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
         {error ? <Alert variant="danger">{error}</Alert> : null}
 
-      <div className="space-y-1">
-        <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+      <div className="space-y-2">
+        <label htmlFor="fullName" className="text-sm font-bold text-slate-700">
           Full name
         </label>
         <input
@@ -85,12 +158,12 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           type="text"
           autoComplete="name"
           required
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
         />
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">
+      <div className="space-y-2">
+        <label htmlFor="email" className="text-sm font-bold text-slate-700">
           Email
         </label>
         <input
@@ -99,12 +172,12 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
         />
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">
+      <div className="space-y-2">
+        <label htmlFor="password" className="text-sm font-bold text-slate-700">
           Password
         </label>
         <input
@@ -114,13 +187,13 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           autoComplete="new-password"
           required
           minLength={8}
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
         />
-        <p className="text-xs text-gray-500">At least 8 characters.</p>
+        <p className="text-sm text-slate-500">At least 8 characters.</p>
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="referralCode" className="text-sm font-medium text-gray-700">
+      <div className="space-y-2">
+        <label htmlFor="referralCode" className="text-sm font-bold text-slate-700">
           Referral code (optional)
         </label>
         <input
@@ -128,11 +201,11 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           name="referralCode"
           type="text"
           defaultValue={initialReferralCode}
-          className="w-full rounded-card border border-surface-border px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
         />
       </div>
 
-      <Button type="submit" isLoading={loading} className="w-full">
+      <Button type="submit" isLoading={loading} className="min-h-12 w-full rounded-2xl bg-brand-700 px-6 py-4 text-base font-extrabold text-white shadow-lg shadow-brand-900/10 transition-all duration-300 hover:bg-brand-800 hover:shadow-xl hover:-translate-y-0.5">
         {loading ? "Creating account..." : "Create account"}
       </Button>
     </form>

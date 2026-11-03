@@ -41,6 +41,9 @@ export async function signIn(_prevState: AuthActionState, formData: FormData): P
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
+    if (error.code === "email_not_confirmed") {
+      return { error: "Please confirm your email before signing in. Check your confirmation email or request another link from sign-up." };
+    }
     // Deliberately generic — never confirm/deny whether an email is registered.
     return { error: "Invalid email or password." };
   }
@@ -79,14 +82,14 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   const referralCode = formData.get("referralCode")?.toString().trim();
   const siteUrl = getPublicSiteOrigin();
   const requestedRedirect = formData.get("redirectTo");
-  const safeRedirect = getSafeRedirectTo(requestedRedirect, "/sign-in");
+  const safeRedirect = getSafeRedirectTo(requestedRedirect, "/account");
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${siteUrl}/auth/confirm?next=${encodeURIComponent(safeRedirect)}`,
+      emailRedirectTo: `${siteUrl}/auth/confirm?flow=signup&next=${encodeURIComponent(safeRedirect)}`,
       // full_name is read by handle_new_user() (0004); referral_code is
       // read by handle_referral_signup() (0041) — both are separate
       // triggers on the same auth.users insert.
@@ -95,17 +98,18 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   });
 
   if (error) {
-    // Log the exact error for debugging
-    console.error("Supabase signUp error:", error.message, error);
-    return { error: error.message || "Could not create account. Please try again." };
+    console.error("Supabase signup request failed:", { code: error.code, message: error.message });
+    if (error.code === "over_email_send_rate_limit") {
+      return { error: "Too many confirmation requests. Please wait before trying again." };
+    }
+    return { error: "Could not create the account. If you already registered, try signing in or resetting your password." };
   }
 
-  // If user is returned but session is null, email confirmation is required
   if (data.user && !data.session) {
     return {
       error: null,
       success: true,
-      message: "We have sent a verification link to your email. Please check your inbox or spam folder.",
+      message: "Supabase accepted the registration request. If this account needs confirmation, it will attempt to send an email; delivery is not confirmed here.",
       email: parsed.data.email,
     };
   }
@@ -120,10 +124,41 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   return { error: "Could not create account. Please try again." };
 }
 
+export async function resendSignupConfirmation(email: string, redirectTo?: string): Promise<AuthActionState> {
+  const parsedEmail = signInSchema.shape.email.safeParse(email);
+  if (!parsedEmail.success) {
+    return { error: "Enter a valid email address before requesting another confirmation link." };
+  }
+
+  const supabase = createClient();
+  const safeRedirect = getSafeRedirectTo(redirectTo ?? null, "/account");
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsedEmail.data,
+    options: {
+      emailRedirectTo: `${getPublicSiteOrigin()}/auth/confirm?flow=signup&next=${encodeURIComponent(safeRedirect)}`,
+    },
+  });
+
+  if (error) {
+    console.error("Supabase confirmation resend failed:", { code: error.code, message: error.message });
+    if (error.code === "over_email_send_rate_limit") {
+      return { error: "Too many confirmation requests. Please wait before trying again." };
+    }
+    return { error: "Supabase could not accept the confirmation request. Please try again later." };
+  }
+
+  return {
+    error: null,
+    success: true,
+    message: "Supabase accepted the request. If this account still needs confirmation, it will attempt to send an email; delivery is not confirmed here.",
+  };
+}
+
 export async function signOut() {
   const supabase = createClient();
   await supabase.auth.signOut();
-  redirect("/sign-in");
+  redirect("/");
 }
 
 export async function requestPasswordReset(
@@ -138,26 +173,44 @@ export async function requestPasswordReset(
 
   const supabase = createClient();
   const siteUrl = getPublicSiteOrigin();
-  // Errors are intentionally not surfaced here beyond a generic message —
-  // confirming or denying whether an email is registered via this form
-  // would let someone enumerate customer accounts.
-  await supabase.auth.resetPasswordForEmail(parsed.data, {
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
     redirectTo: `${siteUrl}/auth/callback?next=/update-password`,
   });
+  if (error) {
+    console.error("Password reset request failed:", { code: error.code, message: error.message });
+    if (error.code === "over_email_send_rate_limit") {
+      return { error: "Too many reset requests. Please wait before trying again." };
+    }
+    return { error: "Supabase could not accept the reset request. Please try again later." };
+  }
 
-  return { error: null, success: true, email: parsed.data };
+  return {
+    error: null,
+    success: true,
+    email: parsed.data,
+    message: "If an account exists for this address, Supabase accepted the request. Email delivery is not confirmed.",
+  };
 }
 
 export async function updatePassword(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const password = formData.get("password");
+  const confirmation = formData.get("confirmPassword");
   const parsed = signUpSchema.shape.password.safeParse(password);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid password." };
   }
+  if (typeof confirmation !== "string" || confirmation !== parsed.data) {
+    return { error: "The passwords do not match." };
+  }
 
   const supabase = createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    return { error: "Your reset session has expired. Request a new password reset link." };
+  }
   const { error } = await supabase.auth.updateUser({ password: parsed.data });
   if (error) {
+    console.error("Password update failed:", { code: error.code, message: error.message });
     return { error: "Could not update your password. The reset link may have expired — request a new one." };
   }
 

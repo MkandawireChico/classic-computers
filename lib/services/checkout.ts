@@ -7,11 +7,12 @@ import { createAdminClient } from "@/lib/supabase/server-admin";
 import { getCartIdReadOnly, clearGuestCartCookie } from "./cart";
 import { checkoutSchema } from "@/schemas/checkout";
 import { appendManualPaymentSelection } from "@/lib/payments/manual-payment";
+import { deliverAdminEmailForRequest } from "@/lib/services/admin-email-outbox";
 
 const GUEST_ORDER_COOKIE_PREFIX = "cc_order_";
 
 export type CheckoutResult =
-  | { success: true; orderNumber: string }
+  | { success: true; orderNumber: string; productIds: string[] }
   | { success: false; error: string };
 
 export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
@@ -46,6 +47,12 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   const staleIds = (cartItems ?? [])
     .filter((row: any) => row.products?.status !== "published" || (row.variant_id && row.product_variants?.status !== "active"))
     .map((row: any) => row.id);
+  const staleIdSet = new Set(staleIds);
+  const orderedProductIds: string[] = [];
+  for (const row of cartItems ?? []) {
+    if (staleIdSet.has(row.id) || typeof row.product_id !== "string" || orderedProductIds.includes(row.product_id)) continue;
+    orderedProductIds.push(row.product_id);
+  }
 
   if (staleIds.length > 0) {
     await (client.from("cart_items") as any).delete().in("id", staleIds);
@@ -107,6 +114,8 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
     return { success: false, error: "Something went wrong creating your order. Please try again." };
   }
 
+  if (row.order_id) await deliverAdminEmailForRequest("order_placed", row.order_id);
+
   if (!user) {
     await clearGuestCartCookie();
     // Gate for the /checkout/confirmation/[orderNumber] page: possession of
@@ -124,7 +133,7 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
     });
   }
 
-  return { success: true, orderNumber: row.order_number };
+  return { success: true, orderNumber: row.order_number, productIds: orderedProductIds };
 }
 
 export async function guestHasConfirmationAccess(orderNumber: string): Promise<boolean> {

@@ -26,14 +26,14 @@ export function ProfileForm({
   const [state, formAction] = useFormState(updateProfile, initialState);
 
   return (
-    <form action={formAction} className="max-w-sm space-y-6">
+    <form action={formAction} className="mt-5 max-w-xl space-y-5">
       {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
       {state.success ? <Alert variant="success">Profile updated successfully.</Alert> : null}
 
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-gray-900">Personal information</h3>
+        <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Personal information</h3>
         <div className="space-y-1">
-          <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+          <label htmlFor="fullName" className="text-sm font-semibold text-slate-700">
             Full name
           </label>
           <input
@@ -46,7 +46,7 @@ export function ProfileForm({
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+          <label htmlFor="phone" className="text-sm font-semibold text-slate-700">
             Phone number
           </label>
           <input

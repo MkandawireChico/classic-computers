@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search-box";
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { getMyPermissions } from "@/lib/auth/permissions";
 import { getCartItemCount } from "@/lib/data/cart";
 import { getSiteMedia } from "@/lib/data/site-media";
 import { getPublicStorageUrl } from "@/lib/storage";
@@ -27,17 +29,30 @@ const NAV_LINK_STYLES = [
 ];
 
 export async function SiteHeader() {
-  const [cartCount, logoMedia] = await Promise.all([getCartItemCount(), getSiteMedia("logo" as any, 1)]);
+  const [cartCount, logoMedia, user] = await Promise.all([
+    getCartItemCount(),
+    getSiteMedia("logo" as any, 1),
+    getCurrentUser(),
+  ]);
+  const permissions = user ? await getMyPermissions() : new Set<string>();
   const logo = logoMedia[0] ?? null;
   const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-emerald-100 bg-gradient-to-r from-amber-50/80 via-white to-emerald-50/80 backdrop-blur-sm">
       <div className="section-shell flex h-16 items-center justify-between gap-2 sm:gap-3 lg:h-[4.5rem]">
-        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3">
+        <Link
+          href="/"
+          className="group flex min-w-0 shrink items-center gap-2 sm:shrink-0 sm:gap-3"
+        >
           {logoUrl ? (
             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-emerald-100 bg-white p-0.5 shadow-sm transition-shadow group-hover:shadow-md sm:h-12 sm:w-12">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill className="object-contain" />
+              <Image
+                src={logoUrl}
+                alt={logo?.alt_text ?? "Classic Computers logo"}
+                fill
+                className="object-contain"
+              />
             </div>
           ) : (
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-base font-bold text-white shadow-sm sm:h-12 sm:w-12 sm:text-lg">
@@ -81,11 +96,18 @@ export async function SiteHeader() {
           >
             <AccountIcon />
           </Link>
-          <MobileNav links={NAV_LINKS} />
+          <MobileNav
+            links={NAV_LINKS}
+            isAuthenticated={Boolean(user)}
+            canAccessAdmin={permissions.size > 0}
+          />
         </div>
       </div>
 
-      <nav aria-label="Primary" className="hidden border-t border-emerald-100 bg-gradient-to-r from-amber-50/70 via-white to-emerald-50/70 lg:block">
+      <nav
+        aria-label="Primary"
+        className="hidden border-t border-emerald-100 bg-gradient-to-r from-amber-50/70 via-white to-emerald-50/70 lg:block"
+      >
         <div className="section-shell flex flex-wrap items-center justify-center gap-1 py-2">
           {NAV_LINKS.map((link, index) => (
             <Link

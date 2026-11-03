@@ -10,13 +10,14 @@ function getSafeNext(value?: string): string {
 export default function AuthConfirmPage({
   searchParams,
 }: {
-  searchParams?: { token_hash?: string; type?: string; next?: string };
+  searchParams?: { code?: string; token_hash?: string; type?: string; flow?: string; next?: string };
 }) {
+  const code = searchParams?.code ?? "";
   const tokenHash = searchParams?.token_hash ?? "";
-  const type = searchParams?.type ?? "";
+  const type = searchParams?.type ?? (searchParams?.flow === "signup" ? "signup" : "");
   const next = getSafeNext(searchParams?.next);
 
-  if (!tokenHash || !type) {
+  if ((!code && !tokenHash) || !type) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
         <Card className="w-full max-w-md">
@@ -32,13 +33,10 @@ export default function AuthConfirmPage({
     );
   }
 
-  const callbackUrl = getAuthRedirectUrl(
-    `/auth/callback?${new URLSearchParams({
-      token_hash: tokenHash,
-      type,
-      next,
-    }).toString()}`,
-  );
+  const callbackParams = new URLSearchParams({ type, next });
+  if (code) callbackParams.set("code", code);
+  else callbackParams.set("token_hash", tokenHash);
+  const callbackUrl = getAuthRedirectUrl(`/auth/callback?${callbackParams.toString()}`);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
@@ -51,7 +49,7 @@ export default function AuthConfirmPage({
         </CardHeader>
 
         <form action={callbackUrl} method="GET" className="mt-4 space-y-4">
-          <input type="hidden" name="token_hash" value={tokenHash} />
+          {code ? <input type="hidden" name="code" value={code} /> : <input type="hidden" name="token_hash" value={tokenHash} />}
           <input type="hidden" name="type" value={type} />
           <input type="hidden" name="next" value={next} />
           <Button type="submit" className="w-full">

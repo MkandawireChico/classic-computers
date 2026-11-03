@@ -2,39 +2,62 @@ import { listAddresses } from "@/lib/services/addresses";
 import { Badge } from "@/components/ui/badge";
 import { NewAddressForm } from "./new-address-form";
 import { DeleteAddressButton } from "./delete-address-button";
+import { EditAddressForm } from "./edit-address-form";
 
 export default async function AddressesPage() {
   const addresses = await listAddresses();
 
   return (
-    <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Addresses</h1>
+    <div className="space-y-6">
+      <div className="border-b border-slate-200 pb-5">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Checkout details</p>
+        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Addresses</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">Manage the delivery addresses saved to your account.</p>
+      </div>
 
       {addresses.length === 0 ? (
-        <p className="mb-4 text-sm text-gray-500">You haven&apos;t saved any addresses yet.</p>
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <h3 className="text-lg font-semibold text-slate-900">No saved addresses</h3>
+          <p className="mt-2 text-sm text-slate-600">Add a delivery address for faster checkout</p>
+        </div>
       ) : (
-        <div className="mb-4 space-y-3">
+        <div className="space-y-3">
           {addresses.map((address) => (
             <div
               key={address.id}
-              className="flex items-start justify-between rounded-card border border-surface-border p-4"
+              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
             >
-              <div>
-                <div className="flex items-center gap-2">
-                  {address.label ? <span className="text-sm font-medium text-gray-900">{address.label}</span> : null}
-                  {address.is_default ? <Badge variant="info">Default</Badge> : null}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3">
+                  {address.label ? <span className="text-base font-bold text-slate-900">{address.label}</span> : null}
+                  {address.is_default ? <Badge variant="info" className="text-xs">Default</Badge> : null}
                 </div>
-                <p className="text-sm text-gray-600">{address.line1}</p>
-                {address.line2 ? <p className="text-sm text-gray-600">{address.line2}</p> : null}
-                <p className="text-sm text-gray-600">{address.city}</p>
+                <div className="mt-2 space-y-1 text-sm text-slate-600">
+                  <p>{address.line1}</p>
+                  {address.line2 ? <p>{address.line2}</p> : null}
+                  <p>{address.city}</p>
+                </div>
               </div>
-              <DeleteAddressButton addressId={address.id} />
+                <div className="flex shrink-0 gap-2">
+                  <DeleteAddressButton addressId={address.id} />
+                </div>
+              </div>
+              <EditAddressForm address={address} />
             </div>
           ))}
         </div>
       )}
 
-      <NewAddressForm />
+      <section className="border-t border-slate-200 pt-6">
+        <h2 className="text-lg font-bold text-slate-950">Add an address</h2>
+        <p className="mt-1 text-sm leading-6 text-slate-600">Save another delivery address for checkout.</p>
+        <NewAddressForm />
+      </section>
     </div>
   );
 }

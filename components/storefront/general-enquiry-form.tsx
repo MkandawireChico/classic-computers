@@ -1,15 +1,20 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import Link from "next/link";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { submitGeneralEnquiryAction } from "./actions";
+import {
+  getOrCreateSubmissionKey,
+  markSubmissionComplete,
+  renewSubmissionKey,
+} from "@/lib/client/submission-key";
 
 export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const submissionKey = useRef<string | null>(null);
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -21,17 +26,22 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
     }
 
     startTransition(async () => {
-      const result = await submitGeneralEnquiryAction({
-        name: formData.get("name")?.toString() ?? "",
-        phone: phone || undefined,
-        email: email || undefined,
-        topic: formData.get("topic")?.toString() ?? "other",
-        message: formData.get("message")?.toString() ?? "",
-      });
+      submissionKey.current ??= getOrCreateSubmissionKey("general-enquiry");
+      const result = await submitGeneralEnquiryAction(
+        {
+          name: formData.get("name")?.toString() ?? "",
+          phone: phone || undefined,
+          email: email || undefined,
+          topic: formData.get("topic")?.toString() ?? "other",
+          message: formData.get("message")?.toString() ?? "",
+        },
+        submissionKey.current,
+      );
       if (!result.success) {
         setError(result.error);
         return;
       }
+      markSubmissionComplete("general-enquiry");
       setSubmitted(true);
     });
   }
@@ -48,6 +58,17 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
               : "."}
           </p>
         </Alert>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() => {
+            submissionKey.current = renewSubmissionKey("general-enquiry");
+            setSubmitted(false);
+          }}
+        >
+          Send another message
+        </Button>
       </div>
     );
   }
@@ -57,11 +78,11 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Your Information Section */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-gray-900">Your information</h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-1">
-            <label htmlFor="enquiry-name" className="text-sm font-medium text-gray-700">
+      <div className="space-y-5">
+        <h3 className="text-lg font-extrabold text-slate-900">Your information</h3>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <label htmlFor="enquiry-name" className="text-sm font-bold text-slate-700">
               Full name
             </label>
             <input
@@ -69,11 +90,11 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
               name="name"
               required
               autoComplete="name"
-              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
             />
           </div>
-          <div className="space-y-1">
-            <label htmlFor="enquiry-phone" className="text-sm font-medium text-gray-700">
+          <div className="space-y-2">
+            <label htmlFor="enquiry-phone" className="text-sm font-bold text-slate-700">
               Phone number
             </label>
             <input
@@ -83,12 +104,12 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
               autoComplete="tel"
               aria-describedby="enquiry-contact-requirement"
               placeholder="+265..."
-              className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
             />
           </div>
         </div>
-        <div className="space-y-1">
-          <label htmlFor="enquiry-email" className="text-sm font-medium text-gray-700">
+        <div className="space-y-2">
+          <label htmlFor="enquiry-email" className="text-sm font-bold text-slate-700">
             Email address
           </label>
           <input
@@ -98,61 +119,60 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             autoComplete="email"
             aria-describedby="enquiry-contact-requirement"
             placeholder="your@email.com"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
           />
-          <p id="enquiry-contact-requirement" className="text-xs text-gray-500">
+          <p id="enquiry-contact-requirement" className="text-sm text-slate-500">
             Enter a phone number or email address so we can reply. At least one is required.
           </p>
         </div>
       </div>
 
       {/* Enquiry Details Section */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-gray-900">Enquiry details</h3>
-        <div className="space-y-1">
-          <label htmlFor="enquiry-topic" className="text-sm font-medium text-gray-700">
+      <div className="space-y-5">
+        <h3 className="text-lg font-extrabold text-slate-900">Enquiry details</h3>
+        <div className="space-y-2">
+          <label htmlFor="enquiry-topic" className="text-sm font-bold text-slate-700">
             Enquiry topic
           </label>
           <select
             id="enquiry-topic"
             name="topic"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            defaultValue="product"
+            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
           >
             <option value="product">Product enquiry</option>
-            <option value="stock">Stock availability</option>
-            <option value="pricing">Pricing information</option>
-            <option value="rental">Rental enquiry</option>
-            <option value="repair">Repair enquiry</option>
+            <option value="rental">Laptop rental</option>
             <option value="corporate">Corporate supply</option>
-            <option value="other">Other</option>
+            <option value="repair">Repairs and technical support</option>
+            <option value="order_assistance">Order assistance</option>
+            <option value="other">General enquiry</option>
           </select>
         </div>
-        <div className="space-y-1">
-          <label htmlFor="enquiry-message" className="text-sm font-medium text-gray-700">
+        <div className="space-y-2">
+          <label htmlFor="enquiry-message" className="text-sm font-bold text-slate-700">
             Message
           </label>
           <textarea
             id="enquiry-message"
             name="message"
             required
-            rows={4}
+            rows={5}
             placeholder="How can we help you?"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full resize-none rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
           />
         </div>
       </div>
 
       {/* Actions */}
-      <div className="space-y-3">
-        <Button type="submit" isLoading={isPending} className="w-full" disabled={isPending}>
+      <div className="space-y-4">
+        <Button
+          type="submit"
+          isLoading={isPending}
+          className="min-h-12 w-full rounded-2xl bg-brand-700 px-6 py-4 text-base font-extrabold text-white shadow-lg shadow-brand-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-800 hover:shadow-xl"
+          disabled={isPending}
+        >
           Send Message
         </Button>
-        <Link
-          href="/"
-          className="block w-full text-center text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-        >
-          Cancel and return to homepage
-        </Link>
       </div>
     </form>
   );

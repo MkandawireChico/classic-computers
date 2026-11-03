@@ -66,7 +66,10 @@ export async function getPaymentMethods(): Promise<PaymentMethodsSetting> {
 }
 
 export async function getBusinessInfo(): Promise<BusinessInfo | null> {
-  return getPublicSetting<BusinessInfo>("business_info");
+  const businessInfo = await getPublicSetting<BusinessInfo>("business_info");
+  if (!businessInfo) return null;
+
+  return { ...businessInfo, phone_alt: "+265 884 482 088" };
 }
 
 export async function getHours(): Promise<HoursSetting | null> {

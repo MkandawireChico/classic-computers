@@ -57,7 +57,14 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
   const { orderId, newStatus } = parsed.data;
 
   const supabase = createClient();
-  const { data: order } = await (supabase.from("orders") as any).select("order_status").eq("id", orderId).maybeSingle();
+  const { data: order, error: lookupError } = await (supabase.from("orders") as any)
+    .select("order_status")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (lookupError) {
+    console.error("Order status lookup failed:", lookupError.message);
+    return { success: false, error: "Could not load the current order status." };
+  }
   if (!order) return { success: false, error: "Order not found." };
 
   const allowed = ORDER_STATUS_TRANSITIONS[order.order_status] ?? [];
@@ -69,7 +76,10 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
   // order_status_history row and an audit_logs entry on this update — no
   // separate call needed here.
   const { error } = await (supabase.from("orders") as any).update({ order_status: newStatus }).eq("id", orderId);
-  if (error) return { success: false, error: "Could not update order status." };
+  if (error) {
+    console.error("Order status update failed:", { orderId, code: error.code, message: error.message });
+    return { success: false, error: "Could not update order status. Check database permissions and try again." };
+  }
   return { success: true };
 }
 
@@ -82,7 +92,14 @@ export async function updatePaymentStatus(input: unknown): Promise<ServiceResult
   const { orderId, newPaymentStatus } = parsed.data;
 
   const supabase = createClient();
-  const { data: order } = await (supabase.from("orders") as any).select("payment_status").eq("id", orderId).maybeSingle();
+  const { data: order, error: lookupError } = await (supabase.from("orders") as any)
+    .select("payment_status")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (lookupError) {
+    console.error("Order payment status lookup failed:", lookupError.message);
+    return { success: false, error: "Could not load the current payment status." };
+  }
   if (!order) return { success: false, error: "Order not found." };
 
   const allowed = PAYMENT_STATUS_TRANSITIONS[order.payment_status] ?? [];
@@ -93,7 +110,10 @@ export async function updatePaymentStatus(input: unknown): Promise<ServiceResult
   const { error } = await (supabase.from("orders") as any)
     .update({ payment_status: newPaymentStatus })
     .eq("id", orderId);
-  if (error) return { success: false, error: "Could not update payment status." };
+  if (error) {
+    console.error("Order payment status update failed:", { orderId, code: error.code, message: error.message });
+    return { success: false, error: "Could not update payment status. Check database permissions and try again." };
+  }
   return { success: true };
 }
 
@@ -105,6 +125,9 @@ export async function updateInternalNotes(orderId: string, internalNotes: string
   // internal_notes (0035) — separate from orders.notes, which is the
   // customer's own checkout notes and must never be overwritten here.
   const { error } = await (supabase.from("orders") as any).update({ internal_notes: internalNotes }).eq("id", orderId);
-  if (error) return { success: false, error: "Could not update internal notes." };
+  if (error) {
+    console.error("Order internal notes update failed:", { orderId, code: error.code, message: error.message });
+    return { success: false, error: "Could not update internal notes. Check database permissions and try again." };
+  }
   return { success: true };
 }

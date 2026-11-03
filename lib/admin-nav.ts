@@ -4,6 +4,7 @@ export interface AdminNavItem {
   /** Permission key required to see this link. `null` means any staff
    * member (anyone who reaches the admin area at all) can see it. */
   permission: string | null;
+  anyPermissions?: string[];
 }
 
 export interface AdminNavGroup {
@@ -34,6 +35,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: "/admin/orders", label: "Orders", permission: "orders.read" },
       { href: "/admin/discounts", label: "Discounts", permission: "settings.write" },
       { href: "/admin/customers", label: "Customers", permission: "customers.read" },
+      { href: "/admin/analytics", label: "Customer interest analytics", permission: "reports.read" },
       { href: "/admin/reviews", label: "Reviews", permission: "reviews.read" },
     ],
   },
@@ -57,14 +59,16 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: "Administration",
     items: [
+      {
+        href: "/admin/email-notifications",
+        label: "Email notifications",
+        permission: "email.notifications.read",
+        anyPermissions: ["customers.read", "rentals.read", "repairs.read", "students.read", "orders.read"],
+      },
       { href: "/admin/users", label: "Staff & Roles", permission: "users.manage" },
-      // "Notifications" and "Audit Logs" are intentionally omitted here:
-      // neither has a dedicated admin page yet (the header notification
-      // bell exists; a full /admin/notifications list page and an
-      // /admin/audit-logs viewer were both explicitly deferred — see the
-      // Phase 5 and Phase 6 reports). Per the brief's own "when
-      // available" qualifier for Audit Logs, and to avoid a dead link,
-      // both stay out of the nav until those pages actually exist.
+      // The email delivery queue has its own link above. The in-app admin
+      // notification list and audit-log viewer remain deferred; neither
+      // should be linked here until those pages are implemented.
     ],
   },
 ];
