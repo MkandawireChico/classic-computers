@@ -10,7 +10,8 @@ const OFFERINGS = [
 ];
 
 export async function CorporateSupplySection() {
-  const [promo] = await getSiteMedia("corporate_promo", 1);
+  const promoMedia = await getSiteMedia("corporate_promo", 1);
+  const promo = promoMedia[0] ?? null;
   const promoUrl = promo ? getPublicStorageUrl("site-media", promo.storage_path) : null;
   return (
     <section aria-labelledby="corporate-supply-heading" className="relative isolate overflow-hidden bg-[#17344d] text-white">
