@@ -61,10 +61,10 @@ export function MobileNav({
               />
               <div
                 id="mobile-nav-panel"
-                className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col overflow-hidden border-b border-emerald-100 bg-gradient-to-br from-amber-50 via-white to-emerald-50 shadow-xl shadow-slate-900/10"
+                className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col overflow-hidden border-b border-slate-200 bg-white shadow-xl shadow-slate-900/10"
               >
-                <div className="flex shrink-0 items-center justify-between border-b border-emerald-100 px-4 py-3">
-                  <p className="text-sm font-bold uppercase tracking-wider text-slate-700">Menu</p>
+                <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
+                  <p className="text-sm font-bold uppercase tracking-wider text-navy-800">Menu</p>
                   <button
                     type="button"
                     aria-label="Close navigation"
@@ -79,8 +79,8 @@ export function MobileNav({
                   aria-label="Mobile"
                   className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4"
                 >
-                  <div className="rounded-2xl border border-violet-100 bg-white/90 p-3">
-                    <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-violet-800">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-700">
                       Account
                     </p>
                     <div className="grid grid-cols-2 gap-1">
@@ -105,7 +105,7 @@ export function MobileNav({
                           <Link
                             href="/sign-up"
                             onClick={() => setOpen(false)}
-                            className="flex min-h-11 items-center justify-center rounded-xl bg-violet-700 px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
+                            className="flex min-h-11 items-center justify-center rounded-xl bg-brand-600 px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
                           >
                             Create Account
                           </Link>
@@ -124,7 +124,7 @@ export function MobileNav({
                   </div>
 
                   {shopLinks.length > 0 ? (
-                    <div className="rounded-2xl border border-brand-100 bg-white/80 p-3">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
                       <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-brand-800">
                         Shop
                       </p>
@@ -144,8 +144,8 @@ export function MobileNav({
                   ) : null}
 
                   {serviceLinks.length > 0 ? (
-                    <div className="rounded-2xl border border-emerald-100 bg-white/80 p-3">
-                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-emerald-800">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
+                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-brand-700">
                         Services
                       </p>
                       <div className="flex flex-col gap-1">
@@ -164,8 +164,8 @@ export function MobileNav({
                   ) : null}
 
                   {infoLinks.length > 0 ? (
-                    <div className="rounded-2xl border border-amber-100 bg-white/80 p-3">
-                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-amber-900">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-3">
+                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-700">
                         Information
                       </p>
                       <div className="flex flex-col gap-1">
