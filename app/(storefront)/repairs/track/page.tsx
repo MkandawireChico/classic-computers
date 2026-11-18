@@ -15,12 +15,12 @@ export default async function TrackRepairPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-2xl py-12 sm:py-14">
+    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-2xl py-12 sm:py-14">
       <header className="rounded-[1.5rem] bg-[#081827] p-6 text-white shadow-xl shadow-slate-900/10 sm:p-8">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Repair support</p>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Track a repair</h1>
         {user ? (
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm leading-6 text-slate-300">
             Signed-in customers can see all their repairs directly in{" "}
             <Link href="/account/repairs" className="font-semibold text-cyan-300 underline underline-offset-4 hover:text-cyan-200">
               My Repairs
