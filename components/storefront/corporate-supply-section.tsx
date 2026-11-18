@@ -1,4 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 const OFFERINGS = [
   { number: "01", title: "Equipment supply", detail: "Computers and ICT equipment for teams and organisations." },
@@ -6,7 +9,9 @@ const OFFERINGS = [
   { number: "03", title: "Rental enquiries", detail: "Ask about equipment rental options for your organisation." },
 ];
 
-export function CorporateSupplySection() {
+export async function CorporateSupplySection() {
+  const [promo] = await getSiteMedia("corporate_promo", 1);
+  const promoUrl = promo ? getPublicStorageUrl("site-media", promo.storage_path) : null;
   return (
     <section aria-labelledby="corporate-supply-heading" className="relative isolate overflow-hidden bg-[#17344d] text-white">
       <div aria-hidden="true" className="absolute inset-y-0 right-0 w-[55%] bg-[radial-gradient(ellipse_at_80%_50%,rgba(8,130,177,0.24),transparent_60%)]" />
@@ -33,16 +38,35 @@ export function CorporateSupplySection() {
             </div>
           </div>
 
-          <div className="border-y border-white/15">
-            {OFFERINGS.map((item) => (
-              <div key={item.number} className="grid grid-cols-[42px_1fr] gap-4 border-b border-white/15 py-6 last:border-b-0 sm:grid-cols-[54px_1fr] sm:gap-6 sm:py-7">
-                <span className="pt-1 font-mono text-xs text-cyan-300">{item.number}</span>
-                <div>
-                  <h3 className="text-lg font-bold tracking-tight text-white sm:text-xl">{item.title}</h3>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-200">{item.detail}</p>
-                </div>
+          <div className="space-y-6">
+            {promoUrl ? (
+              <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/20">
+                <Image
+                  src={promoUrl}
+                  alt={promo.alt_text || "Corporate technology supply from Classic Computers"}
+                  fill
+                  sizes="(max-width: 1023px) 100vw, 48vw"
+                  className="object-cover"
+                />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-transparent" />
+                {promo.title ? (
+                  <p className="absolute bottom-4 left-4 rounded-lg border border-white/25 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white backdrop-blur">
+                    {promo.title}
+                  </p>
+                ) : null}
               </div>
-            ))}
+            ) : null}
+            <div className="border-y border-white/15">
+              {OFFERINGS.map((item) => (
+                <div key={item.number} className="grid grid-cols-[42px_1fr] gap-4 border-b border-white/15 py-6 last:border-b-0 sm:grid-cols-[54px_1fr] sm:gap-6 sm:py-7">
+                  <span className="pt-1 font-mono text-xs text-cyan-300">{item.number}</span>
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight text-white sm:text-xl">{item.title}</h3>
+                    <p className="mt-2 max-w-md text-sm leading-6 text-slate-200">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
