@@ -8,16 +8,16 @@ export default async function AccountReferralsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My benefits</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Referrals</h1>
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My benefits</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Referrals</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Share your referral code. Referrals and any configured rewards appear here.</p>
       </div>
 
       {referralCode ? (
-        <div className="flex flex-col gap-4 rounded-xl border border-emerald-200 bg-emerald-50/60 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="flex flex-col gap-4 rounded-xl border border-brand-200 bg-brand-50/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-900">Your referral code</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-brand-900">Your referral code</p>
             <p className="mt-2 font-mono text-2xl font-extrabold text-slate-950">{referralCode}</p>
             <p className="mt-2 max-w-xl text-sm leading-6 text-slate-700">Share this code with friends. Referrals that use it when signing up are listed below.</p>
           </div>
@@ -26,7 +26,7 @@ export default async function AccountReferralsPage() {
       ) : null}
 
       {referrals.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
@@ -40,7 +40,7 @@ export default async function AccountReferralsPage() {
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-slate-900">Referral History</h2>
           {referrals.map((r) => (
-            <div key={r.id} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <div key={r.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm text-slate-600">
