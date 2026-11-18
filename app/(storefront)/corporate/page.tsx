@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getBusinessInfo } from "@/lib/data/site-settings";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 import { ProductEnquiry } from "@/components/product/product-enquiry";
 
 export const metadata: Metadata = {
@@ -9,25 +12,49 @@ export const metadata: Metadata = {
 };
 
 export default async function CorporatePage() {
-  const businessInfo = await getBusinessInfo();
+  const [businessInfo, promoMedia] = await Promise.all([
+    getBusinessInfo(),
+    getSiteMedia("corporate_promo", 1),
+  ]);
+  const promo = promoMedia[0] ?? null;
+  const promoUrl = promo ? getPublicStorageUrl("site-media", promo.storage_path) : null;
 
   return (
     <div className="section-shell pb-16 pt-5 sm:pt-8">
-      <header className="relative isolate overflow-hidden rounded-[2rem] bg-[#081827] px-6 py-12 text-white shadow-panel sm:px-10 sm:py-16 lg:px-14">
+      <header className={`relative isolate overflow-hidden rounded-[2rem] bg-[#17344d] px-6 py-12 text-white shadow-panel sm:px-10 sm:py-16 lg:px-14 ${promoUrl ? "grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12" : ""}`}>
         <div
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(8,145,178,0.28),transparent_46%),linear-gradient(125deg,#081827_10%,#102d42_100%)]"
         />
-        <p className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cyan-300">
-          Business solutions
-        </p>
-        <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-          Corporate &amp; Bulk ICT Supply
-        </h1>
-        <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-lg">
-          Classic Computers LLC supplies reliable ICT equipment to organisations in Blantyre. Tell
-          us your requirements, and our team will prepare a tailored quotation for you.
-        </p>
+        <div className="relative z-10">
+          <p className="inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
+            Business solutions
+          </p>
+          <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
+            Corporate &amp; Bulk ICT Supply
+          </h1>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-100 sm:text-lg">
+            Classic Computers LLC supplies reliable ICT equipment to organisations in Blantyre. Tell
+            us your requirements, and our team will prepare a tailored quotation for you.
+          </p>
+        </div>
+        {promoUrl ? (
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/25">
+            <Image
+              src={promoUrl}
+              alt={promo?.alt_text ?? "Corporate ICT equipment supply from Classic Computers"}
+              fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 42vw"
+              className="object-cover"
+            />
+            {promo?.title ? (
+              <p className="absolute bottom-4 left-4 rounded-lg border border-white/25 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white backdrop-blur">
+                {promo.title}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </header>
 
       <div className="mt-6 grid items-stretch gap-5 md:grid-cols-2 md:gap-6">
