@@ -14,6 +14,7 @@ async function getHeroProducts(): Promise<ProductListItem[]> {
 
 export async function Hero() {
   const products = await getHeroProducts();
+  const leadProduct = products[0];
 
   return (
     <section aria-labelledby="hero-heading" className="relative isolate overflow-hidden bg-[#071321] text-white">
@@ -66,9 +67,9 @@ export async function Hero() {
 
           <div className="relative mx-auto w-full max-w-[660px] lg:ml-auto">
             <div aria-hidden="true" className="absolute left-[18%] top-[12%] h-[70%] w-[70%] rounded-full bg-cyan-400/10 blur-3xl" />
-            {products.length > 0 ? (
+            {leadProduct ? (
               <div className="relative grid grid-cols-[1.15fr_0.85fr] items-center gap-3 sm:gap-4">
-                <HeroProduct product={products[0]} featured />
+                <HeroProduct product={leadProduct} featured />
                 <div className="flex flex-col gap-3 sm:gap-4">
                   {products.slice(1, 3).map((product) => <HeroProduct key={product.id} product={product} />)}
                   {products.length === 1 ? (
