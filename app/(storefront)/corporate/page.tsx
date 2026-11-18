@@ -13,15 +13,15 @@ export default async function CorporatePage() {
 
   return (
     <div className="section-shell pb-16 pt-5 sm:pt-8">
-      <header className="relative isolate overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-10 text-white shadow-panel sm:px-10 sm:py-14 lg:px-14">
+      <header className="relative isolate overflow-hidden rounded-[2rem] bg-[#081827] px-6 py-12 text-white shadow-panel sm:px-10 sm:py-16 lg:px-14">
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.28),transparent_46%),linear-gradient(125deg,#0f172a_10%,#102d37_100%)]"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(8,145,178,0.28),transparent_46%),linear-gradient(125deg,#081827_10%,#102d42_100%)]"
         />
-        <p className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-emerald-300">
+        <p className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cyan-300">
           Business solutions
         </p>
-        <h1 className="mt-5 max-w-3xl text-balance text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+        <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
           Corporate &amp; Bulk ICT Supply
         </h1>
         <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-lg">
@@ -32,7 +32,7 @@ export default async function CorporatePage() {
 
       <div className="mt-6 grid items-stretch gap-5 md:grid-cols-2 md:gap-6">
         <section className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-panel sm:p-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-800">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-6 w-6">
               <path
                 d="M8 5h8M8 9h8M8 13h5m-8 8V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v17l-7-4-7 4Z"
@@ -52,7 +52,7 @@ export default async function CorporatePage() {
           </p>
           <Link
             href="/corporate/enquire"
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200 focus-visible:ring-offset-2 sm:w-auto"
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-cyan-500 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 sm:w-auto"
           >
             Start Enquiry
             <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="ml-2 h-4 w-4">
