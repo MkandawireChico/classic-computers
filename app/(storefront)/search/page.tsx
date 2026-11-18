@@ -25,22 +25,18 @@ export default async function SearchPage({
   const result = query.trim() ? await searchShop(filters) : { items: [], total: 0, page: 1, pageSize: 24 };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Search</h1>
-      <div className="mt-4 max-w-md">
-        <SearchBox initialQuery={query} />
-      </div>
-
-      {query.trim() ? (
+    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14">
+      <header className="rounded-[1.5rem] bg-[#081827] p-6 text-white sm:p-8"><p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Find your technology</p><h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Search the catalogue</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Search by product name, brand or SKU to find equipment available from Classic Computers.</p><div className="mt-6 max-w-2xl"><SearchBox initialQuery={query} /></div></header>
+            {query.trim() ? (
         <>
           <SearchInterestTracker searchTerm={query} resultCount={result.total} />
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-gray-600" aria-live="polite">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-medium text-slate-600" aria-live="polite">
               {result.total} result{result.total === 1 ? "" : "s"} for &ldquo;{query}&rdquo;
             </p>
             <SortSelect />
           </div>
-          <div className="mt-4">
+          <div className="mt-5">
             <ProductGrid
               products={result.items}
               searchResults
@@ -56,8 +52,8 @@ export default async function SearchPage({
           />
         </>
       ) : (
-        <p className="mt-8 text-sm text-gray-500">Enter a product name, brand or SKU to search.</p>
+        <p className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600">Enter a product name, brand or SKU above to search the catalogue.</p>
       )}
-    </div>
+    </div></main>
   );
 }
