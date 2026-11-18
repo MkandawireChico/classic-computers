@@ -37,35 +37,35 @@ const SERVICES = [
 
 export function ServicesSection() {
   return (
-    <section aria-labelledby="services-heading" className="border-y border-emerald-100 bg-gradient-to-br from-amber-50 via-white to-emerald-50">
+    <section aria-labelledby="services-heading" className="border-y border-slate-200 bg-slate-50/80">
       <div className="section-shell py-14 sm:py-18 lg:py-20">
         <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-3">
-            <p className="inline-flex rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-800 shadow-sm">
+            <p className="inline-flex rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-800 shadow-sm">
               More from Classic Computers
             </p>
             <h2 id="services-heading" className="text-h2 font-extrabold leading-tight text-slate-900">
-              Services and <span className="text-emerald-700">support</span>
+              Services and <span className="text-brand-700">support</span>
             </h2>
             <p className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
               Practical help for work, study, and keeping your technology running.
             </p>
           </div>
-          <div aria-hidden="true" className="hidden h-1.5 w-28 shrink-0 rounded-full bg-gradient-to-r from-amber-400 via-emerald-500 to-brand-500 sm:mb-2 sm:block" />
+          <div aria-hidden="true" className="hidden h-1.5 w-28 shrink-0 rounded-full bg-gradient-to-r from-brand-500 via-cyan-400 to-brand-700 sm:mb-2 sm:block" />
         </div>
         <div className="grid items-stretch grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {SERVICES.map((service) => (
             <Link
               key={service.href}
               href={service.href}
-              className="group flex h-full flex-col rounded-2xl border border-slate-200 border-t-4 border-t-emerald-500 bg-white/95 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-950/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:p-6"
+              className="group flex h-full flex-col rounded-2xl border border-slate-200 border-t-4 border-t-brand-500 bg-white/95 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-brand-300 hover:shadow-xl hover:shadow-emerald-950/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-6"
             >
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 transition-colors group-hover:bg-emerald-200">
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-800 transition-colors group-hover:bg-brand-100">
                 {service.icon}
               </div>
               <h3 className="text-xl font-bold leading-snug text-slate-900">{service.title}</h3>
               <p className="mt-3 flex-1 text-base leading-relaxed text-slate-600">{service.description}</p>
-              <span className="mt-5 inline-flex items-center text-sm font-bold text-emerald-800">
+              <span className="mt-5 inline-flex items-center text-sm font-bold text-brand-800">
                 Explore service
               </span>
             </Link>
