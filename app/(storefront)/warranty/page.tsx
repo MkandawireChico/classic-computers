@@ -27,7 +27,7 @@ export default function WarrantyPage() {
             before purchase.
           </p>
         </article>
-        <article className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm sm:p-7">
+        <article className="rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-5 shadow-sm sm:p-7">
           <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-900">
             Pre-owned laptops
           </span>
