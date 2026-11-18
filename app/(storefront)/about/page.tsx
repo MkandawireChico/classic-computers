@@ -23,7 +23,7 @@ const services = [
     title: "Laptop rentals",
     description:
       "Rental options for organisations, training programmes, conferences, projects and other temporary needs.",
-    tone: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    tone: "border-cyan-200 bg-cyan-50 text-cyan-800",
   },
   {
     number: "03",
@@ -37,7 +37,7 @@ const services = [
     title: "Printers and office equipment",
     description:
       "Printing solutions and office technology for individuals, businesses and institutions.",
-    tone: "border-violet-200 bg-violet-50 text-violet-800",
+    tone: "border-slate-200 bg-slate-50 text-slate-700",
   },
   {
     number: "05",
@@ -65,7 +65,7 @@ export default async function AboutPage() {
       <section aria-labelledby="what-we-do-heading">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">
               What we do
             </p>
             <h2
@@ -128,7 +128,7 @@ export default async function AboutPage() {
               >
                 <span
                   aria-hidden="true"
-                  className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800"
+                  className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-cyan-800"
                 >
                   ✓
                 </span>
@@ -140,9 +140,9 @@ export default async function AboutPage() {
 
         <section
           aria-labelledby="visit-heading"
-          className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-brand-50 p-5 shadow-sm sm:p-7"
+          className="rounded-2xl border border-cyan-100 bg-gradient-to-br from-cyan-50 via-white to-white p-5 shadow-sm sm:p-7"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Visit us</p>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Visit us</p>
           <h2 id="visit-heading" className="mt-2 text-2xl font-black text-slate-900">
             Find us in Blantyre
           </h2>
