@@ -34,7 +34,7 @@ export default async function ShopPage({
           <span aria-current="page" className="text-slate-700">Shop</span>
         </nav>
 
-        <header className="overflow-hidden rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-[#123a55] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
+        <header className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#17344d] via-[#1d4562] to-[#17617b] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">The Classic Computers store</p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
