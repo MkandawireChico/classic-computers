@@ -42,7 +42,7 @@ export default async function BookRentalPage({
     selectedProduct?.rentalProductId ?? products[0]?.rentalProductId ?? "";
 
   return (
-    <div className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-5xl py-10 sm:py-14">
+    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-5xl py-10 sm:py-14">
       <div className="mb-8 rounded-[1.5rem] bg-[#081827] px-6 py-7 text-white shadow-xl shadow-slate-900/10 sm:px-8 sm:py-9">
         <Link href="/rentals" className="inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 transition-colors hover:text-cyan-200">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
