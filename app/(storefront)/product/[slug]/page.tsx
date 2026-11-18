@@ -122,7 +122,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-white to-emerald-50/40">
+    <div className="min-h-screen bg-slate-50/60">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       {/* eslint-disable-next-line react/no-danger */}
@@ -130,40 +130,40 @@ export default async function ProductPage({ params }: { params: Params }) {
 
       <div className="section-shell py-6 sm:py-8 lg:py-10">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-          <Link href="/shop" className="rounded px-1 font-semibold text-emerald-800 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600">
+          <Link href="/shop" className="rounded px-1 font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             Shop
           </Link>
           {product.category ? (
             <>
-              <span aria-hidden="true" className="text-amber-600">/</span>
-              <Link href={`/shop/${product.category.slug}`} className="rounded px-1 font-semibold text-emerald-800 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600">
+              <span aria-hidden="true" className="text-slate-300">/</span>
+              <Link href={`/shop/${product.category.slug}`} className="rounded px-1 font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
                 {formatCategoryName(product.category.name)}
               </Link>
             </>
           ) : null}
-          <span aria-hidden="true" className="text-amber-600">/</span>
+          <span aria-hidden="true" className="text-slate-300">/</span>
           <span aria-current="page" className="min-w-0 text-slate-600">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-8">
-          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-3 shadow-lg shadow-emerald-950/5 sm:p-5">
+          <div className="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5">
             <ProductGallery images={product.images} productName={product.name} productId={product.id} />
           </div>
 
-          <div className="rounded-3xl border border-amber-100 bg-white/95 p-5 shadow-lg shadow-amber-950/5 sm:p-7 lg:p-8">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:p-8">
             <div className="mb-5">
               {product.brand ? (
-                <p className="mb-3 inline-flex rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-violet-800">
+                <p className="mb-3 inline-flex rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
                   {product.brand.name}
                 </p>
               ) : null}
-              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">{product.name}</h1>
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-navy-900 sm:text-4xl">{product.name}</h1>
               <p className="mt-3 inline-flex rounded-md bg-slate-100 px-2.5 py-1 font-mono text-xs font-medium text-slate-700">
                 SKU: {product.sku}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/70 to-white p-4 sm:p-5">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
               <PurchasePanel
                 product={product}
                 businessInfo={businessInfo}
@@ -174,13 +174,13 @@ export default async function ProductPage({ params }: { params: Params }) {
             </div>
 
             {product.warranty_text ? (
-              <div className="mt-4 flex min-h-11 items-center justify-center gap-2.5 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 text-sm">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-violet-700" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <div className="mt-4 flex min-h-11 items-center justify-center gap-2.5 rounded-2xl border border-brand-100 bg-brand-50/70 p-4 text-sm">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-brand-700" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M12 3.5 5.5 6v4.5c0 3.7 2.3 7.1 6.5 9.5 4.2-2.4 6.5-5.8 6.5-9.5V6L12 3.5Z" />
                     <path d="m9.5 12 1.5 1.5 3.5-4" />
                   </svg>
-                  <span className="whitespace-nowrap font-bold text-violet-900">Warranty</span>
-                  <span aria-hidden="true" className="h-4 w-px bg-violet-300" />
+                  <span className="whitespace-nowrap font-bold text-brand-900">Warranty</span>
+                  <span aria-hidden="true" className="h-4 w-px bg-brand-200" />
                   <span className="whitespace-nowrap font-semibold text-slate-800">{product.warranty_text}</span>
               </div>
             ) : null}
@@ -192,9 +192,9 @@ export default async function ProductPage({ params }: { params: Params }) {
         </div>
 
         {product.description ? (
-          <section className="mt-8 rounded-3xl border border-amber-100 bg-gradient-to-br from-amber-50/70 via-white to-rose-50/50 p-5 shadow-sm sm:mt-10 sm:p-7">
+          <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:mt-10 sm:p-7">
             <div className="mb-4 flex items-center gap-3">
-              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-brand-600" />
               <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Description</h2>
             </div>
             <p className="whitespace-pre-line text-sm leading-7 text-slate-700 sm:text-base">{product.description}</p>
@@ -204,7 +204,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         {product.specifications.length > 0 ? (
           <section className="mt-8 sm:mt-10">
             <div className="mb-4 flex items-center gap-3">
-              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-emerald-500" />
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-cyan-500" />
               <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Specifications</h2>
             </div>
             <SpecificationsTable specifications={product.specifications} />
@@ -219,12 +219,12 @@ export default async function ProductPage({ params }: { params: Params }) {
               </div>
               <Link
                 href="/reviews"
-                className="rounded-sm text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                className="rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
               >
                 View all reviews
               </Link>
             </div>
-            <div className="rounded-3xl border border-amber-100 bg-gradient-to-br from-amber-50/70 via-white to-rose-50/50 p-5 shadow-sm sm:p-7">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
