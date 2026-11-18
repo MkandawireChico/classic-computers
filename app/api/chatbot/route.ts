@@ -190,6 +190,8 @@ export async function POST(request: NextRequest) {
       shop: "/shop",
       rentals: "/rentals",
       repairs: "/repairs",
+      repair_tracking: "/repairs/track",
+      rental_tracking: "/rentals/track",
       contact: "/contact",
       corporate_supply: "/corporate",
     },
