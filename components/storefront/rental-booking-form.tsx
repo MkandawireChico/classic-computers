@@ -218,7 +218,7 @@ export function RentalBookingForm({
                     isCompleted
                       ? "bg-emerald-600 text-white"
                       : isActive
-                      ? "bg-violet-600 text-white"
+                      ? "bg-brand-700 text-white"
                       : "bg-slate-200 text-slate-600"
                   }`}
                 >
@@ -232,7 +232,7 @@ export function RentalBookingForm({
                 </div>
                 <p
                   className={`mt-2 text-xs font-medium ${
-                    isActive ? "text-violet-700" : isCompleted ? "text-emerald-600" : "text-slate-500"
+                    isActive ? "text-brand-700" : isCompleted ? "text-brand-700" : "text-slate-500"
                   }`}
                 >
                   {step.title}
@@ -266,7 +266,7 @@ export function RentalBookingForm({
                   setRentalProductId(e.target.value);
                   setAvailability(null);
                 }}
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 {products.map((p) => (
                   <option key={p.rentalProductId} value={p.rentalProductId}>
@@ -313,7 +313,7 @@ export function RentalBookingForm({
                     setStartDate(e.target.value);
                     checkAvailability(e.target.value, endDate);
                   }}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 {validationErrors.startDate && (
                   <p className="text-sm text-rose-600">{validationErrors.startDate}</p>
@@ -331,7 +331,7 @@ export function RentalBookingForm({
                     setEndDate(e.target.value);
                     checkAvailability(startDate, e.target.value);
                   }}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 {validationErrors.endDate && (
                   <p className="text-sm text-rose-600">{validationErrors.endDate}</p>
@@ -350,7 +350,7 @@ export function RentalBookingForm({
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
                 placeholder="e.g. 1"
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
               {validationErrors.quantity && (
                 <p className="text-sm text-rose-600">{validationErrors.quantity}</p>
@@ -358,7 +358,7 @@ export function RentalBookingForm({
             </div>
             {availability !== null ? (
               <p
-                className={`text-sm ${availability >= quantity ? "text-emerald-600" : "text-rose-600"}`}
+                className={`text-sm ${availability >= quantity ? "text-brand-700" : "text-rose-600"}`}
               >
                 {availability} unit(s) available for those dates.{" "}
                 <span className="text-xs text-slate-400">(re-checked when you submit)</span>
@@ -381,7 +381,7 @@ export function RentalBookingForm({
                   value={formData.guestName}
                   onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
                   autoComplete="name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 {validationErrors.guestName && (
                   <p className="text-sm text-rose-600">{validationErrors.guestName}</p>
@@ -398,7 +398,7 @@ export function RentalBookingForm({
                   onChange={(e) => setFormData({ ...formData, guestPhone: e.target.value })}
                   autoComplete="tel"
                   placeholder="+265..."
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 {validationErrors.guestPhone && (
                   <p className="text-sm text-rose-600">{validationErrors.guestPhone}</p>
@@ -416,7 +416,7 @@ export function RentalBookingForm({
                 onChange={(e) => setFormData({ ...formData, guestEmail: e.target.value })}
                 autoComplete="email"
                 placeholder="your@email.com"
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
           </div>
@@ -471,7 +471,7 @@ export function RentalBookingForm({
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 rows={3}
                 placeholder="Any special requirements or notes"
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
           </div>
@@ -495,7 +495,7 @@ export function RentalBookingForm({
               type="button"
               onClick={nextStep}
               disabled={isPending}
-              className="flex-1 bg-violet-600 hover:bg-violet-700"
+              className="flex-1 bg-brand-700 hover:bg-brand-800"
             >
               Continue
             </Button>
@@ -504,7 +504,7 @@ export function RentalBookingForm({
               type="submit"
               isLoading={isPending}
               disabled={isPending}
-              className="flex-1 bg-violet-600 hover:bg-violet-700"
+              className="flex-1 bg-brand-700 hover:bg-brand-800"
             >
               Submit Request
             </Button>
@@ -514,7 +514,7 @@ export function RentalBookingForm({
 
       <Link
         href="/rentals"
-        className="block text-center text-sm font-medium text-slate-600 transition-colors hover:text-violet-600"
+        className="block text-center text-sm font-medium text-slate-600 transition-colors hover:text-brand-700"
       >
         Cancel and return to rentals
       </Link>
