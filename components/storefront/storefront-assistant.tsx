@@ -81,7 +81,11 @@ export function StorefrontAssistant() {
         return;
       }
       setProducts(data.products ?? []);
-      setMessages((current) => [...current, { role: "assistant", content: data.message }].slice(-12));
+      const assistantMessage: ChatMessage = {
+        role: "assistant",
+        content: typeof data.message === "string" ? data.message : "I could not prepare a response. Please contact our team for help.",
+      };
+      setMessages((current) => [...current, assistantMessage].slice(-12));
     } catch {
       setError("We could not reach the assistant. Please try again or contact our team.");
     } finally {
