@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
 
 const FOOTER_COLUMNS = [
@@ -40,11 +43,28 @@ const FOOTER_COLUMNS = [
 ];
 
 export async function SiteFooter() {
-  const [businessInfo, hours] = await Promise.all([getBusinessInfo(), getHours()]);
+  const [businessInfo, hours, footerLogoMedia, headerLogoMedia] = await Promise.all([
+    getBusinessInfo(),
+    getHours(),
+    getSiteMedia("footer_logo" as any, 1),
+    getSiteMedia("logo" as any, 1),
+  ]);
+  const logo = footerLogoMedia[0] ?? headerLogoMedia[0] ?? null;
+  const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
 
   return (
-    <footer className="border-t border-navy-800 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 text-slate-300">
+    <footer className="border-t border-[#31516b] bg-gradient-to-br from-[#17344d] via-[#1b3c56] to-[#153149] text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+        <div className="mb-10 flex flex-col gap-4 border-b border-white/25 pb-8 sm:flex-row sm:items-center">
+          {logoUrl ? (
+            <div className="relative h-14 w-40 shrink-0 overflow-hidden rounded-lg bg-white p-2">
+              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="160px" className="object-contain p-2" />
+            </div>
+          ) : (
+            <p className="text-xl font-black tracking-tight text-white">Classic <span className="text-cyan-300">Computers</span></p>
+          )}
+          <p className="max-w-md text-sm leading-6 text-slate-100">Technology for work, business and everyday life. Sales, rentals, repairs and ICT support in Blantyre.</p>
+        </div>
         <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4 lg:gap-12">
           {/* Navigation Columns */}
           <div className="contents">
@@ -80,10 +100,10 @@ export async function SiteFooter() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-200">
                         Address
                       </p>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                      <p className="mt-1 text-sm leading-relaxed text-slate-100">
                         {businessInfo.address}
                       </p>
                     </div>
@@ -151,7 +171,7 @@ export async function SiteFooter() {
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       Hours
                     </p>
-                    <p className="mt-1 text-sm text-slate-300">{hours.schedule}</p>
+                    <p className="mt-1 text-sm text-slate-100">{hours.schedule}</p>
                   </div>
                 </div>
               ) : null}
@@ -175,7 +195,7 @@ export async function SiteFooter() {
                     </p>
                     <a
                       href={`tel:${businessInfo.phone}`}
-                      className="mt-1 block text-sm font-bold text-white transition-colors hover:text-brand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                      className="mt-1 block text-sm font-bold text-white transition-colors hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                     >
                       {businessInfo.phone}
                     </a>
@@ -252,8 +272,8 @@ export async function SiteFooter() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="border-t border-white/10 bg-navy-950/70 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-        <div className="mx-auto max-w-7xl text-center text-xs text-slate-400 sm:text-sm">
+      <div className="border-t border-white/20 bg-[#10283d] px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <div className="mx-auto max-w-7xl text-center text-xs text-slate-200 sm:text-sm">
           © {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.
         </div>
       </div>
