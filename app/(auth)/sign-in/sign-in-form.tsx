@@ -14,7 +14,7 @@ const initialState: AuthActionState = { error: null };
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" isLoading={pending} className="min-h-12 w-full rounded-2xl bg-brand-700 px-6 py-4 text-base font-extrabold text-white shadow-lg shadow-brand-900/10 transition-all duration-300 hover:bg-brand-800 hover:shadow-xl hover:-translate-y-0.5">
+    <Button type="submit" isLoading={pending} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
       Sign in
     </Button>
   );
@@ -122,7 +122,7 @@ export function SignInForm({ redirectTo }: { redirectTo?: string }) {
             type="email"
             autoComplete="email"
             required
-            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
           />
         </div>
 
@@ -131,7 +131,7 @@ export function SignInForm({ redirectTo }: { redirectTo?: string }) {
             <label htmlFor="password" className="text-sm font-bold text-slate-700">
               Password
             </label>
-            <a href="/reset-password" className="text-sm font-bold text-brand-700 hover:text-brand-600 transition-colors">
+            <a href="/reset-password" className="text-sm font-bold text-cyan-800 hover:text-cyan-600 transition-colors">
               Forgot password?
             </a>
           </div>
@@ -141,7 +141,7 @@ export function SignInForm({ redirectTo }: { redirectTo?: string }) {
             type="password"
             autoComplete="current-password"
             required
-            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+            className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
           />
         </div>
 
