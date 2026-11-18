@@ -11,8 +11,8 @@ export default async function ComparePage() {
 
   if (products.length === 0) {
     return (
-      <div>
-        <h1 className="mb-4 text-xl font-semibold text-gray-900">Compare</h1>
+      <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14"><div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <h1 className="mb-4 text-2xl font-semibold tracking-tight text-[#102033] sm:text-3xl">Compare products</h1>
         <p className="text-sm text-gray-500">
           Nothing to compare yet. Use the &ldquo;Compare&rdquo; button on product cards in the{" "}
           <Link href="/shop" className="text-brand-600 hover:underline">
@@ -20,7 +20,7 @@ export default async function ComparePage() {
           </Link>{" "}
           to add up to 4 products.
         </p>
-      </div>
+      </div></div></main>
     );
   }
 
@@ -29,9 +29,9 @@ export default async function ComparePage() {
   const sameType = firstProductType ? products.every((p) => p.productType === firstProductType) : false;
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Compare</h1>
+    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14"><div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-[#081827] p-5 text-white sm:p-7">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Compare products</h1>
         <ClearCompareButton />
       </div>
 
@@ -42,7 +42,7 @@ export default async function ComparePage() {
         </p>
       ) : null}
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto p-4 sm:p-6">
         <table className="w-full min-w-[600px] border-collapse text-sm">
           <thead>
             <tr>
@@ -98,6 +98,6 @@ export default async function ComparePage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </div></div></main>
   );
 }
