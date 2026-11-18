@@ -59,7 +59,7 @@ export default async function CategoryShopPage({
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
         <span className="text-slate-700">{categoryName}</span>
       </nav>
-      <header className="rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-[#123a55] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
+      <header className="rounded-3xl bg-gradient-to-br from-[#17344d] via-[#1d4562] to-[#17617b] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Browse by category</p>
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{categoryName}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Explore available {categoryName.toLowerCase()} from Classic Computers, Blantyre.</p>
