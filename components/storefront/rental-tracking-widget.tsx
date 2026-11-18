@@ -40,7 +40,7 @@ export function RentalTrackingWidget() {
             <Badge variant="info">{rental.status}</Badge>
           </div>
           <p className="mt-1 text-slate-600">
-            <a href="#" className="text-brand-600 hover:underline">{rental.startDate} – {rental.endDate}</a> · Qty {rental.quantity}
+            <span className="text-slate-600">{rental.startDate} – {rental.endDate}</span> · Qty {rental.quantity}
           </p>
           {rental.totalCharge ? <p className="text-gray-600">Total: {formatMoney(rental.totalCharge)}</p> : null}
         </div>
