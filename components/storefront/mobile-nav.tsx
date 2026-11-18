@@ -71,7 +71,7 @@ export function MobileNav({
                 role="dialog"
                 aria-modal="true"
                 aria-label="Store navigation"
-                className="fixed inset-x-0 bottom-0 top-[7.25rem] z-[60] flex flex-col overflow-hidden border-b border-slate-200 bg-white shadow-2xl shadow-navy-950/20"
+                className="fixed inset-x-0 bottom-0 top-[8.125rem] z-[60] flex flex-col overflow-hidden border-b border-slate-200 bg-white shadow-2xl shadow-navy-950/20"
               >
                 <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
                   <p className="text-sm font-bold uppercase tracking-wider text-navy-800">Menu</p>
