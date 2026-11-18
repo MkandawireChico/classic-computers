@@ -82,9 +82,9 @@ export function AccountNavigation() {
                   const selected = isActivePath(pathname, href);
                   return (
                     <li key={href}>
-                      <Link href={href} aria-current={selected ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 ${selected ? "bg-emerald-50 text-emerald-950" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}>
+                      <Link href={href} aria-current={selected ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${selected ? "bg-brand-50 text-navy-950" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}>
                         <Icon name={icon} /><span className="min-w-0 flex-1">{label}</span>
-                        {selected ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-700" /> : null}
+                        {selected ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-700" /> : null}
                       </Link>
                     </li>
                   );
@@ -96,7 +96,7 @@ export function AccountNavigation() {
       </nav>
 
       <div className="relative lg:hidden">
-        <button type="button" aria-expanded={isOpen} aria-controls="mobile-account-navigation" onClick={() => setIsOpen((open) => !open)} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 text-left text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2">
+        <button type="button" aria-expanded={isOpen} aria-controls="mobile-account-navigation" onClick={() => setIsOpen((open) => !open)} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 text-left text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
           <span className="flex min-w-0 items-center gap-3"><Icon name={active?.[2] ?? "home"} /><span className="truncate">{active?.[1] ?? "Account menu"}</span></span>
           <svg aria-hidden="true" className={`h-4 w-4 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
@@ -108,7 +108,7 @@ export function AccountNavigation() {
                 <ul className="space-y-1">
                   {group.links.map(([href, label, icon]) => {
                     const selected = isActivePath(pathname, href);
-                    return <li key={href}><Link href={href} aria-current={selected ? "page" : undefined} onClick={() => setIsOpen(false)} className={`flex min-h-11 items-center gap-3 rounded-md px-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 ${selected ? "bg-emerald-50 text-emerald-950" : "text-slate-700 hover:bg-slate-100"}`}><Icon name={icon} />{label}</Link></li>;
+                    return <li key={href}><Link href={href} aria-current={selected ? "page" : undefined} onClick={() => setIsOpen(false)} className={`flex min-h-11 items-center gap-3 rounded-md px-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 ${selected ? "bg-brand-50 text-navy-950" : "text-slate-700 hover:bg-slate-100"}`}><Icon name={icon} />{label}</Link></li>;
                   })}
                 </ul>
               </section>
