@@ -85,7 +85,7 @@ export function NotificationList({ notifications }: { notifications: MyNotificat
         {notifications.map((n) => {
           const href = notificationLink(n);
           const content = (
-            <div className={`rounded-xl border p-4 transition-colors sm:p-5 ${n.is_read ? "border-slate-200 bg-white" : "border-emerald-200 bg-emerald-50/60"}`}>
+            <div className={`rounded-xl border p-4 transition-colors sm:p-5 ${n.is_read ? "border-slate-200 bg-white" : "border-brand-200 bg-brand-50/70"}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
@@ -116,7 +116,7 @@ export function NotificationList({ notifications }: { notifications: MyNotificat
                   disabled={isPending}
                   onClick={() => markRead(n.id)}
                   aria-label="Mark as read"
-                  className="min-h-11 min-w-11 shrink-0 self-start rounded-lg border border-slate-200 bg-white p-3 text-slate-600 transition-colors hover:bg-slate-50 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:opacity-50"
+                  className="min-h-11 min-w-11 shrink-0 self-start rounded-lg border border-slate-200 bg-white p-3 text-slate-600 transition-colors hover:bg-slate-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:opacity-50"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
