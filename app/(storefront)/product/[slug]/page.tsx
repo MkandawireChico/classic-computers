@@ -291,7 +291,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                           ))}
                         </div>
                         {review.verified_purchase && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-2 py-0.5 text-xs font-semibold text-cyan-800">
                             Verified
                           </span>
                         )}
