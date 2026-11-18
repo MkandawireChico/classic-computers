@@ -52,30 +52,34 @@ export default async function CategoryShopPage({
   const [result, brands] = await Promise.all([searchShop(filters), getBrands()]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <main className="min-h-screen bg-slate-50/60">
+      <div className="section-shell py-6 sm:py-9 lg:py-11">
       <CategoryInterestTracker categoryId={category.id} />
-      <nav aria-label="Breadcrumb" className="mb-2 text-sm text-gray-500">
-        <a href="/shop" className="hover:text-brand-600">
-          Shop
-        </a>{" "}
-        / <span className="text-gray-700">{categoryName}</span>
+      <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
+        <a href="/shop" className="hover:text-brand-700">Shop</a>
+        <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
+        <span className="text-slate-700">{categoryName}</span>
       </nav>
-      <h1 className="text-2xl font-semibold text-gray-900">{categoryName}</h1>
+      <header className="rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-[#123a55] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Browse by category</p>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{categoryName}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Explore available {categoryName.toLowerCase()} from Classic Computers, Blantyre.</p>
+      </header>
 
-      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
-        <aside aria-label="Filters">
+      <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
+        <aside aria-label="Filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32">
           <ShopFilters brands={brands} />
         </aside>
 
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600" aria-live="polite">
+        <section aria-label="Products" className="min-w-0">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <p className="text-sm font-semibold text-navy-900" aria-live="polite">
               {result.total} product{result.total === 1 ? "" : "s"}
             </p>
             <SortSelect />
           </div>
 
-          <ProductGrid products={result.items} emptyMessage={`No ${categoryName.toLowerCase()} available right now.`} />
+          <ProductGrid products={result.items} mode="catalog" emptyMessage={`No ${categoryName.toLowerCase()} available right now.`} />
 
           <Pagination
             page={result.page}
@@ -84,8 +88,9 @@ export default async function CategoryShopPage({
             basePath={`/shop/${category.slug}`}
             searchParams={searchParams}
           />
-        </div>
+        </section>
       </div>
-    </div>
+      </div>
+    </main>
   );
 }
