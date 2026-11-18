@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 type SuggestedProduct = {
@@ -211,20 +212,18 @@ export function StorefrontAssistant() {
         </section>
       ) : null}
 
-      <button
-        type="button"
-        onClick={() => setIsOpen((open) => !open)}
-        aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
-        aria-expanded={isOpen}
-        className="fixed bottom-4 right-4 z-[91] flex h-14 items-center gap-2 rounded-full bg-navy-950 px-4 text-white shadow-[0_14px_34px_-12px_rgba(2,6,23,0.65)] transition hover:-translate-y-0.5 hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-300 sm:bottom-6 sm:right-6"
-      >
-        {isOpen ? (
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m6 6 12 12M18 6 6 18" /></svg>
-        ) : (
+      {!isOpen ? (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open chat assistant"
+          aria-expanded={false}
+          className="fixed bottom-4 right-4 z-[91] flex h-14 items-center gap-2 rounded-full bg-navy-950 px-4 text-white shadow-[0_14px_34px_-12px_rgba(2,6,23,0.65)] transition hover:-translate-y-0.5 hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-300 sm:bottom-6 sm:right-6"
+        >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.1a8.5 8.5 0 1 1 16.1-4.4Z" /><path d="M8 11h8M8 15h5" /></svg>
-        )}
-        <span className="text-sm font-bold">{isOpen ? "Close" : "Ask us"}</span>
-      </button>
+          <span className="text-sm font-bold">Ask us</span>
+        </button>
+      ) : null}
     </>
   );
 }
