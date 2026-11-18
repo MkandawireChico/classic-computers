@@ -1,47 +1,48 @@
 import Link from "next/link";
 
+const OFFERINGS = [
+  { number: "01", title: "Equipment supply", detail: "Computers and ICT equipment for teams and organisations." },
+  { number: "02", title: "Quotation requests", detail: "Share your requirements with our team for a tailored quotation." },
+  { number: "03", title: "Rental enquiries", detail: "Ask about equipment rental options for your organisation." },
+];
+
 export function CorporateSupplySection() {
   return (
-    <section aria-labelledby="corporate-supply-heading" className="bg-navy-950 py-20 sm:py-24">
-      <div className="section-shell">
-        <div className="grid gap-12 rounded-3xl border border-white/10 bg-gradient-to-br from-navy-900 to-[#123a55] px-10 py-12 text-white backdrop-blur-md shadow-2xl sm:px-12 sm:py-16 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-20 lg:py-20">
-          <div className="max-w-2xl space-y-8">
-            <p className="text-sm font-bold uppercase tracking-[0.25em] text-cyan-300">For organisations</p>
-            <h2 id="corporate-supply-heading" className="text-h2 font-bold leading-tight text-white">
-              Technology supply for businesses and institutions
-            </h2>
-            <p className="max-w-xl text-lg leading-relaxed text-slate-300 sm:text-xl">
-              Need laptops or ICT equipment for your team, school, organisation or project? Contact Classic Computers
-              for a tailored quotation.
+    <section aria-labelledby="corporate-supply-heading" className="relative isolate overflow-hidden bg-[#081827] text-white">
+      <div aria-hidden="true" className="absolute inset-y-0 right-0 w-[55%] bg-[radial-gradient(ellipse_at_80%_50%,rgba(8,130,177,0.24),transparent_60%)]" />
+      <div className="section-shell relative py-16 sm:py-20 lg:py-24">
+        <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
+          <div className="flex flex-col items-start">
+            <p className="inline-flex items-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">
+              <span className="h-px w-9 bg-cyan-300" /> For business and institutions
             </p>
-            <ul className="flex flex-wrap gap-x-10 gap-y-4 text-base text-slate-200 sm:text-lg">
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-lg shadow-brand-400/50" />
-                Bulk computer supply
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-brand-400 shadow-lg shadow-brand-400/50" />
-                ICT equipment quotations
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-brand-400 shadow-lg shadow-brand-400/50" />
-                Laptop rentals
-              </li>
-            </ul>
+            <h2 id="corporate-supply-heading" className="mt-6 max-w-xl text-3xl font-semibold leading-[1.04] tracking-[-0.05em] text-white sm:text-4xl lg:text-5xl">
+              Equip your team.
+              <span className="block text-cyan-300">Move work forward.</span>
+            </h2>
+            <p className="mt-6 max-w-lg text-sm leading-7 text-slate-300 sm:text-base">
+              Sourcing computers for an organisation, school or project? Tell us what your team needs and request a quotation from Classic Computers.
+            </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href="/corporate" className="inline-flex min-h-14 items-center justify-center gap-4 bg-cyan-400 px-6 text-sm font-extrabold text-[#081827] transition hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                Request a quotation <span aria-hidden="true">↗</span>
+              </Link>
+              <Link href="/contact" className="inline-flex min-h-14 items-center justify-center border border-white/25 px-6 text-sm font-bold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">
+                Contact our team
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-col gap-5 sm:flex-row lg:flex-col">
-            <Link
-              href="/corporate"
-              className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-brand-600 px-9 py-5 text-lg font-bold text-white shadow-2xl shadow-brand-900/30 transition-all duration-300 hover:bg-brand-500 hover:shadow-3xl hover:shadow-brand-900/40 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              Request a Business Quote
-            </Link>
-            <Link
-              href="/rentals"
-              className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-9 py-5 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:border-white/40 hover:bg-white/20 hover:shadow-xl hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              Explore Rentals
-            </Link>
+
+          <div className="border-y border-white/15">
+            {OFFERINGS.map((item) => (
+              <div key={item.number} className="grid grid-cols-[42px_1fr] gap-4 border-b border-white/15 py-6 last:border-b-0 sm:grid-cols-[54px_1fr] sm:gap-6 sm:py-7">
+                <span className="pt-1 font-mono text-xs text-cyan-300">{item.number}</span>
+                <div>
+                  <h3 className="text-lg font-bold tracking-tight text-white sm:text-xl">{item.title}</h3>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">{item.detail}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
