@@ -30,15 +30,15 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <header className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Your account</p>
+      <header className="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/50 p-5 shadow-sm sm:p-7">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">Your account</p>
         <h1 className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">
           {summary.displayName ? `Welcome back, ${summary.displayName}` : "Your account overview"}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
           Your Classic Computers account, all in one place. Manage purchases and services, explore student benefits and stay updated.
         </p>
-        <Link href="/account/profile" className="mt-4 inline-flex min-h-10 items-center text-sm font-bold text-emerald-800 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+        <Link href="/account/profile" className="mt-4 inline-flex min-h-10 items-center text-sm font-bold text-brand-800 underline decoration-brand-300 underline-offset-4 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
           Manage your profile
         </Link>
       </header>
@@ -46,12 +46,12 @@ export default async function AccountOverviewPage() {
       {metrics.length > 0 ? (
         <section aria-label="Account summary" className="grid gap-3 sm:grid-cols-3">
           {metrics.map((metric) => (
-            <Link key={metric.label} href={metric.href} className="group flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 transition-colors hover:border-emerald-300 hover:bg-emerald-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 sm:rounded-xl sm:border sm:p-5">
+            <Link key={metric.label} href={metric.href} className="group flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 transition-colors hover:border-brand-200 hover:bg-brand-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:rounded-xl sm:border sm:p-5">
               <span>
                 <span className="block text-sm font-semibold text-slate-700">{metric.label}</span>
                 <span className="mt-1 block text-xs text-slate-500">{metric.detail}</span>
               </span>
-              <span className="text-3xl font-extrabold tabular-nums text-slate-950 group-hover:text-emerald-900">{metric.value}</span>
+              <span className="text-3xl font-extrabold tabular-nums text-slate-950 group-hover:text-brand-900">{metric.value}</span>
             </Link>
           ))}
         </section>
@@ -70,7 +70,7 @@ export default async function AccountOverviewPage() {
             ["/account/student-verification", "Student benefits"],
             ["/corporate/enquire", "Request a quote"],
           ].map(([href, label]) => (
-            <Link key={href as string} href={href as string} className="flex min-h-12 items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 transition-colors hover:border-emerald-300 hover:bg-emerald-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 sm:px-4">
+            <Link key={href as string} href={href as string} className="flex min-h-12 items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 transition-colors hover:border-brand-200 hover:bg-brand-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-4">
               <span>{label}</span>
             </Link>
           ))}
@@ -166,7 +166,7 @@ export default async function AccountOverviewPage() {
               <p className="mt-1 text-xs text-slate-400">Track your repair requests here</p>
               <Link
                 href="/repairs/book"
-                className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-100"
               >
                 Book a Repair
               </Link>
@@ -216,7 +216,7 @@ export default async function AccountOverviewPage() {
               <p className="mt-1 text-xs text-slate-400">Rent equipment for your needs</p>
               <Link
                 href="/rentals"
-                className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 transition-colors hover:bg-violet-100"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-violet-100"
               >
                 Browse Rentals
               </Link>
