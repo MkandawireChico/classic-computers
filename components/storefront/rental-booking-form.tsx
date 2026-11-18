@@ -193,7 +193,6 @@ export function RentalBookingForm({
 
   const selected =
     products.find((p) => p.rentalProductId === rentalProductId) ?? products[0] ?? null;
-  const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
   const adjustedSteps = isAuthenticated
     ? STEPS.filter((s) => s.id !== "customer")
     : STEPS;
