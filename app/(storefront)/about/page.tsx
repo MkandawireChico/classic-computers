@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ContentPage } from "@/components/storefront/content-page";
 import { getBusinessInfo } from "@/lib/data/site-settings";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -54,7 +57,12 @@ const services = [
 ];
 
 export default async function AboutPage() {
-  const businessInfo = await getBusinessInfo();
+  const [businessInfo, storePhotos] = await Promise.all([
+    getBusinessInfo(),
+    getSiteMedia("store_photo", 1),
+  ]);
+  const storePhoto = storePhotos[0] ?? null;
+  const storePhotoUrl = storePhoto ? getPublicStorageUrl("site-media", storePhoto.storage_path) : null;
 
   return (
     <ContentPage
@@ -62,6 +70,31 @@ export default async function AboutPage() {
       title="Technology that works for you"
       description="Classic Computers LLC is a technology and electronics business based in Blantyre, Malawi. We help individuals, students, businesses and organisations find practical computing products and support."
     >
+      {storePhotoUrl ? (
+        <section aria-label="Classic Computers store in Blantyre" className="grid items-center gap-5 overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:grid-cols-[1.1fr_0.9fr] sm:gap-7 sm:p-4">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
+            <Image
+              src={storePhotoUrl}
+              alt={storePhoto?.alt_text ?? "Classic Computers store in Blantyre"}
+              fill
+              sizes="(max-width: 639px) 100vw, 55vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="px-2 py-3 sm:px-3">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">Visit our store</p>
+            <h2 className="mt-3 text-2xl font-extrabold leading-tight text-slate-950">A local technology team in Blantyre.</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Visit Classic Computers for product enquiries, equipment support and service assistance.
+            </p>
+            {businessInfo?.address ? <p className="mt-3 text-sm font-semibold leading-6 text-slate-700">{businessInfo.address}</p> : null}
+            <Link href="/contact" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-700 px-5 text-sm font-bold text-white transition hover:bg-brand-800">
+              Contact our team
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
       <section aria-labelledby="what-we-do-heading">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
