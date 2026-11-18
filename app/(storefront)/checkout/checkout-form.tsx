@@ -44,8 +44,8 @@ const PAYMENT_DESCRIPTIONS: Record<PaymentMethod, string> = {
 };
 
 const PAYMENT_ACCENTS: Record<PaymentMethod, string> = {
-  pay_at_shop: "border-violet-300 bg-violet-50 text-violet-900",
-  bank_transfer: "border-emerald-300 bg-emerald-50 text-emerald-900",
+  pay_at_shop: "border-cyan-300 bg-cyan-50 text-cyan-900",
+  bank_transfer: "border-emerald-300 bg-cyan-50 text-cyan-900",
   mobile_money: "border-rose-300 bg-rose-50 text-rose-900",
   cash_on_delivery: "border-amber-300 bg-amber-50 text-amber-950",
 };
@@ -129,7 +129,7 @@ export function CheckoutForm({
 
       <div className="rounded-3xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 via-white to-amber-50/50 p-6 shadow-lg shadow-amber-900/5 sm:p-8">
         <p className="text-lg font-extrabold text-slate-900 sm:text-xl">
-          <span className="text-emerald-800">
+          <span className="text-cyan-800">
             {itemCount} item{itemCount === 1 ? "" : "s"}
           </span>
           <span className="mx-2 text-amber-600" aria-hidden="true">
@@ -143,8 +143,8 @@ export function CheckoutForm({
       </div>
 
       {!isAuthenticated ? (
-        <fieldset className="space-y-5 rounded-3xl border-2 border-violet-200 bg-gradient-to-br from-violet-50/50 via-white to-violet-50/30 p-6 shadow-lg shadow-violet-900/5 sm:p-8">
-          <legend className="px-3 text-lg font-extrabold text-violet-900">Your details</legend>
+        <fieldset className="space-y-5 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50/50 via-white to-cyan-50/30 p-6 shadow-lg shadow-cyan-900/5 sm:p-8">
+          <legend className="px-3 text-lg font-extrabold text-cyan-900">Your details</legend>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="guestName" className="text-sm font-bold text-slate-700">
@@ -154,7 +154,7 @@ export function CheckoutForm({
                 id="guestName"
                 name="guestName"
                 required
-                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
               />
             </div>
             <div className="space-y-2">
@@ -165,7 +165,7 @@ export function CheckoutForm({
                 id="guestPhone"
                 name="guestPhone"
                 required
-                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
@@ -176,22 +176,22 @@ export function CheckoutForm({
                 id="guestEmail"
                 name="guestEmail"
                 type="email"
-                className="w-full rounded-2xl border-2 border-violet-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
               />
             </div>
           </div>
         </fieldset>
       ) : (
-        <p className="rounded-3xl border-2 border-violet-200 bg-gradient-to-r from-violet-50/50 to-white p-6 text-base text-slate-700 shadow-lg shadow-violet-900/5 sm:p-8">
-          Ordering as <span className="font-extrabold text-violet-900">{userEmail}</span>
+        <p className="rounded-3xl border-2 border-cyan-200 bg-gradient-to-r from-cyan-50/50 to-white p-6 text-base text-slate-700 shadow-lg shadow-cyan-900/5 sm:p-8">
+          Ordering as <span className="font-extrabold text-cyan-900">{userEmail}</span>
         </p>
       )}
 
-      <fieldset className="space-y-4 rounded-3xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/30 p-6 shadow-lg shadow-emerald-900/5 sm:p-8">
-        <legend className="px-3 text-lg font-extrabold text-emerald-900">Fulfillment</legend>
+      <fieldset className="space-y-4 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/30 p-6 shadow-lg shadow-emerald-900/5 sm:p-8">
+        <legend className="px-3 text-lg font-extrabold text-cyan-900">Fulfillment</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-emerald-500 bg-emerald-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-emerald-500 bg-cyan-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
           >
             <input
               type="radio"
@@ -203,7 +203,7 @@ export function CheckoutForm({
             Pickup in-store
           </label>
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-emerald-500 bg-emerald-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-emerald-500 bg-cyan-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
           >
             <input
               type="radio"
@@ -227,7 +227,7 @@ export function CheckoutForm({
                   id="deliveryAddressId"
                   name="deliveryAddressId"
                   defaultValue={defaultAddressId}
-                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 >
                   {addresses.map((address) => (
                     <option key={address.id} value={address.id}>
@@ -256,7 +256,7 @@ export function CheckoutForm({
                   id="guestDeliveryLine1"
                   name="guestDeliveryLine1"
                   required
-                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 />
               </div>
               <div className="space-y-2">
@@ -266,7 +266,7 @@ export function CheckoutForm({
                 <input
                   id="guestDeliveryLine2"
                   name="guestDeliveryLine2"
-                  className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -278,7 +278,7 @@ export function CheckoutForm({
                     id="guestDeliveryCity"
                     name="guestDeliveryCity"
                     required
-                    className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -291,7 +291,7 @@ export function CheckoutForm({
                   <input
                     id="guestDeliveryDistrict"
                     name="guestDeliveryDistrict"
-                    className="w-full rounded-2xl border-2 border-emerald-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                   />
                 </div>
               </div>
@@ -497,9 +497,9 @@ function BankDetails({
   ].join("\n");
 
   return (
-    <div className="space-y-4 rounded-2xl border border-emerald-200 bg-white p-4 sm:p-5">
+    <div className="space-y-4 rounded-2xl border border-cyan-200 bg-white p-4 sm:p-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">
           Bank transfer details
         </p>
         <h4 className="mt-1 text-lg font-extrabold text-slate-900">{provider.name}</h4>
@@ -510,7 +510,7 @@ function BankDetails({
         <PaymentDetail label="Branch" value={provider.branch} />
         <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
       </dl>
-      <p className="rounded-xl bg-emerald-50 p-3 text-sm leading-relaxed text-emerald-950">
+      <p className="rounded-xl bg-cyan-50 p-3 text-sm leading-relaxed text-emerald-950">
         Place your order first. Then transfer the exact final total shown on the order confirmation
         and keep your bank transaction reference. Your order remains unpaid until the transfer is
         verified.
@@ -528,7 +528,7 @@ function BankDetails({
           name="paymentReference"
           maxLength={120}
           autoComplete="off"
-          className="w-full rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-cyan-200 bg-white px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
         />
       </div>
     </div>
