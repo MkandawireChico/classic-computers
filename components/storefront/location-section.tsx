@@ -20,7 +20,7 @@ export async function LocationSection() {
 
   return (
     <section aria-labelledby="location-heading" className="section-shell pb-16 sm:pb-20 lg:pb-24">
-      <div className="overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-emerald-50/60 p-5 shadow-xl shadow-brand-900/5 sm:p-8 lg:p-10">
+      <div className="overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-cyan-50/60 p-5 shadow-xl shadow-brand-900/5 sm:p-8 lg:p-10">
         <div className={`grid items-center gap-7 ${storePhotoUrl ? "md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-10" : ""}`}>
           {storePhoto && storePhotoUrl ? (
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-brand-100 shadow-lg shadow-brand-900/10 ring-1 ring-white/80">
@@ -62,7 +62,7 @@ export async function LocationSection() {
                   </a>
                 ) : null}
               </div>
-              <div className="space-y-3 rounded-2xl border border-emerald-100 bg-white/90 p-5 shadow-md shadow-emerald-900/5 sm:p-6">
+              <div className="space-y-3 rounded-2xl border border-cyan-100 bg-white/90 p-5 shadow-md shadow-cyan-900/5 sm:p-6">
                 {businessInfo.phone ? (
                   <a href={`tel:${businessInfo.phone}`} aria-label={`Call ${businessInfo.phone}`} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><PhoneIcon /></span>
