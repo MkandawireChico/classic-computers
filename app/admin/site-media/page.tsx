@@ -9,10 +9,12 @@ export default async function AdminSiteMediaPage() {
   return (
     <div>
       <h1 className="mb-1 text-xl font-semibold text-gray-900">Site Media</h1>
-      <p className="mb-4 text-sm text-gray-500">
-        Controls homepage/marketing imagery only — product photos are managed from each product&apos;s
-        own page. Upload the real Classic Computers shop photograph here under &ldquo;homepage hero&rdquo;
-        once you have the file.
+      <p className="mb-4 max-w-3xl text-sm leading-6 text-gray-500">
+        Manage the images used across the public website. Upload the official brand mark under
+        &ldquo;logo&rdquo; and a wide or light-background version under &ldquo;footer logo&rdquo; when available.
+        Use &ldquo;homepage banner&rdquo; or &ldquo;homepage hero&rdquo; for the main storefront image,
+        &ldquo;store photo&rdquo; for real shop photography, and the rental or corporate placements
+        for their matching promotional sections. Product photos stay on each product&apos;s own page.
       </p>
       <SiteMediaManager items={items} />
     </div>
