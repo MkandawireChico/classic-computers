@@ -108,18 +108,18 @@ export default async function AccountLayout({ children }: { children: React.Reac
 
   return (
     <div className="section-shell flex-1 pb-12 pt-5 sm:pb-16 sm:pt-8">
-      <header className="mb-6 flex min-w-0 items-center justify-between gap-4 border-b border-slate-200 pb-5 sm:mb-8 sm:pb-6">
+      <header className="mb-6 flex min-w-0 items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:mb-8 sm:px-6 sm:py-5">
         <div className="flex min-w-0 items-center gap-3">
-          <div aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-extrabold text-emerald-900 sm:h-12 sm:w-12">
+          <div aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-900 text-sm font-extrabold text-white shadow-sm sm:h-12 sm:w-12">
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Customer account</p>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Customer account</p>
             <p className="truncate text-base font-bold text-slate-950 sm:text-lg">{displayName}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <Link href="/shop" className="hidden min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 sm:inline-flex">
+          <Link href="/shop" className="hidden min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:inline-flex">
             <AccountIcon name="shopping-bag" />Browse shop
           </Link>
           <form action={signOut}>
@@ -128,7 +128,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
         </div>
       </header>
 
-      <div className="grid min-w-0 gap-6 lg:grid-cols-[232px_minmax(0,1fr)] lg:gap-9">
+      <div className="grid min-w-0 gap-5 lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-8">
         <AccountNavigation />
         <main className="min-w-0">{children}</main>
       </div>
