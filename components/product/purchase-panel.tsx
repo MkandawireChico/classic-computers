@@ -72,11 +72,11 @@ export function PurchasePanel({
       <div className="flex items-baseline gap-2">
         {onSale ? (
           <>
-            <span className="text-3xl font-extrabold text-rose-700">{formatMoney(salePrice as number)}</span>
+            <span className="text-3xl font-extrabold text-brand-700">{formatMoney(salePrice as number)}</span>
             <span className="text-base font-medium text-slate-500 line-through">{formatMoney(price)}</span>
           </>
         ) : (
-            <span className="text-3xl font-extrabold text-emerald-800">{formatMoney(price)}</span>
+            <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
         )}
       </div>
 
@@ -128,7 +128,7 @@ export function PurchasePanel({
         ) : (
           <Link
             href="/sign-in"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 px-4 text-sm font-semibold text-violet-900 transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-navy-900 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             Sign in to save
           </Link>
@@ -147,7 +147,7 @@ export function PurchasePanel({
                 {rentalOffer.monthlyRate ? ` · ${formatMoney(rentalOffer.monthlyRate)}/month` : ""}
               </p>
             </div>
-            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-navy-900 ring-1 ring-emerald-200">
               {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
             </span>
           </div>
