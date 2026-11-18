@@ -10,7 +10,7 @@ export async function GET() {
     supabaseUrlConfigured: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     supabaseAnonKeyConfigured: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     serviceRoleKeyConfigured: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    assistantApiKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
+    assistantApiKeyConfigured: Boolean(process.env.GROQ_API_KEY),
   };
 
   const ok = checks.supabaseUrlConfigured && checks.supabaseAnonKeyConfigured;
