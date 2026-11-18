@@ -123,8 +123,8 @@ export default function PrivacyPage() {
           project does not establish an automatic schedule for running that function; retention
           operations should be confirmed by the site operator.
         </p>
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
-          <p className="font-semibold text-emerald-950">Manage your analytics choice</p>
+        <div className="rounded-xl border border-cyan-200 bg-cyan-50/70 p-4">
+          <p className="font-semibold text-cyan-950">Manage your analytics choice</p>
           <div className="mt-3">
             <AnalyticsConsentControls />
           </div>
