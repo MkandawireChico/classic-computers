@@ -212,7 +212,6 @@ function ContactDetail({
   const toneClasses = {
     brand: "bg-brand-50 text-brand-800 ring-brand-100",
     cyan: "bg-cyan-50 text-cyan-800 ring-cyan-100",
-    emerald: "bg-cyan-50 text-cyan-800 ring-emerald-100",
   };
 
   return (
