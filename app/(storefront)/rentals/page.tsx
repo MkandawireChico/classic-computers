@@ -104,17 +104,18 @@ export default async function RentalsPage() {
                     </div>
 
                     <div className="mt-4 flex gap-2">
-                      <Link
-                        href={`/rentals/book?product=${encodeURIComponent(product.productId)}&variant=${encodeURIComponent(product.variantId ?? "")}`}
-                        className={`inline-flex flex-1 items-center justify-center rounded-xl px-4 py-3 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 ${
-                          product.availableQuantity > 0
-                            ? "bg-[#0b2238] text-white hover:bg-cyan-800"
-                            : "bg-slate-200 text-slate-500 cursor-not-allowed"
-                        }`}
-                        aria-disabled={product.availableQuantity <= 0}
-                      >
-                        Rent Now
-                      </Link>
+                      {product.availableQuantity > 0 ? (
+                        <Link
+                          href={`/rentals/book?product=${encodeURIComponent(product.productId)}&variant=${encodeURIComponent(product.variantId ?? "")}`}
+                          className="inline-flex flex-1 items-center justify-center rounded-xl bg-[#0b2238] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-cyan-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+                        >
+                          Rent Now
+                        </Link>
+                      ) : (
+                        <span aria-disabled="true" className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-400">
+                          Unavailable
+                        </span>
+                      )}
                       <Link
                         href={`/product/${product.productSlug}`}
                         className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
