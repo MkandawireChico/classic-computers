@@ -4,9 +4,13 @@ import { ProductGrid } from "@/components/product/product-grid";
 
 export async function FeaturedProductsSection() {
   let products = await getFeaturedProducts(9);
-  if (products.length === 0) {
-    const fallback = await searchShop({ sort: "featured", pageSize: 9, page: 1 });
-    products = fallback.items;
+  if (products.length < 9) {
+    const fallback = await searchShop({ sort: "featured", pageSize: 12, page: 1 });
+    const existingIds = new Set(products.map((product) => product.id));
+    products = [
+      ...products,
+      ...fallback.items.filter((product) => !existingIds.has(product.id)),
+    ].slice(0, 9);
   }
   const remainingProducts = products.slice(3, 9);
   if (remainingProducts.length === 0) return null;
