@@ -110,8 +110,9 @@ export async function POST(request: NextRequest) {
 
   let productResults: any[] = [];
   let currentProduct: any = null;
-  if (currentProductMatch) {
-    currentProduct = await getProductBySlug(decodeURIComponent(currentProductMatch[1]));
+  const currentProductSlug = currentProductMatch?.[1];
+  if (currentProductSlug) {
+    currentProduct = await getProductBySlug(decodeURIComponent(currentProductSlug));
   }
   if (productIntent) {
     const query = productSearchTerm(userText);
