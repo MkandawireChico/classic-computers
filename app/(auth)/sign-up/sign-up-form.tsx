@@ -123,7 +123,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         </Button>
         <Link
           href="/sign-in"
-          className="inline-flex w-full items-center justify-center rounded-card border border-surface-border px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-surface-muted transition-colors"
+          className="inline-flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
         >
           Go to sign in
         </Link>
@@ -158,7 +158,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           type="text"
           autoComplete="name"
           required
-          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
         />
       </div>
 
@@ -172,7 +172,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
         />
       </div>
 
@@ -187,7 +187,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           autoComplete="new-password"
           required
           minLength={8}
-          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
         />
         <p className="text-sm text-slate-500">At least 8 characters.</p>
       </div>
@@ -201,11 +201,11 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
           name="referralCode"
           type="text"
           defaultValue={initialReferralCode}
-          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 transition-all"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100 transition-all"
         />
       </div>
 
-      <Button type="submit" isLoading={loading} className="min-h-12 w-full rounded-2xl bg-brand-700 px-6 py-4 text-base font-extrabold text-white shadow-lg shadow-brand-900/10 transition-all duration-300 hover:bg-brand-800 hover:shadow-xl hover:-translate-y-0.5">
+      <Button type="submit" isLoading={loading} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
         {loading ? "Creating account..." : "Create account"}
       </Button>
     </form>
