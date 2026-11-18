@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
       rentals: "/rentals",
       repairs: "/repairs",
       repair_tracking: "/repairs/track",
-      rental_tracking: "/rentals/track",
+
       contact: "/contact",
       corporate_supply: "/corporate",
     },
@@ -263,7 +263,7 @@ export async function POST(request: NextRequest) {
         inventoryStatus: product.inventory_status,
         condition: product.condition,
       })),
-    });
+    }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Classic Computers assistant request failed:", error instanceof Error ? error.name : "unknown");
     return NextResponse.json(
