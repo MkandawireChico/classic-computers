@@ -34,14 +34,14 @@ export function NewAddressForm() {
   }
 
   return (
-    <form action={handleSubmit} className="max-w-sm space-y-6 rounded-card border border-surface-border bg-white p-6 shadow-soft">
+    <form action={handleSubmit} className="max-w-sm space-y-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Address Details */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-gray-900">Address details</h3>
+        <h3 className="text-sm font-semibold text-slate-950">Address details</h3>
         <div className="space-y-1">
-          <label htmlFor="label" className="text-sm font-medium text-gray-700">
+          <label htmlFor="label" className="text-sm font-medium text-slate-700">
             Label (optional)
           </label>
           <input
@@ -49,11 +49,11 @@ export function NewAddressForm() {
             name="label"
             placeholder="Home, Office…"
             autoComplete="address-line1"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="line1" className="text-sm font-medium text-gray-700">
+          <label htmlFor="line1" className="text-sm font-medium text-slate-700">
             Address line 1
           </label>
           <input
@@ -61,22 +61,22 @@ export function NewAddressForm() {
             name="line1"
             required
             autoComplete="address-line1"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="line2" className="text-sm font-medium text-gray-700">
+          <label htmlFor="line2" className="text-sm font-medium text-slate-700">
             Address line 2 (optional)
           </label>
           <input
             id="line2"
             name="line2"
             autoComplete="address-line2"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="city" className="text-sm font-medium text-gray-700">
+          <label htmlFor="city" className="text-sm font-medium text-slate-700">
             City
           </label>
           <input
@@ -84,21 +84,21 @@ export function NewAddressForm() {
             name="city"
             required
             autoComplete="address-level2"
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="w-full min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
       </div>
 
       {/* Options */}
       <div className="space-y-4">
-        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+        <label className="flex items-center gap-3 text-sm text-slate-700 cursor-pointer">
           <input type="checkbox" name="isDefault" className="h-4 w-4 rounded border-surface-border text-brand-500 focus:ring-brand-500" />
           Set as default address
         </label>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Button type="submit" isLoading={isPending} className="flex-1">
           Save address
         </Button>
