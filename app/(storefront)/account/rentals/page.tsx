@@ -27,13 +27,13 @@ export default async function AccountRentalsPage() {
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700">My activity</p>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">My activity</p>
         <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My rentals</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Review booking periods, quantities and current status.</p>
       </div>
 
       {rentals.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-9">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
             <line x1="16" x2="16" y1="2" y2="6" />
@@ -44,7 +44,7 @@ export default async function AccountRentalsPage() {
           <p className="mt-2 text-sm leading-6 text-slate-600">Explore available equipment and request a rental when you need it.</p>
           <Link
             href="/rentals"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -60,9 +60,9 @@ export default async function AccountRentalsPage() {
           {rentals.map((r) => (
             <article
               key={r.id}
-              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-panel sm:p-5"
             >
-              <Link href={`/account/rentals/${r.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-700">
+              <Link href={`/account/rentals/${r.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-base font-bold text-slate-950">{r.product_name ?? "Rental"}</p>
@@ -73,7 +73,7 @@ export default async function AccountRentalsPage() {
                   </p>
                   <p className="mt-1 text-xs text-slate-500">Booked {formatDate(r.created_at)}</p>
                 </div>
-                <span className="shrink-0 text-xs font-semibold text-violet-700 transition-colors group-hover:text-violet-900">View details</span>
+                <span className="shrink-0 text-xs font-semibold text-brand-700 transition-colors group-hover:text-brand-900">View details</span>
               </Link>
               <CustomerReviewAction
                 type="rental"
