@@ -39,12 +39,8 @@ function isRateLimited(key: string): boolean {
 }
 
 function extractOutputText(payload: any): string {
-  const parts = (payload?.output ?? [])
-    .filter((item: any) => item.type === "message")
-    .flatMap((item: any) => item.content ?? [])
-    .filter((part: any) => part.type === "output_text" && typeof part.text === "string")
-    .map((part: any) => part.text);
-  return parts.join("\n").trim();
+  const content = payload?.choices?.[0]?.message?.content;
+  return typeof content === "string" ? content.trim() : "";
 }
 
 function productSearchTerm(message: string): string {
@@ -58,7 +54,7 @@ function productSearchTerm(message: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
       { error: "Our chat assistant is being configured. Please use the Contact page to reach our team." },
@@ -217,21 +213,23 @@ export async function POST(request: NextRequest) {
   ].join("\n\n");
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: "Bearer " + apiKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-6-astra",
-        instructions,
-        input: body.messages.slice(-8).map((message) => ({
-          role: message.role,
-          content: message.content,
-        })),
-        max_output_tokens: 420,
-        store: false,
+        model: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
+        messages: [
+          { role: "system", content: instructions },
+          ...body.messages.slice(-8).map((message) => ({
+            role: message.role,
+            content: message.content,
+          })),
+        ],
+        max_completion_tokens: 420,
+        temperature: 0.3,
       }),
       signal: AbortSignal.timeout(25000),
     });
