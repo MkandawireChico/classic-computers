@@ -14,10 +14,10 @@ export default async function BookRepairPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="section-shell max-w-2xl py-10 sm:py-14">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">Book a Repair</h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <h1 className="text-2xl font-extrabold text-white sm:text-3xl">Book a Repair</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-300">
           Tell us about your device and the problem — our team will review your ticket and follow up with next steps.
         </p>
       </div>
