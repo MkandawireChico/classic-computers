@@ -23,7 +23,7 @@ const NAV_LINKS = [
 export async function SiteHeader() {
   const [cartCount, logoMedia, user] = await Promise.all([
     getCartItemCount(),
-    getSiteMedia("logo" as any, 1),
+    getSiteMedia("logo", 1),
     getCurrentUser(),
   ]);
   const logo = logoMedia[0] ?? null;
