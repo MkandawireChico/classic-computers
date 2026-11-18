@@ -84,7 +84,7 @@ export default async function RentalsPage() {
                     {imageUrl ? (
                       <Image src={imageUrl} alt={product.productName} fill className="object-contain p-4 transition-transform group-hover:scale-105" sizes="(max-width: 768px) 100vw, 25vw" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm font-medium text-slate-200">Image unavailable</div>
+                      <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">Image unavailable</div>
                     )}
                     <span className={`absolute top-3 right-3 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] ${product.availableQuantity > 0 ? "bg-cyan-50 text-cyan-800" : "bg-slate-200 text-slate-600"}`}>
                       {product.availableQuantity > 0 ? `${product.availableQuantity} available` : "Out of stock"}
