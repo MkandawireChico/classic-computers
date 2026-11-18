@@ -9,14 +9,14 @@ export default async function AddressesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Checkout details</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Addresses</h1>
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Checkout details</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Addresses</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Manage the delivery addresses saved to your account.</p>
       </div>
 
       {addresses.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
             <circle cx="12" cy="10" r="3" />
@@ -29,7 +29,7 @@ export default async function AddressesPage() {
           {addresses.map((address) => (
             <div
               key={address.id}
-              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
