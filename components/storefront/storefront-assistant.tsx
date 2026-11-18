@@ -134,7 +134,7 @@ export function StorefrontAssistant() {
           </header>
 
           <div className="border-b border-slate-100 bg-slate-50 px-4 py-2.5">
-            <p className="text-[11px] leading-5 text-slate-500">Product details and stock are checked against the website catalogue. Please do not share passwords, PINs or payment details.</p>
+            <p className="text-[11px] leading-5 text-slate-500">Messages are sent to our AI provider to generate replies. Product details and stock are checked against the website catalogue. Do not share passwords, PINs, payment details or sensitive personal information.</p>
           </div>
 
           <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50/70 px-3 py-4 sm:px-4" aria-live="polite">
