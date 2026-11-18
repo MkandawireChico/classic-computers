@@ -46,8 +46,8 @@ export async function SiteFooter() {
   const [businessInfo, hours, footerLogoMedia, headerLogoMedia] = await Promise.all([
     getBusinessInfo(),
     getHours(),
-    getSiteMedia("footer_logo" as any, 1),
-    getSiteMedia("logo" as any, 1),
+    getSiteMedia("footer_logo", 1),
+    getSiteMedia("logo", 1),
   ]);
   const logo = footerLogoMedia[0] ?? headerLogoMedia[0] ?? null;
   const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
