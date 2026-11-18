@@ -33,9 +33,9 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div>
-          <Link href="/account/repairs" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+          <Link href="/account/repairs" className="text-sm font-semibold text-brand-700 hover:text-brand-700">
             ← Back to repairs
           </Link>
           <h1 className="mt-2 text-2xl font-extrabold text-slate-900">{repair.ticket_number}</h1>
@@ -55,7 +55,7 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Device information</h2>
             <dl className="mt-4 space-y-3">
               <div className="flex justify-between">
@@ -112,7 +112,7 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
             <ol className="mt-4 space-y-4 border-l-2 border-slate-200 pl-4">
               {repair.updates.map((u, i) => (
                 <li key={i} className="relative">
-                  <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white" />
+                  <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-brand-600 border-2 border-white" />
                   <p className="text-sm text-slate-900">{u.note}</p>
                   <p className="mt-1 text-xs text-slate-500">{formatDate(u.created_at)}</p>
                 </li>
