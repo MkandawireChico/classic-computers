@@ -10,7 +10,7 @@ const STATUS_LABEL = {
 
 const STATUS_CLASS = {
   pending: "bg-amber-50 text-amber-800",
-  approved: "bg-emerald-50 text-emerald-800",
+  approved: "bg-brand-50 text-brand-800",
   rejected: "bg-rose-50 text-rose-800",
   hidden: "bg-slate-100 text-slate-700",
 } as const;
@@ -37,30 +37,30 @@ export default async function MyReviewsPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My activity</p>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
           <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My reviews</h1>
           <p className="mt-2 text-sm text-slate-600">Track moderation and read responses to your feedback.</p>
         </div>
-        <Link href="/account/reviews/write" className="inline-flex min-h-11 items-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800">
+        <Link href="/account/reviews/write" className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800">
           Find an eligible transaction
         </Link>
       </header>
 
       {reviews.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm">
           <h2 className="font-bold text-slate-950">You haven&apos;t submitted any reviews yet</h2>
           <p className="mt-2 text-sm text-slate-600">Review links are available on completed orders, returned rentals and completed repairs.</p>
-          <Link href="/account/reviews/write" className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white">Find a transaction</Link>
+          <Link href="/account/reviews/write" className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white">Find a transaction</Link>
         </div>
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => {
             const retryHref = review.status === "rejected" ? resubmitHref(review) : null;
             return (
-              <article key={review.id} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+              <article key={review.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-emerald-800">{review.review_type} review</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-brand-800">{review.review_type} review</p>
                     <h2 className="mt-1 font-bold text-slate-950">{review.product?.name ?? review.title ?? "Customer experience"}</h2>
                   </div>
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_CLASS[review.status]}`}>
@@ -80,7 +80,7 @@ export default async function MyReviewsPage() {
                     {review.admin_response_at ? <p className="mt-2 text-xs text-slate-500">{new Date(review.admin_response_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", dateStyle: "long" })}</p> : null}
                   </div>
                 ) : null}
-                {retryHref ? <Link href={retryHref} className="mt-4 inline-flex min-h-10 items-center rounded-lg border border-emerald-700 px-3 text-sm font-semibold text-emerald-800 hover:bg-emerald-50">Resubmit review</Link> : null}
+                {retryHref ? <Link href={retryHref} className="mt-4 inline-flex min-h-10 items-center rounded-lg border border-brand-700 px-3 text-sm font-semibold text-brand-800 hover:bg-brand-50">Resubmit review</Link> : null}
               </article>
             );
           })}
