@@ -8,7 +8,7 @@ const OFFERINGS = [
 
 export function CorporateSupplySection() {
   return (
-    <section aria-labelledby="corporate-supply-heading" className="relative isolate overflow-hidden bg-[#081827] text-white">
+    <section aria-labelledby="corporate-supply-heading" className="relative isolate overflow-hidden bg-[#17344d] text-white">
       <div aria-hidden="true" className="absolute inset-y-0 right-0 w-[55%] bg-[radial-gradient(ellipse_at_80%_50%,rgba(8,130,177,0.24),transparent_60%)]" />
       <div className="section-shell relative py-16 sm:py-20 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
@@ -39,7 +39,7 @@ export function CorporateSupplySection() {
                 <span className="pt-1 font-mono text-xs text-cyan-300">{item.number}</span>
                 <div>
                   <h3 className="text-lg font-bold tracking-tight text-white sm:text-xl">{item.title}</h3>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">{item.detail}</p>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-200">{item.detail}</p>
                 </div>
               </div>
             ))}
