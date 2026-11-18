@@ -66,7 +66,7 @@ export default async function CartPage() {
           <div key={item.cartItemId} className="flex items-center gap-4 bg-slate-50 p-4 opacity-75">
             <div className="flex-1">
               <p className="text-sm font-semibold text-slate-600">{item.productName}</p>
-              <p className="text-xs text-status-danger">No longer available — removed from your total</p>
+              <p className="text-xs font-medium text-rose-700">No longer available — removed from your total</p>
             </div>
             <CartItemControls cartItemId={item.cartItemId} quantity={item.quantity} />
           </div>
@@ -74,7 +74,7 @@ export default async function CartPage() {
       </div>
 
       <div className="mt-6 flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <span className="text-sm font-medium text-gray-700">Subtotal</span>
+        <span className="text-sm font-semibold text-slate-600">Subtotal</span>
         <span className="text-xl font-extrabold text-[#102033]">{formatMoney(cart.subtotal)}</span>
       </div>
       <p className="mt-2 text-xs leading-5 text-slate-500">
