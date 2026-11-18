@@ -217,6 +217,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               <ProductEnquiry product={product} businessInfo={businessInfo} showWhatsApp={false} />
             </div>
           </div>
+          </div>
         </div>
 
         {product.description ? (
