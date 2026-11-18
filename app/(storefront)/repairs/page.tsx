@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default async function RepairsPage() {
   const [businessInfo, heroMedia] = await Promise.all([
     getBusinessInfo(),
-    getSiteMedia("homepage_hero", 1),
+    getSiteMedia("store_photo", 1),
   ]);
   const heroImage = heroMedia[0] ?? null;
   const heroImageUrl = heroImage ? getPublicStorageUrl("site-media", heroImage.storage_path) : null;
@@ -56,7 +56,7 @@ export default async function RepairsPage() {
             {heroImageUrl ? (
               <Image
                 src={heroImageUrl}
-                alt={heroImage?.alt_text ?? heroImage?.title ?? "Technology from Classic Computers"}
+                alt={heroImage?.alt_text ?? heroImage?.title ?? "Classic Computers store in Blantyre"}
                 width={960}
                 height={720}
                 priority
