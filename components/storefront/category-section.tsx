@@ -5,14 +5,6 @@ import { getPublicStorageUrl } from "@/lib/storage";
 import { getCategories } from "@/lib/data/categories";
 import { formatCategoryName } from "@/lib/format/category";
 
-const CATEGORY_STYLES = [
-  "bg-cyan-100 text-cyan-800",
-  "bg-blue-100 text-blue-800",
-  "bg-indigo-100 text-indigo-800",
-  "bg-slate-200 text-slate-800",
-  "bg-sky-100 text-sky-800",
-];
-
 export async function CategorySection() {
   const categories = (await getCategories()).filter(
     (category) => category.parent_id === null && category.name.trim() !== "" && category.slug.trim() !== "",
