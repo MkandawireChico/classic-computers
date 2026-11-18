@@ -6,7 +6,6 @@ import { getBrands } from "@/lib/data/brands";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ShopFilters } from "@/components/storefront/shop-filters";
 import { SortSelect } from "@/components/storefront/sort-select";
-import { Pagination } from "@/components/storefront/pagination";
 import { parseShopSearchParams } from "@/lib/shop-params";
 import { formatCategoryName } from "@/lib/format/category";
 import { CategoryInterestTracker } from "@/components/storefront/analytics-page-tracker";
@@ -49,7 +48,7 @@ export default async function CategoryShopPage({
   const categoryName = formatCategoryName(category.name);
 
   const filters = parseShopSearchParams(searchParams, { categorySlug: category.slug });
-  const [result, brands] = await Promise.all([searchShop(filters), getBrands()]);
+  const [result, brands] = await Promise.all([searchShop({ ...filters, page: 1, pageSize: 1000 }), getBrands()]);
 
   return (
     <main className="min-h-screen bg-slate-50/60">
@@ -81,13 +80,6 @@ export default async function CategoryShopPage({
 
           <ProductGrid products={result.items} mode="catalog" emptyMessage={`No ${categoryName.toLowerCase()} available right now.`} />
 
-          <Pagination
-            page={result.page}
-            pageSize={result.pageSize}
-            total={result.total}
-            basePath={`/shop/${category.slug}`}
-            searchParams={searchParams}
-          />
         </section>
       </div>
       </div>
