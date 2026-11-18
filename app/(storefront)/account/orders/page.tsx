@@ -23,13 +23,13 @@ export default async function OrdersPage() {
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My activity</p>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
         <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My orders</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Review purchases, payment status and order progress.</p>
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-9">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <circle cx="9" cy="21" r="1" />
             <circle cx="20" cy="21" r="1" />
@@ -54,9 +54,9 @@ export default async function OrdersPage() {
           {orders.map((order) => (
             <article
               key={order.id}
-              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-panel sm:p-5"
             >
-              <Link href={`/account/orders/${order.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+              <Link href={`/account/orders/${order.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="break-all text-base font-bold text-slate-950">{order.order_number}</p>
