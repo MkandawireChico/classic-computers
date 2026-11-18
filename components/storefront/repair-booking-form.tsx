@@ -45,6 +45,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
+  const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
+
 
   function validateStep(stepId: StepId): boolean {
     const errors: Record<string, string> = {};
