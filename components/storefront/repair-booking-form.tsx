@@ -117,8 +117,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
   if (result) {
     return (
       <div className="space-y-6">
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 p-12 text-center">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-emerald-600">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-brand-50 p-12 text-center">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-brand-700">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <path d="M22 4L12 14.01l-3-3" />
           </svg>
@@ -128,7 +128,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
           </p>
           <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
             <p className="text-sm font-semibold text-slate-700">Repair reference</p>
-            <p className="mt-1 text-2xl font-extrabold text-emerald-700">{result.ticketNumber}</p>
+            <p className="mt-1 text-2xl font-extrabold text-brand-700">{result.ticketNumber}</p>
             {!isAuthenticated ? (
               <>
                 <p className="mt-4 text-sm font-semibold text-slate-700">Tracking code</p>
@@ -141,14 +141,14 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
             {isAuthenticated ? (
               <Link
                 href="/account/repairs"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-emerald-400"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-brand-500"
               >
                 View repair request
               </Link>
             ) : (
               <Link
                 href="/repairs/track"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-emerald-400"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-brand-500"
               >
                 Track repair
               </Link>
@@ -202,9 +202,9 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                     isActive
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-brand-600 text-white"
                       : isCompleted
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-brand-100 text-brand-700"
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
@@ -218,7 +218,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 </div>
                 <p
                   className={`mt-2 text-xs font-semibold ${
-                    isActive ? "text-emerald-700" : isCompleted ? "text-emerald-600" : "text-slate-500"
+                    isActive ? "text-brand-700" : isCompleted ? "text-brand-700" : "text-slate-500"
                   }`}
                 >
                   {step.title}
@@ -253,8 +253,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 value={formData.deviceType}
                 onChange={(e) => setFormData({ ...formData, deviceType: e.target.value })}
                 placeholder="e.g. Laptop, Desktop, Tablet"
-                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all ${
-                  validationErrors.deviceType ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-emerald-500"
+                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all ${
+                  validationErrors.deviceType ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-brand-500"
                 }`}
               />
               {validationErrors.deviceType && (
@@ -273,7 +273,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                   value={formData.brand}
                   onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                   placeholder="e.g. Dell, HP, Lenovo"
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
                 />
               </div>
 
@@ -287,7 +287,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                   value={formData.model}
                   onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                   placeholder="e.g. Latitude 7420"
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
                 />
               </div>
             </div>
@@ -302,7 +302,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 value={formData.serialNumber}
                 onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
                 placeholder="e.g. Service tag or serial number"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
               />
             </div>
           </div>
@@ -340,8 +340,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 onChange={(e) => setFormData({ ...formData, problemDescription: e.target.value })}
                 rows={5}
                 placeholder="Describe what's wrong with your device. Include any symptoms, error messages, or when the problem occurs..."
-                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none ${
-                  validationErrors.problemDescription ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-emerald-500"
+                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all resize-none ${
+                  validationErrors.problemDescription ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-brand-500"
                 }`}
               />
               {validationErrors.problemDescription && (
@@ -362,7 +362,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 value={formData.accessoriesReceived}
                 onChange={(e) => setFormData({ ...formData, accessoriesReceived: e.target.value })}
                 placeholder="e.g. charger, bag, cables"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
               />
             </div>
           </div>
@@ -408,8 +408,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 value={formData.guestName}
                 onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
                 autoComplete="name"
-                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all ${
-                  validationErrors.guestName ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-emerald-500"
+                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all ${
+                  validationErrors.guestName ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-brand-500"
                 }`}
               />
               {validationErrors.guestName && (
@@ -428,8 +428,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 onChange={(e) => setFormData({ ...formData, guestPhone: e.target.value })}
                 autoComplete="tel"
                 placeholder="+265..."
-                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all ${
-                  validationErrors.guestPhone ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-emerald-500"
+                className={`w-full rounded-xl border px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all ${
+                  validationErrors.guestPhone ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-brand-500"
                 }`}
               />
               {validationErrors.guestPhone && (
@@ -448,7 +448,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 onChange={(e) => setFormData({ ...formData, guestEmail: e.target.value })}
                 autoComplete="email"
                 placeholder="your@email.com"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
               />
             </div>
 
@@ -490,13 +490,13 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl border border-slate-200 bg-white p-5">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">Device information</h3>
                 <button
                   type="button"
                   onClick={() => setCurrentStep("device")}
-                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                  className="text-xs font-semibold text-brand-700 hover:text-brand-700"
                 >
                   Edit
                 </button>
@@ -533,7 +533,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 <button
                   type="button"
                   onClick={() => setCurrentStep("problem")}
-                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                  className="text-xs font-semibold text-brand-700 hover:text-brand-700"
                 >
                   Edit
                 </button>
@@ -553,7 +553,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                   <button
                     type="button"
                     onClick={() => setCurrentStep("contact")}
-                    className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                    className="text-xs font-semibold text-brand-700 hover:text-brand-700"
                   >
                     Edit
                   </button>
@@ -607,7 +607,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
 
       <Link
         href="/repairs"
-        className="block text-center text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600"
+        className="block text-center text-sm font-medium text-slate-600 transition-colors hover:text-brand-700"
       >
         Cancel and return to repairs
       </Link>
