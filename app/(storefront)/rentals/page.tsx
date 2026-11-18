@@ -22,7 +22,7 @@ export default async function RentalsPage() {
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden bg-[#081827] text-white">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.28),transparent_42%),linear-gradient(120deg,#081827_0%,#102b42_100%)]" />
-        <div className="section-shell py-14 sm:py-18 lg:py-24">
+        <div className="section-shell py-14 sm:py-20 lg:py-24">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Equipment rental · Blantyre, Malawi</p>
         <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Technology when you need it. <span className="text-cyan-300">Without buying it.</span></h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
