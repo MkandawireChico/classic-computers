@@ -32,13 +32,13 @@ export default async function AccountRepairsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="border-b border-slate-200 pb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My activity</p>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
           <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My repairs</h1>
           <p className="mt-2 text-sm leading-6 text-slate-600">Track service progress and review updates from our team.</p>
         </div>
         <Link
           href="/repairs/book"
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-brand-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
@@ -48,7 +48,7 @@ export default async function AccountRepairsPage() {
       </div>
 
       {repairs.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-9">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
           </svg>
@@ -60,9 +60,9 @@ export default async function AccountRepairsPage() {
           {repairs.map((r) => (
             <article
               key={r.id}
-              className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-panel sm:p-5"
             >
-              <Link href={`/account/repairs/${r.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+              <Link href={`/account/repairs/${r.id}`} className="group flex items-start justify-between gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="break-all text-base font-bold text-slate-950">{r.ticket_number}</p>
@@ -74,7 +74,7 @@ export default async function AccountRepairsPage() {
                   <p className="mt-1 text-xs text-slate-500">Opened {new Date(r.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "short", day: "numeric" })}</p>
                   <p className="mt-1 text-xs text-slate-500">Submitted {formatDate(r.created_at)}</p>
                 </div>
-                <span className="text-xs font-semibold text-emerald-700 transition-colors group-hover:text-emerald-900">View details</span>
+                <span className="text-xs font-semibold text-brand-700 transition-colors group-hover:text-brand-900">View details</span>
               </Link>
               <CustomerReviewAction
                 type="repair"
