@@ -11,14 +11,14 @@ export default async function WishlistPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My benefits</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Wishlist</h1>
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My benefits</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Wishlist</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Products you have saved to come back to later.</p>
       </div>
 
       {entries.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
           </svg>
@@ -37,7 +37,7 @@ export default async function WishlistPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {entries.map(({ wishlistItemId, product }) => (
-            <div key={wishlistItemId} className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-emerald-300">
+            <div key={wishlistItemId} className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300">
               <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100">
                 {product.primary_image ? (
                   <Image
