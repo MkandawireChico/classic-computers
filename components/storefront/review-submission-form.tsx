@@ -97,7 +97,7 @@ export function ReviewSubmissionForm({
           <Image src={transaction.imageUrl} alt="" width={80} height={80} className="h-20 w-20 shrink-0 rounded-lg border border-slate-200 bg-white object-contain" />
         ) : null}
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-wide text-emerald-800">{transaction.type} review</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-brand-800">{transaction.type} review</p>
           <h2 className="mt-1 font-bold text-slate-950">{transaction.description}</h2>
           <p className="mt-1 text-sm text-slate-600">{transaction.reference}</p>
         </div>
@@ -135,7 +135,7 @@ export function ReviewSubmissionForm({
           onChange={(event) => setTitle(event.target.value)}
           maxLength={200}
           placeholder="Summarize your experience"
-          className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+          className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-100"
         />
       </div>
 
@@ -149,7 +149,7 @@ export function ReviewSubmissionForm({
           maxLength={2000}
           rows={5}
           placeholder="Tell us about your experience."
-          className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-100"
         />
         <p className="text-xs text-slate-500">{comment.length}/2000 characters (minimum 10)</p>
       </div>
@@ -172,7 +172,7 @@ export function ReviewSubmissionForm({
             setError(null);
             setImages(selected);
           }}
-          className="block min-h-11 w-full rounded-xl border border-slate-300 bg-white p-2 text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:font-semibold file:text-emerald-800"
+          className="block min-h-11 w-full rounded-xl border border-slate-300 bg-white p-2 text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:font-semibold file:text-brand-800"
         />
         <p className="text-xs text-slate-500">JPEG, PNG or WebP. Maximum 5MB per image.</p>
       </div>
@@ -181,7 +181,7 @@ export function ReviewSubmissionForm({
         type="submit"
         isLoading={isPending}
         disabled={isPending || rating === 0 || comment.trim().length < 10}
-        className="min-h-12 w-full rounded-xl bg-emerald-700 text-sm font-extrabold hover:bg-emerald-800"
+        className="min-h-12 w-full rounded-xl bg-brand-700 text-sm font-extrabold hover:bg-brand-800"
       >
         Submit Review
       </Button>
