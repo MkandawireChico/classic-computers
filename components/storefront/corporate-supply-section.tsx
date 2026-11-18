@@ -40,7 +40,7 @@ export async function CorporateSupplySection() {
           </div>
 
           <div className="space-y-6">
-            {promoUrl ? (
+            {promo && promoUrl ? (
               <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/20">
                 <Image
                   src={promoUrl}
