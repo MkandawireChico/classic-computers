@@ -154,7 +154,7 @@ export default async function StudentDealsPage() {
 
           <ol className="mt-7 grid gap-3 md:mt-9 md:grid-cols-3 md:gap-4">
             <li className="flex gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-cyan-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-800">
                 <StepIcon kind="apply" />
               </div>
               <div>
