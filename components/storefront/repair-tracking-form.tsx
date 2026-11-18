@@ -67,7 +67,7 @@ export function RepairTrackingForm() {
             name="ticketNumber"
             required
             placeholder="REP-2026-000001"
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
           />
         </div>
         <div className="flex-1 space-y-1.5">
@@ -79,7 +79,7 @@ export function RepairTrackingForm() {
             name="trackingToken"
             required
             placeholder="Your tracking code"
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
           />
         </div>
         <Button type="submit" isLoading={isPending} className="rounded-xl min-h-[52px] w-full sm:w-auto">
@@ -129,7 +129,7 @@ export function RepairTrackingForm() {
               <ol className="mt-4 space-y-4 border-l-2 border-slate-200 pl-4">
                 {repair.updates.map((u, i) => (
                   <li key={i} className="relative">
-                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white" />
+                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-brand-600 border-2 border-white" />
                     <p className="text-sm text-slate-900">{u.note}</p>
                     <p className="mt-1 text-xs text-slate-500">{formatDate(u.createdAt)}</p>
                   </li>
