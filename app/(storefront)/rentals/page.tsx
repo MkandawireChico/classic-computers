@@ -7,6 +7,7 @@ import { RentalTrackingWidget } from "@/components/storefront/rental-tracking-wi
 import { ReviewCategorySection } from "@/components/storefront/review-category-section";
 import { formatMoney } from "@/lib/format/money";
 import { getPublicStorageUrl } from "@/lib/storage";
+import { getSiteMedia } from "@/lib/data/site-media";
 
 export const metadata: Metadata = {
   title: "Laptop Rentals",
@@ -15,14 +16,23 @@ export const metadata: Metadata = {
 
 export default async function RentalsPage() {
   const supabase = createClient();
-  const [, products] = await Promise.all([supabase.auth.getUser(), getRentableProducts()]);
+  const [, products, rentalMedia] = await Promise.all([
+    supabase.auth.getUser(),
+    getRentableProducts(),
+    getSiteMedia("rental_promo", 1),
+  ]);
+  const rentalPromo = rentalMedia[0] ?? null;
+  const rentalPromoUrl = rentalPromo
+    ? getPublicStorageUrl("site-media", rentalPromo.storage_path)
+    : null;
 
   return (
     <div className="min-h-screen bg-[#f5f7f8] pb-16">
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden bg-[#17344d] text-white">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.28),transparent_42%),linear-gradient(120deg,#081827_0%,#102b42_100%)]" />
-        <div className="section-shell py-14 sm:py-20 lg:py-24">
+        <div className="section-shell grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-24">
+          <div className="max-w-3xl">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Equipment rental · Blantyre, Malawi</p>
         <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Technology when you need it. <span className="text-cyan-300">Without buying it.</span></h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
@@ -42,6 +52,25 @@ export default async function RentalsPage() {
             Request a Rental
           </Link>
         </div>
+          </div>
+          {rentalPromoUrl ? (
+            <div className="relative aspect-[5/4] w-full overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/25">
+              <Image
+                src={rentalPromoUrl}
+                alt={rentalPromo?.alt_text ?? "Laptop and equipment rental services from Classic Computers"}
+                fill
+                priority
+                sizes="(max-width: 1023px) 100vw, 44vw"
+                className="object-cover"
+              />
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-transparent" />
+              {rentalPromo?.title ? (
+                <p className="absolute bottom-4 left-4 rounded-lg border border-white/25 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white backdrop-blur">
+                  {rentalPromo.title}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </section>
 
