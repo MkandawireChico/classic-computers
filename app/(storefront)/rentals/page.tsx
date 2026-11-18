@@ -31,7 +31,7 @@ export default async function RentalsPage() {
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden bg-[#17344d] text-white">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.28),transparent_42%),linear-gradient(120deg,#081827_0%,#102b42_100%)]" />
-        <div className="section-shell grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-24">
+        <div className={`section-shell grid items-center gap-10 py-14 sm:py-20 ${rentalPromoUrl ? "lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""} lg:py-24`}>
           <div className="max-w-3xl">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Equipment rental · Blantyre, Malawi</p>
         <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Technology when you need it. <span className="text-cyan-300">Without buying it.</span></h1>
