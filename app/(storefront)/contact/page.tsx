@@ -25,7 +25,7 @@ export default async function ContactPage() {
     : null;
 
   return (
-    <div className="bg-gradient-to-b from-brand-50/70 via-white to-slate-50">
+    <div className="min-h-screen bg-[#f4f6f7]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <nav aria-label="Breadcrumb" className="mb-5 text-sm text-slate-500">
           <Link
@@ -42,14 +42,14 @@ export default async function ContactPage() {
           </span>
         </nav>
 
-        <header className="rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50 to-emerald-50 p-6 shadow-sm sm:p-9 lg:p-12">
-          <p className="inline-flex rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
+        <header className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#081827] p-6 text-white shadow-xl shadow-slate-900/10 sm:p-9 lg:p-12">
+          <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
             Get in touch
           </p>
-          <h1 className="mt-4 max-w-3xl text-3xl font-black leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+          <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-white sm:text-4xl lg:text-5xl">
             We&apos;re here to help
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
             Have a question about a laptop, need help choosing a computer, or looking for ICT
             equipment for your organisation? Our team can help with product enquiries, orders,
             rentals, repairs and corporate supply.
@@ -61,7 +61,7 @@ export default async function ContactPage() {
             aria-labelledby="contact-options-heading"
             className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
           >
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">
               Contact details
             </p>
             <h2 id="contact-options-heading" className="mt-2 text-2xl font-black text-slate-900">
@@ -94,7 +94,7 @@ export default async function ContactPage() {
                   value={businessInfo.email}
                   href={`mailto:${businessInfo.email}`}
                   icon={<EmailIcon />}
-                  tone="violet"
+                  tone="brand"
                 />
               ) : null}
               {businessInfo?.whatsapp ? (
@@ -103,7 +103,7 @@ export default async function ContactPage() {
                   value={businessInfo.whatsapp}
                   href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
                   icon={<WhatsAppIcon />}
-                  tone="emerald"
+                  tone="cyan"
                   compactLabel
                   external
                 />
@@ -205,14 +205,14 @@ function ContactDetail({
   value: string;
   href: string;
   icon: ReactNode;
-  tone: "brand" | "violet" | "emerald";
+  tone: "brand" | "cyan";
   external?: boolean;
   compactLabel?: boolean;
 }) {
   const toneClasses = {
     brand: "bg-brand-50 text-brand-800 ring-brand-100",
-    violet: "bg-violet-50 text-violet-800 ring-violet-100",
-    emerald: "bg-emerald-50 text-emerald-800 ring-emerald-100",
+    cyan: "bg-cyan-50 text-cyan-800 ring-cyan-100",
+    emerald: "bg-cyan-50 text-cyan-800 ring-emerald-100",
   };
 
   return (
