@@ -126,7 +126,7 @@ export function BackButton({ className = "" }: { className?: string }) {
         type="button"
         onClick={handleBack}
         aria-label="Back"
-        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-bold text-emerald-950 shadow-sm transition-colors hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-100 focus-visible:ring-offset-2 active:bg-emerald-100"
+        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-[#102033] shadow-sm transition-colors hover:border-cyan-300 hover:bg-cyan-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-100 focus-visible:ring-offset-2 active:bg-cyan-100"
       >
         <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
           <path
