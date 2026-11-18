@@ -20,7 +20,7 @@ export default async function RentalsPage() {
   return (
     <div className="min-h-screen bg-[#f5f7f8] pb-16">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-[#081827] text-white">
+      <section className="relative isolate overflow-hidden bg-[#17344d] text-white">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.28),transparent_42%),linear-gradient(120deg,#081827_0%,#102b42_100%)]" />
         <div className="section-shell py-14 sm:py-20 lg:py-24">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Equipment rental · Blantyre, Malawi</p>
@@ -84,7 +84,7 @@ export default async function RentalsPage() {
                     {imageUrl ? (
                       <Image src={imageUrl} alt={product.productName} fill className="object-contain p-4 transition-transform group-hover:scale-105" sizes="(max-width: 768px) 100vw, 25vw" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">Image unavailable</div>
+                      <div className="flex h-full items-center justify-center text-sm font-medium text-slate-200">Image unavailable</div>
                     )}
                     <span className={`absolute top-3 right-3 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] ${product.availableQuantity > 0 ? "bg-cyan-50 text-cyan-800" : "bg-slate-200 text-slate-600"}`}>
                       {product.availableQuantity > 0 ? `${product.availableQuantity} available` : "Out of stock"}
@@ -112,7 +112,7 @@ export default async function RentalsPage() {
                           Rent Now
                         </Link>
                       ) : (
-                        <span aria-disabled="true" className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-400">
+                        <span aria-disabled="true" className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-200">
                           Unavailable
                         </span>
                       )}
