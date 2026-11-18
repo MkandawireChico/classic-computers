@@ -106,7 +106,7 @@ export default async function WriteReviewPage({ searchParams }: { searchParams: 
   return (
     <div className="space-y-6">
       <header className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Customer feedback</p>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Customer feedback</p>
         <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">Write a Review</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
           Share honest feedback about a completed purchase, returned rental or completed repair. Reviews are checked before they appear publicly.
@@ -131,7 +131,7 @@ export default async function WriteReviewPage({ searchParams }: { searchParams: 
           <Link href={returnHref} className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50">Return to transaction</Link>
         </section>
       ) : selected ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           {existingReview?.status === "rejected" && existingReview.admin_response ? (
             <p className="mb-5 rounded-lg bg-rose-50 p-3 text-sm text-rose-900">
               Your previous review was rejected. Moderator feedback: {existingReview.admin_response}
@@ -144,13 +144,13 @@ export default async function WriteReviewPage({ searchParams }: { searchParams: 
           <h2 className="font-bold text-slate-950">Choose a completed transaction</h2>
           <p className="text-sm text-slate-600">Select the transaction entry you want to review. Each product in an order can be reviewed separately.</p>
           {candidates.map((candidate) => (
-            <article key={`${candidate.type}:${candidate.transactionKey}`} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
+            <article key={`${candidate.type}:${candidate.transactionKey}`} className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
               {candidate.imageUrl ? <Image src={candidate.imageUrl} alt="" width={64} height={64} className="h-16 w-16 rounded-lg border border-slate-200 object-contain" /> : null}
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-slate-950">{candidate.description}</p>
                 <p className="mt-1 text-sm text-slate-600">{candidate.reference} · {candidate.type}</p>
               </div>
-              <Link href={reviewHref(candidate)} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800">
+              <Link href={reviewHref(candidate)} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800">
                 Write review
               </Link>
             </article>
@@ -165,7 +165,7 @@ export default async function WriteReviewPage({ searchParams }: { searchParams: 
             Product reviews require a completed order, rental reviews require a returned booking, and repair reviews require a completed ticket. The transaction must belong to your signed-in account. If it has just been completed, refresh this page.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link href="/account/orders" className="inline-flex min-h-11 items-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white">Check orders</Link>
+            <Link href="/account/orders" className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white">Check orders</Link>
             <Link href="/account/rentals" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700">Check rentals</Link>
             <Link href="/account/repairs" className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700">Check repairs</Link>
           </div>
