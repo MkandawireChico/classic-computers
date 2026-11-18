@@ -14,7 +14,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   return (
     <div className="space-y-6">
       <header className="border-b border-slate-200 pb-5">
-      <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Order details</p>
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Order details</p>
       <h1 className="mt-1 break-all text-2xl font-extrabold text-slate-950 sm:text-3xl">{order.order_number}</h1>
       <p className="mt-2 text-sm text-slate-600">
         {new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
@@ -28,7 +28,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
       </header>
 
       {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="mb-2 text-sm font-bold text-slate-950">Delivery address</h2>
           {order.delivery_snapshot.full_name ? <p>{order.delivery_snapshot.full_name}</p> : null}
           {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
@@ -47,7 +47,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </p>
       ) : null}
 
-      <section aria-label="Items in this order" className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+      <section aria-label="Items in this order" className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
         {order.items.map((item) => (
           <div key={item.id} className="flex flex-col gap-4 p-4 text-sm sm:flex-row sm:items-start sm:justify-between sm:p-5">
             <div className="flex min-w-0 gap-3">
@@ -74,7 +74,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         ))}
       </section>
 
-      <section aria-label="Order total" className="ml-auto max-w-md space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm sm:p-5">
+      <section aria-label="Order total" className="ml-auto max-w-md space-y-2 rounded-2xl border border-slate-200 bg-white p-5 text-sm shadow-sm sm:p-6">
         <div className="flex justify-between text-slate-600">
           <span>Subtotal</span>
           <span>{formatMoney(order.subtotal)}</span>
