@@ -45,7 +45,7 @@ const PAYMENT_DESCRIPTIONS: Record<PaymentMethod, string> = {
 
 const PAYMENT_ACCENTS: Record<PaymentMethod, string> = {
   pay_at_shop: "border-cyan-300 bg-cyan-50 text-cyan-900",
-  bank_transfer: "border-emerald-300 bg-cyan-50 text-cyan-900",
+  bank_transfer: "border-cyan-300 bg-cyan-50 text-cyan-900",
   mobile_money: "border-rose-300 bg-rose-50 text-rose-900",
   cash_on_delivery: "border-amber-300 bg-amber-50 text-amber-950",
 };
@@ -187,30 +187,30 @@ export function CheckoutForm({
         </p>
       )}
 
-      <fieldset className="space-y-4 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/30 p-6 shadow-lg shadow-emerald-900/5 sm:p-8">
+      <fieldset className="space-y-4 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50/50 via-white to-cyan-50/30 p-6 shadow-lg shadow-cyan-900/5 sm:p-8">
         <legend className="px-3 text-lg font-extrabold text-cyan-900">Fulfillment</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-emerald-500 bg-cyan-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-cyan-500 bg-cyan-50 text-cyan-950 shadow-md shadow-cyan-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-cyan-300 hover:shadow-md"}`}
           >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "pickup"}
               onChange={() => setFulfillmentType("pickup")}
-              className="h-5 w-5 accent-emerald-700 focus:ring-emerald-500"
+              className="h-5 w-5 accent-cyan-700 focus:ring-cyan-500"
             />
             Pickup in-store
           </label>
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-emerald-500 bg-cyan-50 text-emerald-950 shadow-md shadow-emerald-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-cyan-500 bg-cyan-50 text-cyan-950 shadow-md shadow-cyan-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-cyan-300 hover:shadow-md"}`}
           >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "delivery"}
               onChange={() => setFulfillmentType("delivery")}
-              className="h-5 w-5 accent-emerald-700 focus:ring-emerald-500"
+              className="h-5 w-5 accent-cyan-700 focus:ring-cyan-500"
             />
             Delivery
           </label>
@@ -227,7 +227,7 @@ export function CheckoutForm({
                   id="deliveryAddressId"
                   name="deliveryAddressId"
                   defaultValue={defaultAddressId}
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
                 >
                   {addresses.map((address) => (
                     <option key={address.id} value={address.id}>
@@ -256,7 +256,7 @@ export function CheckoutForm({
                   id="guestDeliveryLine1"
                   name="guestDeliveryLine1"
                   required
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
                 />
               </div>
               <div className="space-y-2">
@@ -266,7 +266,7 @@ export function CheckoutForm({
                 <input
                   id="guestDeliveryLine2"
                   name="guestDeliveryLine2"
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -278,7 +278,7 @@ export function CheckoutForm({
                     id="guestDeliveryCity"
                     name="guestDeliveryCity"
                     required
-                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -291,7 +291,7 @@ export function CheckoutForm({
                   <input
                     id="guestDeliveryDistrict"
                     name="guestDeliveryDistrict"
-                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
                   />
                 </div>
               </div>
@@ -407,7 +407,7 @@ export function CheckoutForm({
           (selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
           !selectedProvider
         }
-        className="min-h-14 w-full rounded-2xl bg-emerald-700 px-8 py-4 text-lg font-extrabold text-white shadow-xl shadow-emerald-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-2xl"
+        className="min-h-14 w-full rounded-2xl bg-cyan-700 px-8 py-4 text-lg font-extrabold text-white shadow-xl shadow-cyan-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-800 hover:shadow-2xl"
       >
         Place order
       </Button>
@@ -426,7 +426,7 @@ function ProviderPanel({
 }) {
   const styles =
     accent === "emerald"
-      ? "border-emerald-300 bg-gradient-to-br from-emerald-50/80 to-white"
+      ? "border-cyan-300 bg-gradient-to-br from-cyan-50/80 to-white"
       : "border-rose-300 bg-gradient-to-br from-rose-50/80 to-white";
 
   return (
@@ -452,7 +452,7 @@ function ProviderChoice({
 }) {
   const selectedStyle =
     accent === "emerald"
-      ? "border-emerald-500 bg-white text-emerald-950 ring-2 ring-emerald-200 shadow-md shadow-emerald-900/10"
+      ? "border-cyan-500 bg-white text-cyan-950 ring-2 ring-cyan-200 shadow-md shadow-cyan-900/10"
       : "border-rose-500 bg-white text-rose-950 ring-2 ring-rose-200 shadow-md shadow-rose-900/10";
 
   return (
@@ -473,7 +473,7 @@ function ProviderChoice({
         <span className="min-w-0">{name}</span>
       </span>
       {selected ? (
-        <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700">
+        <span className="text-xs font-extrabold uppercase tracking-wider text-cyan-700">
           Selected
         </span>
       ) : null}
@@ -510,7 +510,7 @@ function BankDetails({
         <PaymentDetail label="Branch" value={provider.branch} />
         <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
       </dl>
-      <p className="rounded-xl bg-cyan-50 p-3 text-sm leading-relaxed text-emerald-950">
+      <p className="rounded-xl bg-cyan-50 p-3 text-sm leading-relaxed text-cyan-950">
         Place your order first. Then transfer the exact final total shown on the order confirmation
         and keep your bank transaction reference. Your order remains unpaid until the transfer is
         verified.
@@ -528,7 +528,7 @@ function BankDetails({
           name="paymentReference"
           maxLength={120}
           autoComplete="off"
-          className="w-full rounded-xl border border-cyan-200 bg-white px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-cyan-200 bg-white px-3 py-2.5 text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-100"
         />
       </div>
     </div>
