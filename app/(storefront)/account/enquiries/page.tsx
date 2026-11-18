@@ -7,14 +7,14 @@ export default async function AccountEnquiriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">My activity</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My enquiries</h1>
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">My enquiries</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Follow up on the questions and quote requests you have sent us.</p>
       </div>
 
       {enquiries.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center sm:p-8">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300">
             <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
           </svg>
@@ -33,7 +33,7 @@ export default async function AccountEnquiriesPage() {
       ) : (
         <div className="space-y-3">
           {enquiries.map((e) => (
-            <div key={e.id} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <div key={e.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
