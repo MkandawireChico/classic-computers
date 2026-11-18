@@ -99,7 +99,7 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
               <div className="mt-4">
                 <p className="text-2xl font-extrabold text-slate-900">{formatMoney(repair.quote_amount)}</p>
                 <p className="mt-2 text-sm text-slate-600">
-                  {repair.quote_approved_at ? "Approved" : "Awaiting your approval"}
+                  {repair.quote_approved_at ? "Approved" : "Awaiting your response"}
                 </p>
               </div>
             </div>
