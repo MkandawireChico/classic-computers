@@ -1,4 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
+import { searchShop } from "@/lib/data/products";
+import { getPublicStorageUrl } from "@/lib/storage";
 import { getCategories } from "@/lib/data/categories";
 import { formatCategoryName } from "@/lib/format/category";
 
@@ -15,6 +18,13 @@ export async function CategorySection() {
     (category) => category.parent_id === null && category.name.trim() !== "" && category.slug.trim() !== "",
   );
   if (categories.length === 0) return null;
+  const categoryProducts = await Promise.all(
+    categories.map(async (category) => {
+      const result = await searchShop({ categorySlug: category.slug, page: 1, pageSize: 1, sort: "featured" });
+      return [category.id, result.items[0] ?? null] as const;
+    }),
+  );
+  const productByCategory = new Map(categoryProducts);
 
   return (
     <section aria-labelledby="shop-by-category-heading" className="bg-white">
@@ -34,26 +44,47 @@ export async function CategorySection() {
             </Link>
           </div>
 
-          <div className="divide-y divide-slate-200 border-y border-slate-200">
-            {categories.map((category, index) => {
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {categories.map((category) => {
               const name = formatCategoryName(category.name);
-              const style = CATEGORY_STYLES[index % CATEGORY_STYLES.length];
+              const product = productByCategory.get(category.id);
+              const imageUrl = product?.primary_image
+                ? getPublicStorageUrl("product-images", product.primary_image.storage_path)
+                : null;
               return (
                 <Link
                   key={category.id}
                   href={`/shop/${category.slug}`}
-                  className="group flex min-h-[88px] items-center gap-4 py-4 transition-colors hover:bg-slate-50 sm:min-h-[100px] sm:gap-6 sm:px-4"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                   aria-label={`Browse ${name}`}
                 >
-                  <span className="w-8 shrink-0 font-mono text-xs text-slate-400">{String(index + 1).padStart(2, "0")}</span>
-                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${style}`}>
-                    <CategoryIcon name={name} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-base font-bold tracking-tight text-[#102033] transition-colors group-hover:text-brand-700 sm:text-lg">{name}</span>
-                    <span className="mt-1 block text-xs text-slate-500">Explore products</span>
-                  </span>
-                  <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-lg text-slate-500 transition-all group-hover:border-brand-600 group-hover:bg-brand-600 group-hover:text-white">↗</span>
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#f3f7fa]">
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={product?.primary_image?.alt_text ?? product?.name ?? name}
+                        fill
+                        sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                        className="object-contain p-5 transition-transform duration-500 group-hover:scale-105 sm:p-7"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#eaf2f7] to-[#f8fafc]">
+                        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
+                          <CategoryIcon name={name} />
+                        </span>
+                      </div>
+                    )}
+                    <span className="absolute left-3 top-3 rounded-full border border-white/80 bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-800 backdrop-blur">
+                      Category
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 p-4 sm:p-5">
+                    <span className="min-w-0">
+                      <span className="block text-base font-bold tracking-tight text-[#102033] transition-colors group-hover:text-brand-700 sm:text-lg">{name}</span>
+                      <span className="mt-1 block text-xs text-slate-500">Browse available products</span>
+                    </span>
+                    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-lg text-slate-500 transition-all group-hover:border-brand-600 group-hover:bg-brand-600 group-hover:text-white">↗</span>
+                  </div>
                 </Link>
               );
             })}
