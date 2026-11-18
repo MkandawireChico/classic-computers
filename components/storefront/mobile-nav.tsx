@@ -30,11 +30,18 @@ export function MobileNav({
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") setOpen(false);
     }
+
     window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
   }, [open]);
 
   return (
@@ -45,7 +52,7 @@ export function MobileNav({
         aria-controls="mobile-nav-panel"
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((v) => !v)}
-        className="rounded-md border border-surface-border bg-white p-2.5 text-gray-700 shadow-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-900 shadow-sm transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
       >
         {open ? <CloseIcon /> : <MenuIcon />}
       </button>
@@ -56,12 +63,15 @@ export function MobileNav({
               <button
                 type="button"
                 aria-label="Close navigation backdrop"
-                className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm"
+                className="fixed inset-0 z-50 bg-navy-950/35 backdrop-blur-sm"
                 onClick={() => setOpen(false)}
               />
               <div
                 id="mobile-nav-panel"
-                className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col overflow-hidden border-b border-slate-200 bg-white shadow-xl shadow-slate-900/10"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Store navigation"
+                className="fixed inset-x-0 bottom-0 top-[7.25rem] z-[60] flex flex-col overflow-hidden border-b border-slate-200 bg-white shadow-2xl shadow-navy-950/20"
               >
                 <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
                   <p className="text-sm font-bold uppercase tracking-wider text-navy-800">Menu</p>
@@ -69,7 +79,7 @@ export function MobileNav({
                     type="button"
                     aria-label="Close navigation"
                     onClick={() => setOpen(false)}
-                    className="inline-flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                   >
                     Close
                     <CloseIcon />
@@ -80,7 +90,7 @@ export function MobileNav({
                   className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4"
                 >
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-700">
+                    <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-800">
                       Account
                     </p>
                     <div className="grid grid-cols-2 gap-1">
@@ -154,7 +164,7 @@ export function MobileNav({
                             key={link.href}
                             href={link.href}
                             onClick={() => setOpen(false)}
-                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-emerald-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
                           >
                             {link.label}
                           </Link>
@@ -165,7 +175,7 @@ export function MobileNav({
 
                   {infoLinks.length > 0 ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-700">
+                      <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-navy-800">
                         Information
                       </p>
                       <div className="flex flex-col gap-1">
