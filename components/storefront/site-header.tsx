@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { getSiteMedia } from "@/lib/data/site-media";
+import { getPublicStorageUrl } from "@/lib/storage";
 import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search-box";
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -18,14 +21,26 @@ const NAV_LINKS = [
 ];
 
 export async function SiteHeader() {
-  const [cartCount, user] = await Promise.all([getCartItemCount(), getCurrentUser()]);
+  const [cartCount, logoMedia, user] = await Promise.all([
+    getCartItemCount(),
+    getSiteMedia("logo" as any, 1),
+    getCurrentUser(),
+  ]);
+  const logo = logoMedia[0] ?? null;
+  const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
   const permissions = user ? await getMyPermissions() : new Set<string>();
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_4px_20px_-18px_rgba(16,29,53,0.35)] backdrop-blur-xl">
       <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[5rem]">
         <Link href="/" className="group flex min-w-0 shrink items-center gap-2.5 sm:shrink-0 sm:gap-3">
-          <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-sm font-bold tracking-tight text-white shadow-sm sm:h-11 sm:w-11">CC</span>
+          {logoUrl ? (
+            <span className="relative block h-11 w-14 shrink-0 overflow-hidden rounded-lg bg-white sm:h-12 sm:w-16">
+              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="64px" className="object-contain" />
+            </span>
+          ) : (
+            <span aria-hidden="true" className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-extrabold tracking-tight text-navy-900 sm:h-12 sm:w-16">CLASSIC</span>
+          )}
           <span className="min-w-0 leading-none">
             <span className="block truncate text-base font-extrabold tracking-[-0.045em] text-navy-900 sm:text-lg lg:text-xl">
               Classic <span className="text-brand-600">Computers</span>
