@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   }
 
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const rateKey = forwardedFor || request.headers.get("x-real-ip") || "anonymous";
+  const rateKey = request.ip || request.headers.get("x-real-ip") || forwardedFor || "anonymous";
   if (isRateLimited(rateKey)) {
     return NextResponse.json(
       { error: "You have sent several messages. Please wait a few minutes and try again." },
