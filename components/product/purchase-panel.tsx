@@ -69,7 +69,9 @@ export function PurchasePanel({
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <div className="flex items-baseline gap-2">
+      <div className="rounded-2xl bg-slate-50 px-4 py-4 sm:px-5">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Price</p>
+        <div className="flex flex-wrap items-baseline gap-2">
         {onSale ? (
           <>
             <span className="text-3xl font-extrabold text-brand-700">{formatMoney(salePrice as number)}</span>
@@ -78,9 +80,13 @@ export function PurchasePanel({
         ) : (
             <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
         )}
+        </div>
       </div>
 
-      <StockBadge status={currentStatus} />
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Availability</p>
+        <StockBadge status={currentStatus} />
+      </div>
 
       {hasVariants ? (
         <div>
@@ -91,7 +97,7 @@ export function PurchasePanel({
             id="variant"
             value={selectedVariantId ?? ""}
             onChange={(e) => setSelectedVariantId(e.target.value)}
-            className="w-full rounded-card border border-surface-border bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             {product.variants
               .filter((v) => v.status === "active")
@@ -104,7 +110,9 @@ export function PurchasePanel({
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Purchase options</p>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <AddToCartButton
           productId={product.id}
           variantId={selectedVariantId}
@@ -116,6 +124,7 @@ export function PurchasePanel({
           disabled={!canOrder}
           buyNow
         />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row">
