@@ -27,7 +27,7 @@ export default async function CheckoutPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#f4f6f7]">
+    <main className="min-h-screen bg-[#f4f6f7]">
       <div className="section-shell max-w-4xl py-8 sm:py-12">
         <header className="mb-7 rounded-[1.5rem] bg-[#081827] p-6 text-center text-white shadow-xl shadow-slate-900/10 sm:mb-8 sm:p-9">
           <p className="mb-3 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
@@ -51,6 +51,6 @@ export default async function CheckoutPage() {
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
