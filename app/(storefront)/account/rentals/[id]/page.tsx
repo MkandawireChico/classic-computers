@@ -35,12 +35,12 @@ export default async function AccountRentalDetailPage({ params }: { params: { id
   return (
     <div className="space-y-6">
       <header className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-violet-700">Rental details</p>
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">Rental details</p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-extrabold text-slate-950 sm:text-3xl">{rental.product_name ?? "Rental booking"}</h1>
           <Badge variant={STATUS_VARIANT[rental.status] ?? "info"}>{rental.status.replace(/_/g, " ")}</Badge>
         </div>
-        <Link href="/account/rentals" className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-violet-700 transition-colors hover:text-violet-900">
+        <Link href="/account/rentals" className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 transition-colors hover:text-brand-900">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6" />
             <path d="M9 18h6" />
@@ -57,7 +57,7 @@ export default async function AccountRentalDetailPage({ params }: { params: { id
       </header>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 text-sm sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 text-sm shadow-sm sm:p-6">
           {rental.image_url ? (
             <Image src={rental.image_url} alt="" width={96} height={96} className="mb-4 h-24 w-24 rounded-lg border border-slate-200 object-contain" />
           ) : null}
@@ -105,12 +105,12 @@ export default async function AccountRentalDetailPage({ params }: { params: { id
       </div>
 
       {rental.statusHistory.length > 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="mb-4 text-base font-semibold text-slate-950">Status history</h2>
           <ol className="space-y-4 border-l border-slate-200 pl-4">
             {rental.statusHistory.map((event, i) => (
               <li key={i} className="relative text-sm text-slate-700">
-                <div className="absolute -left-[21px] flex h-3 w-3 items-center justify-center rounded-full bg-violet-600 ring-4 ring-white"></div>
+                <div className="absolute -left-[21px] flex h-3 w-3 items-center justify-center rounded-full bg-brand-700 ring-4 ring-white"></div>
                 <span className="font-semibold capitalize text-slate-950">{event.to_status.replace(/_/g, " ")}</span>
                 <span className="ml-2 text-xs text-slate-500">{formatDateTime(event.created_at)}</span>
               </li>
