@@ -268,7 +268,6 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </div>
                   <div className="h-12 w-px bg-slate-200" />
                   <div>
-                    <ProductInterestTracker productId={product.id} categoryId={product.category?.id ?? null} />
                     <div className="text-sm text-slate-600">
                       {ratingSummary.count} approved review{ratingSummary.count === 1 ? "" : "s"}
                     </div>
