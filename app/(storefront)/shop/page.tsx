@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { searchShop } from "@/lib/data/products";
 import { getBrands } from "@/lib/data/brands";
 import { getCategories } from "@/lib/data/categories";
@@ -26,52 +27,61 @@ export default async function ShopPage({
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm text-gray-500">
-        <a href="/" className="hover:text-brand-600">Home</a>
-        <span aria-hidden="true" className="mx-2">/</span>
-        <span aria-current="page" className="text-gray-700">Shop</span>
-      </nav>
+    <main className="min-h-screen bg-slate-50/60">
+      <div className="section-shell py-6 sm:py-9 lg:py-11">
+        <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
+          <Link href="/" className="hover:text-brand-700">Home</Link>
+          <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
+          <span aria-current="page" className="text-slate-700">Shop</span>
+        </nav>
 
-      <header className="border-b border-surface-border pb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Classic Computers LLC</p>
-        <h1 className="mt-1 text-3xl font-bold text-slate-900">Shop</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-          Browse available computers, accessories and electronics.
-        </p>
-        <div className="mt-5 max-w-2xl">
-          <ShopSearch initialQuery={filters.query ?? ""} />
-        </div>
-      </header>
-
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-8">
-        <aside aria-label="Shop filters" className="lg:border-r lg:border-surface-border lg:pr-6">
-          <ShopFilters brands={brands} categories={categories} />
-        </aside>
-
-        <section aria-label="Products" className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-surface-border pb-4">
-            <p className="text-sm font-medium text-gray-700" aria-live="polite">
-              Showing {result.total} product{result.total === 1 ? "" : "s"}
-            </p>
-            <SortSelect />
+        <header className="overflow-hidden rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-[#123a55] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">The Classic Computers store</p>
+          <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Find the right technology.</h1>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
+                Explore computers, accessories and electronics, with local support from our Blantyre team.
+              </p>
+            </div>
+            <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur-sm">
+              <ShopSearch initialQuery={filters.query ?? ""} />
+            </div>
           </div>
+        </header>
 
-          <ProductGrid
-            products={result.items}
-            mode="catalog"
-            emptyMessage={hasActiveFilters ? "No products match your search or filters." : "No products are currently available."}
-          />
+        <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
+          <aside aria-label="Shop filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32">
+            <ShopFilters brands={brands} categories={categories} />
+          </aside>
 
-          <Pagination
-            page={result.page}
-            pageSize={result.pageSize}
-            total={result.total}
-            basePath="/shop"
-            searchParams={searchParams}
-          />
-        </section>
+          <section aria-label="Products" className="min-w-0">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div>
+                <p className="text-sm font-semibold text-navy-900" aria-live="polite">
+                  {result.total} product{result.total === 1 ? "" : "s"}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">Prices shown in Malawi Kwacha</p>
+              </div>
+              <SortSelect />
+            </div>
+
+            <ProductGrid
+              products={result.items}
+              mode="catalog"
+              emptyMessage={hasActiveFilters ? "No products match your search or filters." : "No products are currently available."}
+            />
+
+            <Pagination
+              page={result.page}
+              pageSize={result.pageSize}
+              total={result.total}
+              basePath="/shop"
+              searchParams={searchParams}
+            />
+          </section>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
