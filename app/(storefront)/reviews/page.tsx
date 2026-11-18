@@ -105,7 +105,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
             </button>
           </form>
           {(reviewType || rating || sort !== "newest") ? (
-            <Link href="/reviews" className="self-start text-sm font-semibold text-emerald-800 underline underline-offset-4">Clear filters</Link>
+            <Link href="/reviews" className="self-start text-sm font-semibold text-cyan-800 underline underline-offset-4">Clear filters</Link>
           ) : null}
         </div>
 
@@ -122,7 +122,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
                 Write a review
               </Link>
             ) : (
-              <Link href="/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800">
+              <Link href="/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0b2238] px-4 text-sm font-bold text-white hover:bg-cyan-800">
                 Sign in to write a review
               </Link>
             )}
@@ -136,7 +136,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
                     <div className="flex flex-wrap items-center gap-3">
                       <Stars rating={review.rating} />
                       {review.verified_purchase ? (
-                        <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-800">Verified transaction</span>
+                        <span className="rounded-full bg-cyan-50 px-2 py-1 text-xs font-semibold text-cyan-800">Verified transaction</span>
                       ) : null}
                       <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold capitalize text-slate-600">{review.review_type}</span>
                     </div>
