@@ -7,7 +7,6 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { ShopFilters } from "@/components/storefront/shop-filters";
 import { ShopSearch } from "@/components/storefront/shop-search";
 import { SortSelect } from "@/components/storefront/sort-select";
-import { Pagination } from "@/components/storefront/pagination";
 import { parseShopSearchParams } from "@/lib/shop-params";
 
 export const metadata: Metadata = {
@@ -21,7 +20,7 @@ export default async function ShopPage({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const filters = parseShopSearchParams(searchParams);
-  const [result, brands, categories] = await Promise.all([searchShop(filters), getBrands(), getCategories()]);
+  const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: 1, pageSize: 1000 }), getBrands(), getCategories()]);
   const hasActiveFilters = Boolean(
     filters.query || filters.brandSlugs?.length || filters.minPrice !== undefined || filters.maxPrice !== undefined || filters.availableOnly,
   );
@@ -59,9 +58,7 @@ export default async function ShopPage({
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <div>
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
-                  {result.total === 0
-                    ? "No matching products"
-                    : `Showing ${(result.page - 1) * result.pageSize + 1}–${Math.min(result.page * result.pageSize, result.total)} of ${result.total} products`}
+                  {result.total === 0 ? "No matching products" : `Showing all ${result.items.length} products`}
                 </p>
                 <p className="mt-0.5 text-xs text-slate-500">Prices shown in Malawi Kwacha</p>
               </div>
@@ -100,13 +97,6 @@ export default async function ShopPage({
               </div>
             )}
 
-            <Pagination
-              page={result.page}
-              pageSize={result.pageSize}
-              total={result.total}
-              basePath="/shop"
-              searchParams={searchParams}
-            />
           </section>
         </div>
       </div>
