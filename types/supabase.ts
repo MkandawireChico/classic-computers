@@ -2011,11 +2011,13 @@ export type Database = {
       review_status_enum: "pending" | "approved" | "rejected" | "hidden"
       reward_status_enum: "pending" | "issued"
       site_media_placement_enum:
+        | "logo"
         | "homepage_hero"
         | "homepage_banner"
         | "store_photo"
         | "rental_promo"
         | "corporate_promo"
+        | "footer_logo"
         | "other"
       spec_data_type_enum: "text" | "number" | "boolean" | "enum"
       student_status_enum:
