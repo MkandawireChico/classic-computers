@@ -4,8 +4,8 @@ import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
 const FOOTER_COLUMNS = [
   {
     title: "Shop",
-    color: "text-amber-400",
-    hover: "hover:text-amber-300 hover:translate-x-1 focus-visible:ring-amber-400",
+    color: "text-cyan-300",
+    hover: "hover:text-cyan-200 hover:translate-x-1 focus-visible:ring-cyan-300",
     links: [
       { href: "/shop", label: "All products" },
       { href: "/shop/laptop-computers", label: "Laptops" },
@@ -15,8 +15,8 @@ const FOOTER_COLUMNS = [
   },
   {
     title: "Services",
-    color: "text-emerald-400",
-    hover: "hover:text-emerald-300 hover:translate-x-1 focus-visible:ring-emerald-400",
+    color: "text-brand-300",
+    hover: "hover:text-brand-200 hover:translate-x-1 focus-visible:ring-brand-300",
     links: [
       { href: "/rentals", label: "Rentals" },
       { href: "/repairs", label: "Repairs" },
@@ -26,8 +26,8 @@ const FOOTER_COLUMNS = [
   },
   {
     title: "Information",
-    color: "text-violet-400",
-    hover: "hover:text-violet-300 hover:translate-x-1 focus-visible:ring-violet-400",
+    color: "text-sky-300",
+    hover: "hover:text-sky-200 hover:translate-x-1 focus-visible:ring-sky-300",
     links: [
       { href: "/about", label: "About us" },
       { href: "/contact", label: "Contact" },
@@ -43,7 +43,7 @@ export async function SiteFooter() {
   const [businessInfo, hours] = await Promise.all([getBusinessInfo(), getHours()]);
 
   return (
-    <footer className="border-t-2 border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-300">
+    <footer className="border-t border-navy-800 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 text-slate-300">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4 lg:gap-12">
           {/* Navigation Columns */}
@@ -61,7 +61,7 @@ export async function SiteFooter() {
               {businessInfo?.address ? (
                 <div className="space-y-2">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-500/20 text-brand-400">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-300">
                       <svg
                         width="18"
                         height="18"
@@ -80,7 +80,7 @@ export async function SiteFooter() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         Address
                       </p>
                       <p className="mt-1 text-sm leading-relaxed text-slate-300">
@@ -93,7 +93,7 @@ export async function SiteFooter() {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-bold text-emerald-400 transition-colors hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                      className="inline-flex items-center gap-2 text-sm font-bold text-brand-300 transition-colors hover:text-brand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                     >
                       <svg
                         width="16"
@@ -135,7 +135,7 @@ export async function SiteFooter() {
 
               {hours?.enabled && hours.schedule ? (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-cyan-300">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                       <path
@@ -148,7 +148,7 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       Hours
                     </p>
                     <p className="mt-1 text-sm text-slate-300">{hours.schedule}</p>
@@ -158,7 +158,7 @@ export async function SiteFooter() {
 
               {businessInfo?.phone ? (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-brand-300">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path
                         d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"
@@ -170,12 +170,12 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       Phone
                     </p>
                     <a
                       href={`tel:${businessInfo.phone}`}
-                      className="mt-1 block text-sm font-bold text-white transition-colors hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                      className="mt-1 block text-sm font-bold text-white transition-colors hover:text-brand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                     >
                       {businessInfo.phone}
                     </a>
@@ -185,7 +185,7 @@ export async function SiteFooter() {
 
               {businessInfo?.email ? (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 text-sky-300">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path
                         d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"
@@ -204,12 +204,12 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       Email
                     </p>
                     <a
                       href={`mailto:${businessInfo.email}`}
-                      className="mt-1 block break-all text-sm font-bold text-white transition-colors hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                      className="mt-1 block break-all text-sm font-bold text-white transition-colors hover:text-sky-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                     >
                       {businessInfo.email}
                     </a>
@@ -223,9 +223,9 @@ export async function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Message us on WhatsApp"
-                  className="group flex items-start gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                  className="group flex items-start gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-brand-300">
                     <svg
                       width="18"
                       height="18"
@@ -237,10 +237,10 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       WhatsApp
                     </p>
-                    <span className="mt-1 block break-words text-sm font-bold text-white transition-colors group-hover:text-emerald-300">
+                    <span className="mt-1 block break-words text-sm font-bold text-white transition-colors group-hover:text-brand-200">
                       {businessInfo.whatsapp}
                     </span>
                   </div>
@@ -252,8 +252,8 @@ export async function SiteFooter() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="border-t border-slate-800 bg-slate-950/50 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-        <div className="mx-auto max-w-7xl text-center text-xs text-slate-500 sm:text-sm">
+      <div className="border-t border-white/10 bg-navy-950/70 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <div className="mx-auto max-w-7xl text-center text-xs text-slate-400 sm:text-sm">
           © {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.
         </div>
       </div>
@@ -280,7 +280,7 @@ function FooterColumn({
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`inline-flex min-h-8 items-center text-sm text-slate-400 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${hover}`}
+              className={`inline-flex min-h-8 items-center text-sm text-slate-300 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${hover}`}
             >
               {link.label}
             </Link>
