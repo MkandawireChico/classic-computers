@@ -59,18 +59,46 @@ export default async function ShopPage({
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <div>
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
-                  {result.total} product{result.total === 1 ? "" : "s"}
+                  {result.total === 0
+                    ? "No matching products"
+                    : `Showing ${(result.page - 1) * result.pageSize + 1}–${Math.min(result.page * result.pageSize, result.total)} of ${result.total} products`}
                 </p>
                 <p className="mt-0.5 text-xs text-slate-500">Prices shown in Malawi Kwacha</p>
               </div>
               <SortSelect />
             </div>
 
-            <ProductGrid
-              products={result.items}
-              mode="catalog"
-              emptyMessage={hasActiveFilters ? "No products match your search or filters." : "No products are currently available."}
-            />
+            {result.items.length > 0 ? (
+              <ProductGrid products={result.items} mode="catalog" searchResults={Boolean(filters.query)} />
+            ) : (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center sm:px-10">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+                  <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="13" rx="2" />
+                    <path d="M8 21h8M12 17v4" strokeLinecap="round" />
+                    <path d="m9 9 6 4m0-4-6 4" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <h2 className="mt-5 text-lg font-bold text-navy-950">
+                  {hasActiveFilters ? "No products match those filters" : "No products are listed right now"}
+                </h2>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                  {hasActiveFilters
+                    ? "Try a different search, remove a filter or return to the full catalogue."
+                    : "Please check back soon or contact our team for help finding a product."}
+                </p>
+                <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+                  {hasActiveFilters ? (
+                    <Link href="/shop" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-navy-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+                      Clear search and filters
+                    </Link>
+                  ) : null}
+                  <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-navy-900 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+                    Contact the team
+                  </Link>
+                </div>
+              </div>
+            )}
 
             <Pagination
               page={result.page}
