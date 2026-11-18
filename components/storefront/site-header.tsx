@@ -1,12 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search-box";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getMyPermissions } from "@/lib/auth/permissions";
 import { getCartItemCount } from "@/lib/data/cart";
-import { getSiteMedia } from "@/lib/data/site-media";
-import { getPublicStorageUrl } from "@/lib/storage";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -21,26 +18,14 @@ const NAV_LINKS = [
 ];
 
 export async function SiteHeader() {
-  const [cartCount, logoMedia, user] = await Promise.all([
-    getCartItemCount(),
-    getSiteMedia("logo" as any, 1),
-    getCurrentUser(),
-  ]);
+  const [cartCount, user] = await Promise.all([getCartItemCount(), getCurrentUser()]);
   const permissions = user ? await getMyPermissions() : new Set<string>();
-  const logo = logoMedia[0] ?? null;
-  const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_4px_20px_-18px_rgba(16,29,53,0.35)] backdrop-blur-xl">
       <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[5rem]">
         <Link href="/" className="group flex min-w-0 shrink items-center gap-2.5 sm:shrink-0 sm:gap-3">
-          {logoUrl ? (
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white sm:h-11 sm:w-11">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill className="object-contain" />
-            </div>
-          ) : (
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-sm font-bold tracking-tight text-white shadow-sm sm:h-11 sm:w-11">CC</span>
-          )}
+          <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-sm font-bold tracking-tight text-white shadow-sm sm:h-11 sm:w-11">CC</span>
           <span className="min-w-0 leading-none">
             <span className="block truncate text-base font-extrabold tracking-[-0.045em] text-navy-900 sm:text-lg lg:text-xl">
               Classic <span className="text-brand-600">Computers</span>
