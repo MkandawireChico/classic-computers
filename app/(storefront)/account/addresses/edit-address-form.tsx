@@ -47,10 +47,10 @@ export function EditAddressForm({ address }: { address: AddressRecord }) {
         <input name="line2" defaultValue={address.line2 ?? ""} autoComplete="address-line2" className="mt-1 w-full" />
       </label>
       <label className="flex min-h-11 items-center gap-3 text-sm text-slate-700 sm:col-span-2">
-        <input type="checkbox" name="isDefault" defaultChecked={address.is_default} className="h-4 w-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-700" />
+        <input type="checkbox" name="isDefault" defaultChecked={address.is_default} className="h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-emerald-700" />
         Use as my default address
       </label>
-      <div className="flex gap-2 sm:col-span-2">
+      <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row">
         <Button type="submit" isLoading={isPending} className="min-h-11 rounded-lg">Save changes</Button>
         <Button type="button" variant="outline" className="min-h-11 rounded-lg" onClick={() => { setError(null); setIsOpen(false); }}>Cancel</Button>
       </div>
