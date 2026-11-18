@@ -23,7 +23,7 @@ export default async function RepairsPage() {
   return (
     <main>
       {/* Hero Section */}
-      <section aria-labelledby="repairs-heading" className="relative isolate overflow-hidden bg-[#081827] text-white">
+      <section aria-labelledby="repairs-heading" className="relative isolate overflow-hidden bg-[#17344d] text-white">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.24),transparent_42%)]" />
         <div className="section-shell grid items-center gap-8 py-8 sm:gap-10 sm:py-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-16">
           <div className="max-w-2xl">
