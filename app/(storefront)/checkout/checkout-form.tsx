@@ -141,7 +141,7 @@ export function CheckoutForm({
       {error ? (
         <Alert variant="danger">
           {error}
-          {error.startsWith("Stock changed while you were checking out") ? (
+          {error.startsWith("Stock changed while you were checking out") || error.startsWith("One or more items no longer have enough stock") ? (
             <Link href="/cart" className="ml-1 font-bold underline underline-offset-2">Review your cart</Link>
           ) : null}
         </Alert>
