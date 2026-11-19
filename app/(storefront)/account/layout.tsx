@@ -107,28 +107,28 @@ export default async function AccountLayout({ children }: { children: React.Reac
     .slice(0, 2);
 
   return (
-    <div className="section-shell flex-1 pb-12 pt-5 sm:pb-16 sm:pt-8">
-      <header className="mb-6 flex min-w-0 items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:mb-8 sm:px-6 sm:py-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <div aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-900 text-sm font-extrabold text-white shadow-sm sm:h-12 sm:w-12">
+    <div className="section-shell flex-1 pb-14 pt-5 sm:pb-20 sm:pt-8">
+      <header className="relative mb-5 flex min-w-0 items-center justify-between gap-4 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 px-4 py-4 text-white shadow-[0_14px_36px_rgba(15,23,42,0.13)] sm:mb-7 sm:px-6 sm:py-5">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full border-[24px] border-cyan-300/10" />\n        <div className="relative flex min-w-0 items-center gap-3">
+          <div aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-sm font-extrabold text-white shadow-sm sm:h-12 sm:w-12">
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Customer account</p>
-            <p className="truncate text-base font-bold text-slate-950 sm:text-lg">{displayName}</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-300">Customer account</p>
+            <p className="truncate text-base font-extrabold text-white sm:text-lg">{displayName}</p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <Link href="/shop" className="hidden min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:inline-flex">
+        <div className="relative flex shrink-0 items-center gap-2 sm:gap-3">
+          <Link href="/shop" className="hidden min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-bold text-slate-200 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 sm:inline-flex">
             <AccountIcon name="shopping-bag" />Browse shop
           </Link>
           <form action={signOut}>
-            <Button type="submit" variant="outline" size="sm" className="min-h-10 rounded-lg px-3">Sign out</Button>
+            <Button type="submit" variant="outline" size="sm" className="min-h-10 rounded-lg border-white/20 bg-white/5 px-3 text-white hover:bg-white/10 hover:text-white">Sign out</Button>
           </form>
         </div>
       </header>
 
-      <div className="grid min-w-0 gap-5 lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-8">
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[256px_minmax(0,1fr)] lg:gap-8">
         <AccountNavigation />
         <main className="min-w-0">{children}</main>
       </div>
