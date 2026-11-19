@@ -250,6 +250,47 @@ export default async function RepairsPage() {
         </div>
       </section>
 
+      <section aria-labelledby="repair-faq-heading" className="border-y border-slate-200 bg-[#f7f9fa]">
+        <div className="section-shell grid gap-8 py-11 sm:py-14 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">Before you book</p>
+            <h2 id="repair-faq-heading" className="mt-2 text-2xl font-extrabold leading-tight text-[#10243a] sm:text-3xl">Repair questions, answered.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Here are a few things to know before sending a repair request.</p>
+            <Link href="/contact" className="mt-5 inline-flex text-sm font-bold text-brand-800 underline decoration-brand-300 underline-offset-4 hover:text-brand-950">Ask our team</Link>
+          </div>
+          <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white px-5 sm:px-7">
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                Do I need an account to request a repair?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">No. You can submit as a guest with your name and phone number, or sign in and view your requests from your account.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                Does submitting a request confirm the repair price?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">No. The request gives our team the details needed to follow up. Diagnosis, any estimate and approval are discussed with you before repair work proceeds.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                What should I include with my device?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">Describe the fault and list any charger, cable or accessory you plan to leave with the device. Our team will advise you if anything else is needed.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                How do I follow repair progress?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">Signed-in customers can open My Repairs. Guest customers need the repair reference and private tracking code shown after submission.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
       <ReviewCategorySection reviewType="repair" />
 
       {/* Tracking CTA */}
