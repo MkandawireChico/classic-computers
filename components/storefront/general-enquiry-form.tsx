@@ -16,7 +16,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
   const [submitted, setSubmitted] = useState(false);
   const submissionKey = useRef<string | null>(null);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
     setError(null);
     const phone = formData.get("phone")?.toString().trim() ?? "";
     const email = formData.get("email")?.toString().trim() ?? "";
