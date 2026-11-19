@@ -16,13 +16,13 @@ export default async function TrackRepairPage() {
 
   return (
     <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-2xl py-12 sm:py-14">
-      <header className="rounded-[1.5rem] bg-[#081827] p-6 text-white shadow-xl shadow-slate-900/10 sm:p-8">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Repair support</p>
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Track a repair</h1>
+      <header className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-slate-950 shadow-sm sm:p-8">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-700">Repair support</p>
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Track a repair</h1>
         {user ? (
-          <p className="mt-2 text-sm leading-6 text-slate-300">
+          <p className="mt-2 text-sm leading-6 text-slate-600">
             Signed-in customers can see all their repairs directly in{" "}
-            <Link href="/account/repairs" className="font-semibold text-cyan-300 underline underline-offset-4 hover:text-cyan-200">
+            <Link href="/account/repairs" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-900">
               My Repairs
             </Link>{" "}
             — no ticket number needed. You can still track any ticket by number below.
