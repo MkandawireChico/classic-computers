@@ -194,7 +194,7 @@ export function PurchasePanel({
             </span>
           </div>
           <Link
-            href={`/rentals?product=${encodeURIComponent(product.id)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
+            href={`/rentals/book?product=${encodeURIComponent(rentalOffer.productId)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
             className="mt-3 inline-flex w-full items-center justify-center rounded-lg border border-brand-300 bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             Rent Now
