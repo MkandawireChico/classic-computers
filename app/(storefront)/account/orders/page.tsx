@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import Link from "next/link";
 import { getMyOrders } from "@/lib/data/orders";
 import { Badge } from "@/components/ui/badge";
@@ -22,11 +23,7 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 pb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My orders</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Review purchases, payment status and order progress.</p>
-      </div>
+      <AccountPageHeader eyebrow="Purchases · Order history" title="My orders" description="Review purchases, payment status and order progress." />
 
       {orders.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-9">
