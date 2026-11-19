@@ -36,7 +36,7 @@ export async function SiteHeader() {
         <Link href="/" className="group flex min-w-0 shrink items-center gap-2.5 sm:shrink-0 sm:gap-3">
           {logoUrl ? (
             <span className="relative block h-12 w-20 shrink-0 overflow-hidden sm:h-14 sm:w-24">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="64px" className="object-contain" />
+              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="(max-width: 640px) 80px, 96px" className="object-contain" />
             </span>
           ) : (
             <span aria-hidden="true" className="flex h-12 w-20 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-[10px] font-extrabold tracking-tight text-navy-900 sm:h-14 sm:w-24">CLASSIC</span>
