@@ -11,11 +11,16 @@ export function getCompareIdsReadOnly(): string[] {
 }
 
 /** Server Action only (sets a cookie). */
-export function toggleCompare(productId: string): string[] {
+export function toggleCompare(productId: string): { ids: string[]; added: boolean; limitReached: boolean } {
   const current = getCompareIdsReadOnly();
-  const next = current.includes(productId)
+  const isAlreadyComparing = current.includes(productId);
+  if (!isAlreadyComparing && current.length >= MAX_COMPARE) {
+    return { ids: current, added: false, limitReached: true };
+  }
+
+  const next = isAlreadyComparing
     ? current.filter((id) => id !== productId)
-    : [...current, productId].slice(-MAX_COMPARE);
+    : [...current, productId];
 
   cookies().set(COMPARE_COOKIE, next.join(","), {
     httpOnly: false, // read by the compare-button UI to show active state; holds only product ids, nothing sensitive
@@ -23,7 +28,7 @@ export function toggleCompare(productId: string): string[] {
     path: "/",
     maxAge: 60 * 60 * 24,
   });
-  return next;
+  return { ids: next, added: !isAlreadyComparing, limitReached: false };
 }
 
 /** Server Action only. */
