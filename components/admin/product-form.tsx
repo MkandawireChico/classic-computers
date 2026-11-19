@@ -110,6 +110,7 @@ export function ProductForm({
           <label className="text-sm font-medium text-gray-700">Name</label>
           <input
             required
+            maxLength={160}
             value={values.name}
             onChange={(e) => {
               update("name", e.target.value);
@@ -123,6 +124,7 @@ export function ProductForm({
           <label className="text-sm font-medium text-gray-700">Slug</label>
           <input
             required
+            maxLength={180}
             value={values.slug}
             onChange={(e) => {
               setSlugTouched(true);
@@ -136,6 +138,7 @@ export function ProductForm({
           <label className="text-sm font-medium text-gray-700">SKU</label>
           <input
             required
+            maxLength={80}
             value={values.sku}
             onChange={(e) => update("sku", e.target.value)}
             className="w-full rounded-card border border-surface-border px-3 py-2 text-sm"
@@ -261,6 +264,7 @@ export function ProductForm({
         <div className="space-y-1 sm:col-span-2">
           <label className="text-sm font-medium text-gray-700">Warranty</label>
           <input
+            maxLength={500}
             value={values.warrantyText ?? ""}
             onChange={(e) => update("warrantyText", e.target.value)}
             className="w-full rounded-card border border-surface-border px-3 py-2 text-sm"
@@ -270,6 +274,7 @@ export function ProductForm({
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">SEO title (optional)</label>
           <input
+            maxLength={200}
             value={values.seoTitle ?? ""}
             onChange={(e) => update("seoTitle", e.target.value)}
             className="w-full rounded-card border border-surface-border px-3 py-2 text-sm"
@@ -278,6 +283,7 @@ export function ProductForm({
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">SEO description (optional)</label>
           <input
+            maxLength={300}
             value={values.seoDescription ?? ""}
             onChange={(e) => update("seoDescription", e.target.value)}
             className="w-full rounded-card border border-surface-border px-3 py-2 text-sm"
