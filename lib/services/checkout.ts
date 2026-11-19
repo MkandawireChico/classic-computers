@@ -165,6 +165,7 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
     const safeBusinessError =
       /^.+ is no longer available$/.test(error.message) ||
       /^The selected configuration for .+ is no longer available$/.test(error.message) ||
+      error.message === "The selected configuration does not belong to this product" ||
       [
         "Cart not found or already checked out",
         "Not authorized for this cart",
