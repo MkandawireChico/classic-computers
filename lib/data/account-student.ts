@@ -20,7 +20,7 @@ export async function getMyStudentVerification(): Promise<MyStudentVerification 
     .maybeSingle();
   if (error) {
     console.error("getMyStudentVerification failed:", error.message);
-    return null;
+    throw new Error("Could not load your student verification status. Please refresh the page and try again.");
   }
   return data;
 }
