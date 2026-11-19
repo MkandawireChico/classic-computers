@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCategoryBySlug, normalizeShopCategorySlug } from "@/lib/data/categories";
 import { searchShop } from "@/lib/data/products";
 import { getBrands } from "@/lib/data/brands";
+import { getCategories } from "@/lib/data/categories";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ShopFilters } from "@/components/storefront/shop-filters";
 import { SortSelect } from "@/components/storefront/sort-select";
@@ -48,7 +49,7 @@ export default async function CategoryShopPage({
   const categoryName = formatCategoryName(category.name);
 
   const filters = parseShopSearchParams(searchParams, { categorySlug: category.slug });
-  const [result, brands] = await Promise.all([searchShop({ ...filters, page: 1, pageSize: 1000 }), getBrands()]);
+  const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: 1, pageSize: 1000 }), getBrands(), getCategories()]);
 
   return (
     <main className="min-h-screen bg-slate-50/60">
@@ -67,7 +68,7 @@ export default async function CategoryShopPage({
 
       <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
         <aside aria-label="Filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32">
-          <ShopFilters brands={brands} />
+          <ShopFilters brands={brands} categories={categories} />
         </aside>
 
         <section aria-label="Products" className="min-w-0">
