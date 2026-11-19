@@ -23,13 +23,13 @@ export const generalEnquirySchema = z
   });
 
 export const corporateEnquirySchema = z.object({
-  organisationName: z.string().trim().min(2, "Organisation name is required"),
-  contactPerson: z.string().trim().min(2, "Contact person is required"),
-  phone: z.string().trim().min(6, "Phone is required"),
-  email: z.string().trim().email("Enter a valid email"),
-  productsRequired: z.string().trim().max(1000).optional(),
-  quantity: z.coerce.number().int().positive().optional(),
-  budget: z.coerce.number().positive().optional(),
-  deliveryLocation: z.string().trim().max(200).optional(),
-  additionalRequirements: z.string().trim().max(1000).optional(),
+  organisationName: z.string().trim().min(2, "Organisation name is required").max(160, "Organisation name must be 160 characters or fewer"),
+  contactPerson: z.string().trim().min(2, "Contact person is required").max(120, "Contact name must be 120 characters or fewer"),
+  phone: z.string().trim().min(6, "Phone is required").max(30, "Phone number must be 30 characters or fewer"),
+  email: z.string().trim().email("Enter a valid email").max(254, "Email address is too long"),
+  productsRequired: z.string().trim().max(1000, "Product requirements must be 1,000 characters or fewer").optional(),
+  quantity: z.coerce.number().int().positive().max(1000000, "Quantity is too large").optional(),
+  budget: z.coerce.number().finite().positive().max(1000000000000, "Budget is too large").optional(),
+  deliveryLocation: z.string().trim().max(200, "Delivery location must be 200 characters or fewer").optional(),
+  additionalRequirements: z.string().trim().max(1000, "Additional requirements must be 1,000 characters or fewer").optional(),
 });
