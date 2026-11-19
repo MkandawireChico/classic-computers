@@ -39,6 +39,7 @@ export default async function AdminOrdersPage({
         <input
           type="search"
           name="q"
+          maxLength={100}
           defaultValue={query}
           placeholder="Search order number…"
           className="rounded-card border border-surface-border px-3 py-1.5 text-sm"
