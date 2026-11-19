@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -8,6 +9,17 @@ import { AuthProviderButtons } from "@/components/auth-provider-buttons";
 import { resendSignupConfirmation, signUp } from "../actions";
 import { createBrowserClient } from "@supabase/ssr";
 import { getAuthRedirectUrl } from "@/lib/auth/site-url";
+
+const initialState = { error: null as string | null };
+
+function SignUpSubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" isLoading={pending} disabled={pending} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
+      {pending ? "Creating account..." : "Create account"}
+    </Button>
+  );
+}
 
 function maskEmail(email: string): string {
   const [localPart, domain] = email.split("@");
@@ -49,29 +61,6 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
       setResendError("Could not request another confirmation link. Check your connection and try again.");
     } finally {
       setResending(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-
-    try {
-      const res = await signUp({ error: null }, formData);
-
-      if (res?.error) {
-        setError(res.error);
-      } else if (res?.success && res?.message) {
-        setSuccessMessage(res.message);
-        setSuccessEmail(res.email || null);
-      }
-    } catch {
-      setError("We could not confirm the signup response. Your request might already have been accepted. Check your inbox and spam folder before submitting again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -144,9 +133,9 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <form action={formAction} className="space-y-5" noValidate>
         {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
-        {error ? <Alert variant="danger">{error}</Alert> : null}
+        {state.error ? <Alert variant="danger">{state.error}</Alert> : null}
 
       <div className="space-y-2">
         <label htmlFor="fullName" className="text-sm font-bold text-slate-700">
@@ -205,9 +194,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         />
       </div>
 
-      <Button type="submit" isLoading={loading} disabled={loading} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
-        {loading ? "Creating account..." : "Create account"}
-      </Button>
+      <SignUpSubmitButton />
     </form>
     </div>
   );
