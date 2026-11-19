@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { getBusinessInfo } from "@/lib/data/site-settings";
 import { getSiteMedia } from "@/lib/data/site-media";
 import { getPublicStorageUrl } from "@/lib/storage";
-import { ProductEnquiry } from "@/components/product/product-enquiry";
 import { ReviewCategorySection } from "@/components/storefront/review-category-section";
 
 export const metadata: Metadata = {
@@ -13,10 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RepairsPage() {
-  const [businessInfo, heroMedia] = await Promise.all([
-    getBusinessInfo(),
-    getSiteMedia("store_photo", 1),
-  ]);
+  const heroMedia = await getSiteMedia("store_photo", 1);
   const heroImage = heroMedia[0] ?? null;
   const heroImageUrl = heroImage ? getPublicStorageUrl("site-media", heroImage.storage_path) : null;
 
@@ -79,7 +74,7 @@ export default async function RepairsPage() {
       <section aria-labelledby="how-it-works-heading" className="border-b border-slate-200 bg-white">
         <div className="section-shell py-11 sm:py-14 lg:py-16">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Simple process</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">Simple process</p>
             <h2 id="how-it-works-heading" className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">
               How the repair process works
             </h2>
@@ -90,38 +85,38 @@ export default async function RepairsPage() {
 
           <ol className="mt-7 grid gap-3 md:mt-9 md:grid-cols-2 lg:grid-cols-4">
             <li className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4 sm:p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="M8 4h8l4 4v12H4V4h4Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <path d="M8 12h8M8 16h5M15 4v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">Step 01</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Step 01</p>
                 <h3 className="mt-1 text-base font-bold text-slate-950">Tell us about the problem</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Select your device and explain what's happening.</p>
               </div>
             </li>
             <li className="flex gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-800">Step 02</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Step 02</p>
                 <h3 className="mt-1 text-base font-bold text-slate-950">Submit your repair request</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Provide your contact information and review your submission.</p>
               </div>
             </li>
             <li className="flex gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-cyan-50 text-cyan-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="m12 3 2.4 1.4 2.8.2.9 2.6 1.9 2.1-.9 2.7.3 2.8-2.4 1.5-1.6 2.3-2.8-.5-2.7.5-1.7-2.3-2.3-1.5.2-2.8-.9-2.7 1.9-2.1.9-2.6 2.8-.2L12 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">Step 03</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Step 03</p>
                 <h3 className="mt-1 text-base font-bold text-slate-950">Device assessment</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Our team reviews the request and follows up regarding next steps.</p>
               </div>
@@ -148,7 +143,7 @@ export default async function RepairsPage() {
       <section aria-labelledby="services-heading" className="bg-slate-50">
         <div className="section-shell py-11 sm:py-14 lg:py-16">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">What we repair</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">What we repair</p>
             <h2 id="services-heading" className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">
               Devices and issues we can help with
             </h2>
@@ -162,14 +157,14 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.7" />
                   <path d="M2 17h20" stroke="currentColor" strokeWidth="1.7" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Laptop repairs</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Laptop repairs</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Screen issues, keyboard problems, power failures and more.</p>
               </div>
             </Link>
@@ -178,14 +173,14 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" strokeWidth="1.7" />
                   <path d="M8 6h8M8 10h8M8 14h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Desktop computer repairs</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Desktop computer repairs</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Tower units, all-in-one systems and custom builds.</p>
               </div>
             </Link>
@@ -194,13 +189,13 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Hardware problems</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Hardware problems</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Component failures, upgrades and replacements.</p>
               </div>
             </Link>
@@ -209,13 +204,13 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Charging and power</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Charging and power</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Battery issues, charging port problems and power failures.</p>
               </div>
             </Link>
@@ -224,14 +219,14 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z" stroke="currentColor" strokeWidth="1.7" />
                   <path d="M9 9h6M9 12h6M9 15h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Software and operating systems</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Software and operating systems</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">OS issues, software conflicts and performance problems.</p>
               </div>
             </Link>
@@ -240,14 +235,14 @@ export default async function RepairsPage() {
               href="/repairs/book"
               className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-cyan-800">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-cyan-100 group-hover:text-brand-800">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-6 w-6">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.7" />
                   <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-cyan-800">Performance issues</h3>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-800">Performance issues</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Slow startup, freezing and general performance problems.</p>
               </div>
             </Link>
@@ -258,10 +253,10 @@ export default async function RepairsPage() {
       <ReviewCategorySection reviewType="repair" />
 
       {/* Tracking CTA */}
-      <section aria-labelledby="tracking-heading" className="border-y border-cyan-100 bg-white">
+      <section aria-labelledby="tracking-heading" className="border-y border-slate-200 bg-white">
         <div className="section-shell py-11 sm:py-14 lg:py-16">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Already submitted a repair?</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">Already submitted a repair?</p>
             <h2 id="tracking-heading" className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">
               Keep track of your device's repair progress
             </h2>
@@ -270,7 +265,7 @@ export default async function RepairsPage() {
             </p>
             <Link
               href="/repairs/track"
-              className="mt-6 inline-flex min-h-13 items-center justify-center gap-2 rounded-xl bg-cyan-400 px-8 py-3.5 text-base font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-300/60"
+              className="mt-6 inline-flex min-h-13 items-center justify-center gap-2 rounded-xl bg-[#123653] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-300/60"
             >
               Track my repair
             </Link>
@@ -278,12 +273,19 @@ export default async function RepairsPage() {
         </div>
       </section>
 
-      {/* Enquiry Form */}
-      {businessInfo ? (
-        <section className="section-shell py-10 sm:py-12">
-          <ProductEnquiry product={{ name: "Repair enquiry", sku: "REPAIR" }} businessInfo={businessInfo} />
-        </section>
-      ) : null}
+      <section aria-labelledby="repair-help-heading" className="border-t border-slate-200 bg-[#f4f7f9]">
+        <div className="section-shell flex flex-col gap-5 py-10 sm:flex-row sm:items-center sm:justify-between sm:py-12">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">Need help before booking?</p>
+            <h2 id="repair-help-heading" className="mt-2 text-2xl font-extrabold tracking-tight text-[#10243a]">Tell us what your device is doing.</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Contact our team if you are unsure which repair option to choose.</p>
+          </div>
+          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+            <Link href="/repairs/book" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#123653] px-5 text-sm font-bold text-white hover:bg-brand-800">Request a repair</Link>
+            <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-bold text-[#17344d] hover:border-brand-300 hover:bg-brand-50">Contact us</Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
