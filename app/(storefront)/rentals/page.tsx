@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
 import { getRentableProducts } from "@/lib/data/rental-tracking";
 import { RentalTrackingWidget } from "@/components/storefront/rental-tracking-widget";
 import { ReviewCategorySection } from "@/components/storefront/review-category-section";
@@ -15,9 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RentalsPage() {
-  const supabase = createClient();
-  const [, products, rentalMedia] = await Promise.all([
-    supabase.auth.getUser(),
+  const [products, rentalMedia] = await Promise.all([
     getRentableProducts(),
     getSiteMedia("rental_promo", 1),
   ]);
@@ -82,7 +79,7 @@ export default async function RentalsPage() {
             { step: 1, title: "Choose your equipment", description: "Browse our available laptops and technology equipment." },
             { step: 2, title: "Submit your requirements", description: "Select dates, quantity and provide rental details." },
             { step: 3, title: "Team reviews request", description: "We confirm availability and prepare your equipment." },
-            { step: 4, title: "Receive confirmation", description: "Get rental arrangements and pick up your equipment." },
+            { step: 4, title: "Receive confirmation", description: "Review the agreed rental details and collection or delivery arrangements with our team." },
           ].map((item) => (
             <div key={item.step} className="flex min-h-[190px] gap-4 bg-white p-5 sm:p-6">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-50 text-sm font-bold text-cyan-800">
@@ -115,7 +112,7 @@ export default async function RentalsPage() {
                     ) : (
                       <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">Image unavailable</div>
                     )}
-                    <span className={`absolute top-3 right-3 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] ${product.availableQuantity > 0 ? "bg-cyan-50 text-cyan-800" : "bg-slate-200 text-slate-600"}`}>
+                    <span className={`absolute right-3 top-3 rounded-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] ${product.availableQuantity > 0 ? "bg-white text-brand-800 ring-1 ring-slate-200" : "bg-slate-100 text-slate-700 ring-1 ring-slate-200"}`}>
                       {product.availableQuantity > 0 ? `${product.availableQuantity} available` : "Out of stock"}
                     </span>
                   </div>
@@ -136,18 +133,18 @@ export default async function RentalsPage() {
                       {product.availableQuantity > 0 ? (
                         <Link
                           href={`/rentals/book?product=${encodeURIComponent(product.productId)}&variant=${encodeURIComponent(product.variantId ?? "")}`}
-                          className="inline-flex flex-1 items-center justify-center rounded-xl bg-[#0b2238] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-cyan-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+                          className="inline-flex flex-1 items-center justify-center rounded-lg bg-[#123653] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                         >
-                          Rent Now
+                          Request rental
                         </Link>
                       ) : (
-                        <span aria-disabled="true" className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-200">
+                        <span aria-disabled="true" className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-lg bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600">
                           Unavailable
                         </span>
                       )}
                       <Link
                         href={`/product/${product.productSlug}`}
-                        className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+                        className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                       >
                         Details
                       </Link>
@@ -171,7 +168,7 @@ export default async function RentalsPage() {
         )}
       </div>
 
-      <div className="section-shell"><ReviewCategorySection reviewType="rental" /></div>
+      <ReviewCategorySection reviewType="rental" />
 
       {/* Tracking Widget */}
       <section className="section-shell mt-4">
