@@ -72,7 +72,7 @@ export default async function CorporatePage() {
           </h2>
           <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600 sm:text-base">
             Share the equipment, quantities, and delivery details you have in mind. Our team will
-            get back to you within 1–2 business days.
+            review your requirements and contact you about pricing, availability and next steps.
           </p>
           <Link
             href="/corporate/enquire"
