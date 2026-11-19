@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listStaffUsers, getAllRoles } from "@/lib/data/admin/users";
 import { StaffRow } from "@/components/admin/staff-row";
 
@@ -8,13 +9,13 @@ export default async function AdminUsersPage() {
 
   return (
     <div>
-      <h1 className="mb-1 text-xl font-semibold text-gray-900">Staff &amp; Roles</h1>
+      <AdminPageHeader eyebrow="Administration · Access control" title="Staff & Roles" description="Manage staff access and permission assignments." />
       <p className="mb-4 text-sm text-gray-500">
         Roles are assigned here; permissions per role were seeded in Phase 2 and aren&apos;t edited
         from this screen. The last remaining admin cannot be removed.
       </p>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
