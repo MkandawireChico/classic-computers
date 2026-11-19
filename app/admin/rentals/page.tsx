@@ -31,7 +31,7 @@ export default async function AdminRentalsPage({
     <div>
       <h1 className="mb-4 text-xl font-semibold text-gray-900">Rentals</h1>
 
-      <form className="mb-4 flex gap-2" method="get">
+      <form className="mb-4 flex flex-wrap gap-2" method="get" aria-label="Filter rental bookings">
         <select name="status" defaultValue={status ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
           <option value="">All statuses</option>
           {["requested", "approved", "ready", "active", "returned", "overdue", "damaged", "lost", "cancelled"].map((s) => (
