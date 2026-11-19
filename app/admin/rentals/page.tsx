@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminRentals } from "@/lib/data/admin/rentals";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
@@ -29,9 +30,9 @@ export default async function AdminRentalsPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Rentals</h1>
+      <AdminPageHeader eyebrow="Operations · Equipment hire" title="Rentals" description="Manage booking requests, active rentals, returns and exceptions." />
 
-      <form className="mb-4 flex flex-wrap gap-2" method="get" aria-label="Filter rental bookings">
+      <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get" aria-label="Filter rental bookings">
         <select name="status" defaultValue={status ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
           <option value="">All statuses</option>
           {["requested", "approved", "ready", "active", "returned", "overdue", "damaged", "lost", "cancelled"].map((s) => (
@@ -45,7 +46,7 @@ export default async function AdminRentalsPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
