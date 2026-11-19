@@ -33,7 +33,7 @@ export default async function AdminRepairsPage({
       <h1 className="mb-4 text-xl font-semibold text-gray-900">Repairs</h1>
 
       <form className="mb-4 flex flex-wrap gap-2" method="get">
-        <input type="search" name="q" defaultValue={query} placeholder="Ticket number…" className="rounded-card border border-surface-border px-3 py-1.5 text-sm" />
+        <input type="search" name="q" maxLength={100} defaultValue={query} placeholder="Ticket number…" className="rounded-card border border-surface-border px-3 py-1.5 text-sm" />
         <select name="status" defaultValue={status ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
           <option value="">All statuses</option>
           {["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup", "completed", "cancelled"].map((s) => (
