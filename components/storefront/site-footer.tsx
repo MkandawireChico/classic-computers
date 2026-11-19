@@ -1,7 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
-import { getSiteMedia } from "@/lib/data/site-media";
-import { getPublicStorageUrl } from "@/lib/storage";
 import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
 
 const FOOTER_COLUMNS = [
@@ -44,27 +41,16 @@ const FOOTER_COLUMNS = [
 ];
 
 export async function SiteFooter() {
-  const [businessInfo, hours, footerLogoMedia, headerLogoMedia] = await Promise.all([
-    getBusinessInfo(),
-    getHours(),
-    getSiteMedia("footer_logo", 1),
-    getSiteMedia("logo", 1),
-  ]);
-  const logo = footerLogoMedia[0] ?? headerLogoMedia[0] ?? null;
-  const logoUrl = logo ? getPublicStorageUrl("site-media", logo.storage_path) : null;
+  const [businessInfo, hours] = await Promise.all([getBusinessInfo(), getHours()]);
 
   return (
     <footer className="border-t border-[#31516b] bg-gradient-to-br from-[#17344d] via-[#1b3c56] to-[#153149] text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="mb-10 flex flex-col gap-4 border-b border-white/25 pb-8 sm:flex-row sm:items-center">
-          {logoUrl ? (
-            <div className="relative h-14 w-40 shrink-0 overflow-hidden rounded-lg bg-white p-2">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="160px" className="object-contain p-2" />
-            </div>
-          ) : (
+          <div className="min-w-0">
             <p className="text-xl font-black tracking-tight text-white">Classic <span className="text-cyan-300">Computers</span></p>
-          )}
-          <p className="max-w-md text-sm leading-6 text-slate-100">Technology for work, business and everyday life. Sales, rentals, repairs and ICT support in Blantyre.</p>
+            <p className="mt-2 max-w-md text-sm leading-6 text-slate-100">Technology for work, business and everyday life. Sales, rentals, repairs and ICT support in Blantyre.</p>
+          </div>
         </div>
         <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4 lg:gap-12">
           {/* Navigation Columns */}
