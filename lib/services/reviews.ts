@@ -21,7 +21,7 @@ const reviewSubmissionSchema = z.object({
   repair_ticket_id: z.string().uuid().optional(),
   rating: z.number().int().min(1).max(5),
   title: z.string().trim().max(200).optional(),
-  comment: z.string().trim().min(10).max(2000),
+  comment: z.string().trim().max(2000).optional().or(z.literal("")),
 }).refine((data) => {
   // Validate that the correct transaction reference is provided based on review type
   if (data.review_type === "product") {
@@ -166,7 +166,7 @@ export async function submitReview(input: unknown, images: File[] = []): Promise
       repair_ticket_id: d.repair_ticket_id || null,
       rating: d.rating,
       title: d.title || null,
-      comment: d.comment,
+      comment: d.comment?.trim() || null,
     }).select("id").single();
 
     if (reviewError) {
