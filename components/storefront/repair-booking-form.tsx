@@ -266,6 +266,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="deviceType"
                 type="text"
+                maxLength={80}
                 value={formData.deviceType}
                 onChange={(e) => setFormData({ ...formData, deviceType: e.target.value })}
                 placeholder="e.g. Laptop, Desktop, Tablet"
@@ -286,6 +287,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 <input
                   id="brand"
                   type="text"
+                  maxLength={100}
                   value={formData.brand}
                   onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                   placeholder="e.g. Dell, HP, Lenovo"
@@ -300,6 +302,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 <input
                   id="model"
                   type="text"
+                  maxLength={100}
                   value={formData.model}
                   onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                   placeholder="e.g. Latitude 7420"
@@ -315,6 +318,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="serialNumber"
                 type="text"
+                maxLength={100}
                 value={formData.serialNumber}
                 onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
                 placeholder="e.g. Service tag or serial number"
@@ -352,6 +356,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               </label>
               <textarea
                 id="problemDescription"
+                maxLength={2000}
                 value={formData.problemDescription}
                 onChange={(e) => setFormData({ ...formData, problemDescription: e.target.value })}
                 rows={5}
@@ -364,7 +369,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                 <p className="text-xs text-red-600">{validationErrors.problemDescription}</p>
               )}
               <p className="text-xs text-slate-500">
-                {formData.problemDescription.length} / 10 characters minimum
+                {formData.problemDescription.length} / 2,000 characters · 10 minimum
               </p>
             </div>
 
@@ -375,6 +380,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="accessoriesReceived"
                 type="text"
+                maxLength={300}
                 value={formData.accessoriesReceived}
                 onChange={(e) => setFormData({ ...formData, accessoriesReceived: e.target.value })}
                 placeholder="e.g. charger, bag, cables"
@@ -421,6 +427,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="guestName"
                 type="text"
+                maxLength={120}
                 value={formData.guestName}
                 onChange={(e) => setFormData({ ...formData, guestName: e.target.value })}
                 autoComplete="name"
@@ -440,6 +447,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="guestPhone"
                 type="tel"
+                maxLength={30}
                 value={formData.guestPhone}
                 onChange={(e) => setFormData({ ...formData, guestPhone: e.target.value })}
                 autoComplete="tel"
@@ -460,6 +468,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
               <input
                 id="guestEmail"
                 type="email"
+                maxLength={254}
                 value={formData.guestEmail}
                 onChange={(e) => setFormData({ ...formData, guestEmail: e.target.value })}
                 autoComplete="email"
