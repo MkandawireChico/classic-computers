@@ -76,7 +76,13 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
               {reviewType ? `${reviewType.charAt(0).toUpperCase()}${reviewType.slice(1)} rating distribution` : "Approved ratings distribution"}
             </h2>
             <div className="max-w-md">
-              <RatingBreakdown distribution={distribution} total={distributionTotal} />
+              {distributionTotal > 0 ? (
+                <RatingBreakdown distribution={distribution} total={distributionTotal} />
+              ) : (
+                <p className="text-sm leading-6 text-slate-600">
+                  Rating breakdowns will appear here once approved customer reviews are published.
+                </p>
+              )}
             </div>
           </div>
         </header>
