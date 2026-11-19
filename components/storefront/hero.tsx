@@ -10,6 +10,7 @@ export async function Hero() {
     getSiteMedia("store_photo", 1),
   ]);
   const media = banner[0] ?? heroImage[0] ?? storePhoto[0] ?? null;
+  const isHomepageBanner = Boolean(banner[0]);
   const imageUrl = media ? getPublicStorageUrl("site-media", media.storage_path) : null;
 
   return (
@@ -56,10 +57,10 @@ export async function Hero() {
           <div className="relative mx-auto w-full max-w-[680px] lg:ml-auto">
             <div aria-hidden="true" className="absolute -inset-4 rounded-[2rem] bg-cyan-300/15 blur-2xl" />
             {imageUrl ? (
-              <div className="relative aspect-[5/4] w-full overflow-hidden rounded-2xl border border-white/35 bg-slate-200 shadow-[0_30px_80px_-25px_rgba(0,0,0,0.65)]">
-                <Image src={imageUrl} alt={media?.alt_text ?? "Classic Computers store and technology services"} fill priority sizes="(max-width: 1023px) 100vw, 48vw" className="object-cover" />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-white/5" />
-                {media?.title ? <p className="absolute bottom-4 left-4 rounded-lg border border-white/30 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur">{media.title}</p> : null}
+              <div className={`relative w-full overflow-hidden rounded-2xl border border-white/35 shadow-[0_30px_80px_-25px_rgba(0,0,0,0.65)] ${isHomepageBanner ? "aspect-[16/9] bg-white" : "aspect-[5/4] bg-slate-200"}`}>
+                <Image src={imageUrl} alt={media?.alt_text ?? "Classic Computers store and technology services"} fill priority sizes="(max-width: 1023px) 100vw, 48vw" className={isHomepageBanner ? "object-contain" : "object-cover"} />
+                {!isHomepageBanner ? <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-white/5" /> : null}
+                {!isHomepageBanner && media?.title ? <p className="absolute bottom-4 left-4 rounded-lg border border-white/30 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur">{media.title}</p> : null}
               </div>
             ) : (
               <div className="relative flex aspect-[5/4] items-center justify-center overflow-hidden rounded-2xl border border-white/30 bg-gradient-to-br from-[#dcecf3] via-white to-[#b8d9e8] p-8 shadow-2xl">
