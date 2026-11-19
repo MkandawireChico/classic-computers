@@ -54,14 +54,12 @@ export function CheckoutForm({
   isAuthenticated,
   userEmail,
   subtotal,
-  itemCount,
   addresses,
   paymentMethods,
 }: {
   isAuthenticated: boolean;
   userEmail: string | null;
   subtotal: number;
-  itemCount: number;
   addresses: AddressRecord[];
   paymentMethods: PaymentMethodsSetting;
 }) {
@@ -140,21 +138,6 @@ export function CheckoutForm({
   return (
     <form action={handleSubmit} className="space-y-6 sm:space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
-
-      <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
-        <p className="text-lg font-extrabold text-slate-900 sm:text-xl">
-          <span className="text-brand-800">
-            {itemCount} item{itemCount === 1 ? "" : "s"}
-          </span>
-          <span className="mx-2 text-slate-400" aria-hidden="true">
-            ·
-          </span>
-          subtotal {formatMoney(subtotal)}
-        </p>
-        <p className="mt-2 text-base leading-relaxed text-slate-600 sm:text-lg">
-          Discounts (if applicable) and the final total are calculated when your order is placed.
-        </p>
-      </div>
 
       {!isAuthenticated ? (
         <fieldset className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
