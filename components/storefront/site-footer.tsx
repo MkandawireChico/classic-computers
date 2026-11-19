@@ -34,6 +34,7 @@ const FOOTER_COLUMNS = [
     links: [
       { href: "/about", label: "About us" },
       { href: "/contact", label: "Contact" },
+      { href: "/delivery", label: "Delivery & collection" },
       { href: "/warranty", label: "Warranty" },
       { href: "/returns", label: "Returns" },
       { href: "/privacy", label: "Privacy policy" },
