@@ -174,7 +174,7 @@ export async function requestPasswordReset(
   const supabase = createClient();
   const siteUrl = getPublicSiteOrigin();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
-    redirectTo: `${siteUrl}/auth/callback?next=/update-password`,
+    redirectTo: `${siteUrl}/auth/confirm?flow=recovery&next=%2Fupdate-password`,
   });
   if (error) {
     console.error("Password reset request failed:", { code: error.code, message: error.message });
