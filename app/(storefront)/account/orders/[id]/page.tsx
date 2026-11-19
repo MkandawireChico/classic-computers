@@ -5,11 +5,26 @@ import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
 import { getMyReviewStatuses } from "@/lib/data/customer-reviews";
 import { CustomerReviewAction } from "@/components/storefront/customer-review-action";
+import { getManualPaymentProviderFromNotes } from "@/lib/payments/manual-payment";
+import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
   const order = await getMyOrderById(params.id);
   if (!order) notFound();
   const reviewStatuses = await getMyReviewStatuses({ orderIds: [order.id] });
+  const paymentProvider = getManualPaymentProviderFromNotes(order.payment_method, order.notes);
+  const isBankProvider = paymentProvider && "accountNumber" in paymentProvider;
+  const walletNumber = paymentProvider && "walletNumber" in paymentProvider ? paymentProvider.walletNumber : null;
+  const paymentCopyDetails = paymentProvider
+    ? [
+        paymentProvider.name,
+        `Account holder: ${paymentProvider.accountHolder}`,
+        isBankProvider ? `Account number: ${paymentProvider.accountNumber}` : `Wallet number: ${walletNumber}`,
+        ...(isBankProvider ? [`Branch: ${paymentProvider.branch}`] : []),
+        `Order: ${order.order_number}`,
+        `Total: ${formatMoney(order.total)}`,
+      ].join("\\n")
+    : null;
 
   return (
     <div className="space-y-6">
@@ -26,6 +41,35 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         <Badge variant="neutral">{order.fulfillment_type === "pickup" ? "Pickup" : "Delivery"}</Badge>
       </div>
       </header>
+
+      {paymentProvider && paymentCopyDetails && order.payment_status !== "paid" ? (
+        <section className="rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="order-payment-heading">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">Payment still required</p>
+          <h2 id="order-payment-heading" className="mt-1 text-lg font-bold text-slate-950">
+            Pay using {paymentProvider.name}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Send the exact order total below. Include your order number as the payment reference where possible. Your order stays unpaid until our team verifies the transaction.
+          </p>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <PaymentDetail label="Account holder" value={paymentProvider.accountHolder} />
+            {isBankProvider ? (
+              <>
+                <PaymentDetail label="Account number" value={paymentProvider.accountNumber} />
+                <PaymentDetail label="Branch" value={paymentProvider.branch} />
+              </>
+            ) : null}
+            {walletNumber ? <PaymentDetail label="Wallet number" value={walletNumber} /> : null}
+            <PaymentDetail label="Order number" value={order.order_number} />
+            <PaymentDetail label="Amount to send" value={formatMoney(order.total)} />
+          </dl>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {isBankProvider ? <CopyPaymentValue value={paymentProvider.accountNumber} label="account number" /> : null}
+            {walletNumber ? <CopyPaymentValue value={walletNumber} label="wallet number" /> : null}
+            <CopyPaymentValue value={paymentCopyDetails} label="payment details" />
+          </div>
+        </section>
+      ) : null}
 
       {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
@@ -105,6 +149,16 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           </ol>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+
+function PaymentDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-lg bg-slate-50 p-3">
+      <dt className="text-xs font-medium text-slate-500">{label}</dt>
+      <dd className="mt-1 break-words font-bold text-slate-900">{value}</dd>
     </div>
   );
 }
