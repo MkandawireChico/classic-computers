@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listGeneralEnquiries, listCorporateEnquiries } from "@/lib/data/admin/enquiries";
 import { GeneralEnquiryRow } from "@/components/admin/general-enquiry-row";
 import { CorporateEnquiryRow } from "@/components/admin/corporate-enquiry-row";
@@ -21,7 +22,7 @@ export default async function AdminEnquiriesPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Enquiries</h1>
+      <AdminPageHeader eyebrow="Operations · Customer requests" title="Enquiries" description="Review incoming customer and corporate requests." />
 
       <div className="mb-4 flex gap-2 border-b border-surface-border">
         <Link href="/admin/enquiries?tab=general" className={`px-3 py-2 text-sm ${tab === "general" ? "border-b-2 border-brand-500 font-medium text-gray-900" : "text-gray-500"}`}>
