@@ -59,6 +59,20 @@ export async function getAccountDashboardSummary(): Promise<AccountDashboardSumm
     (supabase.from("profiles") as any).select("full_name").eq("id", user.id).maybeSingle(),
   ]);
 
+  const queryErrors = [
+    orders.error,
+    repairs.error,
+    rentals.error,
+    customer.error,
+    enquiries.error,
+    notifications.error,
+    profile.error,
+  ].filter(Boolean);
+  if (queryErrors.length > 0) {
+    console.error("getAccountDashboardSummary failed:", queryErrors.map((queryError: any) => queryError.message));
+    throw new Error("Could not load your account overview. Please refresh the page and try again.");
+  }
+
   return {
     displayName: profile.data?.full_name ?? null,
     totalOrderCount: orders.count ?? null,
