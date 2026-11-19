@@ -317,7 +317,11 @@ export function CheckoutForm({
                 onChange={() => {
                   setSelectedMethod(method);
                   setSelectedProvider(null);
-                  trackInterestEvent({ name: "payment_method_selected", paymentMethod: method });
+                  try {
+                    trackInterestEvent({ name: "payment_method_selected", paymentMethod: method });
+                  } catch (analyticsError) {
+                    console.warn("Payment-method analytics could not be recorded:", analyticsError);
+                  }
                 }}
                 required
                 className="mt-1 h-5 w-5 shrink-0 accent-brand-700 focus:ring-brand-500"
