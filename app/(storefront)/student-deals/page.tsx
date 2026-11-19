@@ -329,6 +329,46 @@ export default async function StudentDealsPage() {
         </div>
       </section>
 
+      <section aria-labelledby="student-faq-heading" className="border-t border-slate-200 bg-[#f7f9fa]">
+        <div className="section-shell grid gap-8 py-11 sm:py-14 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Student support</p>
+            <h2 id="student-faq-heading" className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">A few things to know before applying.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">The verification process is reviewed by our team. These answers explain what to prepare and what approval means.</p>
+          </div>
+          <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white px-5 sm:px-7">
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                Do I need a university email address?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">No. Use an email address you check regularly. Our team reviews your institution details and student ID as part of the verification process.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                Do I have to upload a student document?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">A supporting document is optional on the application form. You may submit one if you have a suitable student document. Our team reviews each application before approval.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                Does applying activate the discount immediately?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">No. Your application must be approved first. Once approved, sign in at checkout to access active offers on eligible products.</p>
+            </details>
+            <details className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 marker:content-none">
+                What if my application needs correction?
+                <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-normal text-slate-600 transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 pr-8 text-sm leading-6 text-slate-600">Sign in and open Student Verification in your account. If your application is not approved or has expired, you can submit updated details for another review.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="student-help-heading" className="border-t border-slate-200 bg-white">
         <div className="section-shell flex flex-col gap-4 py-9 sm:flex-row sm:items-center sm:justify-between sm:py-11">
           <div className="max-w-2xl">
