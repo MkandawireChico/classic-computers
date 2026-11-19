@@ -322,7 +322,7 @@ export function CheckoutForm({
               key={method}
               className={`flex min-h-[100px] cursor-pointer items-start gap-4 rounded-2xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-brand-500 focus-within:ring-offset-2 ${
                 selectedMethod === method
-                  ? PAYMENT_ACCENTS[method] + " shadow-lg shadow-slate-900/5 hover:-translate-y-0.5"
+                  ? PAYMENT_ACCENTS[method] + " shadow-sm"
                   : "border-slate-200 bg-white text-slate-800 hover:border-brand-300"
               }`}
             >
@@ -403,14 +403,14 @@ export function CheckoutForm({
       </fieldset>
 
       <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
-        <label htmlFor="notes" className="text-sm font-bold text-rose-900">
+        <label htmlFor="notes" className="text-sm font-bold text-navy-950">
           Order notes (optional)
         </label>
         <textarea
           id="notes"
           name="notes"
           rows={3}
-          className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-100"
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
       </div>
 
@@ -476,9 +476,9 @@ function ProviderChoice({
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`flex min-h-16 items-center justify-between gap-4 rounded-xl border px-5 py-4 text-left text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-700 focus-visible:ring-offset-2 ${
+      className={`flex min-h-16 items-center justify-between gap-4 rounded-xl border px-5 py-4 text-left text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
         selected
-          ? selectedStyle + " hover:-translate-y-0.5"
+          ? selectedStyle + " hover:border-brand-300"
           : "border-slate-200 bg-white/90 text-slate-800 hover:border-slate-300 hover:shadow-md"
       }`}
     >
@@ -489,7 +489,7 @@ function ProviderChoice({
         <span className="min-w-0">{name}</span>
       </span>
       {selected ? (
-        <span className="text-xs font-extrabold uppercase tracking-wider text-cyan-700">
+        <span className="text-xs font-extrabold uppercase tracking-wider text-brand-800">
           Selected
         </span>
       ) : null}
@@ -568,7 +568,7 @@ function MobileMoneyDetails({
   return (
     <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-rose-800">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">
           Mobile-money details
         </p>
         <h4 className="mt-1 text-lg font-extrabold text-slate-900">{provider.name}</h4>
