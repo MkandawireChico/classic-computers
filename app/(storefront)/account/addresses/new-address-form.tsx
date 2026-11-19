@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -8,13 +8,15 @@ import { createAddressAction } from "./actions";
 
 export function NewAddressForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const result = await createAddressAction(formData);
       if (result.success) {
         setOpen(false);
@@ -22,7 +24,11 @@ export function NewAddressForm() {
       } else {
         setError(result.error);
       }
-    });
+    } catch {
+      setError("We couldn't save this address. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (!open) {
@@ -99,10 +105,10 @@ export function NewAddressForm() {
 
       {/* Actions */}
       <div className="flex flex-col gap-2 sm:flex-row">
-        <Button type="submit" isLoading={isPending} className="flex-1">
+        <Button type="submit" isLoading={isPending} disabled={isPending} className="flex-1">
           Save address
         </Button>
-        <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
+        <Button type="button" variant="outline" disabled={isPending} onClick={() => setOpen(false)} className="flex-1">
           Cancel
         </Button>
       </div>
