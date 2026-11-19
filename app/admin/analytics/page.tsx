@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getAdminCustomerInterestAnalytics } from "@/lib/data/admin/interest-analytics";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -139,7 +140,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-xl font-semibold text-gray-900">Customer interest analytics</h1>
+        <AdminPageHeader eyebrow="Reports · Store insights" title="Customer interest analytics" description="Understand opted-in customer activity across the storefront." />
         <p className="mt-1 text-sm text-gray-600">
           First-party activity from visitors who opted in to analytics. Counts describe observed
           activity, not guaranteed purchase intent.
