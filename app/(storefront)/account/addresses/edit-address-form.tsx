@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,13 @@ export function EditAddressForm({ address }: { address: AddressRecord }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const result = await updateAddressAction(formData);
       if (result.success) {
         setIsOpen(false);
@@ -23,7 +25,11 @@ export function EditAddressForm({ address }: { address: AddressRecord }) {
       } else {
         setError(result.error);
       }
-    });
+    } catch {
+      setError("We couldn't update this address. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (!isOpen) {
@@ -51,8 +57,8 @@ export function EditAddressForm({ address }: { address: AddressRecord }) {
         Use as my default address
       </label>
       <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row">
-        <Button type="submit" isLoading={isPending} className="min-h-11 rounded-lg">Save changes</Button>
-        <Button type="button" variant="outline" className="min-h-11 rounded-lg" onClick={() => { setError(null); setIsOpen(false); }}>Cancel</Button>
+        <Button type="submit" isLoading={isPending} disabled={isPending} className="min-h-11 rounded-lg">Save changes</Button>
+        <Button type="button" variant="outline" disabled={isPending} className="min-h-11 rounded-lg" onClick={() => { setError(null); setIsOpen(false); }}>Cancel</Button>
       </div>
     </form>
   );
