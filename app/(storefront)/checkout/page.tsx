@@ -46,7 +46,7 @@ export default async function CheckoutPage() {
         </header>
         {cart.items.length > availableItems.length ? (
           <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-            Some items in your cart are unavailable and are not included in this order. <Link href="/cart" className="font-bold underline underline-offset-2">Review your cart</Link>.
+            Some items in your cart are unavailable. Remove them before placing your order. <Link href="/cart" className="font-bold underline underline-offset-2">Review your cart</Link>.
           </div>
         ) : null}
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_350px] lg:gap-8">
