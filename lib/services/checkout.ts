@@ -43,11 +43,10 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
 
   const client: SupabaseClient<Database> = user ? supabase : createAdminClient();
 
-  // Self-heal: the /cart page already shows unavailable items separately
-  // and excludes them from the displayed total. Re-check publication,
-  // variant status and inventory here because stock may change between
-  // viewing the cart and submitting checkout. Remove unavailable lines
-  // before the order RPC so one stale line does not block available items.
+  // Re-check publication, variant status and inventory because stock may
+  // change between viewing the cart and submitting checkout. Keep stale
+  // lines visible and stop submission so the customer must review the
+  // changed basket rather than unknowingly placing a different order.
   const { data: cartItems, error: cartItemsError } = await (client.from("cart_items") as any)
     .select("id, product_id, variant_id, products ( status ), product_variants ( status )")
     .eq("cart_id", cartId);
@@ -173,6 +172,9 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
         "A delivery address is required",
         "Delivery address not found",
         "Cart is empty",
+        "Payment method is invalid",
+        "This payment method is currently unavailable",
+        "Guest checkout must be submitted through the storefront",
       ].includes(error.message);
 
     return {
