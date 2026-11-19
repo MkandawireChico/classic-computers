@@ -95,7 +95,10 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
   }
 
   if (existing) {
-    const newQuantity = Math.min(existing.quantity + quantity, 20);
+    if (existing.quantity + quantity > 20) {
+      return { success: false, error: "Maximum 20 of this item per cart. Adjust the quantity in your cart before adding more." };
+    }
+    const newQuantity = existing.quantity + quantity;
     const { error } = await (client.from("cart_items") as any)
       .update({ quantity: newQuantity })
       .eq("id", existing.id);
@@ -123,8 +126,11 @@ export async function addToCart(input: unknown): Promise<CartActionResult> {
       ).maybeSingle();
 
       if (racedItem && !retryLookupError) {
+        if (racedItem.quantity + quantity > 20) {
+          return { success: false, error: "Maximum 20 of this item per cart. Adjust the quantity in your cart before adding more." };
+        }
         const { error: retryUpdateError } = await (client.from("cart_items") as any)
-          .update({ quantity: Math.min(racedItem.quantity + quantity, 20) })
+          .update({ quantity: racedItem.quantity + quantity })
           .eq("id", racedItem.id);
         if (!retryUpdateError) return { success: true };
         console.error("addToCart duplicate-item recovery update failed:", {
