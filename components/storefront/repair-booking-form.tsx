@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -18,7 +18,7 @@ const STEPS = [
 type StepId = typeof STEPS[number]["id"];
 
 export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolean }) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ ticketNumber: string; trackingToken: string } | null>(null);
   const [currentStep, setCurrentStep] = useState<StepId>("device");
@@ -45,7 +45,8 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
+  const visibleSteps = isAuthenticated ? STEPS.filter((step) => step.id !== "contact") : STEPS;
+  const currentStepIndex = visibleSteps.findIndex((step) => step.id === currentStep);
 
 
   function validateStep(stepId: StepId): boolean {
@@ -74,7 +75,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
     if (!validateStep(currentStep)) return;
 
     const nextIndex = currentStepIndex + 1;
-    const nextStep = STEPS[nextIndex];
+    const nextStep = visibleSteps[nextIndex];
     if (nextStep) {
       setCurrentStep(nextStep.id);
     }
@@ -82,17 +83,19 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
 
   function previousStep() {
     const prevIndex = currentStepIndex - 1;
-    const prevStep = STEPS[prevIndex];
+    const prevStep = visibleSteps[prevIndex];
     if (prevStep) {
       setCurrentStep(prevStep.id);
     }
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isPending) return;
     setError(null);
-    submissionKey.current ??= getOrCreateSubmissionKey("repair-booking");
-    startTransition(async () => {
+    setIsPending(true);
+    try {
+      submissionKey.current ??= getOrCreateSubmissionKey("repair-booking");
       const res = await submitRepairBookingAction({
         deviceType: formData.deviceType,
         brand: formData.brand || undefined,
@@ -103,15 +106,28 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
         guestName: formData.guestName || undefined,
         guestPhone: formData.guestPhone || undefined,
         guestEmail: formData.guestEmail || undefined,
-      }, submissionKey.current!);
+      }, submissionKey.current);
       if (!res.success) {
         setError(res.error);
         return;
       }
-      trackInterestEvent({ name: "repair_request_submitted" });
-      markSubmissionComplete("repair-booking");
+      try {
+        trackInterestEvent({ name: "repair_request_submitted" });
+      } catch (analyticsError) {
+        console.warn("Repair analytics could not be recorded:", analyticsError);
+      }
+      try {
+        markSubmissionComplete("repair-booking");
+      } catch (storageError) {
+        console.warn("Repair submission marker could not be saved:", storageError);
+      }
       setResult({ ticketNumber: res.ticketNumber, trackingToken: res.trackingToken });
-    });
+    } catch (submitError) {
+      console.error("Repair request submission failed:", submitError);
+      setError("We couldn't submit your repair request. Please check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (result) {
@@ -191,7 +207,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
 
       {/* Progress Indicator */}
       <div className="flex items-center justify-between">
-        {STEPS.filter((s) => isAuthenticated ? s.id !== "contact" : true).map((step, index) => {
+        {visibleSteps.map((step, index) => {
           const stepNumber = index + 1;
           const isActive = step.id === currentStep;
           const isCompleted = currentStepIndex > index;
@@ -224,7 +240,7 @@ export function RepairBookingForm({ isAuthenticated }: { isAuthenticated: boolea
                   {step.title}
                 </p>
               </div>
-              {index < (isAuthenticated ? 2 : 3) && (
+              {index < visibleSteps.length - 1 && (
                 <div className="flex-1 h-0.5 mx-2 bg-slate-200" />
               )}
             </div>
