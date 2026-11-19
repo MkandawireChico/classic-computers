@@ -38,7 +38,7 @@ export default async function AccountRepairsPage() {
         </div>
         <Link
           href="/repairs/book"
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-black/15 transition-colors hover:bg-brand-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
@@ -71,7 +71,6 @@ export default async function AccountRepairsPage() {
                     </Badge>
                   </div>
                   <p className="mt-2 text-sm text-slate-700">{r.device_type}</p>
-                  <p className="mt-1 text-xs text-slate-500">Opened {new Date(r.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "short", day: "numeric" })}</p>
                   <p className="mt-1 text-xs text-slate-500">Submitted {formatDate(r.created_at)}</p>
                 </div>
                 <span className="text-xs font-semibold text-brand-700 transition-colors group-hover:text-brand-900">View details</span>
