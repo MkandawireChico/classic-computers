@@ -53,6 +53,7 @@ export function PurchasePanel({
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
   const onSale = salePrice !== null && salePrice < price;
+  const effectivePrice = onSale ? (salePrice as number) : price;
 
   // Phase 4 correction (item 3): the SELECTED variant's own inventory
   // status is authoritative for a product that has variants — a product
@@ -193,12 +194,18 @@ export function PurchasePanel({
               {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
             </span>
           </div>
-          <Link
-            href={`/rentals/book?product=${encodeURIComponent(rentalOffer.productId)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
-            className="mt-3 inline-flex w-full items-center justify-center rounded-lg border border-brand-300 bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-          >
-            Rent Now
-          </Link>
+          {rentalOffer.availableQuantity > 0 ? (
+            <Link
+              href={`/rentals/book?product=${encodeURIComponent(rentalOffer.productId)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
+              className="mt-3 inline-flex w-full items-center justify-center rounded-lg border border-brand-300 bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            >
+              Request rental
+            </Link>
+          ) : (
+            <p className="mt-3 rounded-lg bg-slate-100 px-4 py-2.5 text-center text-sm font-semibold text-slate-600" role="status">
+              This item is currently unavailable for rental
+            </p>
+          )}
         </div>
       ) : null}
 
@@ -210,7 +217,7 @@ export function PurchasePanel({
           slug: product.slug,
           variantName: selectedVariant?.name ?? null,
           variantSku: selectedVariant?.sku ?? null,
-          unitPrice: salePrice ?? price,
+          unitPrice: effectivePrice,
         }}
       />
 
