@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -37,21 +37,43 @@ function notificationLink(notification: MyNotification): string | null {
 
 export function NotificationList({ notifications }: { notifications: MyNotification[] }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);\n  const [actionError, setActionError] = useState<string | null>(null);
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  function markRead(id: string) {
-    startTransition(async () => {
-      await markMyNotificationReadAction(id);
+  async function markRead(id: string) {
+    if (isPending) return;
+    setIsPending(true);
+    setActionError(null);
+    try {
+      const result = await markMyNotificationReadAction(id);
+      if (!result.success) {
+        setActionError(result.error);
+        return;
+      }
       router.refresh();
-    });
+    } catch {
+      setActionError("We couldn't update this notification. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
-  function markAllRead() {
-    startTransition(async () => {
-      await markAllMyNotificationsReadAction();
+  async function markAllRead() {
+    if (isPending) return;
+    setIsPending(true);
+    setActionError(null);
+    try {
+      const result = await markAllMyNotificationsReadAction();
+      if (!result.success) {
+        setActionError(result.error);
+        return;
+      }
       router.refresh();
-    });
+    } catch {
+      setActionError("We couldn't update your notifications. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (notifications.length === 0) {
