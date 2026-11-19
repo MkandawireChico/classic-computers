@@ -35,7 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminHeader email={user.email} notifications={notifications} />
       <div className="flex min-h-0 flex-1">
         <AdminSidebar permissions={Array.from(permissions)} />
-        <main className="admin-content min-w-0 flex-1 overflow-x-auto px-4 py-6 sm:px-6 lg:px-8 [&_table]:text-slate-700 [&_table_th]:border-b [&_table_th]:border-surface-border [&_table_th]:font-semibold">
+        <main className="admin-content min-w-0 flex-1 overflow-x-auto px-4 py-5 sm:px-6 sm:py-7 lg:px-8 [&_table]:text-slate-700 [&_table_th]:border-b [&_table_th]:border-surface-border [&_table_th]:font-semibold">
           <div className="mx-auto w-full max-w-[1600px]">
             <BackButton className="mb-5 px-0 pt-0 sm:px-0 lg:px-0" />
             {children}
