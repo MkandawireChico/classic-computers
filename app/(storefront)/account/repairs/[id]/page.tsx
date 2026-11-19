@@ -24,7 +24,7 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div>
           <Link href="/account/repairs" className="text-sm font-semibold text-brand-700 hover:text-brand-700">
             ← Back to repairs
