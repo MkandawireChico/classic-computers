@@ -124,6 +124,62 @@ export default async function CorporatePage() {
           )}
         </section>
       </div>
+
+      <section aria-labelledby="corporate-supply-heading" className="mt-14 border-t border-slate-200 pt-12 sm:mt-16 sm:pt-14">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">What we supply</p>
+          <h2 id="corporate-supply-heading" className="mt-2 text-2xl font-extrabold tracking-tight text-[#10243a] sm:text-3xl">
+            ICT equipment for your organisation
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+            Share the products and specifications your team needs. We will review the request and discuss suitable options, availability and pricing.
+          </p>
+        </div>
+        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { number: "01", title: "Computers", detail: "Business laptops, desktops and workstation requirements." },
+            { number: "02", title: "Printing", detail: "Printers, scanners and related office equipment." },
+            { number: "03", title: "Networking", detail: "Routers, network equipment and connectivity requirements." },
+            { number: "04", title: "Accessories", detail: "Monitors, storage, peripherals and supporting equipment." },
+          ].map((item) => (
+            <article key={item.number} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-xs font-extrabold tracking-[0.14em] text-brand-700">{item.number}</p>
+              <h3 className="mt-3 text-base font-bold text-slate-950">{item.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="corporate-process-heading" className="mt-14 rounded-3xl bg-[#102f49] px-6 py-9 text-white sm:mt-16 sm:px-9 sm:py-11">
+        <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">How enquiries work</p>
+            <h2 id="corporate-process-heading" className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">A clear route from request to quotation.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-200">Give us the information you have. Our team will follow up to clarify the rest.</p>
+            <Link href="/corporate/enquire" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#102f49] transition-colors hover:bg-cyan-50">
+              Start a corporate enquiry
+            </Link>
+          </div>
+          <ol className="grid gap-4 sm:grid-cols-3">
+            {[
+              { number: "01", title: "Send requirements", detail: "Tell us the equipment, quantities and delivery location." },
+              { number: "02", title: "Review and clarify", detail: "We review your request and contact you about specifications or availability." },
+              { number: "03", title: "Receive a quotation", detail: "We discuss pricing and the next steps before any order is confirmed." },
+            ].map((item) => (
+              <li key={item.number} className="rounded-2xl border border-white/15 bg-white/5 p-4">
+                <p className="text-xs font-extrabold tracking-[0.14em] text-cyan-200">{item.number}</p>
+                <h3 className="mt-3 text-sm font-bold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-200">{item.detail}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <p className="mt-6 text-center text-xs leading-5 text-slate-500">
+        A submitted enquiry is a request for information or a quotation. Pricing, stock availability and order acceptance are confirmed separately.
+      </p>
     </div>
   );
 }
