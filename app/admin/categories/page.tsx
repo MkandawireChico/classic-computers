@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getCategories } from "@/lib/data/categories";
 import { CategoriesManager } from "@/components/admin/categories-manager";
 
@@ -8,7 +9,7 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Categories</h1>
+      <AdminPageHeader eyebrow="Catalogue · Organisation" title="Categories" description="Organise products into clear storefront categories." />
       <CategoriesManager categories={categories} />
     </div>
   );
