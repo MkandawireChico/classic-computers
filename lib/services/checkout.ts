@@ -35,17 +35,44 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   const client: SupabaseClient<Database> = user ? supabase : createAdminClient();
 
   // Self-heal: the /cart page already shows unavailable items separately
-  // and excludes them from the displayed total, so silently drop them here
-  // too rather than letting create_order() reject the whole checkout over
-  // an item the customer was never going to pay for anyway. create_order()
-  // itself stays strict about publication status — this pruning is what
-  // keeps the customer-facing path from tripping over that strictness.
-  const { data: cartItems } = await (client.from("cart_items") as any)
+  // and excludes them from the displayed total. Re-check publication,
+  // variant status and inventory here because stock may change between
+  // viewing the cart and submitting checkout. Remove unavailable lines
+  // before the order RPC so one stale line does not block available items.
+  const { data: cartItems, error: cartItemsError } = await (client.from("cart_items") as any)
     .select("id, product_id, variant_id, products ( status ), product_variants ( status )")
     .eq("cart_id", cartId);
 
+  if (cartItemsError || !cartItems) {
+    console.error("Checkout cart validation failed:", cartItemsError?.message);
+    return { success: false, error: "We could not verify your cart. Please return to your cart and try again." };
+  }
+
+  const productIds = Array.from(new Set((cartItems ?? []).map((row: any) => row.product_id)));
+  const { data: inventoryRows, error: inventoryError } = productIds.length
+    ? await (client.from("storefront_inventory_status" as any) as any)
+        .select("product_id, variant_id, status")
+        .in("product_id", productIds)
+    : { data: [], error: null };
+
+  if (inventoryError) {
+    console.error("Checkout inventory validation failed:", inventoryError.message);
+    return { success: false, error: "We could not verify product availability. Please return to your cart and try again." };
+  }
+
   const staleIds = (cartItems ?? [])
-    .filter((row: any) => row.products?.status !== "published" || (row.variant_id && row.product_variants?.status !== "active"))
+    .filter((row: any) => {
+      const inventory = (inventoryRows ?? []).find(
+        (entry: any) =>
+          entry.product_id === row.product_id &&
+          (row.variant_id ? entry.variant_id === row.variant_id : entry.variant_id === null),
+      );
+      const productAndVariantAvailable =
+        row.products?.status === "published" &&
+        (!row.variant_id || row.product_variants?.status === "active");
+      const stockAvailable = inventory && ["in_stock", "low_stock"].includes(inventory.status);
+      return !productAndVariantAvailable || !stockAvailable;
+    })
     .map((row: any) => row.id);
   const staleIdSet = new Set(staleIds);
   const orderedProductIds: string[] = [];
