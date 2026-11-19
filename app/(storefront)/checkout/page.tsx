@@ -44,6 +44,11 @@ export default async function CheckoutPage() {
             Add your contact details, select pickup or delivery, then choose a payment method.
           </p>
         </header>
+        {cart.items.length > availableItems.length ? (
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+            Some items in your cart are unavailable and are not included in this order. <Link href="/cart" className="font-bold underline underline-offset-2">Review your cart</Link>.
+          </div>
+        ) : null}
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_350px] lg:gap-8">
           <aside className="order-1 h-fit rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:order-2 lg:sticky lg:top-28" aria-labelledby="checkout-summary-heading">
             <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
@@ -81,7 +86,8 @@ export default async function CheckoutPage() {
                 <span className="text-sm font-semibold text-slate-600">Items subtotal</span>
                 <span className="text-lg font-extrabold tabular-nums text-[#10243a]">{formatMoney(cart.subtotal)}</span>
               </div>
-              <p className="mt-3 text-xs leading-5 text-slate-500">Any delivery arrangement and applicable charge will be confirmed with your order.</p>
+              <p className="mt-2 text-xs leading-5 text-slate-500">Discounts, if applicable, and the final order total are confirmed when your order is placed.</p>
+              <p className="mt-2 text-xs leading-5 text-slate-500">Any delivery arrangement and applicable charge will be confirmed with your order.</p>
             </div>
           </aside>
           <div className="order-2 min-w-0 lg:order-1">
