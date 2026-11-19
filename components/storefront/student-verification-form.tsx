@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -9,22 +9,33 @@ import { getOrCreateSubmissionKey, markSubmissionComplete } from "@/lib/client/s
 
 export function StudentVerificationForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const submissionKey = useRef<string | null>(null);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
+    if (isPending) return;
+
     setError(null);
-    submissionKey.current ??= getOrCreateSubmissionKey("student-verification");
-    formData.set("submissionKey", submissionKey.current);
-    startTransition(async () => {
+    setIsPending(true);
+
+    try {
+      submissionKey.current ??= getOrCreateSubmissionKey("student-verification");
+      formData.set("submissionKey", submissionKey.current);
+
       const result = await submitStudentVerificationAction(formData);
-      if (!result.success) setError(result.error);
-      else {
-        markSubmissionComplete("student-verification");
-        router.refresh();
+      if (!result.success) {
+        setError(result.error);
+        return;
       }
-    });
+
+      markSubmissionComplete("student-verification");
+      router.refresh();
+    } catch {
+      setError("We couldn't submit your application. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
@@ -128,7 +139,7 @@ export function StudentVerificationForm() {
         </div>
       </div>
 
-      <Button type="submit" isLoading={isPending} className="w-full rounded-xl">
+      <Button type="submit" isLoading={isPending} disabled={isPending} className="w-full rounded-xl">
         Submit for verification
       </Button>
     </form>
