@@ -109,7 +109,7 @@ begin
     raise exception 'Cart not found or already checked out';
   end if;
 
-  if v_cart.customer_id is not null and v_cart.customer_id <> auth.uid() then
+  if v_cart.customer_id is not null and v_cart.customer_id is distinct from auth.uid() then
     raise exception 'Not authorized for this cart';
   end if;
 
