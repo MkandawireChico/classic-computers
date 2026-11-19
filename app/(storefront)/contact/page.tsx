@@ -61,7 +61,7 @@ export default async function ContactPage() {
             aria-labelledby="contact-options-heading"
             className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
           >
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
               Contact details
             </p>
             <h2 id="contact-options-heading" className="mt-2 text-2xl font-black text-slate-900">
@@ -103,7 +103,7 @@ export default async function ContactPage() {
                   value={businessInfo.whatsapp}
                   href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
                   icon={<WhatsAppIcon />}
-                  tone="cyan"
+                  tone="brand"
                   compactLabel
                   external
                 />
@@ -113,7 +113,7 @@ export default async function ContactPage() {
             {businessInfo?.address ? (
               <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-800">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-800">
                     <LocationIcon />
                   </span>
                   <div className="min-w-0">
@@ -126,9 +126,10 @@ export default async function ContactPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Open directions to Classic Computers in Google Maps"
                     className="mt-4 inline-flex min-h-10 items-center rounded-lg px-2 text-sm font-bold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                   >
-                    Get directions{" "}
+                    Open directions in Google Maps{" "}
                     <span aria-hidden="true" className="ml-1">
                       ↗
                     </span>
@@ -138,8 +139,8 @@ export default async function ContactPage() {
             ) : null}
 
             {hours?.enabled && hours.schedule ? (
-              <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-amber-800">
+              <div className="mt-4 flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50/70 p-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-800">
                   <ClockIcon />
                 </span>
                 <div>
