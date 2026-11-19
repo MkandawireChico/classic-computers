@@ -15,6 +15,7 @@ const FOOTER_COLUMNS = [
     links: [
       { href: "/rentals", label: "Equipment rentals" },
       { href: "/repairs", label: "Repairs and support" },
+      { href: "/repairs/track", label: "Track a repair" },
       { href: "/student-deals", label: "Student deals" },
       { href: "/corporate", label: "Corporate supply" },
     ],
