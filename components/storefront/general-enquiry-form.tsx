@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { submitGeneralEnquiryAction } from "./actions";
@@ -11,7 +11,7 @@ import {
 } from "@/lib/client/submission-key";
 
 export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boolean }) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const submissionKey = useRef<string | null>(null);
@@ -25,7 +25,8 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
       return;
     }
 
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       submissionKey.current ??= getOrCreateSubmissionKey("general-enquiry");
       const result = await submitGeneralEnquiryAction(
         {
@@ -43,7 +44,11 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
       }
       markSubmissionComplete("general-enquiry");
       setSubmitted(true);
-    });
+    } catch {
+      setError("We couldn't send your message. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (submitted) {
