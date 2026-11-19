@@ -23,7 +23,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         ...(isBankProvider ? [`Branch: ${paymentProvider.branch}`] : []),
         `Order: ${order.order_number}`,
         `Total: ${formatMoney(order.total)}`,
-      ].join("\\n")
+      ].join("\n")
     : null;
 
   return (
