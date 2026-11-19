@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { submitStudentVerificationAction } from "./actions";
-import { getOrCreateSubmissionKey, markSubmissionComplete } from "@/lib/client/submission-key";
+import { getOrCreateSubmissionKey, markSubmissionComplete, renewSubmissionKey } from "@/lib/client/submission-key";
 
 export function StudentVerificationForm() {
   const router = useRouter();
@@ -48,6 +48,7 @@ export function StudentVerificationForm() {
       } catch (storageError) {
         console.warn("Student verification submission marker could not be saved:", storageError);
       }
+      submissionKey.current = renewSubmissionKey("student-verification");
       router.refresh();
     } catch {
       setError("We couldn't submit your application. Check your connection and try again.");
