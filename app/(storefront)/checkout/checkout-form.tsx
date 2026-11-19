@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ export function CheckoutForm({
   paymentMethods: PaymentMethodsSetting;
 }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fulfillmentType, setFulfillmentType] = useState<"pickup" | "delivery">("pickup");
   const defaultAddressId = addresses.find((a) => a.is_default)?.id ?? addresses[0]?.id;
@@ -84,11 +84,11 @@ export function CheckoutForm({
     (provider) => provider.id === selectedProvider,
   );
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
     if (isPending) return;
     setError(null);
-    startTransition(async () => {
-      try {
+    setIsPending(true);
+    try {
         const result = await submitCheckoutAction({
           fulfillmentType,
           paymentMethod: formData.get("paymentMethod")?.toString(),
@@ -121,11 +121,12 @@ export function CheckoutForm({
           console.warn("Order analytics could not be recorded:", analyticsError);
         }
         router.push(`/checkout/confirmation/${result.orderNumber}`);
-      } catch (checkoutError) {
-        console.error("Checkout submission failed:", checkoutError);
-        setError("We could not submit your order. Please check your connection and try again. If you were charged or received an order number, contact us before placing another order.");
-      }
-    });
+    } catch (checkoutError) {
+      console.error("Checkout submission failed:", checkoutError);
+      setError("We could not submit your order. Please check your connection and try again. If you were charged or received an order number, contact us before placing another order.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (enabledMethods.length === 0) {
