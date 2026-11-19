@@ -404,8 +404,9 @@ export function CheckoutForm({
         type="submit"
         isLoading={isPending}
         disabled={
-          (selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
-          !selectedProvider
+          ((selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
+            !selectedProvider) ||
+          (fulfillmentType === "delivery" && isAuthenticated && addresses.length === 0)
         }
         className="min-h-14 w-full rounded-2xl bg-cyan-700 px-8 py-4 text-lg font-extrabold text-white shadow-xl shadow-cyan-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-800 hover:shadow-2xl"
       >
