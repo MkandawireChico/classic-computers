@@ -108,14 +108,14 @@ export function MobileNav({
                           <Link
                             href="/sign-in"
                             onClick={() => setOpen(false)}
-                            className="flex min-h-11 items-center justify-center rounded-xl px-2 py-2 text-sm font-semibold text-slate-800 transition-colors hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
+                            className="flex min-h-11 items-center justify-center rounded-xl px-2 py-2 text-sm font-semibold text-slate-800 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                           >
                             Sign In
                           </Link>
                           <Link
                             href="/sign-up"
                             onClick={() => setOpen(false)}
-                            className="flex min-h-11 items-center justify-center rounded-xl bg-brand-600 px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
+                            className="flex min-h-11 items-center justify-center rounded-xl bg-brand-600 px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                           >
                             Create Account
                           </Link>
@@ -125,7 +125,7 @@ export function MobileNav({
                         <Link
                           href="/admin"
                           onClick={() => setOpen(false)}
-                          className="flex min-h-11 min-w-0 items-center justify-center rounded-xl px-2 py-2 text-center text-sm font-semibold text-slate-800 transition-colors hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
+                          className="flex min-h-11 min-w-0 items-center justify-center rounded-xl px-2 py-2 text-center text-sm font-semibold text-slate-800 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                         >
                           Staff Dashboard
                         </Link>
