@@ -69,7 +69,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         setSuccessEmail(res.email || null);
       }
     } catch {
-      setError("An unexpected error occurred. Please try again.");
+      setError("We could not confirm the signup response. Your request might already have been accepted. Check your inbox and spam folder before submitting again.");
     } finally {
       setLoading(false);
     }
@@ -205,7 +205,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
         />
       </div>
 
-      <Button type="submit" isLoading={loading} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
+      <Button type="submit" isLoading={loading} disabled={loading} className="min-h-12 w-full rounded-2xl bg-[#0b2238] px-6 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-cyan-800 hover:shadow-xl hover:-translate-y-0.5">
         {loading ? "Creating account..." : "Create account"}
       </Button>
     </form>
