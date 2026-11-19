@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const generalEnquirySchema = z
   .object({
-    name: z.string().trim().min(2, "Name is required"),
+    name: z.string().trim().min(2, "Name is required").max(120, "Name is too long"),
     phone: z.string().trim().max(30).optional(),
     email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
     topic: z.enum([
@@ -15,7 +15,7 @@ export const generalEnquirySchema = z
       "order_assistance",
       "other",
     ]),
-    message: z.string().trim().min(5, "Message is required"),
+    message: z.string().trim().min(5, "Message is required").max(2000, "Message must be 2,000 characters or fewer"),
   })
   .refine((data) => Boolean(data.phone || data.email), {
     message: "Enter a phone number or email address so we can reply.",
