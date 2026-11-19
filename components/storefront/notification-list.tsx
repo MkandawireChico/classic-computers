@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { markMyNotificationReadAction, markAllMyNotificationsReadAction } from "./actions";
 
 export type MyNotification = {
@@ -37,7 +38,8 @@ function notificationLink(notification: MyNotification): string | null {
 
 export function NotificationList({ notifications }: { notifications: MyNotification[] }) {
   const router = useRouter();
-  const [isPending, setIsPending] = useState(false);\n  const [actionError, setActionError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   async function markRead(id: string) {
@@ -91,6 +93,7 @@ export function NotificationList({ notifications }: { notifications: MyNotificat
 
   return (
     <div className="space-y-4">
+      {actionError ? <Alert variant="danger">{actionError}</Alert> : null}
       {unreadCount > 0 ? (
         <Button
           type="button"
