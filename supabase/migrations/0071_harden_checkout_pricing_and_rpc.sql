@@ -366,3 +366,12 @@ begin
   return query select v_order_id, v_order_number;
 end;
 $$;
+
+-- Keep the RPC callable only by authenticated customers and the server-side
+-- service role used for the cookie-verified guest checkout flow.
+revoke all on function public.create_order(
+  uuid, fulfillment_type_enum, text, text, text, text, uuid, text, text, text, text, text
+) from public;
+grant execute on function public.create_order(
+  uuid, fulfillment_type_enum, text, text, text, text, uuid, text, text, text, text, text
+) to authenticated, service_role;
