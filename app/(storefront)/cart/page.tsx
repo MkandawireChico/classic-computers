@@ -97,7 +97,7 @@ export default async function CartPage() {
               <section className="overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/70" aria-labelledby="unavailable-items-heading">
                 <div className="border-b border-amber-200 px-4 py-3 sm:px-5">
                   <h2 id="unavailable-items-heading" className="text-sm font-bold text-amber-950">Items needing attention</h2>
-                  <p className="mt-1 text-xs leading-5 text-amber-900">These products are no longer available. They are excluded from your subtotal and checkout.</p>
+                  <p className="mt-1 text-xs leading-5 text-amber-900">These items are unavailable for checkout right now. They are excluded from your subtotal and checkout.</p>
                 </div>
                 {unavailableItems.map((item) => (
                   <div key={item.cartItemId} className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-100 px-4 py-4 last:border-0 sm:px-5">
