@@ -91,10 +91,26 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   }
 
   if (staleIds.length > 0) {
-    await (client.from("cart_items") as any).delete().in("id", staleIds);
+    const { error: staleDeleteError } = await (client.from("cart_items") as any)
+      .delete()
+      .in("id", staleIds);
+    if (staleDeleteError) {
+      console.error("Checkout unavailable-item cleanup failed:", staleDeleteError.message);
+      return {
+        success: false,
+        error: "Some items in your cart are no longer available. We could not update your cart automatically. Please return to your cart and remove them before trying again.",
+      };
+    }
   }
 
-  const { data: remaining } = await (client.from("cart_items") as any).select("id").eq("cart_id", cartId).limit(1);
+  const { data: remaining, error: remainingError } = await (client.from("cart_items") as any)
+    .select("id")
+    .eq("cart_id", cartId)
+    .limit(1);
+  if (remainingError) {
+    console.error("Checkout remaining-cart verification failed:", remainingError.message);
+    return { success: false, error: "We could not verify the items in your cart. Please return to your cart and try again." };
+  }
   if (!remaining || remaining.length === 0) {
     return { success: false, error: "The items in your cart are no longer available." };
   }
