@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -9,7 +9,7 @@ import { getOrCreateSubmissionKey, markSubmissionComplete, renewSubmissionKey } 
 import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 
 export function CorporateEnquiryForm() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const submissionKey = useRef<string | null>(null);
@@ -21,9 +21,13 @@ export function CorporateEnquiryForm() {
     trackInterestEvent({ name: "quotation_request_started" });
   }, []);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    const formData = new FormData(event.currentTarget);
+    setIsPending(true);
+    try {
       submissionKey.current ??= getOrCreateSubmissionKey("corporate-enquiry");
       const result = await submitCorporateEnquiryAction({
         organisationName: formData.get("organisationName")?.toString() ?? "",
@@ -40,10 +44,23 @@ export function CorporateEnquiryForm() {
         setError(result.error);
         return;
       }
-      trackInterestEvent({ name: "quotation_request_submitted" });
-      markSubmissionComplete("corporate-enquiry");
+      try {
+        trackInterestEvent({ name: "quotation_request_submitted" });
+      } catch (analyticsError) {
+        console.warn("Quotation analytics could not be recorded:", analyticsError);
+      }
+      try {
+        markSubmissionComplete("corporate-enquiry");
+      } catch (storageError) {
+        console.warn("Quotation submission marker could not be saved:", storageError);
+      }
       setSubmitted(true);
-    });
+    } catch (submitError) {
+      console.error("Corporate enquiry submission failed:", submitError);
+      setError("We couldn't submit your enquiry. Please check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (submitted) {
@@ -67,7 +84,7 @@ export function CorporateEnquiryForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       <section className="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
