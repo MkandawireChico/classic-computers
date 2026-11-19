@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import { getMyReferralInfo } from "@/lib/data/account-referrals";
 import { Badge } from "@/components/ui/badge";
 import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
@@ -8,11 +9,7 @@ export default async function AccountReferralsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My benefits</p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Referrals</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Share your referral code. Referrals and any configured rewards appear here.</p>
-      </div>
+      <AccountPageHeader eyebrow="Benefits · Referrals" title="Referrals" description="Share your referral code. Referrals and any configured rewards appear here." />
 
       {referralCode ? (
         <div className="flex flex-col gap-4 rounded-xl border border-brand-200 bg-brand-50/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
