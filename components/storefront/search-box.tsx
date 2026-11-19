@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 
 export function SearchBox({ initialQuery = "" }: { initialQuery?: string }) {
   const router = useRouter();
+  const searchInputId = useId();
   const [value, setValue] = useState(initialQuery);
 
   function handleSubmit(e: FormEvent) {
@@ -15,12 +16,12 @@ export function SearchBox({ initialQuery = "" }: { initialQuery?: string }) {
 
   return (
     <form role="search" onSubmit={handleSubmit} className="w-full max-w-md">
-      <label htmlFor="site-search" className="sr-only">
+      <label htmlFor={searchInputId} className="sr-only">
         Search products
       </label>
       <div className="relative">
         <svg
-          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-700"
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-700"
           width="18"
           height="18"
           viewBox="0 0 24 24"
@@ -31,12 +32,12 @@ export function SearchBox({ initialQuery = "" }: { initialQuery?: string }) {
           <path d="M21 21l-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
         <input
-          id="site-search"
+          id={searchInputId}
           type="search"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search laptops, phones, printers…"
-          className="w-full rounded-full border border-amber-200 bg-white/90 py-2.5 pl-11 pr-4 text-sm text-slate-800 shadow-sm transition-all placeholder:text-slate-500 hover:border-emerald-300 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100"
+          className="w-full rounded-full border border-slate-300 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-800 shadow-sm transition-all placeholder:text-slate-500 hover:border-brand-300 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-100"
         />
       </div>
     </form>
