@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminReferrals } from "@/lib/data/admin/referrals";
 import { ReferralRow } from "@/components/admin/referral-row";
 
@@ -13,7 +14,7 @@ export default async function AdminReferralsPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Referrals</h1>
+      <AdminPageHeader eyebrow="Marketing · Referrals" title="Referrals" description="Review referral activity and programme settings." />
       <div className="rounded-card border border-surface-border">
         {referrals.length === 0 ? (
           <p className="p-6 text-center text-sm text-gray-500">No referrals found.</p>
