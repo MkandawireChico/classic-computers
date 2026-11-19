@@ -98,7 +98,7 @@ export function MobileNav({
                         <Link
                           href="/account"
                           onClick={() => setOpen(false)}
-                          className="flex min-h-11 min-w-0 items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-800 transition-colors hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
+                          className="flex min-h-11 min-w-0 items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-800 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                         >
                           <AccountIcon />
                           My Account
@@ -164,7 +164,7 @@ export function MobileNav({
                             key={link.href}
                             href={link.href}
                             onClick={() => setOpen(false)}
-                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-emerald-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                           >
                             {link.label}
                           </Link>
@@ -184,7 +184,7 @@ export function MobileNav({
                             key={link.href}
                             href={link.href}
                             onClick={() => setOpen(false)}
-                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-amber-50 hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+                            className="rounded-xl px-3 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                           >
                             {link.label}
                           </Link>
