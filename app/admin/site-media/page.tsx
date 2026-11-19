@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAllSiteMedia } from "@/lib/services/admin/site-media";
 import { SiteMediaManager } from "@/components/admin/site-media-manager";
 
@@ -8,7 +9,7 @@ export default async function AdminSiteMediaPage() {
 
   return (
     <div>
-      <h1 className="mb-1 text-xl font-semibold text-gray-900">Site Media</h1>
+      <AdminPageHeader eyebrow="Content · Storefront assets" title="Site Media" description="Manage images and media used across the customer-facing website." />
       <p className="mb-4 max-w-3xl text-sm leading-6 text-gray-500">
         Manage the images used across the public website. Upload the official brand mark under
         &ldquo;logo&rdquo; and a wide or light-background version under &ldquo;footer logo&rdquo; when available.
