@@ -28,6 +28,8 @@ export function RentalBookingForm({
   isAuthenticated: boolean;
   defaultRentalProductId?: string;
 }) {
+  const today = new Date();
+  const minRentalDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   const [isPending, setIsPending] = useState(false);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const availabilityRequestId = useRef(0);
@@ -338,10 +340,14 @@ export function RentalBookingForm({
                 <input
                   id="rental-start-date"
                   type="date"
+                  min={minRentalDate}
                   value={startDate}
                   onChange={(e) => {
-                    setStartDate(e.target.value);
-                    void checkAvailability(e.target.value, endDate);
+                    const nextStartDate = e.target.value;
+                    const nextEndDate = endDate && endDate >= nextStartDate ? endDate : "";
+                    setStartDate(nextStartDate);
+                    if (nextEndDate !== endDate) setEndDate(nextEndDate);
+                    void checkAvailability(nextStartDate, nextEndDate);
                   }}
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
@@ -356,6 +362,7 @@ export function RentalBookingForm({
                 <input
                   id="rental-end-date"
                   type="date"
+                  min={startDate || minRentalDate}
                   value={endDate}
                   onChange={(e) => {
                     setEndDate(e.target.value);
@@ -378,7 +385,7 @@ export function RentalBookingForm({
                 min={1}
                 max={10}
                 value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                onChange={(e) => setQuantity(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                 placeholder="e.g. 1"
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
@@ -390,12 +397,22 @@ export function RentalBookingForm({
               <p className="text-sm text-slate-500" role="status">Checking availability for these dates…</p>
             ) : null}
             {availability !== null ? (
-              <p
-                className={`text-sm ${availability >= quantity ? "text-brand-700" : "text-rose-600"}`}
+              <div
+                role="status"
+                aria-live="polite"
+                className={`rounded-lg border px-4 py-3 text-sm ${availability >= quantity ? "border-brand-200 bg-brand-50 text-brand-900" : "border-rose-200 bg-rose-50 text-rose-800"}`}
               >
-                {availability} unit(s) available for those dates.{" "}
-                <span className="text-xs text-slate-400">(re-checked when you submit)</span>
-              </p>
+                <p className="font-semibold">
+                  {availability > 0
+                    ? `${availability} ${availability === 1 ? "unit is" : "units are"} available for these dates.`
+                    : "No units appear available for these dates."}
+                </p>
+                {availability < quantity ? (
+                  <p className="mt-1 text-xs">Reduce the quantity or choose different dates. Our team will re-check availability when you submit.</p>
+                ) : (
+                  <p className="mt-1 text-xs">Availability is provisional and will be checked again when you submit.</p>
+                )}
+              </div>
             ) : null}
           </div>
         )}
@@ -500,12 +517,14 @@ export function RentalBookingForm({
               </label>
               <textarea
                 id="rental-notes"
+                maxLength={500}
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 rows={3}
                 placeholder="Any special requirements or notes"
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
+              <p className="text-right text-xs text-slate-400">{formData.notes.length}/500 characters</p>
             </div>
           </div>
         )}
