@@ -105,7 +105,7 @@ export default async function AccountRentalDetailPage({ params }: { params: { id
       </div>
 
       {rental.statusHistory.length > 0 ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_18px_rgba(15,23,42,0.045)] sm:p-6">
           <h2 className="mb-4 text-base font-semibold text-slate-950">Status history</h2>
           <ol className="space-y-4 border-l border-slate-200 pl-4">
             {rental.statusHistory.map((event, i) => (
