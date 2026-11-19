@@ -55,7 +55,7 @@ create or replace function public.guard_active_cart_item_mutation()
 returns trigger
 language plpgsql
 set search_path = pg_catalog, public, pg_temp
-as $
+as $$
 declare
   v_cart_id uuid;
   v_cart_status public.cart_status_enum;
@@ -107,7 +107,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 
 revoke all on function public.guard_active_cart_item_mutation() from public;
 
@@ -149,7 +149,7 @@ returns table(order_id uuid, order_number text)
 language plpgsql
 security definer
 set search_path = pg_catalog, public, pg_temp
-as $
+as $$
 declare
   v_cart record;
   v_customer_id uuid;
