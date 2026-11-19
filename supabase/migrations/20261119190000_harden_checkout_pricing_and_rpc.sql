@@ -109,6 +109,8 @@ begin
 end;
 $;
 
+revoke all on function public.guard_active_cart_item_mutation() from public;
+
 drop trigger if exists cart_items_active_cart_guard on public.cart_items;
 create trigger cart_items_active_cart_guard
   before insert or update or delete on public.cart_items
