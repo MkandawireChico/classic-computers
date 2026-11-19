@@ -96,7 +96,7 @@ export async function SiteFooter() {
             {contactPhones.map((phone) => (
               <a
                 key={phone}
-                href={`tel:${phone.replace(/[^\\d+]/g, "")}`}
+                href={`tel:${phone.replace(/[^\d+]/g, "")}`}
                 aria-label={`Call Classic Computers at ${phone}`}
                 className="font-semibold text-slate-600 hover:text-brand-800"
               >
