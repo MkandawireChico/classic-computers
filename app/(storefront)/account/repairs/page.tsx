@@ -3,17 +3,7 @@ import { getMyRepairs } from "@/lib/data/account-repairs";
 import { Badge } from "@/components/ui/badge";
 import { getMyReviewStatuses } from "@/lib/data/customer-reviews";
 import { CustomerReviewAction } from "@/components/storefront/customer-review-action";
-
-const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  checked_in: "warning",
-  diagnosing: "info",
-  quoted: "info",
-  awaiting_approval: "warning",
-  in_progress: "info",
-  ready_for_pickup: "info",
-  completed: "success",
-  cancelled: "danger",
-};
+import { getRepairStatusDetails } from "@/lib/repairs/status";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-MW", {
@@ -57,7 +47,9 @@ export default async function AccountRepairsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {repairs.map((r) => (
+          {repairs.map((r) => {
+            const status = getRepairStatusDetails(r.status);
+            return (
             <article
               key={r.id}
               className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-panel sm:p-5"
@@ -66,8 +58,8 @@ export default async function AccountRepairsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="break-all text-base font-bold text-slate-950">{r.ticket_number}</p>
-                    <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"} className="text-xs">
-                      {r.status.replace(/_/g, " ")}
+                    <Badge variant={status.variant} className="text-xs">
+                      {status.label}
                     </Badge>
                   </div>
                   <p className="mt-2 text-sm text-slate-700">{r.device_type}</p>
@@ -83,7 +75,8 @@ export default async function AccountRepairsPage() {
                 label="repair"
               />
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
