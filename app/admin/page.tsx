@@ -26,6 +26,7 @@ const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger
 export default async function AdminDashboardPage() {
   const permissions = await getMyPermissions();
   const canSeeOrders = permissions.has("orders.read");
+  const canManageProducts = permissions.has("products.write");
   const canSeeInventory = permissions.has("inventory.read");
   const canSeeCustomers = permissions.has("customers.read");
   const canSeeReviews = permissions.has("reviews.read");
@@ -52,6 +53,7 @@ export default async function AdminDashboardPage() {
   ]);
 
   const quickActions = [
+    canManageProducts ? { href: "/admin/products/new", label: "Add a product", description: "Create a listing with pricing, images and specifications" } : null,
     canSeeOrders ? { href: "/admin/orders", label: "Review orders", description: "Check new and active orders" } : null,
     canSeeInventory ? { href: "/admin/inventory", label: "Manage stock", description: "Review low and unavailable stock" } : null,
     canSeeRepairs ? { href: "/admin/repairs", label: "Repair queue", description: "Review open repair tickets" } : null,
@@ -59,6 +61,7 @@ export default async function AdminDashboardPage() {
     canSeeCustomers ? { href: "/admin/enquiries", label: "Customer enquiries", description: "Respond to incoming requests" } : null,
     canSeeReports ? { href: "/admin/analytics", label: "Customer interest analytics", description: "Review opted-in storefront activity" } : null,
     canSeeStudents ? { href: "/admin/students", label: "Student verification", description: "Review pending applications" } : null,
+    permissions.has("settings.write") ? { href: "/admin/settings", label: "Store settings", description: "Review storefront, payment and business settings" } : null,
   ].filter((item): item is { href: string; label: string; description: string } => item !== null);
 
   const today = new Intl.DateTimeFormat("en-MW", {
