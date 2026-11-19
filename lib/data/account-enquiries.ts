@@ -16,7 +16,7 @@ export async function getMyEnquiries(): Promise<MyEnquiry[]> {
     .order("created_at", { ascending: false });
   if (error) {
     console.error("getMyEnquiries failed:", error.message);
-    return [];
+    throw new Error("Could not load your enquiries. Please refresh the page and try again.");
   }
   return data ?? [];
 }
