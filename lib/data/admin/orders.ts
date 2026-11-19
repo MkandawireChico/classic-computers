@@ -50,7 +50,7 @@ export async function listAdminOrders(filters: AdminOrderFilters) {
   const { data, error, count } = await query.range(from, to);
   if (error) {
     console.error("listAdminOrders failed:", error.message);
-    return { items: [] as AdminOrderListItem[], total: 0, page, pageSize };
+    throw new Error("Could not load orders. Please refresh the page and try again.");
   }
 
   const items: AdminOrderListItem[] = (data ?? []).map((row: any) => ({
@@ -114,9 +114,13 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     .eq("id", id)
     .maybeSingle();
 
-  if (error || !order) return null;
+  if (error) {
+    console.error("getAdminOrderById failed:", error.message);
+    throw new Error("Could not load this order. Please refresh the page and try again.");
+  }
+  if (!order) return null;
 
-  const [{ data: items }, { data: history }] = await Promise.all([
+  const [itemsResult, historyResult] = await Promise.all([
     (supabase.from("order_items") as any)
       .select("id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total")
       .eq("order_id", id),
@@ -125,6 +129,15 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
   ]);
+  if (itemsResult.error || historyResult.error) {
+    console.error("getAdminOrderById related data failed:", {
+      items: itemsResult.error?.message,
+      history: historyResult.error?.message,
+    });
+    throw new Error("Could not load the full order history. Please refresh the page and try again.");
+  }
+  const items = itemsResult.data;
+  const history = historyResult.data;
 
   return {
     id: order.id,
