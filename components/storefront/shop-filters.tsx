@@ -16,6 +16,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(searchParams.get("min") ?? "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("max") ?? "");
+  const [priceError, setPriceError] = useState("");
   const selectedBrands = new Set(searchParams.getAll("brand"));
   const availableOnly = searchParams.get("available") === "1";
   const activeQuery = searchParams.get("q") ?? searchParams.get("query") ?? "";
@@ -70,6 +71,17 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
 
   function submitPriceRange(e: FormEvent) {
     e.preventDefault();
+    const min = minPrice.trim() ? Number(minPrice) : undefined;
+    const max = maxPrice.trim() ? Number(maxPrice) : undefined;
+    if ((min !== undefined && (!Number.isFinite(min) || min < 0)) || (max !== undefined && (!Number.isFinite(max) || max < 0))) {
+      setPriceError("Enter valid non-negative prices.");
+      return;
+    }
+    if (min !== undefined && max !== undefined && min > max) {
+      setPriceError("Minimum price must not exceed maximum price.");
+      return;
+    }
+    setPriceError("");
     updateParams((params) => {
       if (minPrice) params.set("min", minPrice);
       else params.delete("min");
@@ -229,6 +241,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
               <input
                 type="number"
                 min="0"
+                max={maxPrice || undefined}
                 inputMode="numeric"
                 placeholder="Min"
                 value={minPrice}
@@ -240,7 +253,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
               <span>Maximum</span>
               <input
                 type="number"
-                min="0"
+                min={minPrice || "0"}
                 inputMode="numeric"
                 placeholder="Max"
                 value={maxPrice}
@@ -249,6 +262,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
               />
             </label>
           </div>
+          {priceError ? <p role="alert" className="text-xs font-medium text-red-700">{priceError}</p> : null}
           <Button type="submit" size="sm" variant="outline" className="w-full">Apply price</Button>
         </form>
       </details>
