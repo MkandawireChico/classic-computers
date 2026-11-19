@@ -52,7 +52,7 @@ export function PurchasePanel({
 
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
-  const onSale = salePrice !== null && salePrice < price;
+  const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
 
   // Phase 4 correction (item 3): the SELECTED variant's own inventory
@@ -131,7 +131,7 @@ export function PurchasePanel({
                 status === "in_stock" ? " · In stock" : " · Availability unconfirmed";
               return (
                 <option key={variant.id} value={variant.id}>
-                  {variant.name} — {formatMoney(variant.sale_price ?? variant.price)}{availabilityLabel}
+                  {variant.name} — {formatMoney(variant.sale_price !== null && variant.sale_price > 0 && variant.sale_price < variant.price ? variant.sale_price : variant.price)}{availabilityLabel}
                 </option>
               );
             })}
