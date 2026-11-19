@@ -101,6 +101,13 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
         error: "Some items in your cart are no longer available. We could not update your cart automatically. Please return to your cart and remove them before trying again.",
       };
     }
+
+    // Do not silently submit an order with a different basket or total than
+    // the customer reviewed. Remove stale lines, then require a fresh review.
+    return {
+      success: false,
+      error: "Stock changed while you were checking out. We removed unavailable items from your cart. Please review the updated cart and place your order again.",
+    };
   }
 
   const { data: remaining, error: remainingError } = await (client.from("cart_items") as any)
