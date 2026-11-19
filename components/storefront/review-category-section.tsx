@@ -64,7 +64,7 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
                   ) : null}
                 </div>
                 {review.title ? <h3 className="mt-3 font-bold text-slate-950">{review.title}</h3> : null}
-                <p className="mt-2 text-sm leading-6 text-slate-700">{review.comment}</p>
+                {review.comment ? <p className="mt-2 text-sm leading-6 text-slate-700">{review.comment}</p> : <p className="mt-2 text-sm text-slate-500">Rating submitted without a written comment.</p>}
                 <ReviewPhotos images={review.images} />
                 {review.admin_response ? (
                   <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
