@@ -43,16 +43,16 @@ export default async function BookRentalPage({
 
   return (
     <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-5xl py-10 sm:py-14">
-      <div className="mb-8 rounded-[1.5rem] bg-[#081827] px-6 py-7 text-white shadow-xl shadow-slate-900/10 sm:px-8 sm:py-9">
-        <Link href="/rentals" className="inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 transition-colors hover:text-cyan-200">
+      <div className="mb-8 rounded-[1.5rem] border border-slate-200 bg-white px-6 py-7 text-slate-950 shadow-sm sm:px-8 sm:py-9">
+        <Link href="/rentals" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 transition-colors hover:text-brand-900">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6" />
             <path d="M9 18h6" />
           </svg>
           Back to rentals
         </Link>
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Book a rental</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Book a rental</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
           Complete the form below to submit your rental request for review.
         </p>
       </div>
