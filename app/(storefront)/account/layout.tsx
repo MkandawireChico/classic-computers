@@ -109,7 +109,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
   return (
     <div className="section-shell flex-1 pb-14 pt-5 sm:pb-20 sm:pt-8">
       <header className="relative mb-5 flex min-w-0 items-center justify-between gap-4 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 px-4 py-4 text-white shadow-[0_14px_36px_rgba(15,23,42,0.13)] sm:mb-7 sm:px-6 sm:py-5">
-        <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full border-[24px] border-cyan-300/10" />\n        <div className="relative flex min-w-0 items-center gap-3">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full border-[24px] border-cyan-300/10" />
+        <div className="relative flex min-w-0 items-center gap-3">
           <div aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-sm font-extrabold text-white shadow-sm sm:h-12 sm:w-12">
             {initials}
           </div>
