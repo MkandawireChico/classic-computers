@@ -75,10 +75,21 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
   // The audit_order_status_trigger (0017) automatically writes an
   // order_status_history row and an audit_logs entry on this update — no
   // separate call needed here.
-  const { error } = await (supabase.from("orders") as any).update({ order_status: newStatus }).eq("id", orderId);
+  // Compare-and-set the status read above. This prevents two staff actions
+  // based on the same stale status from both succeeding and bypassing the
+  // transition map.
+  const { data: updated, error } = await (supabase.from("orders") as any)
+    .update({ order_status: newStatus })
+    .eq("id", orderId)
+    .eq("order_status", order.order_status)
+    .select("id")
+    .maybeSingle();
   if (error) {
     console.error("Order status update failed:", { orderId, code: error.code, message: error.message });
     return { success: false, error: "Could not update order status. Check database permissions and try again." };
+  }
+  if (!updated) {
+    return { success: false, error: "Another staff member changed this order. Refresh the page and review its current status." };
   }
   return { success: true };
 }
@@ -107,12 +118,20 @@ export async function updatePaymentStatus(input: unknown): Promise<ServiceResult
     return { success: false, error: `Cannot move payment status from "${order.payment_status}" to "${newPaymentStatus}".` };
   }
 
-  const { error } = await (supabase.from("orders") as any)
+  // Compare-and-set avoids accepting a payment transition based on a stale
+  // status if another staff member has already recorded a payment update.
+  const { data: updated, error } = await (supabase.from("orders") as any)
     .update({ payment_status: newPaymentStatus })
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .eq("payment_status", order.payment_status)
+    .select("id")
+    .maybeSingle();
   if (error) {
     console.error("Order payment status update failed:", { orderId, code: error.code, message: error.message });
     return { success: false, error: "Could not update payment status. Check database permissions and try again." };
+  }
+  if (!updated) {
+    return { success: false, error: "Another staff member changed this payment status. Refresh the page and review the current status." };
   }
   return { success: true };
 }
