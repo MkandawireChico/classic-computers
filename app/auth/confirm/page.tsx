@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { getAuthRedirectUrl } from "@/lib/auth/site-url";
 
-function getSafeNext(value?: string): string {
-  if (!value) return "/account";
-  return value.startsWith("/") && !value.startsWith("//") && value !== "/" ? value : "/account";
+function getSafeNext(value?: string, type?: string): string {
+  const fallback = type === "recovery" ? "/update-password" : "/account";
+  if (!value) return fallback;
+  return value.startsWith("/") && !value.startsWith("//") && value !== "/" ? value : fallback;
 }
 
 export default function AuthConfirmPage({
@@ -14,18 +15,21 @@ export default function AuthConfirmPage({
 }) {
   const code = searchParams?.code ?? "";
   const tokenHash = searchParams?.token_hash ?? "";
-  const type = searchParams?.type ?? (searchParams?.flow === "signup" ? "signup" : "");
-  const next = getSafeNext(searchParams?.next);
+  const type = searchParams?.type ?? (
+    searchParams?.flow === "signup" ? "signup" :
+    searchParams?.flow === "recovery" ? "recovery" : ""
+  );
+  const next = getSafeNext(searchParams?.next, type);
+  const isRecovery = type === "recovery";
 
-  if ((!code && !tokenHash) || !type) {
+  if ((!code && !tokenHash) || !["signup", "recovery", "email", "magiclink", "otp"].includes(type)) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-3 text-center">
-            <CardTitle className="text-2xl">Missing verification data</CardTitle>
+            <CardTitle className="text-2xl">Invalid email link</CardTitle>
             <CardDescription className="text-base">
-              This confirmation link is incomplete. Please request a new confirmation email and try
-              again.
+              This link is incomplete or no longer valid. Request a fresh email and open the newest link.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -42,9 +46,11 @@ export default function AuthConfirmPage({
     <main className="flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-3 text-center">
-          <CardTitle className="text-2xl">Confirm your email</CardTitle>
+          <CardTitle className="text-2xl">{isRecovery ? "Continue password reset" : "Confirm your email"}</CardTitle>
           <CardDescription className="text-base">
-            Please confirm this email address before continuing to your account.
+            {isRecovery
+              ? "Continue to securely choose a new password for your account."
+              : "Confirm this email address to finish setting up your account."}
           </CardDescription>
         </CardHeader>
 
@@ -53,7 +59,7 @@ export default function AuthConfirmPage({
           <input type="hidden" name="type" value={type} />
           <input type="hidden" name="next" value={next} />
           <Button type="submit" className="w-full">
-            Confirm email
+            {isRecovery ? "Continue to reset password" : "Confirm email"}
           </Button>
         </form>
       </Card>
