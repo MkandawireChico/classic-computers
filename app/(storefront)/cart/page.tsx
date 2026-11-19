@@ -120,13 +120,28 @@ export default async function CartPage() {
             <p className="mt-3 text-xs leading-5 text-slate-500">
               Delivery charges and any applicable discounts are confirmed during checkout.
             </p>
-            <Link
-              href="/checkout"
-              aria-disabled={availableItems.length === 0}
-              className={`mt-6 flex min-h-12 w-full items-center justify-center rounded-xl px-5 text-sm font-bold text-white transition ${availableItems.length === 0 ? "pointer-events-none cursor-not-allowed bg-slate-300" : "bg-[#123653] hover:bg-cyan-800"}`}
-            >
-              Continue to checkout
-            </Link>
+            {availableItems.length > 0 ? (
+              <Link
+                href="/checkout"
+                className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-[#123653] px-5 text-sm font-bold text-white transition hover:bg-cyan-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              >
+                Continue to checkout
+              </Link>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-describedby="checkout-unavailable-reason"
+                className="mt-6 flex min-h-12 w-full cursor-not-allowed items-center justify-center rounded-xl bg-slate-200 px-5 text-sm font-bold text-slate-500"
+              >
+                Continue to checkout
+              </button>
+            )}
+            {availableItems.length === 0 ? (
+              <p id="checkout-unavailable-reason" className="mt-2 text-xs leading-5 text-slate-600">
+                Checkout becomes available when your cart contains an available product.
+              </p>
+            ) : null}
             <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500">
               <span aria-hidden="true">●</span>
               <span>Order details are checked again before placement</span>
