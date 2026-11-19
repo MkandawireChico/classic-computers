@@ -175,14 +175,16 @@ export function CorporateEnquiryForm() {
         </div>
         <div className="space-y-1">
           <label htmlFor="corporate-products" className="text-sm font-bold text-slate-700">
-            Equipment or products required
+            Equipment or products required <span aria-hidden="true" className="text-rose-600">*</span>
           </label>
           <textarea
             id="corporate-products"
             name="productsRequired"
+            required
+            minLength={5}
             rows={3}
             maxLength={1000}
-            placeholder="e.g. 10 laptops, 5 printers, networking equipment"
+            placeholder="e.g. 10 business laptops with 16GB RAM, 5 network printers, or a small office network setup"
             className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
           />
         </div>
