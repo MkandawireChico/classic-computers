@@ -74,7 +74,12 @@ export default async function CartPage() {
                     {item.variantName ? <p className="mt-1 text-xs text-slate-500">{item.variantName}</p> : null}
                     <p className="mt-2 text-sm font-semibold text-slate-900">{formatMoney(item.unitPrice)} <span className="font-normal text-slate-500">each</span></p>
                     <p className={`mt-1 text-xs font-medium ${item.inventoryStatus === "low_stock" ? "text-amber-700" : "text-emerald-700"}`}>
-                      {item.inventoryStatus === "low_stock" ? "Limited stock" : "Available"}
+                      {item.inventoryStatus === "low_stock" ? "Limited stock" :
+                        item.inventoryStatus === "in_stock" ? "In stock" :
+                        item.inventoryStatus === "out_of_stock" ? "Out of stock" :
+                        item.inventoryStatus === "coming_soon" ? "Coming soon" :
+                        item.inventoryStatus === "discontinued" ? "Discontinued" :
+                        "Availability unconfirmed"}
                     </p>
                   </div>
                   <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-3 sm:min-w-44 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
@@ -98,7 +103,11 @@ export default async function CartPage() {
                   <div key={item.cartItemId} className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-100 px-4 py-4 last:border-0 sm:px-5">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-slate-800">{item.productName}</p>
-                      <p className="mt-1 text-xs text-amber-900">Unavailable · Remove this item or leave it in your cart.</p>
+                      <p className="mt-1 text-xs text-amber-900">{item.inventoryStatus === "out_of_stock" ? "Out of stock" :
+                        item.inventoryStatus === "coming_soon" ? "Coming soon" :
+                        item.inventoryStatus === "discontinued" ? "Discontinued" :
+                        item.inventoryStatus === null ? "Stock status unavailable" :
+                        "Product or configuration unavailable"} · Remove this item or leave it in your cart.</p>
                     </div>
                     <CartItemControls cartItemId={item.cartItemId} quantity={item.quantity} />
                   </div>
