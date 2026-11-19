@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import { listAddresses } from "@/lib/services/addresses";
 import { Badge } from "@/components/ui/badge";
 import { NewAddressForm } from "./new-address-form";
@@ -9,11 +10,7 @@ export default async function AddressesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Checkout details</p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Addresses</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Manage the delivery addresses saved to your account.</p>
-      </div>
+      <AccountPageHeader eyebrow="Account · Checkout details" title="Addresses" description="Manage the delivery addresses saved to your account." />
 
       {addresses.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
