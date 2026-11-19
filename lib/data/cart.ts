@@ -83,7 +83,6 @@ export async function getCartSummary(): Promise<CartSummary> {
     const unitPrice = variant ? (variant.sale_price ?? variant.price) : (product.sale_price ?? product.base_price);
     const isPublished = product?.status === "published";
     const variantOk = !row.variant_id || variant?.status === "active";
-    const isAvailable = Boolean(isPublished && variantOk);
 
     const productImage = (images ?? []).find(
       (img: any) => img.product_id === row.product_id && img.variant_id === null && img.is_primary,
@@ -93,6 +92,14 @@ export async function getCartSummary(): Promise<CartSummary> {
       (inv: any) =>
         inv.product_id === row.product_id &&
         (row.variant_id ? inv.variant_id === row.variant_id : inv.variant_id === null),
+    );
+    // A published product or active variant is not necessarily in stock.
+    // Fail closed when its inventory row is missing or unavailable.
+    const isAvailable = Boolean(
+      isPublished &&
+      variantOk &&
+      inventoryRow &&
+      ["in_stock", "low_stock"].includes(inventoryRow.status),
     );
 
     if (isAvailable) {
