@@ -19,8 +19,15 @@ export function parseShopSearchParams(
   const sortParam = readSingleValue(searchParams.sort);
   const sort = sortParam && VALID_SORTS.has(sortParam) ? (sortParam as ShopFilters["sort"]) : "featured";
 
-  const minPrice = typeof searchParams.min === "string" ? Number(searchParams.min) : undefined;
-  const maxPrice = typeof searchParams.max === "string" ? Number(searchParams.max) : undefined;
+  const minRaw = readSingleValue(searchParams.min)?.trim();
+  const maxRaw = readSingleValue(searchParams.max)?.trim();
+  const parsedMin = minRaw ? Number(minRaw) : undefined;
+  const parsedMax = maxRaw ? Number(maxRaw) : undefined;
+  const validMin = parsedMin !== undefined && Number.isFinite(parsedMin) && parsedMin >= 0 ? parsedMin : undefined;
+  const validMax = parsedMax !== undefined && Number.isFinite(parsedMax) && parsedMax >= 0 ? parsedMax : undefined;
+  const validPriceRange = validMin === undefined || validMax === undefined || validMin <= validMax;
+  const minPrice = validPriceRange ? validMin : undefined;
+  const maxPrice = validPriceRange ? validMax : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
   const query = readSingleValue(searchParams.q) ?? readSingleValue(searchParams.query) ?? overrides.query;
 
