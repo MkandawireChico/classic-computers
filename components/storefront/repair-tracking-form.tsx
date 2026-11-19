@@ -44,7 +44,7 @@ export function RepairTrackingForm() {
     });
   }
 
-  const status = repair ? getRepairStatusDetails(repair.status) : null;
+  const status = getRepairStatusDetails(repair?.status ?? "unknown");
 
   return (
     <div className="space-y-7">
