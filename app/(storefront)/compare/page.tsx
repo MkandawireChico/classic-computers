@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getCompareIdsReadOnly } from "@/lib/services/compare";
 import { getCompareProducts, collectSpecLabels } from "@/lib/data/compare";
 import { formatMoney } from "@/lib/format/money";
@@ -51,15 +52,30 @@ export default async function ComparePage() {
               </th>
               {products.map((product) => (
                 <th key={product.id} scope="col" className="p-2 text-left align-top">
-                  <Link href={`/product/${product.slug}`} className="font-medium text-gray-900 hover:underline">
+                  <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 p-2">
+                    {product.imageUrl ? (
+                      <Image src={product.imageUrl} alt={product.imageAlt} width={180} height={140} className="h-full w-full object-contain" />
+                    ) : (
+                      <span className="text-xs font-medium text-slate-400">Image unavailable</span>
+                    )}
+                  </div>
+                  <Link href={`/product/${product.slug}`} className="font-semibold text-gray-900 hover:text-brand-700 hover:underline">
                     {product.name}
                   </Link>
-                  {product.brandName ? <p className="text-xs text-gray-500">{product.brandName}</p> : null}
+                  {product.brandName ? <p className="mt-1 text-xs text-gray-500">{product.brandName}</p> : null}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
+            <tr className="border-t border-surface-border">
+              <th scope="row" className="p-2 text-left font-medium text-gray-700">
+                Condition
+              </th>
+              {products.map((product) => (
+                <td key={product.id} className="p-2 capitalize text-gray-800">{product.condition.replaceAll("_", " ")}</td>
+              ))}
+            </tr>
             <tr className="border-t border-surface-border">
               <th scope="row" className="p-2 text-left font-medium text-gray-700">
                 Price
