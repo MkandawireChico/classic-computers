@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const GROUPS = [
   { title: "My account", links: [
@@ -59,6 +59,24 @@ function isActivePath(pathname: string, href: string): boolean {
 export function AccountNavigation() {
   const pathname = usePathname() ?? "/account";
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
   let active: readonly [string, string, string] | undefined = undefined;
   for (const group of GROUPS) {
     for (const link of group.links) {
@@ -75,14 +93,14 @@ export function AccountNavigation() {
       <nav aria-label="Account navigation" className="hidden lg:block">
         <div className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto border-r border-slate-200 pr-4">
           {GROUPS.map((group) => (
-            <section key={group.title} className="mb-6 last:mb-0">
-              <h2 className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{group.title}</h2>
+            <section key={group.title} className="mb-5 last:mb-0">
+              <h2 className="mb-2 px-3 pt-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">{group.title}</h2>
               <ul className="space-y-1">
                 {group.links.map(([href, label, icon]) => {
                   const selected = isActivePath(pathname, href);
                   return (
                     <li key={href}>
-                      <Link href={href} aria-current={selected ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${selected ? "bg-brand-50 text-navy-950" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}>
+                      <Link href={href} aria-current={selected ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${selected ? "bg-slate-950 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}>
                         <Icon name={icon} /><span className="min-w-0 flex-1">{label}</span>
                         {selected ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-700" /> : null}
                       </Link>
@@ -96,24 +114,31 @@ export function AccountNavigation() {
       </nav>
 
       <div className="relative lg:hidden">
-        <button type="button" aria-expanded={isOpen} aria-controls="mobile-account-navigation" onClick={() => setIsOpen((open) => !open)} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 text-left text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+        <button type="button" aria-expanded={isOpen} aria-controls="mobile-account-navigation" onClick={() => setIsOpen((open) => !open)} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-950 px-4 text-left text-sm font-bold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
           <span className="flex min-w-0 items-center gap-3"><Icon name={active?.[2] ?? "home"} /><span className="truncate">{active?.[1] ?? "Account menu"}</span></span>
           <svg aria-hidden="true" className={`h-4 w-4 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
         {isOpen ? (
-          <nav id="mobile-account-navigation" aria-label="Account navigation" className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-20 max-h-[min(70dvh,34rem)] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 shadow-xl">
-            {GROUPS.map((group) => (
-              <section key={group.title} className="mb-4 last:mb-0">
-                <h2 className="mb-1.5 px-2 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{group.title}</h2>
-                <ul className="space-y-1">
-                  {group.links.map(([href, label, icon]) => {
-                    const selected = isActivePath(pathname, href);
-                    return <li key={href}><Link href={href} aria-current={selected ? "page" : undefined} onClick={() => setIsOpen(false)} className={`flex min-h-11 items-center gap-3 rounded-md px-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 ${selected ? "bg-brand-50 text-navy-950" : "text-slate-700 hover:bg-slate-100"}`}><Icon name={icon} />{label}</Link></li>;
-                  })}
-                </ul>
-              </section>
-            ))}
-          </nav>
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <button type="button" aria-label="Close account menu" onClick={() => setIsOpen(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
+            <nav id="mobile-account-navigation" aria-label="Account navigation" className="absolute inset-y-0 right-0 flex w-[min(88vw,380px)] flex-col overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-2xl">
+              <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-5">
+                <div><p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-brand-700">Classic Computers</p><p className="mt-1 text-lg font-extrabold text-slate-950">Your account</p></div>
+                <button type="button" onClick={() => setIsOpen(false)} aria-label="Close account menu" className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-xl text-slate-600 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">×</button>
+              </div>
+              {GROUPS.map((group) => (
+                <section key={group.title} className="mb-5 last:mb-0">
+                  <h2 className="mb-2 px-3 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">{group.title}</h2>
+                  <ul className="space-y-1">
+                    {group.links.map(([href, label, icon]) => {
+                      const selected = isActivePath(pathname, href);
+                      return <li key={href}><Link href={href} aria-current={selected ? "page" : undefined} onClick={() => setIsOpen(false)} className={"flex min-h-12 items-center gap-3 rounded-xl px-3 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 " + (selected ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100")}><Icon name={icon} />{label}{selected ? <span className="ml-auto h-1.5 w-1.5 rounded-full bg-cyan-400" /> : null}</Link></li>;
+                    })}
+                  </ul>
+                </section>
+              ))}
+            </nav>
+          </div>
         ) : null}
       </div>
     </>
