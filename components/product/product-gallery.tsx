@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getPublicStorageUrl } from "@/lib/storage";
 import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
@@ -10,55 +10,89 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
   const [activeIndex, setActiveIndex] = useState(0);
   const active = images[Math.min(activeIndex, Math.max(images.length - 1, 0))] ?? null;
 
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [productId, images]);
+
+  function selectImage(index: number) {
+    if (index === activeIndex || index < 0 || index >= images.length) return;
+    trackInterestEvent({ name: "product_gallery_opened", productId });
+    setActiveIndex(index);
+  }
+
   if (images.length === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 text-sm font-medium text-slate-500">
-        No image yet
+      <div
+        role="img"
+        aria-label={`No product image available for ${productName}`}
+        className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 text-sm font-medium text-slate-500"
+      >
+        Product image coming soon
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <section aria-label={`Images of ${productName}`} className="min-w-0">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 via-white to-slate-100">
         <Image
           key={active!.id}
           src={getPublicStorageUrl("product-images", active!.storage_path)}
-          alt={active!.alt_text ?? productName}
+          alt={active!.alt_text?.trim() || productName}
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain p-5 sm:p-8 transition-transform duration-500"
+          className="object-contain p-5 sm:p-8"
         />
+        {images.length > 1 ? (
+          <>
+            <button
+              type="button"
+              onClick={() => selectImage((activeIndex - 1 + images.length) % images.length)}
+              aria-label="Show previous product image"
+              className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-xl font-semibold text-slate-800 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => selectImage((activeIndex + 1) % images.length)}
+              aria-label="Show next product image"
+              className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-xl font-semibold text-slate-800 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+            <span className="absolute bottom-3 right-3 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold tabular-nums text-white" aria-live="polite">
+              {activeIndex + 1} / {images.length}
+            </span>
+          </>
+        ) : null}
       </div>
 
       {images.length > 1 ? (
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+        <div className="mt-4 flex gap-3 overflow-x-auto pb-2" role="group" aria-label="Choose product image">
           {images.map((image, index) => (
             <button
               key={image.id}
               type="button"
-              onClick={() => {
-                if (index !== activeIndex) trackInterestEvent({ name: "product_gallery_opened", productId });
-                setActiveIndex(index);
-              }}
+              onClick={() => selectImage(index)}
               aria-label={`Show image ${index + 1} of ${images.length}`}
-              aria-current={index === activeIndex}
-              className={`relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xl border-2 bg-slate-50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
-                index === activeIndex ? "border-brand-500 shadow-sm scale-[1.03]" : "border-slate-200 hover:border-brand-300"
+              aria-pressed={index === activeIndex}
+              className={`relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xl border-2 bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+                index === activeIndex ? "border-brand-500 shadow-sm" : "border-slate-200 hover:border-brand-300"
               }`}
             >
               <Image
                 src={getPublicStorageUrl("product-images", image.storage_path)}
                 alt=""
                 fill
-                sizes="80px"
+                sizes="72px"
                 className="object-contain p-1.5"
               />
             </button>
           ))}
         </div>
       ) : null}
-    </div>
+    </section>
   );
 }
