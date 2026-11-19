@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -34,28 +34,40 @@ export function OrderStatusControls({
   currentPaymentStatus: string;
 }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const statusOptions = NEXT_STATUS[currentStatus] ?? [];
   const paymentOptions = NEXT_PAYMENT[currentPaymentStatus] ?? [];
 
-  function handleStatus(newStatus: string) {
+  async function handleStatus(newStatus: string) {
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const result = await updateOrderStatusAction({ orderId, newStatus });
       if (!result.success) setError(result.error);
       else router.refresh();
-    });
+    } catch {
+      setError("We could not update the order status. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
-  function handlePayment(newPaymentStatus: string) {
+  async function handlePayment(newPaymentStatus: string) {
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const result = await updatePaymentStatusAction({ orderId, newPaymentStatus });
       if (!result.success) setError(result.error);
       else router.refresh();
-    });
+    } catch {
+      setError("We could not update the payment status. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
