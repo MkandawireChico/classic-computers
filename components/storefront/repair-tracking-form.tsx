@@ -63,6 +63,7 @@ export function RepairTrackingForm() {
           <input
             id="repair-ticket-number"
             name="ticketNumber"
+            maxLength={40}
             type="text"
             required
             autoComplete="off"
@@ -80,6 +81,7 @@ export function RepairTrackingForm() {
           <input
             id="repair-tracking-code"
             name="trackingToken"
+            maxLength={200}
             type="text"
             required
             autoComplete="off"
