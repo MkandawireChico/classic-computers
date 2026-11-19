@@ -29,20 +29,20 @@ export function ContentPage({
             {title}
           </span>
         </nav>
-        <header className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#081827] p-6 text-white shadow-xl shadow-slate-900/10 sm:p-9 lg:p-12">
+        <header className="relative isolate overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 text-slate-950 shadow-sm sm:p-9 lg:p-12">
           <div
             aria-hidden="true"
             className="absolute -right-20 -top-24 h-72 w-72 rounded-full border-[32px] border-cyan-300/10"
           />
           <div className="relative max-w-3xl">
-            <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
+            <p className="inline-flex rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
               {eyebrow}
             </p>
-            <h1 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-white sm:text-4xl lg:text-5xl">
+            <h1 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-5xl">
               {title}
             </h1>
             {description ? (
-              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
                 {description}
               </p>
             ) : null}
