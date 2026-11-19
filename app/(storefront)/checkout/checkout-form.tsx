@@ -397,6 +397,12 @@ export function CheckoutForm({
         ) : null}
       </fieldset>
 
+      {enabledMethods.length === 0 ? (
+        <Alert variant="warning">
+          No payment methods are currently available. Please <Link href="/contact" className="font-bold underline">contact Classic Computers</Link> before placing your order.
+        </Alert>
+      ) : null}
+
       <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
         <label htmlFor="notes" className="text-sm font-bold text-navy-950">
           Order notes (optional)
@@ -414,6 +420,7 @@ export function CheckoutForm({
         isLoading={isPending}
         disabled={
           isPending ||
+          enabledMethods.length === 0 ||
           ((selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
             !selectedProvider) ||
           (fulfillmentType === "delivery" && isAuthenticated && addresses.length === 0)
