@@ -85,32 +85,45 @@ export function CheckoutForm({
   );
 
   function handleSubmit(formData: FormData) {
+    if (isPending) return;
     setError(null);
     startTransition(async () => {
-      const result = await submitCheckoutAction({
-        fulfillmentType,
-        paymentMethod: formData.get("paymentMethod")?.toString(),
-        paymentProvider: selectedProvider ?? undefined,
-        paymentReference: formData.get("paymentReference")?.toString() || undefined,
-        notes: formData.get("notes")?.toString() || undefined,
-        deliveryAddressId: formData.get("deliveryAddressId")?.toString() || undefined,
-        guestName: formData.get("guestName")?.toString() || undefined,
-        guestPhone: formData.get("guestPhone")?.toString() || undefined,
-        guestEmail: formData.get("guestEmail")?.toString() || undefined,
-        guestDeliveryLine1: formData.get("guestDeliveryLine1")?.toString() || undefined,
-        guestDeliveryLine2: formData.get("guestDeliveryLine2")?.toString() || undefined,
-        guestDeliveryCity: formData.get("guestDeliveryCity")?.toString() || undefined,
-        guestDeliveryDistrict: formData.get("guestDeliveryDistrict")?.toString() || undefined,
-      });
+      try {
+        const result = await submitCheckoutAction({
+          fulfillmentType,
+          paymentMethod: formData.get("paymentMethod")?.toString(),
+          paymentProvider: selectedProvider ?? undefined,
+          paymentReference: formData.get("paymentReference")?.toString() || undefined,
+          notes: formData.get("notes")?.toString() || undefined,
+          deliveryAddressId: formData.get("deliveryAddressId")?.toString() || undefined,
+          guestName: formData.get("guestName")?.toString() || undefined,
+          guestPhone: formData.get("guestPhone")?.toString() || undefined,
+          guestEmail: formData.get("guestEmail")?.toString() || undefined,
+          guestDeliveryLine1: formData.get("guestDeliveryLine1")?.toString() || undefined,
+          guestDeliveryLine2: formData.get("guestDeliveryLine2")?.toString() || undefined,
+          guestDeliveryCity: formData.get("guestDeliveryCity")?.toString() || undefined,
+          guestDeliveryDistrict: formData.get("guestDeliveryDistrict")?.toString() || undefined,
+        });
 
-      if (result.success) {
-        trackInterestEvent({ name: "order_placed" });
-        for (const productId of result.productIds) {
-          trackInterestEvent({ name: "order_product_placed", productId });
+        if (!result.success) {
+          setError(result.error);
+          return;
+        }
+
+        // Analytics must never prevent a successfully created order from
+        // reaching its confirmation page.
+        try {
+          trackInterestEvent({ name: "order_placed" });
+          for (const productId of result.productIds) {
+            trackInterestEvent({ name: "order_product_placed", productId });
+          }
+        } catch (analyticsError) {
+          console.warn("Order analytics could not be recorded:", analyticsError);
         }
         router.push(`/checkout/confirmation/${result.orderNumber}`);
-      } else {
-        setError(result.error);
+      } catch (checkoutError) {
+        console.error("Checkout submission failed:", checkoutError);
+        setError("We could not submit your order. Please check your connection and try again. If you were charged or received an order number, contact us before placing another order.");
       }
     });
   }
@@ -404,6 +417,7 @@ export function CheckoutForm({
         type="submit"
         isLoading={isPending}
         disabled={
+          isPending ||
           ((selectedMethod === "bank_transfer" || selectedMethod === "mobile_money") &&
             !selectedProvider) ||
           (fulfillmentType === "delivery" && isAuthenticated && addresses.length === 0)
