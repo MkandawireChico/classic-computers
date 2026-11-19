@@ -88,7 +88,7 @@ export async function submitCorporateEnquiry(
         return { success: true };
       }
     }
-    return { success: false, error: `Could not submit your enquiry: ${error.message}` };
+    return { success: false, error: "We couldn’t save your enquiry. Please try again or contact our team directly." };
   }
   const requestId = await findNotificationRequestId("corporate_enquiry", parsedKey.data);
   if (requestId) await deliverAdminEmailForRequest("corporate_enquiry", requestId);
