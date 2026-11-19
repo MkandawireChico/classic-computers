@@ -24,7 +24,7 @@ export async function ReviewsSection() {
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-3">
             <p className="section-kicker">Customer feedback</p>
-            <h2 id="reviews-heading" className="section-heading">Experiences worth sharing</h2>
+            <h2 id="reviews-heading" className="section-heading">What customers say</h2>
             <p className="section-description">
               {stats.totalReviews} approved customer {stats.totalReviews === 1 ? "review" : "reviews"} across products and services.
             </p>

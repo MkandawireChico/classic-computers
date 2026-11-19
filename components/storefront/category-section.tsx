@@ -13,9 +13,9 @@ export async function CategorySection() {
       <div className="section-shell py-14 sm:py-18 lg:py-20">
         <div className="mb-8 flex flex-col gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Browse the catalogue</p>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Product categories</p>
             <h2 id="shop-by-category-heading" className="mt-3 text-3xl font-bold leading-tight tracking-[-0.045em] text-[#10243a] sm:text-4xl">
-              Find the equipment you need.
+              Browse by category.
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
               Browse by equipment type and compare the available options.

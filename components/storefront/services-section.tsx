@@ -33,13 +33,13 @@ export function ServicesSection() {
       <div className="section-shell py-16 sm:py-20 lg:py-24">
         <div className="mb-10 grid gap-5 border-b border-slate-300 pb-8 sm:mb-12 sm:pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-700">Beyond the shop</p>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-700">More services</p>
             <h2 id="services-heading" className="mt-4 max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#102033] sm:text-4xl lg:text-5xl">
               Support for every
               <span className="block text-brand-700">stage of your tech journey.</span>
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-7 text-slate-600 sm:text-base">From short-term equipment needs to repairs and student offers, find the service you need.</p>
+          <p className="max-w-sm text-sm leading-7 text-slate-600 sm:text-base">Need equipment temporarily, a repair, or a student offer? Start here.</p>
         </div>
 
         <div className="grid gap-px overflow-hidden border border-slate-300 bg-slate-300 md:grid-cols-3">

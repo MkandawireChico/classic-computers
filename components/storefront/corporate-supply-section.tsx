@@ -20,10 +20,10 @@ export async function CorporateSupplySection() {
         <div>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-800">For businesses and institutions</p>
           <h2 id="corporate-supply-heading" className="mt-4 max-w-xl text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-[#10243a] sm:text-4xl lg:text-5xl">
-            Technology for the work your team needs to do.
+            ICT supply for your organisation.
           </h2>
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-600 sm:text-base">
-            Sourcing computers for an organisation, school or project? Tell us what your team needs and request a quotation from Classic Computers.
+            Tell us which computers and equipment your organisation needs. Our team will review your requirements and respond with the next steps.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Link href="/corporate/enquire" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-lg bg-[#123653] px-6 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">

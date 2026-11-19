@@ -23,7 +23,7 @@ export async function Hero() {
               Computers and ICT equipment · Blantyre
             </p>
             <h1 id="hero-heading" className="mt-5 max-w-[650px] text-[clamp(2.7rem,5.2vw,4.8rem)] font-extrabold leading-[0.99] tracking-[-0.065em] text-[#10243a]">
-              Technology for the way you <span className="text-brand-700">work and live.</span>
+              Shop laptops, computers and <span className="text-brand-700">ICT equipment.</span>
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-slate-700 sm:text-lg sm:leading-8">
               Shop computers, laptops and ICT equipment, or speak with our Blantyre team about rentals, repairs and business supply.

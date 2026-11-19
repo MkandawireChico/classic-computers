@@ -80,7 +80,7 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 sm:p-8">
           <p className="font-semibold text-slate-900">No approved {reviewType} reviews yet</p>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-            Have you completed an experience with our {labels.noun}? {user
+            Have you completed a transaction with us? {user
               ? "Write a review after your transaction is complete."
               : "Sign in to share honest feedback after your transaction is complete."}
           </p>
