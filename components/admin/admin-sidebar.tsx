@@ -45,7 +45,7 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
                 <Link key={item.href} href={item.href} onClick={() => mobile && setMobileOpen(false)} aria-current={active ? "page" : undefined}
                   className={"group relative flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 " + (active ? "bg-white text-slate-950 shadow-lg" : "text-slate-300 hover:bg-white/[0.08] hover:text-white")}>
                   <span aria-hidden="true" className={"flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-black tracking-wide " + (active ? "bg-cyan-100 text-cyan-800" : "bg-white/[0.08] text-slate-300 group-hover:bg-white/[0.13] group-hover:text-white")}>
-                    {item.label.split(/\\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
+                    {item.label.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
                   </span>
                   <span className="min-w-0 flex-1">{item.label}</span>
                   {active ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-cyan-600" /> : null}
