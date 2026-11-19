@@ -107,6 +107,7 @@ export function CorporateEnquiryForm() {
               id="corporate-organisation"
               name="organisationName"
               required
+              maxLength={160}
               autoComplete="organization"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -122,6 +123,7 @@ export function CorporateEnquiryForm() {
               id="corporate-contact"
               name="contactPerson"
               required
+              maxLength={120}
               autoComplete="name"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -138,6 +140,7 @@ export function CorporateEnquiryForm() {
               name="phone"
               required
               type="tel"
+              maxLength={30}
               autoComplete="tel"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -153,6 +156,7 @@ export function CorporateEnquiryForm() {
               id="corporate-email"
               name="email"
               type="email"
+              maxLength={254}
               required
               autoComplete="email"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
@@ -177,6 +181,7 @@ export function CorporateEnquiryForm() {
             id="corporate-products"
             name="productsRequired"
             rows={3}
+            maxLength={1000}
             placeholder="e.g. 10 laptops, 5 printers, networking equipment"
             className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
           />
@@ -191,6 +196,7 @@ export function CorporateEnquiryForm() {
               name="quantity"
               type="number"
               min={1}
+              max={1000000}
               placeholder="e.g. 10"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -203,7 +209,8 @@ export function CorporateEnquiryForm() {
               id="corporate-budget"
               name="budget"
               type="number"
-              min={0}
+              min={1}
+              max={1000000000000}
               placeholder="e.g. 5000000"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -215,6 +222,7 @@ export function CorporateEnquiryForm() {
             <input
               id="corporate-location"
               name="deliveryLocation"
+              maxLength={200}
               placeholder="e.g. Blantyre"
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
             />
@@ -238,6 +246,7 @@ export function CorporateEnquiryForm() {
             id="corporate-additional"
             name="additionalRequirements"
             rows={3}
+            maxLength={1000}
             placeholder="Any other requirements or specifications"
             className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
           />
