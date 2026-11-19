@@ -3,9 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getOrderConfirmation } from "@/lib/data/order-confirmation";
 import { formatMoney } from "@/lib/format/money";
-import {
-  getManualPaymentProviderFromNotes,
-} from "@/lib/payments/manual-payment";
+import { getManualPaymentProviderFromNotes } from "@/lib/payments/manual-payment";
 import { CopyPaymentValue } from "@/components/storefront/copy-payment-value";
 
 export const metadata: Metadata = { title: "Order Confirmed", robots: { index: false } };
@@ -13,6 +11,7 @@ export const metadata: Metadata = { title: "Order Confirmed", robots: { index: f
 export default async function OrderConfirmationPage({ params }: { params: { orderNumber: string } }) {
   const order = await getOrderConfirmation(params.orderNumber);
   if (!order) notFound();
+
   const paymentProvider = getManualPaymentProviderFromNotes(order.payment_method, order.notes);
   const isBankProvider = paymentProvider && "accountNumber" in paymentProvider;
   const accountNumber = isBankProvider ? paymentProvider.accountNumber : null;
@@ -29,117 +28,145 @@ export default async function OrderConfirmationPage({ params }: { params: { orde
     : null;
 
   return (
-    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell max-w-3xl py-10 sm:py-14">
-      <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-4 text-sm font-semibold text-cyan-900">
-        Order placed successfully.
-      </div>
-
-      <h1 className="mt-6 text-2xl font-semibold tracking-tight text-[#102033] sm:text-3xl">Order {order.order_number}</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        Placed {new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
-      </p>
-      <p className="mt-1 text-sm text-slate-600 capitalize">Status: {order.order_status.replace(/_/g, " ")}</p>
-      <p className="text-sm text-slate-600 capitalize">
-        {order.fulfillment_type === "pickup" ? "Pickup in-store" : "Delivery"} ·{" "}
-        {order.payment_method.replace(/_/g, " ")}
-      </p>
-
-      {paymentProvider && copyDetails ? (
-        <section className="mt-6 space-y-4 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 sm:p-5" aria-labelledby="payment-instructions-heading">
-          <div>
-            <h2 id="payment-instructions-heading" className="text-lg font-bold text-cyan-950">
-              Payment details — {paymentProvider.name}
-            </h2>
-            <p className="mt-1 text-sm leading-relaxed text-cyan-900">
-              Send the order total below using your bank&apos;s or mobile provider&apos;s normal transfer process. Include the order number as the payment reference where possible. Your order remains unpaid until we verify the transfer.
-            </p>
-          </div>
-          <dl className="grid gap-3 text-sm sm:grid-cols-2">
-            <ConfirmationPaymentDetail label="Account holder" value={paymentProvider.accountHolder} />
-            {isBankProvider ? (
-              <>
-                <ConfirmationPaymentDetail label="Account number" value={paymentProvider.accountNumber} />
-                <ConfirmationPaymentDetail label="Branch" value={paymentProvider.branch} />
-              </>
-            ) : null}
-            {walletNumber ? <ConfirmationPaymentDetail label="Wallet number" value={walletNumber} /> : null}
-            <ConfirmationPaymentDetail label="Order number" value={order.order_number} />
-            <ConfirmationPaymentDetail label="Amount to send" value={formatMoney(order.total)} />
-          </dl>
-          <div className="flex flex-wrap gap-2">
-            {accountNumber ? <CopyPaymentValue value={accountNumber} label="account number" /> : null}
-            {walletNumber ? <CopyPaymentValue value={walletNumber} label="wallet number" /> : null}
-            <CopyPaymentValue value={copyDetails} label="payment details" />
-          </div>
-        </section>
-      ) : null}
-
-      {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
-        <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-          <p className="mb-1 font-semibold text-slate-900">Delivering to</p>
-          {order.delivery_snapshot.full_name ? <p>{order.delivery_snapshot.full_name}</p> : null}
-          {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
-          {order.delivery_snapshot.line2 ? <p>{order.delivery_snapshot.line2}</p> : null}
-          <p>{[order.delivery_snapshot.city, order.delivery_snapshot.district].filter(Boolean).join(", ")}</p>
-          {order.delivery_snapshot.phone ? <p>{order.delivery_snapshot.phone}</p> : null}
-        </div>
-      ) : null}
-
-      <div className="mt-6 divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        {order.items.map((item) => (
-          <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm sm:p-5">
+    <main className="min-h-screen bg-[#f5f7fa]">
+      <div className="section-shell max-w-5xl py-8 sm:py-12">
+        <header className="rounded-3xl border border-emerald-200 bg-white p-6 shadow-sm sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">Order received</p>
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-semibold text-slate-900">{item.product_name_snapshot}</p>
-              <p className="mt-1 text-xs text-slate-500">
-                {item.quantity} × {formatMoney(item.unit_price)}
+              <h1 className="text-3xl font-semibold tracking-tight text-[#102033] sm:text-4xl">Thank you for your order.</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Your order has been recorded. Keep the order number below for reference.
               </p>
             </div>
-            <p className="font-medium text-gray-900">{formatMoney(item.line_total)}</p>
+            <div className="shrink-0 rounded-2xl bg-emerald-50 px-5 py-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">Order number</p>
+              <p className="mt-1 text-lg font-extrabold tracking-wide text-emerald-950">{order.order_number}</p>
+            </div>
           </div>
-        ))}
-      </div>
+          <div className="mt-6 grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-3">
+            <ConfirmationMeta label="Placed" value={new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })} />
+            <ConfirmationMeta label="Order status" value={order.order_status.replace(/_/g, " ")} />
+            <ConfirmationMeta label="Fulfilment" value={order.fulfillment_type === "pickup" ? "Pickup in-store" : "Delivery"} />
+          </div>
+        </header>
 
-      <div className="mt-5 space-y-2 rounded-2xl border border-slate-200 bg-white p-5 text-sm">
-        <div className="flex justify-between text-slate-600">
-          <span>Subtotal</span>
-          <span>{formatMoney(order.subtotal)}</span>
-        </div>
-        {order.discount_total > 0 ? (
-          <div className="flex justify-between text-gray-600">
-            <span>Discount</span>
-            <span>-{formatMoney(order.discount_total)}</span>
-          </div>
+        {paymentProvider && copyDetails ? (
+          <section className="mt-6 rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="payment-instructions-heading">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Action required</p>
+                <h2 id="payment-instructions-heading" className="mt-1 text-xl font-bold text-[#102033]">
+                  Complete payment with {paymentProvider.name}
+                </h2>
+              </div>
+              <span className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800">Awaiting verification</span>
+            </div>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+              Transfer the exact order total using your bank&apos;s or mobile provider&apos;s normal process. Include the order number as the payment reference where possible. Your order remains unpaid until Classic Computers verifies the transfer.
+            </p>
+            <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <ConfirmationPaymentDetail label="Account holder" value={paymentProvider.accountHolder} />
+              {isBankProvider ? (
+                <>
+                  <ConfirmationPaymentDetail label="Account number" value={paymentProvider.accountNumber} />
+                  <ConfirmationPaymentDetail label="Branch" value={paymentProvider.branch} />
+                </>
+              ) : null}
+              {walletNumber ? <ConfirmationPaymentDetail label="Wallet number" value={walletNumber} /> : null}
+              <ConfirmationPaymentDetail label="Order number" value={order.order_number} />
+              <ConfirmationPaymentDetail label="Amount to send" value={formatMoney(order.total)} />
+            </dl>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {accountNumber ? <CopyPaymentValue value={accountNumber} label="account number" /> : null}
+              {walletNumber ? <CopyPaymentValue value={walletNumber} label="wallet number" /> : null}
+              <CopyPaymentValue value={copyDetails} label="payment details" />
+            </div>
+          </section>
         ) : null}
-        <div className="flex justify-between border-t border-slate-100 pt-3 text-base font-bold text-[#102033]">
-          <span>Total</span>
-          <span>{formatMoney(order.total)}</span>
-        </div>
-      </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm leading-6 text-slate-600">
-        We&apos;ll be in touch about your order using the contact details you provided. You can
-        {order.guest_name ? " keep this page for your records" : " check your order status any time"}{" "}
-        {!order.guest_name ? (
-          <>
-            in{" "}
-            <Link href="/account/orders" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-900">
-              your order history
+        {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
+          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" aria-labelledby="delivery-heading">
+            <h2 id="delivery-heading" className="text-base font-bold text-[#102033]">Delivery address</h2>
+            <div className="mt-3 text-sm leading-6 text-slate-600">
+              {order.delivery_snapshot.full_name ? <p>{order.delivery_snapshot.full_name}</p> : null}
+              {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
+              {order.delivery_snapshot.line2 ? <p>{order.delivery_snapshot.line2}</p> : null}
+              <p>{[order.delivery_snapshot.city, order.delivery_snapshot.district].filter(Boolean).join(", ")}</p>
+              {order.delivery_snapshot.phone ? <p>{order.delivery_snapshot.phone}</p> : null}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="items-heading">
+          <div className="border-b border-slate-100 px-5 py-4 sm:px-6">
+            <h2 id="items-heading" className="text-lg font-bold text-[#102033]">Items in your order</h2>
+            <p className="mt-1 text-xs text-slate-500">{order.items.length} product line{order.items.length === 1 ? "" : "s"}</p>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 text-sm sm:px-6">
+                <div>
+                  <p className="font-semibold text-slate-900">{item.product_name_snapshot}</p>
+                  <p className="mt-1 text-xs text-slate-500">{item.quantity} × {formatMoney(item.unit_price)}</p>
+                </div>
+                <p className="font-bold tabular-nums text-[#102033]">{formatMoney(item.line_total)}</p>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-3 border-t border-slate-100 bg-slate-50/70 px-5 py-5 text-sm sm:px-6">
+            <div className="flex justify-between text-slate-600">
+              <span>Subtotal</span><span className="tabular-nums">{formatMoney(order.subtotal)}</span>
+            </div>
+            {order.discount_total > 0 ? (
+              <div className="flex justify-between text-emerald-700">
+                <span>Discount</span><span className="tabular-nums">−{formatMoney(order.discount_total)}</span>
+              </div>
+            ) : null}
+            <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-extrabold text-[#102033]">
+              <span>Order total</span><span className="tabular-nums">{formatMoney(order.total)}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <h2 className="text-base font-bold text-[#102033]">What happens next?</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Our team will contact you using the details supplied at checkout to coordinate your order.
+            {paymentProvider ? " For bank or mobile-money transfers, we will update payment status after verifying the transaction." : ""}
+          </p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            {!order.guest_name ? (
+              <Link href="/account/orders" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#123653] px-5 text-sm font-bold text-white transition hover:bg-cyan-800">
+                View your orders
+              </Link>
+            ) : (
+              <p className="text-xs leading-5 text-slate-500">Keep this page and your order number for your records.</p>
+            )}
+            <Link href="/shop" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-semibold text-slate-700 transition hover:border-cyan-700 hover:text-cyan-800">
+              Continue shopping
             </Link>
-            .
-          </>
-        ) : (
-          "."
-        )}
+          </div>
+        </section>
       </div>
-    </div></main>
+    </main>
+  );
+}
+
+function ConfirmationMeta({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-xs font-medium text-slate-500">{label}</dt>
+      <dd className="mt-1 text-sm font-semibold capitalize text-slate-900">{value}</dd>
+    </div>
   );
 }
 
 function ConfirmationPaymentDetail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-cyan-100 bg-white p-3">
+    <div className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
       <dt className="text-xs font-medium text-slate-500">{label}</dt>
-      <dd className="mt-1 break-words font-bold text-slate-900">{value}</dd>
+      <dd className="mt-1 break-words text-sm font-bold text-slate-900">{value}</dd>
     </div>
   );
 }
