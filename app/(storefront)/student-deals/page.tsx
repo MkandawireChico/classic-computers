@@ -5,9 +5,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { getMyStudentVerification } from "@/lib/data/account-student";
 import { getActiveStudentDiscounts } from "@/lib/data/student-deals";
 import { getSiteMedia } from "@/lib/data/site-media";
-import { getBusinessInfo } from "@/lib/data/site-settings";
 import { getPublicStorageUrl } from "@/lib/storage";
-import { ProductEnquiry } from "@/components/product/product-enquiry";
 import { Badge } from "@/components/ui/badge";
 import { StudentDealsRetryButton } from "@/components/storefront/student-deals-retry-button";
 import { formatMoney } from "@/lib/format/money";
@@ -55,10 +53,9 @@ function StepIcon({ kind }: { kind: "apply" | "review" | "shop" }) {
 }
 
 export default async function StudentDealsPage() {
-  const [user, discountResult, businessInfo, heroMedia] = await Promise.all([
+  const [user, discountResult, heroMedia] = await Promise.all([
     getCurrentUser(),
     getActiveStudentDiscounts(),
-    getBusinessInfo(),
     getSiteMedia("homepage_hero", 1),
   ]);
   const verification = user ? await getMyStudentVerification() : null;
@@ -332,7 +329,17 @@ export default async function StudentDealsPage() {
         </div>
       </section>
 
-      {businessInfo ? <div className="section-shell py-10 sm:py-12"><ProductEnquiry product={{ name: "Student deal enquiry", sku: "STUDENT" }} businessInfo={businessInfo} /></div> : null}
+      <section aria-labelledby="student-help-heading" className="border-t border-slate-200 bg-white">
+        <div className="section-shell flex flex-col gap-4 py-9 sm:flex-row sm:items-center sm:justify-between sm:py-11">
+          <div className="max-w-2xl">
+            <h2 id="student-help-heading" className="text-xl font-extrabold text-slate-950">Need help with student eligibility?</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Contact our team if you have questions about verification, eligible products or an active offer.</p>
+          </div>
+          <Link href="/contact" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-[#123653] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+            Contact Classic Computers
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
