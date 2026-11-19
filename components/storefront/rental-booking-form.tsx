@@ -61,17 +61,17 @@ export function RentalBookingForm({
     ? STEPS.filter((step) => step.id !== "customer")
     : STEPS;
 
-  async function checkAvailability(nextStart: string, nextEnd: string) {
+  async function checkAvailability(nextStart: string, nextEnd: string, productId = rentalProductId) {
     const requestId = ++availabilityRequestId.current;
     setAvailability(null);
-    if (!nextStart || !nextEnd || !rentalProductId) {
+    if (!nextStart || !nextEnd || !productId) {
       setIsCheckingAvailability(false);
       return;
     }
     setIsCheckingAvailability(true);
     setError(null);
     try {
-      const avail = await checkAvailabilityAction(rentalProductId, nextStart, nextEnd);
+      const avail = await checkAvailabilityAction(productId, nextStart, nextEnd);
       if (requestId === availabilityRequestId.current) setAvailability(avail);
     } catch (availabilityError) {
       console.error("Rental availability check failed:", availabilityError);
@@ -294,6 +294,7 @@ export function RentalBookingForm({
                 onChange={(e) => {
                   setRentalProductId(e.target.value);
                   setAvailability(null);
+                  void checkAvailability(startDate, endDate, e.target.value);
                 }}
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
