@@ -11,10 +11,9 @@ export async function FeaturedProductsSection() {
       <div className="section-shell relative py-16 sm:py-20 lg:py-24">
         <div className="mb-10 grid gap-6 border-b border-slate-300 pb-8 lg:grid-cols-[1fr_auto] lg:items-end lg:pb-10">
           <div className="max-w-3xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-brand-800">Featured in our store</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-brand-800">Selected by our team</p>
             <h2 id="featured-products-heading" className="mt-4 text-3xl font-bold leading-[1.05] tracking-[-0.05em] text-[#10243a] sm:text-4xl lg:text-5xl">
-              Products
-              <span className="block text-brand-800">Selected by our team.</span>
+              Featured products.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-7 text-slate-700 sm:text-base">
               A selection of products highlighted by our team. Browse each listing for specifications, pricing and availability.

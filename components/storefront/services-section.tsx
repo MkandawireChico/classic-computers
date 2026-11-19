@@ -35,8 +35,8 @@ export function ServicesSection() {
           <div>
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-700">More services</p>
             <h2 id="services-heading" className="mt-4 max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#102033] sm:text-4xl lg:text-5xl">
-              Support for every
-              <span className="block text-brand-700">stage of your tech journey.</span>
+              Rentals, repairs and
+              <span className="block text-brand-700">student deals.</span>
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-7 text-slate-600 sm:text-base">Need equipment temporarily, a repair, or a student offer? Start here.</p>
