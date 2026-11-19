@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { toggleCompare as toggleCompareService, clearCompare as clearCompareService } from "@/lib/services/compare";
 
-export async function toggleCompareAction(productId: string): Promise<string[]> {
+export async function toggleCompareAction(productId: string): Promise<{ ids: string[]; added: boolean; limitReached: boolean }> {
   const result = toggleCompareService(productId);
   revalidatePath("/compare");
   return result;
