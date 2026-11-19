@@ -5,17 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
 import { getMyReviewStatuses } from "@/lib/data/customer-reviews";
 import { CustomerReviewAction } from "@/components/storefront/customer-review-action";
-
-const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  checked_in: "warning",
-  diagnosing: "info",
-  quoted: "info",
-  awaiting_approval: "warning",
-  in_progress: "info",
-  ready_for_pickup: "info",
-  completed: "success",
-  cancelled: "danger",
-};
+import { getRepairStatusDetails } from "@/lib/repairs/status";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-MW", {
@@ -30,6 +20,7 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
   const repair = await getMyRepairById(params.id);
   if (!repair) notFound();
   const reviewStatuses = await getMyReviewStatuses({ repairIds: [repair.id] });
+  const status = getRepairStatusDetails(repair.status);
 
   return (
     <div className="space-y-6">
@@ -48,9 +39,12 @@ export default async function AccountRepairDetailPage({ params }: { params: { id
             label="repair"
           />
         </div>
-        <Badge variant={STATUS_VARIANT[repair.status] ?? "neutral"} className="px-3 py-1.5 text-sm">
-          {repair.status.replace(/_/g, " ")}
-        </Badge>
+        <div className="flex flex-col items-end gap-2">
+          <Badge variant={status.variant} className="px-3 py-1.5 text-sm">
+            {status.label}
+          </Badge>
+          <p className="max-w-xs text-right text-xs leading-5 text-slate-500">{status.description}</p>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
