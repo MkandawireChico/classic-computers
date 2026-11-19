@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { AuthProviderButtons } from "@/components/auth-provider-buttons";
-import { resendSignupConfirmation, signUp } from "../actions";
+import { resendSignupConfirmation, signUp, type AuthActionState } from "../actions";
 import { createBrowserClient } from "@supabase/ssr";
 import { getAuthRedirectUrl } from "@/lib/auth/site-url";
 
-const initialState = { error: null as string | null };
+const initialState: AuthActionState = { error: null };
 
 function SignUpSubmitButton() {
   const { pending } = useFormStatus();
@@ -28,10 +28,9 @@ function maskEmail(email: string): string {
 }
 
 export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferralCode?: string; redirectTo?: string }) {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [successEmail, setSuccessEmail] = useState<string | null>(null);
+  const [state, formAction] = useFormState(signUp, initialState);
+  const successEmail = state.email ?? null;
+  const successMessage = state.message ?? "Your registration request was accepted.";
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [resendError, setResendError] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -90,7 +89,7 @@ export function SignUpForm({ initialReferralCode, redirectTo }: { initialReferra
     }
   };
 
-  if (successMessage) {
+  if (state.success) {
     const email = successEmail ? maskEmail(successEmail) : "your email address";
     return (
       <div className="space-y-4">
