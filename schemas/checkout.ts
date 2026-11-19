@@ -18,9 +18,9 @@ export const checkoutSchema = z
     // Authenticated customer flow
     deliveryAddressId: z.string().uuid().optional(),
     // Guest flow
-    guestName: z.string().trim().min(2).optional(),
-    guestPhone: z.string().trim().min(6).optional(),
-    guestEmail: z.string().trim().email().optional().or(z.literal("")),
+    guestName: z.string().trim().min(2).max(120).optional(),
+    guestPhone: z.string().trim().min(6).max(30).optional(),
+    guestEmail: z.string().trim().email().max(254).optional().or(z.literal("")),
     // Guests have no saved-address system (see PHASE_4_REPORT.md) — the
     // Phase 4 correction pass replaced the earlier free-text workaround
     // with structured fields that map directly onto orders
