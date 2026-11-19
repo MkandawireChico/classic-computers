@@ -49,6 +49,7 @@ export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
         <input
           id={inputId}
           type="search"
+          maxLength={100}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search products by name or SKU"
