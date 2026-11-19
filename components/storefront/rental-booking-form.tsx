@@ -527,7 +527,7 @@ export function RentalBookingForm({
             <Button
               type="button"
               onClick={nextStep}
-              disabled={isPending}
+              disabled={isPending || isCheckingAvailability}
               className="flex-1 bg-brand-700 hover:bg-brand-800"
             >
               Continue
@@ -536,7 +536,7 @@ export function RentalBookingForm({
             <Button
               type="submit"
               isLoading={isPending || isCheckingAvailability}
-              disabled={isPending}
+              disabled={isPending || isCheckingAvailability}
               className="flex-1 bg-brand-700 hover:bg-brand-800"
             >
               Submit Request
