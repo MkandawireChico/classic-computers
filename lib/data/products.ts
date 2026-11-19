@@ -23,6 +23,13 @@ import type {
  * generated types exist.
  */
 
+function getValidSalePrice(salePrice: unknown, regularPrice: number): number | null {
+  const value = salePrice === null || salePrice === undefined ? null : Number(salePrice);
+  return value !== null && Number.isFinite(value) && value > 0 && value < regularPrice
+    ? value
+    : null;
+}
+
 function productListSelect(requireMatchingInventory = false) {
   const inventoryRelation = requireMatchingInventory
     ? "inventory:storefront_inventory_status!inner"
@@ -71,7 +78,7 @@ function toListItem(row: any): ProductListItem {
     slug: row.slug,
     name: row.name,
     base_price: Number(row.base_price),
-    sale_price: row.sale_price === null ? null : Number(row.sale_price),
+    sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
     condition: row.condition,
     is_featured: row.is_featured,
     brand: row.brand ?? null,
@@ -247,7 +254,7 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     name: row.name,
     description: row.description,
     base_price: Number(row.base_price),
-    sale_price: row.sale_price === null ? null : Number(row.sale_price),
+    sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
     condition: row.condition,
     is_featured: row.is_featured,
     warranty_text: row.warranty_text,
@@ -262,7 +269,7 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
       sku: v.sku,
       name: v.name,
       price: Number(v.price),
-      sale_price: v.sale_price === null ? null : Number(v.sale_price),
+      sale_price: getValidSalePrice(v.sale_price, Number(v.price)),
       is_default: v.is_default,
       status: v.status,
     })),
