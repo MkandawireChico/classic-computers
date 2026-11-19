@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import Link from "next/link";
 import Image from "next/image";
 import { getWishlistWithProducts } from "@/lib/data/wishlist";
@@ -11,11 +12,7 @@ export default async function WishlistPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My benefits</p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Wishlist</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Products you have saved to come back to later.</p>
-      </div>
+      <AccountPageHeader eyebrow="Shopping · Saved products" title="Wishlist" description="Products you have saved to come back to later." />
 
       {entries.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-10">
