@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 
 export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
@@ -9,6 +9,7 @@ export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(initialQuery);
+  const inputId = useId();
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? searchParams.get("query") ?? "");
@@ -32,7 +33,7 @@ export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
 
   return (
     <form role="search" onSubmit={submitSearch} className="flex gap-2">
-      <label htmlFor="shop-search" className="sr-only">Search products in the shop</label>
+      <label htmlFor={inputId} className="sr-only">Search products in the shop</label>
       <div className="relative min-w-0 flex-1">
         <svg
           className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -46,7 +47,7 @@ export function ShopSearch({ initialQuery = "" }: { initialQuery?: string }) {
           <path d="m16 16 4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
         </svg>
         <input
-          id="shop-search"
+          id={inputId}
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
