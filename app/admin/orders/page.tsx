@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminOrders } from "@/lib/data/admin/orders";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
@@ -33,9 +34,9 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Orders</h1>
+      <AdminPageHeader eyebrow="Commerce · Order management" title="Orders" description="Review purchases, payment status and fulfilment progress." />
 
-      <form className="mb-4 flex flex-wrap gap-2" method="get">
+      <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get">
         <input
           type="search"
           name="q"
@@ -70,7 +71,7 @@ export default async function AdminOrdersPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[700px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
