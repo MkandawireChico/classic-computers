@@ -14,70 +14,64 @@ export async function Hero() {
   const imageUrl = media ? getPublicStorageUrl("site-media", media.storage_path) : null;
 
   return (
-    <section aria-labelledby="hero-heading" className="relative isolate overflow-hidden bg-[#10243a] text-white">
-      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_45%,rgba(16,150,205,0.28),transparent_48%),linear-gradient(112deg,#10243a_0%,#173650_58%,#16445d_100%)]" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-cyan-500 via-sky-300 to-cyan-500" />
-      <div className="section-shell relative">
-        <div className="grid items-center gap-10 py-14 sm:gap-14 sm:py-20 lg:min-h-[590px] lg:grid-cols-[1fr_1fr] lg:gap-14 lg:py-20">
-          <div className="relative z-10 max-w-2xl">
-            <p className="mb-6 inline-flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.2em] text-cyan-200">
-              <span className="h-0.5 w-9 bg-cyan-300" />
-              Classic Computers · Blantyre, Malawi
+    <section aria-labelledby="hero-heading" className="border-b border-slate-200 bg-[#f4f7f9]">
+      <div className="section-shell">
+        <div className="grid items-center gap-8 py-10 sm:gap-10 sm:py-14 lg:min-h-[570px] lg:grid-cols-[0.92fr_1.08fr] lg:gap-14 lg:py-16">
+          <div className="max-w-2xl">
+            <p className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-800">
+              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-cyan-500" />
+              Computers and ICT equipment · Blantyre
             </p>
-            <h1 id="hero-heading" className="max-w-[720px] text-[clamp(3rem,5.7vw,5.5rem)] font-bold leading-[0.98] tracking-[-0.06em] text-white">
-              Technology for <span className="text-cyan-300">work</span>, <span className="text-sky-200">business</span> and everyday life.
+            <h1 id="hero-heading" className="mt-5 max-w-[650px] text-[clamp(2.7rem,5.2vw,4.8rem)] font-extrabold leading-[0.99] tracking-[-0.065em] text-[#10243a]">
+              Technology for the way you <span className="text-brand-700">work and live.</span>
             </h1>
-            <p className="mt-7 max-w-xl text-base leading-8 text-slate-100 sm:text-lg">
-              Shop laptops and ICT equipment from Classic Computers in Blantyre, Malawi. Find technology for personal use, education and business, or request a quotation for your organisation.
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-700 sm:text-lg sm:leading-8">
+              Shop computers, laptops and ICT equipment, or speak with our Blantyre team about rentals, repairs and business supply.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/shop/laptop-computers" className="inline-flex min-h-14 items-center justify-center gap-3 bg-cyan-400 px-7 text-sm font-extrabold text-[#082238] shadow-lg shadow-black/20 transition hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#10243a]">
-                Shop laptops <span aria-hidden="true" className="text-lg">↗</span>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link href="/shop" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-lg bg-[#123653] px-7 py-3.5 text-sm font-extrabold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+                Browse products <span aria-hidden="true" className="text-lg">↗</span>
               </Link>
-              <Link href="/corporate" className="inline-flex min-h-14 items-center justify-center border border-white/50 bg-white/10 px-7 text-sm font-bold text-white transition hover:border-white hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
-                Request a business quote
+              <Link href="/corporate" className="inline-flex min-h-13 items-center justify-center rounded-lg border border-slate-300 bg-white px-7 py-3.5 text-sm font-bold text-[#17344d] transition-colors hover:border-brand-400 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+                Business enquiries
               </Link>
             </div>
-            <div className="mt-11 grid max-w-lg grid-cols-3 border-t border-white/30 pt-5">
-              <div className="pr-3">
-                <p className="text-sm font-extrabold text-white">Sales</p>
-                <p className="mt-1 text-xs leading-5 text-slate-200">Computers & equipment</p>
-              </div>
-              <div className="border-l border-white/30 px-4">
-                <p className="text-sm font-extrabold text-white">Rentals</p>
-                <p className="mt-1 text-xs leading-5 text-slate-200">Flexible requests</p>
-              </div>
-              <div className="border-l border-white/30 pl-4">
-                <p className="text-sm font-extrabold text-white">Repairs</p>
-                <p className="mt-1 text-xs leading-5 text-slate-200">Technical support</p>
-              </div>
+            <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-300 pt-5 text-xs font-semibold text-slate-600 sm:text-sm">
+              <Link href="/rentals" className="transition-colors hover:text-brand-800">Equipment rentals</Link>
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-slate-400" />
+              <Link href="/repairs" className="transition-colors hover:text-brand-800">Repairs and support</Link>
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-slate-400" />
+              <Link href="/student-deals" className="transition-colors hover:text-brand-800">Student deals</Link>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[680px] lg:ml-auto">
-            <div aria-hidden="true" className="absolute -inset-4 rounded-[2rem] bg-cyan-300/15 blur-2xl" />
+          <div className="relative w-full">
             {imageUrl ? (
-              <div className={`relative w-full overflow-hidden rounded-2xl border border-white/35 shadow-[0_30px_80px_-25px_rgba(0,0,0,0.65)] ${isHomepageBanner ? "aspect-[16/9] bg-white" : "aspect-[5/4] bg-slate-200"}`}>
-                <Image src={imageUrl} alt={media?.alt_text ?? "Classic Computers store and technology services"} fill priority sizes="(max-width: 1023px) 100vw, 48vw" className={isHomepageBanner ? "object-contain" : "object-cover"} />
-                {!isHomepageBanner ? <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-white/5" /> : null}
-                {!isHomepageBanner && media?.title ? <p className="absolute bottom-4 left-4 rounded-lg border border-white/30 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur">{media.title}</p> : null}
+              <div className={`relative w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_18px_55px_-35px_rgba(15,35,55,0.35)] ${isHomepageBanner ? "aspect-[16/9]" : "aspect-[5/4]"}`}>
+                <Image
+                  src={imageUrl}
+                  alt={media?.alt_text ?? "Classic Computers and its technology services in Blantyre"}
+                  fill
+                  priority
+                  sizes="(max-width: 1023px) 100vw, 56vw"
+                  className={isHomepageBanner ? "object-contain" : "object-cover"}
+                />
               </div>
             ) : (
-              <div className="relative flex aspect-[5/4] items-center justify-center overflow-hidden rounded-2xl border border-white/30 bg-gradient-to-br from-[#dcecf3] via-white to-[#b8d9e8] p-8 shadow-2xl">
-                <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full border border-sky-700/15" />
-                <div className="absolute -bottom-28 -left-12 h-80 w-80 rounded-full border border-sky-700/15" />
-                <div className="relative text-center text-[#12334c]">
-                  <svg viewBox="0 0 240 160" className="mx-auto w-full max-w-[300px]" fill="none" aria-hidden="true">
-                    <rect x="34" y="15" width="172" height="112" rx="7" stroke="currentColor" strokeWidth="3" />
-                    <path d="M18 143h204l-16-16H34l-16 16Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-                    <path d="M92 143h56" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M85 69h70M85 87h46" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity=".65" />
-                  </svg>
-                  <p className="mt-5 text-xl font-bold sm:text-2xl">Your technology partner in Blantyre.</p>
-                  <p className="mt-2 text-sm font-medium text-slate-700">Computers · Rentals · Repairs · ICT support</p>
+              <div className="flex min-h-[280px] flex-col justify-between rounded-xl border border-slate-200 bg-white p-7 shadow-sm sm:min-h-[360px] sm:p-10">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">Classic Computers · Blantyre</p>
+                <div>
+                  <p className="max-w-md text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">Computers, equipment and practical technology support.</p>
+                  <p className="mt-4 max-w-md text-sm leading-6 text-slate-600">Visit our shop or contact the team for help choosing the right equipment.</p>
                 </div>
+                <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center gap-2 self-start border-b-2 border-brand-600 text-sm font-bold text-brand-800 hover:text-brand-950">
+                  Find our shop <span aria-hidden="true">↗</span>
+                </Link>
               </div>
             )}
+            {media?.title && !isHomepageBanner ? (
+              <p className="mt-3 text-xs font-medium text-slate-500">{media.title}</p>
+            ) : null}
           </div>
         </div>
       </div>

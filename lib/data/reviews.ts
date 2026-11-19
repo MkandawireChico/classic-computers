@@ -80,6 +80,40 @@ async function attachSignedImages(rows: any[]): Promise<ApprovedReview[]> {
   })) as ApprovedReview[];
 }
 
+async function loadStatsFromApprovedReviews(reviewType?: ReviewType, productId?: string): Promise<ReviewStats> {
+  const supabase = createClient();
+  let query = (supabase.from("reviews").select("review_type, rating") as any)
+    .eq("status", "approved");
+  if (reviewType) query = query.eq("review_type", reviewType);
+  if (productId) query = query.eq("product_id", productId);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("Could not load approved reviews for statistics:", error.message);
+    throw new Error("Customer review statistics are temporarily unavailable.");
+  }
+
+  const stats = emptyStats();
+  const ratingTotals: Record<ReviewType, number> = { product: 0, rental: 0, repair: 0 };
+  for (const row of data ?? []) {
+    const type = row.review_type as ReviewType;
+    const rating = Number(row.rating);
+    if (!(type in stats.byType) || !Number.isInteger(rating) || rating < 1 || rating > 5) continue;
+    const category = stats.byType[type];
+    category.count += 1;
+    category.distribution[rating as 1 | 2 | 3 | 4 | 5] += 1;
+    ratingTotals[type] += rating;
+  }
+  for (const type of ["product", "rental", "repair"] as const) {
+    const category = stats.byType[type];
+    category.averageRating = category.count > 0
+      ? Math.round((ratingTotals[type] / category.count) * 10) / 10
+      : 0;
+  }
+  stats.totalReviews = Object.values(stats.byType).reduce((sum, category) => sum + category.count, 0);
+  return stats;
+}
+
 async function loadStats(reviewType?: ReviewType, productId?: string): Promise<ReviewStats> {
   try {
     const supabase = createClient();
@@ -89,9 +123,8 @@ async function loadStats(reviewType?: ReviewType, productId?: string): Promise<R
     });
 
     if (error) {
-      console.error("get_public_review_stats failed:", error.message);
-      // Return empty stats rather than failing entirely
-      return emptyStats();
+      console.warn("get_public_review_stats unavailable; using approved review rows:", error.message);
+      return loadStatsFromApprovedReviews(reviewType, productId);
     }
 
     const stats = emptyStats();
@@ -113,9 +146,11 @@ async function loadStats(reviewType?: ReviewType, productId?: string): Promise<R
     stats.totalReviews = Object.values(stats.byType).reduce((sum, category) => sum + category.count, 0);
     return stats;
   } catch (err) {
-    console.error("Error loading review stats:", err instanceof Error ? err.message : String(err));
-    // Return empty stats rather than failing entirely
-    return emptyStats();
+    if (err instanceof Error && err.message === "Customer review statistics are temporarily unavailable.") {
+      throw err;
+    }
+    console.warn("Review statistics RPC failed; using approved review rows:", err instanceof Error ? err.message : String(err));
+    return loadStatsFromApprovedReviews(reviewType, productId);
   }
 }
 
