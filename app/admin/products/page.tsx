@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminProducts } from "@/lib/data/admin/products";
 import { getCategories } from "@/lib/data/categories";
 import { getPublicStorageUrl } from "@/lib/storage";
@@ -33,17 +34,9 @@ export default async function AdminProductsPage({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Products</h1>
-        <Link
-          href="/admin/products/new"
-          className="inline-flex h-9 items-center rounded-card bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-        >
-          New product
-        </Link>
-      </div>
+      <AdminPageHeader eyebrow="Commerce · Catalogue" title="Products" description="Manage the catalogue, product information and publication status." action={<Link href="/admin/products/new" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Add product <span aria-hidden="true" className="ml-2">+</span></Link>} />
 
-      <form className="mb-4 flex flex-wrap gap-2" method="get">
+      <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get">
         <input
           type="search"
           name="q"
@@ -78,7 +71,7 @@ export default async function AdminProductsPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[700px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
