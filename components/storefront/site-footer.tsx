@@ -40,6 +40,13 @@ export async function SiteFooter() {
   const directionsUrl = businessInfo?.address
     ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`
     : null;
+  const contactPhones = [
+    ...new Set(
+      [businessInfo?.phone, businessInfo?.phone_alt].filter(
+        (value): value is string => Boolean(value),
+      ),
+    ),
+  ];
 
   return (
     <footer className="border-t border-slate-200 bg-[#f1f5f7] text-slate-700">
@@ -85,8 +92,17 @@ export async function SiteFooter() {
       <div className="border-t border-slate-200 bg-white">
         <div className="section-shell flex flex-col gap-3 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {businessInfo?.phone ? <a href={`tel:${businessInfo.phone}`} className="font-semibold text-slate-600 hover:text-brand-800">{businessInfo.phone}</a> : null}
+          <div aria-label="Contact details" className="flex flex-wrap gap-x-5 gap-y-2">
+            {contactPhones.map((phone) => (
+              <a
+                key={phone}
+                href={`tel:${phone.replace(/[^\\d+]/g, "")}`}
+                aria-label={`Call Classic Computers at ${phone}`}
+                className="font-semibold text-slate-600 hover:text-brand-800"
+              >
+                {phone}
+              </a>
+            ))}
             {businessInfo?.email ? <a href={`mailto:${businessInfo.email}`} className="font-semibold text-slate-600 hover:text-brand-800">{businessInfo.email}</a> : null}
             {businessInfo?.whatsapp ? <a href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-600 hover:text-brand-800">WhatsApp</a> : null}
           </div>
