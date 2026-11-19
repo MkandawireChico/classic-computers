@@ -66,7 +66,7 @@ export default async function AdminEmailNotificationsPage() {
     <div className="space-y-5">
       <header className="border-b border-slate-200 pb-4">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Operations</p>
-        <h1 className="mt-1 text-2xl font-extrabold text-slate-950">Email notifications</h1>
+        <AdminPageHeader eyebrow="Administration · Communications" title="Email notifications" description="Monitor and manage automated email delivery and notification settings." />
         <p className="mt-2 text-sm leading-6 text-slate-600">Delivery status for saved customer requests. Failed or pending messages can be retried here.</p>
       </header>
 
