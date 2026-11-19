@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminReviews } from "@/lib/data/admin/reviews";
 import { ReviewRow } from "@/components/admin/review-row";
 import { Pagination } from "@/components/storefront/pagination";
@@ -18,7 +19,7 @@ export default async function AdminReviewsPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Reviews</h1>
+      <AdminPageHeader eyebrow="Commerce · Customer feedback" title="Reviews" description="Moderate product reviews and maintain storefront trust." />
 
       <form className="mb-4 flex gap-2" method="get">
         <select name="status" defaultValue={status ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
