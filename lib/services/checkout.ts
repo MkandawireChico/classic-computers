@@ -154,11 +154,37 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   } as any);
 
   if (error) {
-    console.error("create_order failed:", error.message);
-    // The function raises specific, non-sensitive exceptions (e.g. "X is
-    // no longer available") — safe to surface directly rather than a
-    // generic message, since nothing internal leaks through them.
-    return { success: false, error: error.message.replace(/^.*?: /, "") };
+    console.error("create_order failed:", { code: error.code, message: error.message });
+
+    // Inventory is decremented inside the database transaction. A customer
+    // may reach checkout while another order takes the remaining stock.
+    // Translate the inventory CHECK constraint instead of exposing SQL
+    // constraint names or raw database errors in the storefront.
+    if (error.code === "23514" || error.message.includes("inventory_quantity_on_hand_check")) {
+      return {
+        success: false,
+        error: "One or more items no longer have enough stock for the requested quantity. Your order was not placed. Please review your cart and try again.",
+      };
+    }
+
+    const safeBusinessError =
+      /^.+ is no longer available$/.test(error.message) ||
+      /^The selected configuration for .+ is no longer available$/.test(error.message) ||
+      [
+        "Cart not found or already checked out",
+        "Not authorized for this cart",
+        "Guest name and phone are required for guest checkout",
+        "A delivery address is required",
+        "Delivery address not found",
+        "Cart is empty",
+      ].includes(error.message);
+
+    return {
+      success: false,
+      error: safeBusinessError
+        ? error.message
+        : "We could not place your order. Your cart has not been converted. Please review your details and try again. If the problem continues, contact Classic Computers.",
+    };
   }
 
   const row = Array.isArray((result as any)) ? (result as any[])[0] : (result as any);
