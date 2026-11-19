@@ -240,26 +240,26 @@ export default async function ProductPage({ params }: { params: Params }) {
           </section>
         ) : null}
 
-        {ratingSummary.count > 0 ? (
         <section className="mt-8 sm:mt-10">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
-                <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Customer Reviews</h2>
-              </div>
-              <Link
-                href="/reviews"
-                className="rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-              >
-                View all reviews
-              </Link>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
+              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Customer Reviews</h2>
             </div>
+            <Link
+              href="/reviews"
+              className="rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            >
+              View all reviews
+            </Link>
+          </div>
+          {ratingSummary.count > 0 ? (
             <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <div className="text-4xl font-extrabold text-slate-900">{ratingSummary.averageRating}</div>
-                    <div className="flex text-amber-500">
+                    <div className="flex text-amber-500" aria-label={`${ratingSummary.averageRating} out of 5 stars`}>
                       {Array.from({ length: 5 }).map((_, i) => (
                         <span key={i} aria-hidden="true">
                           {i < Math.round(ratingSummary.averageRating) ? "★" : "☆"}
@@ -268,48 +268,42 @@ export default async function ProductPage({ params }: { params: Params }) {
                     </div>
                   </div>
                   <div className="h-12 w-px bg-slate-200" />
-                  <div>
-                    <div className="text-sm text-slate-600">
-                      {ratingSummary.count} approved review{ratingSummary.count === 1 ? "" : "s"}
-                    </div>
+                  <div className="text-sm text-slate-600">
+                    {ratingSummary.count} approved review{ratingSummary.count === 1 ? "" : "s"}
                   </div>
                 </div>
               </div>
               <div className="mb-6 max-w-md">
                 <RatingBreakdown distribution={ratingSummary.distribution} total={ratingSummary.count} />
               </div>
-              {reviews.length > 0 && (
+              {reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map((review) => (
                     <article key={review.id} className="rounded-xl border border-slate-200 bg-white p-4">
                       <div className="flex items-center gap-2">
-                        <div className="flex text-amber-500">
+                        <div className="flex text-amber-500" aria-label={`${review.rating} out of 5 stars`}>
                           {Array.from({ length: 5 }).map((_, i) => (
                             <span key={i} aria-hidden="true">
                               {i < review.rating ? "★" : "☆"}
                             </span>
                           ))}
                         </div>
-                        {review.verified_purchase && (
+                        {review.verified_purchase ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-2 py-0.5 text-xs font-semibold text-cyan-800">
                             Verified
                           </span>
-                        )}
+                        ) : null}
                       </div>
-                      {review.title && (
-                        <h3 className="mt-2 text-sm font-semibold text-slate-900">{review.title}</h3>
-                      )}
-                      {review.comment && (
-                        <p className="mt-1 text-sm text-slate-600">{review.comment}</p>
-                      )}
+                      {review.title ? <h3 className="mt-2 text-sm font-semibold text-slate-900">{review.title}</h3> : null}
+                      {review.comment ? <p className="mt-1 text-sm text-slate-600">{review.comment}</p> : null}
                       <ReviewPhotos images={review.images} />
-                      {review.admin_response && (
+                      {review.admin_response ? (
                         <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
                           <p className="font-semibold text-slate-900">Response from Classic Computers:</p>
                           <p className="mt-1 text-slate-600">{review.admin_response}</p>
                         </div>
-                      )}
-                      <p className="mt-2 text-xs text-slate-400">
+                      ) : null}
+                      <p className="mt-2 text-xs text-slate-500">
                         {new Date(review.created_at).toLocaleDateString("en-MW", {
                           year: "numeric",
                           month: "long",
@@ -319,10 +313,17 @@ export default async function ProductPage({ params }: { params: Params }) {
                     </article>
                   ))}
                 </div>
-              )}
+              ) : null}
             </div>
-          </section>
-        ) : null}
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-base font-bold text-slate-900">No approved reviews yet</h3>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                There are no published customer reviews for this product yet. Reviews from eligible customers appear here after moderation.
+              </p>
+            </div>
+          )}
+        </section>
 
         <RelatedProducts products={related} />
       </div>
