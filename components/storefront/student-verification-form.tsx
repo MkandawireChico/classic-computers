@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -13,8 +13,22 @@ export function StudentVerificationForm() {
   const [error, setError] = useState<string | null>(null);
   const submissionKey = useRef<string | null>(null);
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     if (isPending) return;
+
+    const formData = new FormData(event.currentTarget);
+    const file = formData.get("document") as File | null;
+    if (file && file.size > 0) {
+      if (!["image/jpeg", "image/png", "application/pdf"].includes(file.type)) {
+        setError("Document must be a JPEG, PNG, or PDF.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Document must be 5MB or smaller.");
+        return;
+      }
+    }
 
     setError(null);
     setIsPending(true);
@@ -29,7 +43,11 @@ export function StudentVerificationForm() {
         return;
       }
 
-      markSubmissionComplete("student-verification");
+      try {
+        markSubmissionComplete("student-verification");
+      } catch (storageError) {
+        console.warn("Student verification submission marker could not be saved:", storageError);
+      }
       router.refresh();
     } catch {
       setError("We couldn't submit your application. Check your connection and try again.");
@@ -39,7 +57,7 @@ export function StudentVerificationForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {/* Personal Information */}
@@ -55,6 +73,7 @@ export function StudentVerificationForm() {
               name="fullName"
               required
               autoComplete="name"
+              maxLength={120}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
             />
           </div>
@@ -68,6 +87,7 @@ export function StudentVerificationForm() {
               type="tel"
               required
               autoComplete="tel"
+              maxLength={30}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
             />
           </div>
@@ -86,6 +106,7 @@ export function StudentVerificationForm() {
               id="student-institution"
               name="institution"
               required
+              maxLength={160}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
             />
           </div>
@@ -97,12 +118,13 @@ export function StudentVerificationForm() {
               id="student-id-number"
               name="studentIdNumber"
               required
+              maxLength={80}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
             />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="student-email" className="text-sm font-medium text-slate-700">
-              Institution email
+              Contact email
             </label>
             <input
               id="student-email"
@@ -110,10 +132,11 @@ export function StudentVerificationForm() {
               type="email"
               required
               autoComplete="email"
+              maxLength={254}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
             />
             <p className="mt-2 text-xs text-slate-500">
-              Use an email address where our team can contact you. Verification is confirmed by our team.
+              Use an email address you check. A university-issued address is helpful but not required. Our team verifies your student status using your details and any supporting document.
             </p>
           </div>
         </div>
