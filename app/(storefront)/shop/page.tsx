@@ -58,7 +58,7 @@ export default async function ShopPage({
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
               <div>
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
-                  {result.total === 0 ? "No matching products" : `Showing all ${result.items.length} products`}
+                  {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
                 </p>
                 <p className="mt-0.5 text-xs text-slate-500">Prices shown in Malawi Kwacha</p>
               </div>
