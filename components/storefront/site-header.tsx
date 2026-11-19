@@ -11,12 +11,10 @@ import { getCartItemCount } from "@/lib/data/cart";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
-  { href: "/shop/laptop-computers", label: "Laptops" },
   { href: "/rentals", label: "Rentals" },
   { href: "/repairs", label: "Repairs" },
   { href: "/student-deals", label: "Student deals" },
   { href: "/corporate", label: "Corporate" },
-  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -31,24 +29,18 @@ export async function SiteHeader() {
   const permissions = user ? await getMyPermissions() : new Set<string>();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_4px_20px_-18px_rgba(16,29,53,0.35)] backdrop-blur-xl">
-      <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[5rem]">
-        <Link href="/" className="group flex min-w-0 shrink items-center gap-2.5 sm:shrink-0 sm:gap-3">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+      <div className="section-shell flex h-[4.25rem] items-center justify-between gap-3 lg:h-[4.75rem]">
+        <Link href="/" aria-label="Classic Computers home" className="flex min-w-0 shrink-0 items-center">
           {logoUrl ? (
-            <span className="relative block h-12 w-20 shrink-0 overflow-hidden sm:h-14 sm:w-24">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="(max-width: 640px) 80px, 96px" className="object-contain" />
+            <span className="relative block h-10 w-[4.5rem] overflow-hidden sm:h-11 sm:w-20">
+              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers"} fill sizes="80px" className="object-contain object-left" />
             </span>
           ) : (
-            <span aria-hidden="true" className="flex h-12 w-20 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-[10px] font-extrabold tracking-tight text-navy-900 sm:h-14 sm:w-24">CLASSIC</span>
+            <span className="text-lg font-extrabold tracking-tight text-navy-950 sm:text-xl">
+              Classic <span className="text-brand-700">Computers</span>
+            </span>
           )}
-          <span className="min-w-0 leading-none">
-            <span className="block truncate text-base font-extrabold tracking-[-0.045em] text-navy-900 sm:text-lg lg:text-xl">
-              Classic <span className="text-brand-600">Computers</span>
-            </span>
-            <span className="mt-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-500 sm:text-[10px]">
-              Blantyre · Malawi
-            </span>
-          </span>
         </Link>
 
         <div className="hidden min-w-0 flex-1 justify-end px-5 lg:flex">
@@ -59,15 +51,15 @@ export async function SiteHeader() {
           <Link
             href="/cart"
             aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
           >
             <CartIcon />
-            {cartCount > 0 ? <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}
+            {cartCount > 0 ? <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-700 px-1 text-[10px] font-bold text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}
           </Link>
           <Link
             href="/account"
             aria-label="Account"
-            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:inline-flex"
+            className="hidden h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:inline-flex"
           >
             <AccountIcon />
           </Link>
@@ -76,9 +68,9 @@ export async function SiteHeader() {
       </div>
 
       <div className="hidden border-t border-slate-100 lg:block">
-        <nav aria-label="Primary" className="section-shell flex items-center justify-center gap-1 py-2">
+        <nav aria-label="Primary" className="section-shell flex items-center justify-center gap-1 py-1.5">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="inline-flex min-h-9 items-center rounded-lg px-3 text-[13px] font-semibold text-slate-600 transition-colors hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+            <Link key={link.href} href={link.href} className="inline-flex min-h-9 items-center rounded-md px-4 text-[13px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
               {link.label}
             </Link>
           ))}
