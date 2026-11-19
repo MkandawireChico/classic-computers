@@ -14,13 +14,14 @@ export const PRODUCT_TYPES = [
 ] as const;
 
 const productBaseSchema = z.object({
-  name: z.string().trim().min(2, "Name is required"),
+  name: z.string().trim().min(2, "Name is required").max(160, "Name must be 160 characters or fewer"),
   slug: z
     .string()
     .trim()
     .min(2, "Slug is required")
+    .max(180, "Slug must be 180 characters or fewer")
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Slug must be lowercase, hyphen-separated"),
-  sku: z.string().trim().min(1, "SKU is required"),
+  sku: z.string().trim().min(1, "SKU is required").max(80, "SKU must be 80 characters or fewer"),
   brandId: z.string().uuid().nullable().optional(),
   categoryId: z.string().uuid("Category is required"),
   productType: z.enum(PRODUCT_TYPES),
