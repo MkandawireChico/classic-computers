@@ -34,7 +34,7 @@ export async function listAddresses(): Promise<AddressRecord[]> {
 
   if (error) {
     console.error("listAddresses failed:", error.message);
-    return [];
+    throw new Error("Could not load your saved addresses. Please refresh the page and try again.");
   }
   return data ?? [];
 }
