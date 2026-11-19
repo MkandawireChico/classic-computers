@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminRepairs } from "@/lib/data/admin/repairs";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
@@ -30,9 +31,9 @@ export default async function AdminRepairsPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Repairs</h1>
+      <AdminPageHeader eyebrow="Operations · Service desk" title="Repairs" description="Track incoming devices, diagnosis, approvals and completed work." />
 
-      <form className="mb-4 flex flex-wrap gap-2" method="get">
+      <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get">
         <input type="search" name="q" maxLength={100} defaultValue={query} placeholder="Ticket number…" className="rounded-card border border-surface-border px-3 py-1.5 text-sm" />
         <select name="status" defaultValue={status ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
           <option value="">All statuses</option>
@@ -47,7 +48,7 @@ export default async function AdminRepairsPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
