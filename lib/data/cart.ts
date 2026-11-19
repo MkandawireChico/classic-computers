@@ -76,12 +76,12 @@ export async function getCartSummary(): Promise<CartSummary> {
       : Promise.resolve({ data: [] as any[], error: null }),
   ]);
 
-  if (imageResult.error || inventoryResult.error) {
-    console.error("getCartSummary supporting lookup failed:", {
-      images: imageResult.error?.message,
-      inventory: inventoryResult.error?.message,
-    });
-    throw new Error("We could not verify your cart details. Please refresh the page and try again.");
+  if (imageResult.error) {
+    console.error("getCartSummary image lookup failed:", imageResult.error.message);
+  }
+  if (inventoryResult.error) {
+    console.error("getCartSummary inventory lookup failed:", inventoryResult.error.message);
+    throw new Error("We could not verify product availability. Please refresh your cart and try again.");
   }
   const images = imageResult.data ?? [];
   const inventoryRows = inventoryResult.data ?? [];
