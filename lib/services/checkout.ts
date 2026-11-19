@@ -91,22 +91,11 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
   }
 
   if (staleIds.length > 0) {
-    const { error: staleDeleteError } = await (client.from("cart_items") as any)
-      .delete()
-      .in("id", staleIds);
-    if (staleDeleteError) {
-      console.error("Checkout unavailable-item cleanup failed:", staleDeleteError.message);
-      return {
-        success: false,
-        error: "Some items in your cart are no longer available. We could not update your cart automatically. Please return to your cart and remove them before trying again.",
-      };
-    }
-
-    // Do not silently submit an order with a different basket or total than
-    // the customer reviewed. Remove stale lines, then require a fresh review.
+    // Keep unavailable lines in the cart so the customer can see and remove
+    // them. Never change the basket behind the customer's back.
     return {
       success: false,
-      error: "Stock changed while you were checking out. We removed unavailable items from your cart. Please review the updated cart and place your order again.",
+      error: "Stock changed while you were checking out. Please review your cart, remove unavailable items and submit your order again.",
     };
   }
 
