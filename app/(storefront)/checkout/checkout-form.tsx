@@ -158,6 +158,7 @@ export function CheckoutForm({
               <input
                 id="guestName"
                 name="guestName"
+                maxLength={120}
                 required
                 className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
@@ -169,6 +170,7 @@ export function CheckoutForm({
               <input
                 id="guestPhone"
                 name="guestPhone"
+                maxLength={30}
                 required
                 className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
@@ -180,6 +182,7 @@ export function CheckoutForm({
               <input
                 id="guestEmail"
                 name="guestEmail"
+                maxLength={254}
                 type="email"
                 className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
@@ -260,6 +263,7 @@ export function CheckoutForm({
                 <input
                   id="guestDeliveryLine1"
                   name="guestDeliveryLine1"
+                  maxLength={200}
                   required
                   className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 />
@@ -271,6 +275,7 @@ export function CheckoutForm({
                 <input
                   id="guestDeliveryLine2"
                   name="guestDeliveryLine2"
+                  maxLength={200}
                   className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 />
               </div>
@@ -282,6 +287,7 @@ export function CheckoutForm({
                   <input
                     id="guestDeliveryCity"
                     name="guestDeliveryCity"
+                    maxLength={100}
                     required
                     className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
@@ -296,6 +302,7 @@ export function CheckoutForm({
                   <input
                     id="guestDeliveryDistrict"
                     name="guestDeliveryDistrict"
+                    maxLength={100}
                     className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                 </div>
