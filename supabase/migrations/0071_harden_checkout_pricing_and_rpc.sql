@@ -41,30 +41,11 @@ alter table public.discounts
   check (min_order_total is null or min_order_total > 0) not valid;
 alter table public.discounts
   add constraint discounts_max_discount_amount_positive
-  check (max_discount_amount is null or max_discount_amount > 0) not valid;
+  check (max_discount_amount is null or max_discount_amount > 0);
 
--- Historical orders/items are left untouched. NOT VALID constraints still
--- protect every new or updated row while allowing a later historical audit.
-alter table public.orders
-  add constraint orders_financial_totals_consistent
-  check (
-    subtotal >= 0
-    and discount_total >= 0
-    and discount_total <= subtotal
-    and total >= 0
-    and total = subtotal - discount_total
-  ) not valid;
-
-alter table public.order_items
-  add constraint order_items_financial_totals_consistent
-  check (
-    unit_price >= 0
-    and quantity > 0
-    and discount_amount >= 0
-    and discount_amount <= unit_price * quantity
-    and line_total >= 0
-    and line_total = unit_price * quantity - discount_amount
-  ) not valid;
+alter table public.discounts validate constraint discounts_min_quantity_positive;
+alter table public.discounts validate constraint discounts_min_order_total_positive;
+alter table public.discounts validate constraint discounts_max_discount_amount_positive;
 
 -- Replace the latest 12-argument create_order() implementation from 0058.
 -- Preserve delivery snapshots, student eligibility, product-scoped student
