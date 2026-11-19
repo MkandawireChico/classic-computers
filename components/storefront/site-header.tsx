@@ -35,11 +35,11 @@ export async function SiteHeader() {
       <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[5rem]">
         <Link href="/" className="group flex min-w-0 shrink items-center gap-2.5 sm:shrink-0 sm:gap-3">
           {logoUrl ? (
-            <span className="relative block h-11 w-14 shrink-0 overflow-hidden rounded-lg bg-white sm:h-12 sm:w-16">
+            <span className="relative block h-12 w-20 shrink-0 overflow-hidden sm:h-14 sm:w-24">
               <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers logo"} fill sizes="64px" className="object-contain" />
             </span>
           ) : (
-            <span aria-hidden="true" className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-extrabold tracking-tight text-navy-900 sm:h-12 sm:w-16">CLASSIC</span>
+            <span aria-hidden="true" className="flex h-12 w-20 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-[10px] font-extrabold tracking-tight text-navy-900 sm:h-14 sm:w-24">CLASSIC</span>
           )}
           <span className="min-w-0 leading-none">
             <span className="block truncate text-base font-extrabold tracking-[-0.045em] text-navy-900 sm:text-lg lg:text-xl">
