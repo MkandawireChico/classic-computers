@@ -85,39 +85,39 @@ export default async function StudentDealsPage() {
 
   return (
     <main>
-      <section aria-labelledby="student-deals-heading" className="relative isolate overflow-hidden bg-[#081827] text-white">
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.24),transparent_42%)]" />
+      <section aria-labelledby="student-deals-heading" className="border-b border-slate-200 bg-[#f4f7f9] text-[#10243a]">
+        
         <div className="section-shell grid items-center gap-8 py-8 sm:gap-10 sm:py-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-16">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200 sm:text-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700 sm:text-sm">
               Classic Computers Student Deals
             </p>
-            <h1 id="student-deals-heading" className="mt-3 max-w-xl text-balance text-4xl font-extrabold leading-[1.06] text-white sm:mt-4 sm:text-5xl lg:text-6xl">
-              Smart technology. <span className="text-amber-300">Better student prices.</span>
+            <h1 id="student-deals-heading" className="mt-3 max-w-xl text-balance text-4xl font-extrabold leading-[1.06] text-[#10243a] sm:mt-4 sm:text-5xl lg:text-6xl">
+              Smart technology. <span className="text-brand-700">Better student prices.</span>
             </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-slate-200 sm:mt-5 sm:text-lg sm:leading-8">
+            <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8">
               Being a student comes with enough expenses. Get access to eligible student offers on selected technology products by verifying your student status with Classic Computers.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:items-center">
               <Link
                 href={user ? "#verification" : signUpPath}
-                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-xl bg-amber-300 px-6 py-3.5 text-base font-bold text-[#081827] shadow-lg shadow-black/15 transition-colors hover:bg-amber-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-200/60"
+                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-xl bg-[#123653] px-6 py-3.5 text-base font-bold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 {user && verification ? "View your application" : "Apply for student deals"}
               </Link>
               <Link
                 href="/shop"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/30 px-5 py-3 text-sm font-bold text-white transition-colors hover:border-white/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 Explore products
               </Link>
             </div>
-            <p className="mt-4 max-w-lg text-sm leading-6 text-slate-400">
+            <p className="mt-4 max-w-lg text-sm leading-6 text-slate-500">
               Student offers are available to verified students and apply to eligible products while the offers are active.
             </p>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-2xl border border-white/15 bg-[#102b42] shadow-2xl shadow-black/25 lg:rounded-3xl">
+          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             {heroImageUrl ? (
               <Image
                 src={heroImageUrl}
@@ -129,7 +129,7 @@ export default async function StudentDealsPage() {
                 className="aspect-[16/8] w-full object-cover sm:aspect-[16/9] lg:aspect-[5/4]"
               />
             ) : (
-              <div aria-hidden="true" className="flex aspect-[16/8] items-center justify-center bg-[#102b42] text-amber-200 sm:aspect-[16/9] lg:aspect-[5/4]">
+              <div aria-hidden="true" className="flex aspect-[16/8] items-center justify-center bg-slate-100 text-brand-700 sm:aspect-[16/9] lg:aspect-[5/4]">
                 <svg viewBox="0 0 72 56" fill="none" className="h-20 w-24">
                   <rect x="9" y="4" width="54" height="38" rx="3" stroke="currentColor" strokeWidth="2.5" />
                   <path d="M3 51h66l-6-9H9l-6 9ZM29 51h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -164,11 +164,11 @@ export default async function StudentDealsPage() {
               </div>
             </li>
             <li className="flex gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-800">
                 <StepIcon kind="review" />
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-800">Step 02</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Step 02</p>
                 <h3 className="mt-1 text-base font-bold text-slate-950">Get verified</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Our team reviews your submission. Check your verification status and decision from your account.</p>
               </div>

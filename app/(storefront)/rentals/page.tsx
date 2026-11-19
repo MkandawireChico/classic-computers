@@ -29,32 +29,32 @@ export default async function RentalsPage() {
   return (
     <div className="min-h-screen bg-[#f5f7f8] pb-16">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-[#17344d] text-white">
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_82%_28%,rgba(8,145,178,0.28),transparent_42%),linear-gradient(120deg,#081827_0%,#102b42_100%)]" />
+      <section className="border-b border-slate-200 bg-[#f4f7f9] text-[#10243a]">
+        
         <div className={`section-shell grid items-center gap-10 py-14 sm:py-20 ${rentalPromoUrl ? "lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""} lg:py-24`}>
           <div className="max-w-3xl">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Equipment rental · Blantyre, Malawi</p>
-        <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Technology when you need it. <span className="text-cyan-300">Without buying it.</span></h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-700">Equipment rental · Blantyre, Malawi</p>
+        <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-[-0.045em] text-[#10243a] sm:text-5xl lg:text-6xl">Technology when you need it. <span className="text-brand-700">Without buying it.</span></h1>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
           Access reliable laptops and essential technology for business, training, education and short-term projects. Find the right equipment and submit a rental request with ease.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
             href="#equipment"
-            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-cyan-400 px-6 py-3 text-sm font-extrabold text-[#081827] shadow-lg shadow-black/15 transition-colors hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-200/60"
+            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#123653] px-6 py-3 text-sm font-extrabold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-200/60"
           >
             Browse Rental Equipment
           </Link>
           <Link
             href="/rentals/book"
-            className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/30 px-6 py-3 text-sm font-bold text-white transition-colors hover:border-cyan-200 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+            className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
           >
             Request a Rental
           </Link>
         </div>
           </div>
           {rentalPromoUrl ? (
-            <div className="relative aspect-[5/4] w-full overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/25">
+            <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <Image
                 src={rentalPromoUrl}
                 alt={rentalPromo?.alt_text ?? "Laptop and equipment rental services from Classic Computers"}
@@ -63,9 +63,9 @@ export default async function RentalsPage() {
                 sizes="(max-width: 1023px) 100vw, 44vw"
                 className="object-cover"
               />
-              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#071a2b]/35 via-transparent to-transparent" />
+              
               {rentalPromo?.title ? (
-                <p className="absolute bottom-4 left-4 rounded-lg border border-white/25 bg-[#10243a]/90 px-4 py-2 text-xs font-bold text-white backdrop-blur">
+                <p className="absolute bottom-4 left-4 rounded-md border border-slate-200 bg-white/95 px-4 py-2 text-xs font-bold text-slate-700">
                   {rentalPromo.title}
                 </p>
               ) : null}
@@ -108,7 +108,7 @@ export default async function RentalsPage() {
             {products.map((product) => {
               const imageUrl = product.imagePath ? getPublicStorageUrl("product-images", product.imagePath) : null;
               return (
-                <div key={`${product.productId}-${product.variantId ?? "default"}`} className="group flex flex-col overflow-hidden rounded-[1.4rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
+                <div key={`${product.productId}-${product.variantId ?? "default"}`} className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-colors hover:border-brand-300 hover:shadow-md">
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#f0f4f6]">
                     {imageUrl ? (
                       <Image src={imageUrl} alt={product.productName} fill className="object-contain p-4 transition-transform group-hover:scale-105" sizes="(max-width: 768px) 100vw, 25vw" />

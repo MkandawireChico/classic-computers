@@ -21,25 +21,22 @@ export default async function CorporatePage() {
 
   return (
     <div className="section-shell pb-16 pt-5 sm:pt-8">
-      <header className={`relative isolate overflow-hidden rounded-[2rem] bg-[#17344d] px-6 py-12 text-white shadow-panel sm:px-10 sm:py-16 lg:px-14 ${promoUrl ? "grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12" : ""}`}>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(8,145,178,0.28),transparent_46%),linear-gradient(125deg,#081827_10%,#102d42_100%)]"
-        />
+      <header className={`relative isolate overflow-hidden rounded-[2rem] bg-[#f4f7f9] px-6 py-12 text-[#10243a] shadow-sm sm:px-10 sm:py-16 lg:px-14 ${promoUrl ? "grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12" : ""}`}>
+        
         <div className="relative z-10">
-          <p className="inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
+          <p className="inline-flex rounded-full border border-brand-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-brand-800">
             Business solutions
           </p>
-          <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-[#10243a] sm:text-5xl lg:text-6xl">
             Corporate &amp; Bulk ICT Supply
           </h1>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-100 sm:text-lg">
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
             Classic Computers LLC supplies reliable ICT equipment to organisations in Blantyre. Tell
             us your requirements, and our team will prepare a tailored quotation for you.
           </p>
         </div>
         {promoUrl ? (
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/20 bg-[#244760] shadow-2xl shadow-black/25">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             <Image
               src={promoUrl}
               alt={promo?.alt_text ?? "Corporate ICT equipment supply from Classic Computers"}
@@ -79,7 +76,7 @@ export default async function CorporatePage() {
           </p>
           <Link
             href="/corporate/enquire"
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-cyan-500 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 sm:w-auto"
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#123653] px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 sm:w-auto"
           >
             Start Enquiry
             <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="ml-2 h-4 w-4">
