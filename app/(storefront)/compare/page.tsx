@@ -5,6 +5,7 @@ import { getCompareProducts, collectSpecLabels } from "@/lib/data/compare";
 import { formatMoney } from "@/lib/format/money";
 import { StockBadge } from "@/components/product/stock-badge";
 import { ClearCompareButton } from "./clear-compare-button";
+import { RemoveComparedProductButton } from "./remove-compared-product-button";
 
 export default async function ComparePage() {
   const ids = getCompareIdsReadOnly();
