@@ -8,6 +8,7 @@ import { getCartIdReadOnly, clearGuestCartCookie } from "./cart";
 import { checkoutSchema } from "@/schemas/checkout";
 import { appendManualPaymentSelection } from "@/lib/payments/manual-payment";
 import { deliverAdminEmailForRequest } from "@/lib/services/admin-email-outbox";
+import { getPaymentMethods } from "@/lib/data/site-settings";
 
 const GUEST_ORDER_COOKIE_PREFIX = "cc_order_";
 
@@ -21,6 +22,14 @@ export async function submitCheckout(input: unknown): Promise<CheckoutResult> {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Please check the form and try again." };
   }
   const data = parsed.data;
+
+  // The storefront hides disabled payment options, but server actions are
+  // callable independently. Enforce the current public payment settings
+  // here as well so a forged request cannot select a disabled method.
+  const paymentMethods = await getPaymentMethods();
+  if (!paymentMethods[data.paymentMethod]) {
+    return { success: false, error: "This payment method is currently unavailable. Please choose another option." };
+  }
 
   const cartId = await getCartIdReadOnly();
   if (!cartId) {
