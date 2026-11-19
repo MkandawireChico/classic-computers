@@ -16,7 +16,7 @@ export async function getMyRepairs(): Promise<MyRepairListItem[]> {
     .order("created_at", { ascending: false });
   if (error) {
     console.error("getMyRepairs failed:", error.message);
-    return [];
+    throw new Error("Could not load your repairs. Please refresh the page and try again.");
   }
   return data ?? [];
 }
