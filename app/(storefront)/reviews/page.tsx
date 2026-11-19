@@ -49,30 +49,30 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
   return (
     <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14 lg:py-16">
       <div className="mx-auto max-w-4xl">
-        <header className="mb-8 space-y-4 rounded-[1.5rem] bg-[#081827] p-6 text-white sm:p-8">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Customer feedback</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Customer reviews</h1>
-          <p className="max-w-2xl text-sm leading-6 text-slate-300">
+        <header className="mb-8 space-y-4 rounded-[1.5rem] border border-slate-200 bg-gradient-to-br from-brand-50 via-white to-cyan-50 p-6 text-navy-900 shadow-sm sm:p-8">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-800">Customer feedback</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-navy-950 sm:text-4xl">Customer reviews</h1>
+          <p className="max-w-2xl text-sm leading-6 text-slate-700">
             Reviews are shown after moderation. Ratings are reported separately for products, rentals and repairs.
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             {REVIEW_TYPES.map((type) => {
               const category = stats.byType[type];
               return (
-                <section key={type} className="rounded-xl border border-white/10 bg-white/[0.06] p-4" aria-label={`${type} review statistics`}>
-                  <h2 className="text-sm font-bold capitalize text-white">{type}</h2>
+                <section key={type} className="rounded-xl border border-slate-200 bg-white p-4" aria-label={`${type} review statistics`}>
+                  <h2 className="text-sm font-bold capitalize text-navy-900">{type}</h2>
                   {category.count ? (
-                    <p className="mt-1 text-sm text-slate-300">
-                      <span className="font-bold text-white">{category.averageRating.toFixed(1)} / 5</span>
+                    <p className="mt-1 text-sm text-slate-700">
+                      <span className="font-bold text-navy-950">{category.averageRating.toFixed(1)} / 5</span>
                       {" · "}{category.count} approved review{category.count === 1 ? "" : "s"}
                     </p>
-                  ) : <p className="mt-1 text-sm text-slate-400">No approved reviews yet</p>}
+                  ) : <p className="mt-1 text-sm text-slate-600">No approved reviews yet</p>}
                 </section>
               );
             })}
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
-            <h2 className="mb-3 text-sm font-bold text-white">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="mb-3 text-sm font-bold text-navy-900">
               {reviewType ? `${reviewType.charAt(0).toUpperCase()}${reviewType.slice(1)} rating distribution` : "Approved ratings distribution"}
             </h2>
             <div className="max-w-md">
