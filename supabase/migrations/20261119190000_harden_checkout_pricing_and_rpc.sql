@@ -79,8 +79,8 @@ create or replace function public.create_order(
 returns table(order_id uuid, order_number text)
 language plpgsql
 security definer
-set search_path = public
-as $$
+set search_path = pg_catalog, public, pg_temp
+as $
 declare
   v_cart record;
   v_customer_id uuid;
@@ -104,7 +104,7 @@ declare
   v_payment_setting_key text;
   v_payment_enabled boolean := false;
 begin
-  select * into v_cart from carts where id = p_cart_id and status = 'active';
+  select * into v_cart from carts where id = p_cart_id and status = 'active' for update;
   if not found then
     raise exception 'Cart not found or already checked out';
   end if;
@@ -241,6 +241,7 @@ begin
       ci.id as cart_item_id, ci.product_id, ci.variant_id, ci.quantity,
       p.name as product_name, p.sku as product_sku, p.status as product_status,
       p.base_price, p.sale_price, p.category_id,
+      pv.product_id as variant_product_id,
       pv.price as variant_price, pv.sale_price as variant_sale_price, pv.status as variant_status
     from cart_items ci
     join products p on p.id = ci.product_id
@@ -253,6 +254,10 @@ begin
 
     if v_item.product_status <> 'published' then
       raise exception '% is no longer available', v_item.product_name;
+    end if;
+
+    if v_item.variant_id is not null and v_item.variant_product_id is distinct from v_item.product_id then
+      raise exception 'The selected configuration does not belong to this product';
     end if;
 
     if v_item.variant_id is not null and v_item.variant_status is distinct from 'active' then
