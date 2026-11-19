@@ -28,7 +28,7 @@ export async function getMyNotifications(): Promise<MyNotification[]> {
     .limit(50);
   if (error) {
     console.error("getMyNotifications failed:", error.message);
-    return [];
+    throw new Error("Could not load your notifications. Please refresh the page and try again.");
   }
   return data ?? [];
 }
