@@ -30,7 +30,10 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <header className="relative overflow-hidden rounded-[1.75rem] border border-slate-800 bg-slate-950 p-6 text-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:p-8">\n        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full border-[36px] border-cyan-300/10" />\n        <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 right-24 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />\n        <div className="relative">
+      <header className="relative overflow-hidden rounded-[1.75rem] border border-slate-800 bg-slate-950 p-6 text-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:p-8">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full border-[36px] border-cyan-300/10" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 right-24 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="relative">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Customer dashboard</p>
         <h1 className="mt-2 text-2xl font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-4xl">
           {summary.displayName ? `Welcome back, ${summary.displayName}` : "Your account overview"}
@@ -41,6 +44,7 @@ export default async function AccountOverviewPage() {
         <Link href="/account/profile" className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">
           Manage your profile
         </Link>
+        </div>
       </header>
 
       {metrics.length > 0 ? (
