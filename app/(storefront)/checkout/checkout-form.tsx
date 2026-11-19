@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { formatMoney } from "@/lib/format/money";
@@ -137,7 +138,14 @@ export function CheckoutForm({
 
   return (
     <form action={handleSubmit} className="space-y-6 sm:space-y-8">
-      {error ? <Alert variant="danger">{error}</Alert> : null}
+      {error ? (
+        <Alert variant="danger">
+          {error}
+          {error.startsWith("Stock changed while you were checking out") ? (
+            <Link href="/cart" className="ml-1 font-bold underline underline-offset-2">Review your cart</Link>
+          ) : null}
+        </Alert>
+      ) : null}
 
       {!isAuthenticated ? (
         <fieldset className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
