@@ -124,7 +124,7 @@ export interface ReviewSubmissionInput {
   repair_ticket_id?: string;
   rating: number;
   title?: string;
-  comment: string;
+  comment?: string;
   images?: string[];
 }
 
