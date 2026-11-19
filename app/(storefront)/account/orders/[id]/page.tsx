@@ -72,7 +72,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
       ) : null}
 
       {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_18px_rgba(15,23,42,0.045)] sm:p-6">
           <h2 className="mb-2 text-sm font-bold text-slate-950">Delivery address</h2>
           {order.delivery_snapshot.full_name ? <p>{order.delivery_snapshot.full_name}</p> : null}
           {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
@@ -91,7 +91,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </p>
       ) : null}
 
-      <section aria-label="Items in this order" className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <section aria-label="Items in this order" className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-[0_4px_18px_rgba(15,23,42,0.045)]">
         {order.items.map((item) => (
           <div key={item.id} className="flex flex-col gap-4 p-4 text-sm sm:flex-row sm:items-start sm:justify-between sm:p-5">
             <div className="flex min-w-0 gap-3">
