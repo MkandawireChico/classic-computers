@@ -30,8 +30,8 @@ export default async function ComparePage() {
 
   return (
     <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14"><div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-[#081827] p-5 text-white sm:p-7">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Compare products</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-gradient-to-r from-brand-50 via-white to-cyan-50 p-5 text-navy-900 sm:p-7">
+        <h1 className="text-2xl font-semibold tracking-tight text-navy-950">Compare products</h1>
         <ClearCompareButton />
       </div>
 
