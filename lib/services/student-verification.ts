@@ -25,11 +25,15 @@ export async function submitStudentVerification(formData: FormData): Promise<Stu
   const parsedKey = z.string().uuid().safeParse(formData.get("submissionKey")?.toString());
   if (!parsedKey.success) return { success: false, error: "Please refresh the form and try again." };
 
-  const { data: submitted } = await (supabase.from("student_verifications") as any)
+  const { data: submitted, error: submittedLookupError } = await (supabase.from("student_verifications") as any)
     .select("id")
     .eq("customer_id", user.id)
     .eq("submission_key", parsedKey.data)
     .maybeSingle();
+  if (submittedLookupError) {
+    console.error("submitStudentVerification idempotency lookup failed:", submittedLookupError.message);
+    return { success: false, error: "Could not verify your previous submission. Please try again." };
+  }
   if (submitted) {
     await deliverAdminEmailForRequest("student_verification", submitted.id);
     return { success: true, requestId: submitted.id };
@@ -46,12 +50,16 @@ export async function submitStudentVerification(formData: FormData): Promise<Stu
     return { success: false, error: parsed.error.issues[0]?.message ?? "Please check the form and try again." };
   }
 
-  const { data: existing } = await (supabase.from("student_verifications") as any)
+  const { data: existing, error: existingLookupError } = await (supabase.from("student_verifications") as any)
     .select("id, status")
     .eq("customer_id", user.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (existingLookupError) {
+    console.error("submitStudentVerification existing request lookup failed:", existingLookupError.message);
+    return { success: false, error: "Could not check your current verification status. Please try again." };
+  }
   if (existing && existing.status === "pending") {
     return { success: false, error: "You already have a verification request pending review." };
   }
@@ -87,12 +95,16 @@ export async function submitStudentVerification(formData: FormData): Promise<Stu
 
   if (error) {
     if (error.code === "23505") {
-      const { data: duplicate } = await (supabase.from("student_verifications") as any)
+      const { data: duplicate, error: duplicateLookupError } = await (supabase.from("student_verifications") as any)
         .select("id")
         .eq("customer_id", user.id)
         .eq("submission_key", parsedKey.data)
         .maybeSingle();
       if (documentPath) await supabase.storage.from("student-documents").remove([documentPath]);
+      if (duplicateLookupError) {
+        console.error("submitStudentVerification duplicate lookup failed:", duplicateLookupError.message);
+        return { success: false, error: "Could not confirm your submission. Please refresh and check your verification status." };
+      }
       if (duplicate) {
         await deliverAdminEmailForRequest("student_verification", duplicate.id);
         return { success: true, requestId: duplicate.id };
