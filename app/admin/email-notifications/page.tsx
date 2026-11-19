@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { RetryAdminEmailButton } from "@/components/admin/retry-admin-email-button";
 import { getMyPermissions } from "@/lib/auth/permissions";
 import { getAdminEmailOutboxForPermissions, type AdminEmailRequestType } from "@/lib/services/admin-email-outbox";
