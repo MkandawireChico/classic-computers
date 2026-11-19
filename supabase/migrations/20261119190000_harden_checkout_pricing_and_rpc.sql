@@ -65,7 +65,11 @@ begin
     raise exception 'Cart items cannot be moved between carts';
   end if;
 
-  v_cart_id := case when tg_op = 'DELETE' then old.cart_id else new.cart_id end;
+  if tg_op = 'DELETE' then
+    v_cart_id := old.cart_id;
+  else
+    v_cart_id := new.cart_id;
+  end if;
 
   select status into v_cart_status
     from public.carts
@@ -86,13 +90,15 @@ begin
     raise exception 'Cart has already been checked out';
   end if;
 
-  if tg_op <> 'DELETE' and new.variant_id is not null then
-    select product_id into v_variant_product_id
-      from public.product_variants
-      where id = new.variant_id;
+  if tg_op <> 'DELETE' then
+    if new.variant_id is not null then
+      select product_id into v_variant_product_id
+        from public.product_variants
+        where id = new.variant_id;
 
-    if not found or v_variant_product_id is distinct from new.product_id then
-      raise exception 'Selected configuration does not belong to this product';
+      if not found or v_variant_product_id is distinct from new.product_id then
+        raise exception 'Selected configuration does not belong to this product';
+      end if;
     end if;
   end if;
 
