@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ContentCallout, ContentPage, ContentSection } from "@/components/storefront/content-page";
 
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   description: "Answers about shopping, payments, delivery, rentals, repairs and student offers at Classic Computers.",
 };
 
-function Question({ title, children }: { title: string; children: React.ReactNode }) {
+function Question({ title, children }: { title: string; children: ReactNode }) {
   return (
     <details className="group border-b border-slate-200 py-4 last:border-b-0">
       <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-left text-sm font-bold text-slate-900 marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:text-base">
@@ -31,7 +32,7 @@ export default function FAQPage() {
           Browse the <Link href="/shop" className="font-semibold text-brand-800 underline underline-offset-4">product catalogue</Link>, open a product to review its price, availability and specifications, then add the item to your cart. At checkout, enter your details, select an available fulfilment option and choose one of the payment methods displayed.
         </Question>
         <Question title="Does the website show live stock quantities?">
-          Product pages show availability status rather than exact stock quantities. Stock is checked again during checkout. If an item becomes unavailable, the order process will ask you to review your cart.
+          Product pages show availability status rather than exact stock quantities. Stock is checked again during checkout. If an item is no longer available, checkout will not complete for it. Return to your cart to review its availability.
         </Question>
         <Question title="Which payment methods are available?">
           The methods enabled for your order appear during checkout. Some payment options use manual confirmation. Follow the payment instructions on your order confirmation and keep your payment reference. Never share a mobile money PIN, one-time password or card security code with anyone.
