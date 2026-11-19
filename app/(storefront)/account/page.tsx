@@ -30,15 +30,15 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <header className="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/50 p-5 shadow-sm sm:p-7">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-800">Your account</p>
-        <h1 className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 sm:text-3xl">
+      <header className="relative overflow-hidden rounded-[1.75rem] border border-slate-800 bg-slate-950 p-6 text-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:p-8">\n        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full border-[36px] border-cyan-300/10" />\n        <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 right-24 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />\n        <div className="relative">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-cyan-300">Customer dashboard</p>
+        <h1 className="mt-2 text-2xl font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-4xl">
           {summary.displayName ? `Welcome back, ${summary.displayName}` : "Your account overview"}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
           Your Classic Computers account, all in one place. Manage purchases and services, explore student benefits and stay updated.
         </p>
-        <Link href="/account/profile" className="mt-4 inline-flex min-h-10 items-center text-sm font-bold text-brand-800 underline decoration-brand-300 underline-offset-4 hover:text-navy-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
+        <Link href="/account/profile" className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">
           Manage your profile
         </Link>
       </header>
@@ -46,12 +46,12 @@ export default async function AccountOverviewPage() {
       {metrics.length > 0 ? (
         <section aria-label="Account summary" className="grid gap-3 sm:grid-cols-3">
           {metrics.map((metric) => (
-            <Link key={metric.label} href={metric.href} className="group flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 transition-colors hover:border-brand-200 hover:bg-brand-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:rounded-xl sm:border sm:p-5">
+            <Link key={metric.label} href={metric.href} className="group flex min-h-[112px] items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-[0_3px_14px_rgba(15,23,42,0.04)] transition-all hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:p-5">
               <span>
                 <span className="block text-sm font-semibold text-slate-700">{metric.label}</span>
                 <span className="mt-1 block text-xs text-slate-500">{metric.detail}</span>
               </span>
-              <span className="text-3xl font-extrabold tabular-nums text-slate-950 group-hover:text-brand-900">{metric.value}</span>
+              <span className="text-3xl font-extrabold tracking-tight tabular-nums text-slate-950 group-hover:text-brand-900">{metric.value}</span>
             </Link>
           ))}
         </section>
@@ -62,7 +62,7 @@ export default async function AccountOverviewPage() {
           <h2 id="account-shortcuts-heading" className="text-lg font-extrabold text-slate-950">Useful shortcuts</h2>
           <p className="mt-1 text-sm text-slate-600">Pick up where you need to.</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
           {[
             ["/shop", "Browse products"],
             ["/repairs/book", "Book a repair"],
@@ -70,7 +70,7 @@ export default async function AccountOverviewPage() {
             ["/account/student-verification", "Student benefits"],
             ["/corporate/enquire", "Request a quote"],
           ].map(([href, label]) => (
-            <Link key={href as string} href={href as string} className="flex min-h-12 items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 transition-colors hover:border-brand-200 hover:bg-brand-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-4">
+            <Link key={href as string} href={href as string} className="flex min-h-[76px] items-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-bold text-slate-800 shadow-[0_2px_10px_rgba(15,23,42,0.03)] transition-all hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:px-4">
               <span>{label}</span>
             </Link>
           ))}
