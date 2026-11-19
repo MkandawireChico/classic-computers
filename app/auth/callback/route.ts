@@ -14,8 +14,9 @@ export async function GET(request: Request) {
     const token_hash = searchParams.get("token_hash");
     const type = searchParams.get("type") as EmailOtpType | null;
 
-    const defaultNext = type === "recovery" ? "/update-password" : type === "signup" ? "/account" : "/sign-in";
     const requestedNext = searchParams.get("next");
+    const isRecoveryFlow = type === "recovery" || requestedNext === "/update-password";
+    const defaultNext = isRecoveryFlow ? "/update-password" : type === "signup" ? "/account" : "/sign-in";
     const next =
       requestedNext && requestedNext.startsWith("/") && !requestedNext.startsWith("//") && requestedNext !== "/"
         ? requestedNext
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
       }
 
       console.error("exchangeCodeForSession error:", { message: error?.message, type });
-      if (type === "recovery") {
+      if (isRecoveryFlow) {
         return NextResponse.redirect(getAuthRedirectUrl(`/reset-password?error=${encodeURIComponent(PASSWORD_RESET_ERROR)}`));
       }
       const message = type === "signup" ? SIGNUP_CONFIRMATION_ERROR : "Could not complete sign-in. Please try again.";
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
 
       console.error("verifyOtp error:", { message: error?.message, type });
 
-      if (type === "recovery") {
+      if (isRecoveryFlow) {
         return NextResponse.redirect(getAuthRedirectUrl(`/reset-password?error=${encodeURIComponent(PASSWORD_RESET_ERROR)}`));
       }
 
