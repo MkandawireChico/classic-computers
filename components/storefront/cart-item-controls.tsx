@@ -1,22 +1,25 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateCartItemQuantityAction, removeCartItemAction } from "@/app/(storefront)/cart/actions";
 
 export function CartItemControls({ cartItemId, quantity }: { cartItemId: string; quantity: number }) {
   const router = useRouter();
   const [value, setValue] = useState(quantity);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => setValue(quantity), [quantity]);
 
-  function commitQuantity(next: number) {
+  async function commitQuantity(next: number) {
+    if (isPending) return;
     const clamped = Math.max(1, Math.min(20, next));
     setError(null);
     setValue(clamped);
-    startTransition(async () => {
+    setIsPending(true);
+
+    try {
       const result = await updateCartItemQuantityAction({ cartItemId, quantity: clamped });
       if (!result.success) {
         setValue(quantity);
@@ -24,19 +27,33 @@ export function CartItemControls({ cartItemId, quantity }: { cartItemId: string;
         return;
       }
       router.refresh();
-    });
+    } catch (err) {
+      console.error("Cart quantity update failed:", err);
+      setValue(quantity);
+      setError("Could not update quantity. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
-  function handleRemove() {
+  async function handleRemove() {
+    if (isPending) return;
     setError(null);
-    startTransition(async () => {
+    setIsPending(true);
+
+    try {
       const result = await removeCartItemAction({ cartItemId });
       if (!result.success) {
         setError(result.error);
         return;
       }
       router.refresh();
-    });
+    } catch (err) {
+      console.error("Cart item removal failed:", err);
+      setError("Could not remove item. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
