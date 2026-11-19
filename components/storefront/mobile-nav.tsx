@@ -33,6 +33,7 @@ export function MobileNav({
   useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
     document.body.style.overflow = "hidden";
 
     const getFocusableElements = () =>
@@ -59,6 +60,7 @@ export function MobileNav({
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
       const active = document.activeElement;
 
       if (event.shiftKey && (active === first || !dialogRef.current?.contains(active))) {
@@ -74,7 +76,7 @@ export function MobileNav({
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleDialogKeyDown);
-      menuButtonRef.current?.focus();
+      menuButton?.focus();
     };
   }, [open]);
 
