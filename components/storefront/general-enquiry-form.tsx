@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { submitGeneralEnquiryAction } from "./actions";
@@ -16,7 +16,11 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
   const [submitted, setSubmitted] = useState(false);
   const submissionKey = useRef<string | null>(null);
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isPending) return;
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     setError(null);
     const phone = formData.get("phone")?.toString().trim() ?? "";
     const email = formData.get("email")?.toString().trim() ?? "";
@@ -42,7 +46,12 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
         setError(result.error);
         return;
       }
-      markSubmissionComplete("general-enquiry");
+      try {
+        markSubmissionComplete("general-enquiry");
+      } catch (storageError) {
+        console.warn("Enquiry submission marker could not be saved:", storageError);
+      }
+      form.reset();
       setSubmitted(true);
     } catch {
       setError("We couldn't send your message. Check your connection and try again.");
@@ -79,8 +88,8 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
   }
 
   return (
-    <form action={handleSubmit} className="space-y-8">
-      {error ? <Alert variant="danger">{error}</Alert> : null}
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {error ? <div role="alert" aria-live="assertive"><Alert variant="danger">{error}</Alert></div> : null}
 
       {/* Your Information Section */}
       <div className="space-y-5">
@@ -146,6 +155,8 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
           >
             <option value="product">Product enquiry</option>
+            <option value="stock">Product availability and stock</option>
+            <option value="pricing">Pricing</option>
             <option value="rental">Laptop rental</option>
             <option value="corporate">Corporate supply</option>
             <option value="repair">Repairs and technical support</option>
@@ -162,6 +173,7 @@ export function GeneralEnquiryForm({ isAuthenticated }: { isAuthenticated: boole
             name="message"
             required
             rows={5}
+            maxLength={2000}
             placeholder="How can we help you?"
             className="w-full resize-none rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
           />
