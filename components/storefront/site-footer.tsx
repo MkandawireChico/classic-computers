@@ -168,7 +168,7 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-200">
                       Hours
                     </p>
                     <p className="mt-1 text-sm text-slate-100">{hours.schedule}</p>
@@ -190,7 +190,7 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-200">
                       Phone
                     </p>
                     <a
@@ -224,7 +224,7 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-200">
                       Email
                     </p>
                     <a
@@ -257,7 +257,7 @@ export async function SiteFooter() {
                     </svg>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-200">
                       WhatsApp
                     </p>
                     <span className="mt-1 block break-words text-sm font-bold text-white transition-colors group-hover:text-brand-200">
