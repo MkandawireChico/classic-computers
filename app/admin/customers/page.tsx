@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { listAdminCustomers, type CustomerActivityFilter } from "@/lib/data/admin/customers";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
@@ -39,7 +40,7 @@ export default async function AdminCustomersPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Customers</h1>
+      <AdminPageHeader eyebrow="Commerce · Customer records" title="Customers" description="Review customer accounts and their store activity." />
       {invalidDateFilter ? <p role="status" className="mb-3 rounded-card bg-amber-50 p-3 text-sm text-amber-900">The registration date range is invalid. The date filter was ignored.</p> : null}
 
       <form className="mb-4 grid gap-2 rounded-card border border-surface-border bg-white p-3 sm:grid-cols-2 xl:grid-cols-5" method="get">
@@ -66,7 +67,7 @@ export default async function AdminCustomersPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-card border border-surface-border">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[1120px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
