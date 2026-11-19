@@ -3,7 +3,6 @@ import { getMyPermissions } from "@/lib/auth/permissions";
 import {
   getDashboardStats,
   getRecentOrders,
-  getRecentCustomers,
   getRecentReviews,
   getRecentInventoryMovements,
 } from "@/lib/data/admin/dashboard";
@@ -11,6 +10,7 @@ import { StatCard } from "@/components/admin/stat-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
+import { listAdminCustomers } from "@/lib/data/admin/customers";
 
 const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
   pending: "warning",
@@ -32,12 +32,13 @@ export default async function AdminDashboardPage() {
   const canSeeRepairs = permissions.has("repairs.read");
   const canSeeRentals = permissions.has("rentals.read");
   const canSeeStudents = permissions.has("students.read");
-  const canSeeReports = permissions.has("reports.read") || canSeeOrders;
+  const canSeeReports = permissions.has("reports.read");
+  const canSeeSales = canSeeOrders;
 
   const [stats, recentOrders, recentCustomers, recentReviews, recentMovements] = await Promise.all([
     getDashboardStats({
       orders: canSeeOrders,
-      sales: canSeeReports,
+      sales: canSeeSales,
       inventory: canSeeInventory,
       enquiries: canSeeCustomers,
       repairs: canSeeRepairs,
@@ -45,7 +46,7 @@ export default async function AdminDashboardPage() {
       students: canSeeStudents,
     }),
     canSeeOrders ? getRecentOrders() : Promise.resolve([]),
-    canSeeCustomers ? getRecentCustomers() : Promise.resolve([]),
+    canSeeCustomers ? listAdminCustomers({ page: 1, pageSize: 5 }).then((result) => result.items) : Promise.resolve([]),
     canSeeReviews ? getRecentReviews() : Promise.resolve([]),
     canSeeInventory ? getRecentInventoryMovements() : Promise.resolve([]),
   ]);
@@ -56,6 +57,7 @@ export default async function AdminDashboardPage() {
     canSeeRepairs ? { href: "/admin/repairs", label: "Repair queue", description: "Review open repair tickets" } : null,
     canSeeRentals ? { href: "/admin/rentals", label: "Rental bookings", description: "Review active rental activity" } : null,
     canSeeCustomers ? { href: "/admin/enquiries", label: "Customer enquiries", description: "Respond to incoming requests" } : null,
+    canSeeReports ? { href: "/admin/analytics", label: "Customer interest analytics", description: "Review opted-in storefront activity" } : null,
     canSeeStudents ? { href: "/admin/students", label: "Student verification", description: "Review pending applications" } : null,
   ].filter((item): item is { href: string; label: string; description: string } => item !== null);
 
@@ -87,7 +89,7 @@ export default async function AdminDashboardPage() {
             <StatCard label="Awaiting action" value={stats.ordersAwaitingAction} description="Confirmed or processing" />
           </>
         ) : null}
-        {canSeeReports ? <StatCard label="Completed sales" value={formatMoney(stats.salesTotalMwk)} description="Completed orders · MWK" /> : null}
+        {canSeeSales ? <StatCard label="Completed sales" value={formatMoney(stats.salesTotalMwk)} description="Completed orders · MWK" /> : null}
         {canSeeInventory ? (
           <>
             <StatCard label="Low stock" value={stats.lowStockCount} tone={stats.lowStockCount > 0 ? "warning" : undefined} description="Below the stock threshold" />

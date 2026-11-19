@@ -22,12 +22,6 @@ export interface RecentOrder {
   total: number;
 }
 
-export interface RecentCustomer {
-  id: string;
-  full_name: string | null;
-  created_at: string;
-}
-
 export interface RecentReview {
   id: string;
   rating: number;
@@ -45,9 +39,9 @@ export interface RecentMovement {
 }
 
 /**
- * Every count here uses `{ count: "exact", head: true }` — Postgres/
- * PostgREST returns just the row count, never the rows themselves, so
- * this never pulls a full table into memory just to display a number.
+ * Count queries request exact row counts without loading full result sets.
+ * The completed-sales summary is the exception because the current schema
+ * has no dedicated aggregate RPC for this dashboard metric.
  */
 export interface DashboardAccess {
   orders: boolean;
@@ -134,23 +128,6 @@ export async function getRecentOrders(limit = 5): Promise<RecentOrder[]> {
     throw new Error("Could not load recent orders. Please refresh the page and try again.");
   }
   return data ?? [];
-}
-
-export async function getRecentCustomers(limit = 5): Promise<RecentCustomer[]> {
-  const supabase = createClient();
-  const { data, error } = await (supabase.from("customers") as any)
-    .select("id, created_at, profiles ( full_name )")
-    .order("created_at", { ascending: false })
-    .limit(limit);
-  if (error) {
-    console.error("getRecentCustomers failed:", error.message);
-    throw new Error("Could not load recent customers. Please refresh the page and try again.");
-  }
-  return (data ?? []).map((row: any) => ({
-    id: row.id,
-    full_name: row.profiles?.full_name ?? null,
-    created_at: row.created_at,
-  }));
 }
 
 export async function getRecentReviews(limit = 5): Promise<RecentReview[]> {
