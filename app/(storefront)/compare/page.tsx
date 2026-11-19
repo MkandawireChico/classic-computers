@@ -46,6 +46,7 @@ export default async function ComparePage() {
 
       <div className="overflow-x-auto p-4 sm:p-6">
         <table className="w-full min-w-[600px] border-collapse text-sm">
+          <caption className="sr-only">Side-by-side comparison of selected products, including condition, price, availability and specifications.</caption>
           <thead>
             <tr>
               <th className="w-40 p-2 text-left" scope="col">
@@ -64,11 +65,18 @@ export default async function ComparePage() {
                     {product.name}
                   </Link>
                   {product.brandName ? <p className="mt-1 text-xs text-gray-500">{product.brandName}</p> : null}
+                  <RemoveComparedProductButton productId={product.id} />
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
+            <tr className="border-t border-surface-border bg-surface-muted">
+              <th scope="row" className="p-2 text-left font-medium text-gray-700">Product type</th>
+              {products.map((product) => (
+                <td key={product.id} className="p-2 capitalize text-gray-800">{product.productType.replaceAll("_", " ")}</td>
+              ))}
+            </tr>
             <tr className="border-t border-surface-border">
               <th scope="row" className="p-2 text-left font-medium text-gray-700">
                 Condition
