@@ -32,7 +32,7 @@ export default function ReturnsPage() {
             <li key={item} className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
               <span
                 aria-hidden="true"
-                className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800"
+                className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-800"
               >
                 ✓
               </span>

@@ -32,12 +32,12 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
     <section aria-labelledby={`${reviewType}-reviews-heading`} className="section-shell py-10 sm:py-12">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Customer feedback</p>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Customer feedback</p>
           <h2 id={`${reviewType}-reviews-heading`} className="mt-1 text-2xl font-extrabold text-slate-950">
             {labels.heading}
           </h2>
         </div>
-        <Link href={`/reviews?type=${reviewType}`} className="text-sm font-semibold text-emerald-800 underline underline-offset-4">
+        <Link href={`/reviews?type=${reviewType}`} className="text-sm font-semibold text-brand-800 underline underline-offset-4">
           View all
         </Link>
       </div>
@@ -60,7 +60,7 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <Stars rating={review.rating} />
                   {review.verified_purchase ? (
-                    <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-800">Verified transaction</span>
+                    <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-brand-800">Verified transaction</span>
                   ) : null}
                 </div>
                 {review.title ? <h3 className="mt-3 font-bold text-slate-950">{review.title}</h3> : null}
@@ -86,7 +86,7 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
           </p>
           <Link
             href={user ? "/account/reviews/write" : "/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite"}
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800"
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-4 text-sm font-bold text-white hover:bg-brand-800"
           >
             {user ? "Write a review" : "Sign in to write a review"}
           </Link>

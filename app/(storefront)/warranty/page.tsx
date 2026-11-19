@@ -16,8 +16,8 @@ export default function WarrantyPage() {
       description="Warranty coverage depends on the product, its condition and the terms shown for that specific item. Keep your proof of purchase and contact us if you experience a fault."
     >
       <section aria-label="Laptop warranty coverage" className="grid gap-4 md:grid-cols-2">
-        <article className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white p-5 shadow-sm sm:p-7">
-          <span className="inline-flex rounded-full bg-brand-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-800">
+        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-800">
             New, sealed laptops
           </span>
           <h2 className="mt-4 text-2xl font-black text-slate-900">Manufacturer warranty</h2>
@@ -27,8 +27,8 @@ export default function WarrantyPage() {
             before purchase.
           </p>
         </article>
-        <article className="rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-5 shadow-sm sm:p-7">
-          <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-900">
+        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-700">
             Pre-owned laptops
           </span>
           <h2 className="mt-4 text-2xl font-black text-slate-900">Three-month coverage</h2>
