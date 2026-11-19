@@ -14,10 +14,14 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
   } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const { data: wishlist } = await (supabase.from("wishlists") as any)
+  const { data: wishlist, error: wishlistError } = await (supabase.from("wishlists") as any)
     .select("id")
     .eq("customer_id", user.id)
     .maybeSingle();
+  if (wishlistError) {
+    console.error("getWishlistWithProducts wishlist lookup failed:", wishlistError.message);
+    throw new Error("Could not load your wishlist. Please refresh the page and try again.");
+  }
   if (!wishlist) return [];
 
   const { data, error } = await (supabase
@@ -37,7 +41,7 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
 
   if (error) {
     console.error("getWishlistWithProducts failed:", error.message);
-    return [];
+    throw new Error("Could not load your wishlist items. Please refresh the page and try again.");
   }
 
   return (data ?? [])
