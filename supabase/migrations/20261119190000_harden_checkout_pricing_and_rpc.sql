@@ -47,6 +47,67 @@ alter table public.discounts validate constraint discounts_min_quantity_positive
 alter table public.discounts validate constraint discounts_min_order_total_positive;
 alter table public.discounts validate constraint discounts_max_discount_amount_positive;
 
+-- Keep cart mutations serialized against order creation. create_order()
+-- locks the parent cart row; this trigger takes the same lock for item
+-- inserts/updates/deletes. A mutation either completes before checkout reads
+-- the cart, or waits until checkout commits and then sees a converted cart.
+create or replace function public.guard_active_cart_item_mutation()
+returns trigger
+language plpgsql
+set search_path = pg_catalog, public, pg_temp
+as $
+declare
+  v_cart_id uuid;
+  v_cart_status public.cart_status_enum;
+  v_variant_product_id uuid;
+begin
+  if tg_op = 'UPDATE' and new.cart_id is distinct from old.cart_id then
+    raise exception 'Cart items cannot be moved between carts';
+  end if;
+
+  v_cart_id := case when tg_op = 'DELETE' then old.cart_id else new.cart_id end;
+
+  select status into v_cart_status
+    from public.carts
+    where id = v_cart_id
+    for update;
+
+  -- A parent-cart deletion cascades to cart_items after the parent row
+  -- disappears. Permit only that cascading DELETE; all ordinary mutations
+  -- require an existing active cart.
+  if not found then
+    if tg_op = 'DELETE' then
+      return old;
+    end if;
+    raise exception 'Cart is no longer available';
+  end if;
+
+  if v_cart_status <> 'active' then
+    raise exception 'Cart has already been checked out';
+  end if;
+
+  if tg_op <> 'DELETE' and new.variant_id is not null then
+    select product_id into v_variant_product_id
+      from public.product_variants
+      where id = new.variant_id;
+
+    if not found or v_variant_product_id is distinct from new.product_id then
+      raise exception 'Selected configuration does not belong to this product';
+    end if;
+  end if;
+
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
+  return new;
+end;
+$;
+
+drop trigger if exists cart_items_active_cart_guard on public.cart_items;
+create trigger cart_items_active_cart_guard
+  before insert or update or delete on public.cart_items
+  for each row execute function public.guard_active_cart_item_mutation();
+
 -- Replace the latest 12-argument create_order() implementation from 0058.
 -- Preserve delivery snapshots, student eligibility, product-scoped student
 -- offers, discount limits, inventory movements, notifications and grants.
