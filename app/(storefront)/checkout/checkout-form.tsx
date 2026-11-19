@@ -44,10 +44,10 @@ const PAYMENT_DESCRIPTIONS: Record<PaymentMethod, string> = {
 };
 
 const PAYMENT_ACCENTS: Record<PaymentMethod, string> = {
-  pay_at_shop: "border-cyan-300 bg-cyan-50 text-cyan-900",
-  bank_transfer: "border-cyan-300 bg-cyan-50 text-cyan-900",
-  mobile_money: "border-rose-300 bg-rose-50 text-rose-900",
-  cash_on_delivery: "border-amber-300 bg-amber-50 text-amber-950",
+  pay_at_shop: "border-brand-300 bg-brand-50 text-brand-950",
+  bank_transfer: "border-brand-300 bg-brand-50 text-brand-950",
+  mobile_money: "border-brand-300 bg-brand-50 text-brand-950",
+  cash_on_delivery: "border-brand-300 bg-brand-50 text-brand-950",
 };
 
 export function CheckoutForm({
@@ -141,12 +141,12 @@ export function CheckoutForm({
     <form action={handleSubmit} className="space-y-6 sm:space-y-8">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
-      <div className="rounded-3xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 via-white to-amber-50/50 p-6 shadow-lg shadow-amber-900/5 sm:p-8">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
         <p className="text-lg font-extrabold text-slate-900 sm:text-xl">
-          <span className="text-cyan-800">
+          <span className="text-brand-800">
             {itemCount} item{itemCount === 1 ? "" : "s"}
           </span>
-          <span className="mx-2 text-amber-600" aria-hidden="true">
+          <span className="mx-2 text-slate-400" aria-hidden="true">
             ·
           </span>
           subtotal {formatMoney(subtotal)}
@@ -157,8 +157,8 @@ export function CheckoutForm({
       </div>
 
       {!isAuthenticated ? (
-        <fieldset className="space-y-5 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50/50 via-white to-cyan-50/30 p-6 shadow-lg shadow-cyan-900/5 sm:p-8">
-          <legend className="px-3 text-lg font-extrabold text-cyan-900">Your details</legend>
+        <fieldset className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+          <legend className="px-3 text-lg font-extrabold text-navy-950">Your details</legend>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="guestName" className="text-sm font-bold text-slate-700">
@@ -168,7 +168,7 @@ export function CheckoutForm({
                 id="guestName"
                 name="guestName"
                 required
-                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </div>
             <div className="space-y-2">
@@ -179,7 +179,7 @@ export function CheckoutForm({
                 id="guestPhone"
                 name="guestPhone"
                 required
-                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
@@ -190,41 +190,41 @@ export function CheckoutForm({
                 id="guestEmail"
                 name="guestEmail"
                 type="email"
-                className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </div>
           </div>
         </fieldset>
       ) : (
-        <p className="rounded-3xl border-2 border-cyan-200 bg-gradient-to-r from-cyan-50/50 to-white p-6 text-base text-slate-700 shadow-lg shadow-cyan-900/5 sm:p-8">
-          Ordering as <span className="font-extrabold text-cyan-900">{userEmail}</span>
+        <p className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700">
+          Ordering as <span className="font-extrabold text-navy-950">{userEmail}</span>
         </p>
       )}
 
-      <fieldset className="space-y-4 rounded-3xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50/50 via-white to-cyan-50/30 p-6 shadow-lg shadow-cyan-900/5 sm:p-8">
-        <legend className="px-3 text-lg font-extrabold text-cyan-900">Fulfillment</legend>
+      <fieldset className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+        <legend className="px-3 text-lg font-extrabold text-navy-950">Fulfillment</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-cyan-500 bg-cyan-50 text-cyan-950 shadow-md shadow-cyan-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-cyan-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-xl border px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "pickup" ? "border-brand-500 bg-brand-50 text-brand-950" : "border-slate-200 bg-white text-slate-700 hover:border-brand-300"}`}
           >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "pickup"}
               onChange={() => setFulfillmentType("pickup")}
-              className="h-5 w-5 accent-cyan-700 focus:ring-cyan-500"
+              className="h-5 w-5 accent-brand-700 focus:ring-brand-500"
             />
             Pickup in-store
           </label>
           <label
-            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-cyan-500 bg-cyan-50 text-cyan-950 shadow-md shadow-cyan-900/10" : "border-slate-200 bg-white text-slate-700 hover:border-cyan-300 hover:shadow-md"}`}
+            className={`flex min-h-14 cursor-pointer items-center gap-4 rounded-xl border px-5 py-4 text-sm font-bold transition-all duration-300 ${fulfillmentType === "delivery" ? "border-brand-500 bg-brand-50 text-brand-950" : "border-slate-200 bg-white text-slate-700 hover:border-brand-300"}`}
           >
             <input
               type="radio"
               name="fulfillmentTypeChoice"
               checked={fulfillmentType === "delivery"}
               onChange={() => setFulfillmentType("delivery")}
-              className="h-5 w-5 accent-cyan-700 focus:ring-cyan-500"
+              className="h-5 w-5 accent-brand-700 focus:ring-brand-500"
             />
             Delivery
           </label>
@@ -241,7 +241,7 @@ export function CheckoutForm({
                   id="deliveryAddressId"
                   name="deliveryAddressId"
                   defaultValue={defaultAddressId}
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 >
                   {addresses.map((address) => (
                     <option key={address.id} value={address.id}>
@@ -270,7 +270,7 @@ export function CheckoutForm({
                   id="guestDeliveryLine1"
                   name="guestDeliveryLine1"
                   required
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 />
               </div>
               <div className="space-y-2">
@@ -280,7 +280,7 @@ export function CheckoutForm({
                 <input
                   id="guestDeliveryLine2"
                   name="guestDeliveryLine2"
-                  className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -292,7 +292,7 @@ export function CheckoutForm({
                     id="guestDeliveryCity"
                     name="guestDeliveryCity"
                     required
-                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -305,7 +305,7 @@ export function CheckoutForm({
                   <input
                     id="guestDeliveryDistrict"
                     name="guestDeliveryDistrict"
-                    className="w-full rounded-2xl border-2 border-cyan-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-100"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                 </div>
               </div>
@@ -314,16 +314,16 @@ export function CheckoutForm({
         ) : null}
       </fieldset>
 
-      <fieldset className="space-y-5 rounded-3xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 p-6 shadow-lg shadow-amber-900/5 sm:p-8">
-        <legend className="px-3 text-lg font-extrabold text-amber-900">Payment method</legend>
+      <fieldset className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+        <legend className="px-3 text-lg font-extrabold text-navy-950">Payment method</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           {enabledMethods.map((method) => (
             <label
               key={method}
-              className={`flex min-h-[100px] cursor-pointer items-start gap-4 rounded-2xl border-2 p-5 transition-all duration-300 focus-within:ring-4 focus-within:ring-amber-500 focus-within:ring-offset-2 ${
+              className={`flex min-h-[100px] cursor-pointer items-start gap-4 rounded-2xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-brand-500 focus-within:ring-offset-2 ${
                 selectedMethod === method
                   ? PAYMENT_ACCENTS[method] + " shadow-lg shadow-slate-900/5 hover:-translate-y-0.5"
-                  : "border-slate-200 bg-white text-slate-800 hover:border-amber-300 hover:shadow-md"
+                  : "border-slate-200 bg-white text-slate-800 hover:border-brand-300"
               }`}
             >
               <input
@@ -337,7 +337,7 @@ export function CheckoutForm({
                   trackInterestEvent({ name: "payment_method_selected", paymentMethod: method });
                 }}
                 required
-                className="mt-1 h-5 w-5 shrink-0 accent-amber-700 focus:ring-amber-500"
+                className="mt-1 h-5 w-5 shrink-0 accent-brand-700 focus:ring-brand-500"
               />
               <span>
                 <span className="block text-base font-extrabold">{PAYMENT_LABELS[method]}</span>
@@ -402,7 +402,7 @@ export function CheckoutForm({
         ) : null}
       </fieldset>
 
-      <div className="space-y-2 rounded-3xl border-2 border-rose-200 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/30 p-6 shadow-lg shadow-rose-900/5 sm:p-8">
+      <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
         <label htmlFor="notes" className="text-sm font-bold text-rose-900">
           Order notes (optional)
         </label>
@@ -410,7 +410,7 @@ export function CheckoutForm({
           id="notes"
           name="notes"
           rows={3}
-          className="w-full rounded-2xl border-2 border-rose-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-100"
+          className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm font-medium transition-all focus:border-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-100"
         />
       </div>
 
@@ -423,7 +423,7 @@ export function CheckoutForm({
             !selectedProvider) ||
           (fulfillmentType === "delivery" && isAuthenticated && addresses.length === 0)
         }
-        className="min-h-14 w-full rounded-2xl bg-cyan-700 px-8 py-4 text-lg font-extrabold text-white shadow-xl shadow-cyan-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-800 hover:shadow-2xl"
+        className="min-h-14 w-full rounded-2xl bg-[#123653] px-8 py-4 text-base font-extrabold text-white shadow-sm transition-colors hover:bg-brand-800"
       >
         Place order
       </Button>
@@ -442,11 +442,11 @@ function ProviderPanel({
 }) {
   const styles =
     accent === "emerald"
-      ? "border-cyan-300 bg-gradient-to-br from-cyan-50/80 to-white"
-      : "border-rose-300 bg-gradient-to-br from-rose-50/80 to-white";
+      ? "border-slate-200 bg-white"
+      : "border-slate-200 bg-white";
 
   return (
-    <div className={`space-y-5 rounded-3xl border-2 p-6 shadow-lg ${styles} sm:p-7`}>
+    <div className={`space-y-5 rounded-xl border p-5 ${styles} sm:p-7`}>
       <h3 className="text-base font-extrabold text-slate-900">{title}</h3>
       {children}
     </div>
@@ -468,15 +468,15 @@ function ProviderChoice({
 }) {
   const selectedStyle =
     accent === "emerald"
-      ? "border-cyan-500 bg-white text-cyan-950 ring-2 ring-cyan-200 shadow-md shadow-cyan-900/10"
-      : "border-rose-500 bg-white text-rose-950 ring-2 ring-rose-200 shadow-md shadow-rose-900/10";
+      ? "border-brand-500 bg-brand-50 text-brand-950 ring-1 ring-brand-200"
+      : "border-brand-500 bg-brand-50 text-brand-950 ring-1 ring-brand-200";
 
   return (
     <button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`flex min-h-16 items-center justify-between gap-4 rounded-2xl border-2 px-5 py-4 text-left text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-700 focus-visible:ring-offset-2 ${
+      className={`flex min-h-16 items-center justify-between gap-4 rounded-xl border px-5 py-4 text-left text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-700 focus-visible:ring-offset-2 ${
         selected
           ? selectedStyle + " hover:-translate-y-0.5"
           : "border-slate-200 bg-white/90 text-slate-800 hover:border-slate-300 hover:shadow-md"
@@ -513,9 +513,9 @@ function BankDetails({
   ].join("\n");
 
   return (
-    <div className="space-y-4 rounded-2xl border border-cyan-200 bg-white p-4 sm:p-5">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">
           Bank transfer details
         </p>
         <h4 className="mt-1 text-lg font-extrabold text-slate-900">{provider.name}</h4>
@@ -526,7 +526,7 @@ function BankDetails({
         <PaymentDetail label="Branch" value={provider.branch} />
         <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
       </dl>
-      <p className="rounded-xl bg-cyan-50 p-3 text-sm leading-relaxed text-cyan-950">
+      <p className="rounded-xl bg-brand-50 p-3 text-sm leading-relaxed text-brand-950">
         Place your order first. Then transfer the exact final total shown on the order confirmation
         and keep your bank transaction reference. Your order remains unpaid until the transfer is
         verified.
@@ -544,7 +544,7 @@ function BankDetails({
           name="paymentReference"
           maxLength={120}
           autoComplete="off"
-          className="w-full rounded-xl border border-cyan-200 bg-white px-3 py-2.5 text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-100"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
       </div>
     </div>
@@ -566,7 +566,7 @@ function MobileMoneyDetails({
   ].join("\n");
 
   return (
-    <div className="space-y-4 rounded-2xl border border-rose-200 bg-white p-4 sm:p-5">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-rose-800">
           Mobile-money details
@@ -578,7 +578,7 @@ function MobileMoneyDetails({
         <PaymentDetail label="Account holder" value={provider.accountHolder} />
         <PaymentDetail label="Current cart subtotal" value={formatMoney(subtotal)} />
       </dl>
-      <p className="rounded-xl bg-rose-50 p-3 text-sm leading-relaxed text-rose-950">
+      <p className="rounded-xl bg-brand-50 p-3 text-sm leading-relaxed text-brand-950">
         Place your order, then use your provider&apos;s normal transfer process to send the exact
         final total shown on the confirmation page. Keep your transaction ID. Your order remains
         unpaid until the payment is verified.
@@ -596,7 +596,7 @@ function MobileMoneyDetails({
           name="paymentReference"
           maxLength={120}
           autoComplete="off"
-          className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-100"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
       </div>
     </div>
