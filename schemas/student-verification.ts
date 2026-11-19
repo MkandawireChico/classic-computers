@@ -1,20 +1,15 @@
 import { z } from "zod";
 
 export const studentVerificationSchema = z.object({
-  fullName: z.string().trim().min(2, "Full name is required"),
-  institution: z.string().trim().min(2, "Institution is required"),
-  studentIdNumber: z.string().trim().min(1, "Student ID is required"),
-  phone: z.string().trim().min(6, "Phone is required"),
+  fullName: z.string().trim().min(2, "Full name is required").max(120, "Name must be 120 characters or fewer"),
+  institution: z.string().trim().min(2, "Institution is required").max(160, "Institution name must be 160 characters or fewer"),
+  studentIdNumber: z.string().trim().min(1, "Student ID is required").max(80, "Student ID must be 80 characters or fewer"),
+  phone: z.string().trim().min(6, "Phone is required").max(30, "Phone number must be 30 characters or fewer"),
   email: z
     .string()
     .trim()
     .email("Enter a valid email")
-    .refine((email) => {
-      const domainLabels = email.split("@")[1]?.toLowerCase().split(".") ?? [];
-      return ["mubas", "must", "cu", "unima", "luanar"].some((institution) =>
-        domainLabels.includes(institution),
-      );
-    }, "Use an email address from your institution (MUBAS, MUST, CU, UNIMA, or LUANAR)."),
+    .max(254, "Email address is too long"),
 });
 
 export type StudentVerificationInput = z.infer<typeof studentVerificationSchema>;
