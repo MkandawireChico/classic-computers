@@ -73,7 +73,7 @@ export async function getMyOrders(): Promise<OrderListItem[]> {
 
   if (error) {
     console.error("getMyOrders failed:", error.message);
-    return [];
+    throw new Error("Could not load your orders. Please refresh the page and try again.");
   }
   return (data ?? []).map((order: any) => ({ ...order, items: order.order_items ?? [] }));
 }
@@ -95,9 +95,13 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
     .eq("id", orderId)
     .maybeSingle();
 
-  if (error || !order) return null;
+  if (error) {
+    console.error("getMyOrderById failed:", error.message);
+    throw new Error("Could not load this order. Please refresh the page and try again.");
+  }
+  if (!order) return null;
 
-  const [{ data: items }, { data: history }] = await Promise.all([
+  const [itemsResult, historyResult] = await Promise.all([
     (supabase.from("order_items") as any)
       .select("id, product_id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total, product:products(product_images(storage_path, alt_text, is_primary, display_order, variant_id))")
       .eq("order_id", orderId),
@@ -106,6 +110,15 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
       .eq("order_id", orderId)
       .order("created_at", { ascending: true }),
   ]);
+  if (itemsResult.error || historyResult.error) {
+    console.error("getMyOrderById related data failed:", {
+      items: itemsResult.error?.message,
+      history: historyResult.error?.message,
+    });
+    throw new Error("Could not load the full order history. Please refresh the page and try again.");
+  }
+  const items = itemsResult.data;
+  const history = historyResult.data;
 
   const orderItems = (items ?? []).map((item: any) => {
     const images = item.product?.product_images ?? [];
