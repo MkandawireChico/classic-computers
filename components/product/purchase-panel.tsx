@@ -36,13 +36,19 @@ export function PurchasePanel({
   }>;
 }) {
   const hasVariants = product.variants.length > 0;
-  const defaultVariant = product.variants.find((v) => v.is_default) ?? product.variants[0] ?? null;
+  const activeVariants = useMemo(
+    () => product.variants.filter((variant) => variant.status === "active"),
+    [product.variants],
+  );
+  const defaultVariant =
+    activeVariants.find((variant) => variant.is_default) ?? activeVariants[0] ?? null;
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(defaultVariant?.id ?? null);
 
-  const selectedVariant = useMemo(
-    () => product.variants.find((v) => v.id === selectedVariantId) ?? null,
-    [product.variants, selectedVariantId],
-  );
+  // Resolve against the current active list. A stale/default discontinued
+  // variant must never become the selected purchase configuration.
+  const selectedVariant =
+    activeVariants.find((variant) => variant.id === selectedVariantId) ?? defaultVariant;
+  const effectiveVariantId = selectedVariant?.id ?? null;
 
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
@@ -54,14 +60,14 @@ export function PurchasePanel({
   // unavailable, and a product-level status (which usually doesn't exist
   // at all once variants exist) must never be used here instead.
   const currentStatus = hasVariants
-    ? selectedVariantId
-      ? (product.inventory_by_variant[selectedVariantId] ?? null)
+    ? effectiveVariantId
+      ? (product.inventory_by_variant[effectiveVariantId] ?? null)
       : null
     : product.inventory_status;
   const canOrder = currentStatus === "in_stock" || currentStatus === "low_stock";
   const rentalOffer = rentalOffers.find((offer) => {
-    if (selectedVariantId) {
-      return offer.variantId === selectedVariantId;
+    if (effectiveVariantId) {
+      return offer.variantId === effectiveVariantId;
     }
     return offer.variantId === null || offer.variantId === undefined;
   }) ?? null;
@@ -93,20 +99,33 @@ export function PurchasePanel({
           <label htmlFor="variant" className="mb-1.5 block text-sm font-semibold text-slate-700">
             Configuration
           </label>
+          {activeVariants.length > 0 ? (
           <select
             id="variant"
-            value={selectedVariantId ?? ""}
+            value={effectiveVariantId ?? ""}
             onChange={(e) => setSelectedVariantId(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
-            {product.variants
-              .filter((v) => v.status === "active")
-              .map((variant) => (
+            {activeVariants.map((variant) => {
+              const status = product.inventory_by_variant[variant.id] ?? null;
+              const availabilityLabel =
+                status === "out_of_stock" ? " · Out of stock" :
+                status === "coming_soon" ? " · Coming soon" :
+                status === "discontinued" ? " · Discontinued" :
+                status === "low_stock" ? " · Limited stock" :
+                status === "in_stock" ? " · In stock" : " · Availability unconfirmed";
+              return (
                 <option key={variant.id} value={variant.id}>
-                  {variant.name} — {formatMoney(variant.sale_price ?? variant.price)}
+                  {variant.name} — {formatMoney(variant.sale_price ?? variant.price)}{availabilityLabel}
                 </option>
-              ))}
+              );
+            })}
           </select>
+          ) : (
+            <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+              No active configurations are available for purchase. Please contact us for assistance.
+            </p>
+          )}
         </div>
       ) : null}
 
@@ -115,12 +134,12 @@ export function PurchasePanel({
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <AddToCartButton
           productId={product.id}
-          variantId={selectedVariantId}
+          variantId={effectiveVariantId}
           disabled={!canOrder}
         />
         <AddToCartButton
           productId={product.id}
-          variantId={selectedVariantId}
+          variantId={effectiveVariantId}
           disabled={!canOrder}
           buyNow
         />
@@ -131,7 +150,7 @@ export function PurchasePanel({
         {isAuthenticated ? (
           <WishlistButton
             productId={product.id}
-            variantId={selectedVariantId}
+            variantId={effectiveVariantId}
             initialInWishlist={initialInWishlist}
           />
         ) : (
@@ -161,7 +180,7 @@ export function PurchasePanel({
             </span>
           </div>
           <Link
-            href={`/rentals?product=${encodeURIComponent(product.id)}&variant=${encodeURIComponent(selectedVariantId ?? rentalOffer.variantId ?? "")}`}
+            href={`/rentals?product=${encodeURIComponent(product.id)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
             className="mt-3 inline-flex w-full items-center justify-center rounded-card border border-brand-600 bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             Rent Now
