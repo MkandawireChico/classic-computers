@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { toggleWishlistAction } from "@/app/(storefront)/account/wishlist/actions";
 import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 
@@ -17,22 +18,41 @@ export function WishlistButton({
 }) {
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleClick() {
-    startTransition(async () => {
+  async function handleClick() {
+    if (isPending) return;
+    setIsPending(true);
+    setError(null);
+    try {
       const result = await toggleWishlistAction({ productId, variantId });
-      if (result.success) {
-        if (result.inWishlist) trackInterestEvent({ name: "add_to_wishlist", productId });
-        setInWishlist(result.inWishlist);
-        router.refresh();
+      if (!result.success) {
+        setError(result.error);
+        return;
       }
-    });
+      if (result.inWishlist) {
+        try {
+          trackInterestEvent({ name: "add_to_wishlist", productId });
+        } catch (analyticsError) {
+          console.warn("Wishlist analytics could not be recorded:", analyticsError);
+        }
+      }
+      setInWishlist(result.inWishlist);
+      router.refresh();
+    } catch {
+      setError("We couldn't update your wishlist. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
-    <Button variant="outline" onClick={handleClick} isLoading={isPending}>
-      {inWishlist ? "Remove from wishlist" : "Wishlist"}
-    </Button>
+    <div className="space-y-2">
+      <Button variant="outline" onClick={handleClick} isLoading={isPending} disabled={isPending}>
+        {inWishlist ? "Remove from wishlist" : "Wishlist"}
+      </Button>
+      {error ? <Alert variant="danger">{error}</Alert> : null}
+    </div>
   );
 }
