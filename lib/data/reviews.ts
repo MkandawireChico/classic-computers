@@ -126,6 +126,9 @@ async function loadStats(reviewType?: ReviewType, productId?: string): Promise<R
       console.warn("get_public_review_stats unavailable; using approved review rows:", error.message);
       return loadStatsFromApprovedReviews(reviewType, productId);
     }
+    if (!data || data.length === 0) {
+      return loadStatsFromApprovedReviews(reviewType, productId);
+    }
 
     const stats = emptyStats();
     for (const row of data ?? []) {
