@@ -26,6 +26,46 @@ alter table public.product_variants
   add constraint product_variants_sale_price_check
   check (sale_price is null or (sale_price > 0 and sale_price < price));
 
+-- Optional discount conditions are positive values in the admin form.
+-- Normalize legacy zero/negative values to "not configured", then enforce
+-- the same rule for all future writes.
+update public.discounts set min_quantity = null where min_quantity is not null and min_quantity <= 0;
+update public.discounts set min_order_total = null where min_order_total is not null and min_order_total <= 0;
+update public.discounts set max_discount_amount = null where max_discount_amount is not null and max_discount_amount <= 0;
+
+alter table public.discounts
+  add constraint discounts_min_quantity_positive
+  check (min_quantity is null or min_quantity > 0) not valid;
+alter table public.discounts
+  add constraint discounts_min_order_total_positive
+  check (min_order_total is null or min_order_total > 0) not valid;
+alter table public.discounts
+  add constraint discounts_max_discount_amount_positive
+  check (max_discount_amount is null or max_discount_amount > 0) not valid;
+
+-- Historical orders/items are left untouched. NOT VALID constraints still
+-- protect every new or updated row while allowing a later historical audit.
+alter table public.orders
+  add constraint orders_financial_totals_consistent
+  check (
+    subtotal >= 0
+    and discount_total >= 0
+    and discount_total <= subtotal
+    and total >= 0
+    and total = subtotal - discount_total
+  ) not valid;
+
+alter table public.order_items
+  add constraint order_items_financial_totals_consistent
+  check (
+    unit_price >= 0
+    and quantity > 0
+    and discount_amount >= 0
+    and discount_amount <= unit_price * quantity
+    and line_total >= 0
+    and line_total = unit_price * quantity - discount_amount
+  ) not valid;
+
 -- Replace the latest 12-argument create_order() implementation from 0058.
 -- Preserve delivery snapshots, student eligibility, product-scoped student
 -- offers, discount limits, inventory movements, notifications and grants.
@@ -210,7 +250,7 @@ begin
     delivery_address_id, delivery_snapshot, notes
   ) values (
     v_order_number, v_customer_id, p_guest_name, p_guest_phone, p_guest_email,
-    v_subtotal, 0, 0, p_payment_method, p_fulfillment_type,
+    v_subtotal, 0, v_subtotal, p_payment_method, p_fulfillment_type,
     p_delivery_address_id, v_delivery_snapshot, p_notes
   )
   returning id into v_order_id;
