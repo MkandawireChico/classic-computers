@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import Link from "next/link";
 import { getMyRepairs } from "@/lib/data/account-repairs";
 import { Badge } from "@/components/ui/badge";
@@ -20,22 +21,12 @@ export default async function AccountRepairsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="border-b border-slate-200 pb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My activity</p>
-          <h1 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">My repairs</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Track service progress and review updates from our team.</p>
-        </div>
-        <Link
-          href="/repairs/book"
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-          </svg>
-          Book a Repair
-        </Link>
-      </div>
+      <AccountPageHeader
+        eyebrow="Services · Service desk"
+        title="My repairs"
+        description="Track service progress and review updates from our team."
+        action={<Link href="/repairs/book" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">Book a repair <span aria-hidden="true">↗</span></Link>}
+      />
 
       {repairs.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center shadow-sm sm:p-9">
