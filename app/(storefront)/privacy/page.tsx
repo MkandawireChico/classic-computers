@@ -14,6 +14,7 @@ const sections = [
   ["cookies", "Cookies and essential technologies"],
   ["analytics", "Optional analytics"],
   ["sharing", "When information is shared"],
+  ["chat-assistant", "Website chat assistant"],
   ["security-retention", "Security and retention"],
   ["your-choices", "Your choices and questions"],
 ] as const;
@@ -142,6 +143,33 @@ export default function PrivacyPage() {
         <p>
           We do not describe customer information as never being shared: limited information may be
           shared with a provider when needed to deliver a requested service or operate the website.
+        </p>
+      </ContentSection>
+
+      <ContentSection id="chat-assistant" title="Website chat assistant">
+        <p>
+          The website includes an optional automated chat assistant. If you use it, the messages
+          you submit and recent conversation messages are sent to Groq to generate a response.
+          The request may also include the page you are viewing and relevant business or catalogue
+          information so the assistant can answer questions about products and services.
+        </p>
+        <p>
+          If you are signed in and ask about your orders, the application retrieves order details
+          from your account and includes the selected order information in the request sent to
+          Groq. This information can include order numbers, dates, order and payment statuses,
+          totals and product names. Order information is only retrieved for the signed-in
+          customer's account.
+        </p>
+        <p>
+          Do not enter passwords, payment card details, mobile money PINs, one-time codes or other
+          sensitive payment credentials in the chat. You do not need to use the assistant to browse
+          the website, place an order or contact our team. You can use the Contact page instead.
+        </p>
+        <p>
+          Chat conversations are not saved as chat transcripts in the website database or browser
+          storage by the current application. Groq processes the information sent to its service
+          under its own terms and privacy practices. Please review Groq's current documentation
+          for details about provider-side processing and retention.
         </p>
       </ContentSection>
 
