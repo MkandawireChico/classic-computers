@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { submitReviewAction } from "@/app/(storefront)/account/reviews/write/actions";
@@ -25,7 +25,7 @@ export function ReviewSubmissionForm({
   transaction: ReviewableTransaction;
   returnHref: string;
 }) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [rating, setRating] = useState(0);
@@ -35,19 +35,17 @@ export function ReviewSubmissionForm({
   const [images, setImages] = useState<File[]>([]);
   const [successWarning, setSuccessWarning] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (isPending) return;
     setError(null);
     if (rating === 0) {
       setError("Please select a star rating.");
       return;
     }
-    if (comment.trim().length < 10) {
-      setError("Please write at least 10 characters for your review.");
-      return;
-    }
 
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const request = new FormData();
       request.set("review", JSON.stringify({
         review_type: transaction.type,
@@ -57,7 +55,7 @@ export function ReviewSubmissionForm({
         repair_ticket_id: transaction.type === "repair" ? transaction.id : undefined,
         rating,
         title: title.trim() || undefined,
-        comment: comment.trim(),
+        comment: comment.trim() || undefined,
       }));
       images.forEach((image) => request.append("images", image));
       const result = await submitReviewAction(request);
@@ -67,7 +65,12 @@ export function ReviewSubmissionForm({
       }
       setSuccessWarning(result.warning ?? null);
       setSuccess(true);
-    });
+    } catch (submissionError) {
+      console.error("Review form submission failed:", submissionError);
+      setError("We could not submit your review. Please check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (success) {
@@ -140,18 +143,17 @@ export function ReviewSubmissionForm({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="review-comment" className="text-sm font-semibold text-slate-800">Your review <span className="text-rose-600">*</span></label>
+        <label htmlFor="review-comment" className="text-sm font-semibold text-slate-800">Your review (optional)</label>
         <textarea
           id="review-comment"
           value={comment}
           onChange={(event) => setComment(event.target.value)}
-          minLength={10}
           maxLength={2000}
           rows={5}
-          placeholder="Tell us about your experience."
+          placeholder="Add a few details if you would like to explain your rating."
           className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-100"
         />
-        <p className="text-xs text-slate-500">{comment.length}/2000 characters (minimum 10)</p>
+        <p className="text-xs text-slate-500">{comment.length}/2000 characters. A written comment is optional.</p>
       </div>
 
       <div className="space-y-2">
@@ -180,7 +182,7 @@ export function ReviewSubmissionForm({
       <Button
         type="submit"
         isLoading={isPending}
-        disabled={isPending || rating === 0 || comment.trim().length < 10}
+        disabled={isPending || rating === 0}
         className="min-h-12 w-full rounded-xl bg-brand-700 text-sm font-extrabold hover:bg-brand-800"
       >
         Submit Review
