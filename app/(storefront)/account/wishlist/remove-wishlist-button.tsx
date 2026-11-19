@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toggleWishlistAction } from "./actions";
 
-export function RemoveWishlistButton({ productId }: { productId: string }) {
+export function RemoveWishlistButton({ productId, variantId }: { productId: string; variantId: string | null }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export function RemoveWishlistButton({ productId }: { productId: string }) {
     setIsPending(true);
     setError(null);
     try {
-      const result = await toggleWishlistAction({ productId, variantId: null });
+      const result = await toggleWishlistAction({ productId, variantId });
       if (!result.success) {
         setError(result.error);
         return;
