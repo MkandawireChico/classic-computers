@@ -91,7 +91,7 @@ export function AccountNavigation() {
   return (
     <>
       <nav aria-label="Account navigation" className="hidden lg:block">
-        <div className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto border-r border-slate-200 pr-4">
+        <div className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_4px_18px_rgba(15,23,42,0.045)]">
           {GROUPS.map((group) => (
             <section key={group.title} className="mb-5 last:mb-0">
               <h2 className="mb-2 px-3 pt-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">{group.title}</h2>
@@ -102,7 +102,7 @@ export function AccountNavigation() {
                     <li key={href}>
                       <Link href={href} aria-current={selected ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${selected ? "bg-slate-950 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}>
                         <Icon name={icon} /><span className="min-w-0 flex-1">{label}</span>
-                        {selected ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-700" /> : null}
+                        {selected ? <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-cyan-400" /> : null}
                       </Link>
                     </li>
                   );
