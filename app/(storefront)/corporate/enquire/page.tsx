@@ -9,18 +9,18 @@ export const metadata: Metadata = {
 export default async function CorporateEnquiryPage() {
   return (
     <div className="section-shell pb-16 pt-5 sm:pt-8">
-      <header className="relative isolate overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-9 text-white shadow-panel sm:px-10 sm:py-12">
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-slate-200 bg-white px-6 py-9 text-slate-950 shadow-panel sm:px-10 sm:py-12">
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.24),transparent_48%),linear-gradient(120deg,#0f172a,#12333b)]"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(14,165,233,0.10),transparent_48%),linear-gradient(120deg,#ffffff,#f1f7fb)]"
         />
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">
           Corporate ICT supply
         </p>
-        <h1 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+        <h1 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-slate-950 sm:text-4xl">
           Tell us what your organisation needs
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
           Share your equipment requirements and our team will review your enquiry and follow up.
           Submitting this form is a request for a quote, not a confirmed order.
         </p>
