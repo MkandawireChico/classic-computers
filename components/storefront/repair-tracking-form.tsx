@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -19,14 +19,16 @@ const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger
 };
 
 export function RepairTrackingForm() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [repair, setRepair] = useState<TrackedRepair | null>(null);
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
+    if (isPending) return;
     setError(null);
     setRepair(null);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const result = await trackRepairAction({
         ticketNumber: formData.get("ticketNumber")?.toString() ?? "",
         trackingToken: formData.get("trackingToken")?.toString() ?? "",
@@ -36,7 +38,11 @@ export function RepairTrackingForm() {
       } else {
         setRepair(result);
       }
-    });
+    } catch {
+      setError("We couldn't retrieve your repair update. Check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   function formatDate(dateString: string): string {
@@ -82,7 +88,7 @@ export function RepairTrackingForm() {
             className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
           />
         </div>
-        <Button type="submit" isLoading={isPending} className="rounded-xl min-h-[52px] w-full sm:w-auto">
+        <Button type="submit" isLoading={isPending} disabled={isPending} className="rounded-xl min-h-[52px] w-full sm:w-auto">
           Track repair
         </Button>
       </form>
