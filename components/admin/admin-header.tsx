@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { signOut } from "@/app/(auth)/actions";
 import { NotificationBell } from "./notification-bell";
