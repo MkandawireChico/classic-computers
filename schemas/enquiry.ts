@@ -27,7 +27,7 @@ export const corporateEnquirySchema = z.object({
   contactPerson: z.string().trim().min(2, "Contact person is required").max(120, "Contact name must be 120 characters or fewer"),
   phone: z.string().trim().min(6, "Phone is required").max(30, "Phone number must be 30 characters or fewer"),
   email: z.string().trim().email("Enter a valid email").max(254, "Email address is too long"),
-  productsRequired: z.string().trim().max(1000, "Product requirements must be 1,000 characters or fewer").optional(),
+  productsRequired: z.string().trim().min(5, "Describe the equipment or products you need").max(1000, "Product requirements must be 1,000 characters or fewer"),
   quantity: z.coerce.number().int().positive().max(1000000, "Quantity is too large").optional(),
   budget: z.coerce.number().finite().positive().max(1000000000000, "Budget is too large").optional(),
   deliveryLocation: z.string().trim().max(200, "Delivery location must be 200 characters or fewer").optional(),
