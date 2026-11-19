@@ -9,11 +9,12 @@ async function getCustomerId(): Promise<string | null> {
 
 async function getOrCreateWishlistId(customerId: string): Promise<string> {
   const supabase = createClient();
-  const { data: existing } = await (supabase
+  const { data: existing, error: lookupError } = await (supabase
     .from("wishlists") as any)
     .select("id")
     .eq("customer_id", customerId)
     .maybeSingle();
+  if (lookupError) throw new Error("Could not load wishlist.");
   if (existing) return existing.id;
 
   const { data: created, error } = await (supabase
@@ -35,12 +36,13 @@ export async function toggleWishlist(
   const supabase = createClient();
   const wishlistId = await getOrCreateWishlistId(customerId);
 
-  const { data: existing } = await (supabase.from("wishlist_items") as any)
+  const { data: existing, error: lookupError } = await (supabase.from("wishlist_items") as any)
     .select("id")
     .eq("wishlist_id", wishlistId)
     .eq("product_id", productId)
     .is("variant_id", variantId ?? null)
     .maybeSingle();
+  if (lookupError) return { success: false, error: "Could not check your wishlist. Please try again." };
 
   if (existing) {
     const { error } = await (supabase.from("wishlist_items") as any).delete().eq("id", existing.id);
@@ -68,16 +70,18 @@ export async function getWishlistProductIds(): Promise<WishlistEntry[]> {
   if (!customerId) return [];
 
   const supabase = createClient();
-  const { data: wishlist } = await (supabase
+  const { data: wishlist, error: wishlistError } = await (supabase
     .from("wishlists") as any)
     .select("id")
     .eq("customer_id", customerId)
     .maybeSingle();
+  if (wishlistError) throw new Error("Could not load wishlist.");
   if (!wishlist) return [];
 
-  const { data } = await (supabase.from("wishlist_items") as any)
+  const { data, error } = await (supabase.from("wishlist_items") as any)
     .select("id, product_id, variant_id")
     .eq("wishlist_id", wishlist.id);
+  if (error) throw new Error("Could not load wishlist items.");
 
   return (data ?? []).map((row: any) => ({
     wishlistItemId: row.id,
