@@ -9,11 +9,7 @@ export const metadata: Metadata = {
 export default async function CorporateEnquiryPage() {
   return (
     <div className="section-shell pb-16 pt-5 sm:pt-8">
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-slate-200 bg-white px-6 py-9 text-slate-950 shadow-panel sm:px-10 sm:py-12">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(14,165,233,0.10),transparent_48%),linear-gradient(120deg,#ffffff,#f1f7fb)]"
-        />
+      <header className="relative isolate overflow-hidden rounded-xl border border-slate-200 bg-white px-6 py-9 text-slate-950 shadow-sm sm:px-10 sm:py-12">
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">
           Corporate ICT supply
         </p>
@@ -29,10 +25,10 @@ export default async function CorporateEnquiryPage() {
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.7fr)] lg:gap-8">
         <section
           aria-labelledby="corporate-enquiry-form-title"
-          className="rounded-3xl border border-slate-200 bg-white p-5 shadow-panel sm:p-8"
+          className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
         >
           <div className="mb-7 border-b border-slate-200 pb-5">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">
               Your enquiry
             </p>
             <h2
@@ -49,7 +45,7 @@ export default async function CorporateEnquiryPage() {
         </section>
 
         <aside className="space-y-5 lg:sticky lg:top-6">
-          <section className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <section className="rounded-xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">
               Helpful to include
             </p>
