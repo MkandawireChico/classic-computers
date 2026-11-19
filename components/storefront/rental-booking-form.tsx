@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -28,7 +28,9 @@ export function RentalBookingForm({
   isAuthenticated: boolean;
   defaultRentalProductId?: string;
 }) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const availabilityRequestId = useRef(0);
   const [rentalProductId, setRentalProductId] = useState(
     defaultRentalProductId ?? products[0]?.rentalProductId ?? "",
   );
@@ -55,13 +57,30 @@ export function RentalBookingForm({
     guestEmail: "",
     notes: "",
   });
+  const adjustedSteps = isAuthenticated
+    ? STEPS.filter((step) => step.id !== "customer")
+    : STEPS;
 
-  function checkAvailability(nextStart: string, nextEnd: string) {
-    if (!nextStart || !nextEnd || !rentalProductId) return;
-    startTransition(async () => {
+  async function checkAvailability(nextStart: string, nextEnd: string) {
+    const requestId = ++availabilityRequestId.current;
+    setAvailability(null);
+    if (!nextStart || !nextEnd || !rentalProductId) {
+      setIsCheckingAvailability(false);
+      return;
+    }
+    setIsCheckingAvailability(true);
+    setError(null);
+    try {
       const avail = await checkAvailabilityAction(rentalProductId, nextStart, nextEnd);
-      setAvailability(avail);
-    });
+      if (requestId === availabilityRequestId.current) setAvailability(avail);
+    } catch (availabilityError) {
+      console.error("Rental availability check failed:", availabilityError);
+      if (requestId === availabilityRequestId.current) {
+        setError("We couldn't check availability for those dates. Please try again.");
+      }
+    } finally {
+      if (requestId === availabilityRequestId.current) setIsCheckingAvailability(false);
+    }
   }
 
   function validateStep(step: StepId): boolean {
@@ -96,29 +115,30 @@ export function RentalBookingForm({
   function nextStep() {
     if (!validateStep(currentStep)) return;
 
-    const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
+    const currentIndex = adjustedSteps.findIndex((step) => step.id === currentStep);
     const nextIndex = currentIndex + 1;
-    const nextStep = STEPS[nextIndex];
+    const nextStep = adjustedSteps[nextIndex];
     if (nextStep) {
       setCurrentStep(nextStep.id);
     }
   }
 
   function previousStep() {
-    const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
+    const currentIndex = adjustedSteps.findIndex((step) => step.id === currentStep);
     const prevIndex = currentIndex - 1;
-    const prevStep = STEPS[prevIndex];
+    const prevStep = adjustedSteps[prevIndex];
     if (prevStep) {
       setCurrentStep(prevStep.id);
     }
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isPending || isCheckingAvailability) return;
     setError(null);
     if (!validateStep(currentStep)) return;
-
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       submissionKey.current ??= getOrCreateSubmissionKey("rental-booking");
       const res = await submitRentalBookingAction(
         {
@@ -137,10 +157,23 @@ export function RentalBookingForm({
         setError(res.error);
         return;
       }
-      trackInterestEvent({ name: "rental_request_submitted" });
-      markSubmissionComplete("rental-booking");
+      try {
+        trackInterestEvent({ name: "rental_request_submitted" });
+      } catch (analyticsError) {
+        console.warn("Rental analytics could not be recorded:", analyticsError);
+      }
+      try {
+        markSubmissionComplete("rental-booking");
+      } catch (storageError) {
+        console.warn("Rental submission marker could not be saved:", storageError);
+      }
       setResult({ trackingToken: res.trackingToken });
-    });
+    } catch (submitError) {
+      console.error("Rental request submission failed:", submitError);
+      setError("We couldn't submit your rental request. Please check your connection and try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   if (products.length === 0) {
@@ -193,10 +226,7 @@ export function RentalBookingForm({
 
   const selected =
     products.find((p) => p.rentalProductId === rentalProductId) ?? products[0] ?? null;
-  const adjustedSteps = isAuthenticated
-    ? STEPS.filter((s) => s.id !== "customer")
-    : STEPS;
-  const adjustedStepIndex = adjustedSteps.findIndex((s) => s.id === currentStep);
+  const adjustedStepIndex = adjustedSteps.findIndex((step) => step.id === currentStep);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -265,7 +295,7 @@ export function RentalBookingForm({
                   setRentalProductId(e.target.value);
                   setAvailability(null);
                 }}
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 {products.map((p) => (
                   <option key={p.rentalProductId} value={p.rentalProductId}>
@@ -310,7 +340,7 @@ export function RentalBookingForm({
                   value={startDate}
                   onChange={(e) => {
                     setStartDate(e.target.value);
-                    checkAvailability(e.target.value, endDate);
+                    void checkAvailability(e.target.value, endDate);
                   }}
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
@@ -328,7 +358,7 @@ export function RentalBookingForm({
                   value={endDate}
                   onChange={(e) => {
                     setEndDate(e.target.value);
-                    checkAvailability(startDate, e.target.value);
+                    void checkAvailability(startDate, e.target.value);
                   }}
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
@@ -355,6 +385,9 @@ export function RentalBookingForm({
                 <p className="text-sm text-rose-600">{validationErrors.quantity}</p>
               )}
             </div>
+            {isCheckingAvailability ? (
+              <p className="text-sm text-slate-500" role="status">Checking availability for these dates…</p>
+            ) : null}
             {availability !== null ? (
               <p
                 className={`text-sm ${availability >= quantity ? "text-brand-700" : "text-rose-600"}`}
@@ -483,7 +516,7 @@ export function RentalBookingForm({
               type="button"
               variant="outline"
               onClick={previousStep}
-              disabled={isPending}
+              disabled={isPending || isCheckingAvailability}
               className="flex-1"
             >
               Back
@@ -501,7 +534,7 @@ export function RentalBookingForm({
           ) : (
             <Button
               type="submit"
-              isLoading={isPending}
+              isLoading={isPending || isCheckingAvailability}
               disabled={isPending}
               className="flex-1 bg-brand-700 hover:bg-brand-800"
             >
