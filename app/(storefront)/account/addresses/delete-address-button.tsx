@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import { deleteAddressAction } from "./actions";
 
 export function DeleteAddressButton({ addressId }: { addressId: string }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   return (
@@ -17,15 +17,23 @@ export function DeleteAddressButton({ addressId }: { addressId: string }) {
         disabled={isPending}
         onClick={() => {
           if (!window.confirm("Delete this saved address? This cannot be undone.")) return;
+          if (isPending) return;
           setError(null);
-          startTransition(async () => {
-            const result = await deleteAddressAction(addressId);
-            if (!result.success) {
-              setError(result.error);
-              return;
+          setIsPending(true);
+          void (async () => {
+            try {
+              const result = await deleteAddressAction(addressId);
+              if (!result.success) {
+                setError(result.error);
+                return;
+              }
+              router.refresh();
+            } catch {
+              setError("We couldn't delete this address. Check your connection and try again.");
+            } finally {
+              setIsPending(false);
             }
-            router.refresh();
-          });
+          })();
         }}
         className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-rose-300 hover:bg-rose-50 hover:text-rose-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-700 disabled:opacity-50"
       >
