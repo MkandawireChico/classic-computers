@@ -7,6 +7,7 @@ import { getCategories } from "@/lib/data/categories";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ShopFilters } from "@/components/storefront/shop-filters";
 import { SortSelect } from "@/components/storefront/sort-select";
+import { ShopSearch } from "@/components/storefront/shop-search";
 import { parseShopSearchParams } from "@/lib/shop-params";
 import { formatCategoryName } from "@/lib/format/category";
 import { CategoryInterestTracker } from "@/components/storefront/analytics-page-tracker";
@@ -64,6 +65,9 @@ export default async function CategoryShopPage({
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Browse by category</p>
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{categoryName}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Explore available {categoryName.toLowerCase()} from Classic Computers, Blantyre.</p>
+        <div className="mt-5 max-w-xl border border-white/20 bg-white p-2 text-slate-900 shadow-sm">
+          <ShopSearch initialQuery={filters.query ?? ""} />
+        </div>
       </header>
 
       <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
