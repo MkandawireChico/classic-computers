@@ -19,7 +19,7 @@ export async function getMyRentals(): Promise<MyRentalListItem[]> {
     .order("created_at", { ascending: false });
   if (error) {
     console.error("getMyRentals failed:", error.message);
-    return [];
+    throw new Error("Could not load your rental bookings. Please refresh the page and try again.");
   }
   return (data ?? []).map((row: any) => ({
     id: row.id,
@@ -51,12 +51,20 @@ export async function getMyRentalById(id: string): Promise<MyRentalDetail | null
     `)
     .eq("id", id)
     .maybeSingle();
-  if (error || !booking) return null;
+  if (error) {
+    console.error("getMyRentalById failed:", error.message);
+    throw new Error("Could not load this rental. Please refresh the page and try again.");
+  }
+  if (!booking) return null;
 
-  const { data: history } = await (supabase.from("rental_status_history") as any)
+  const { data: history, error: historyError } = await (supabase.from("rental_status_history") as any)
     .select("from_status, to_status, created_at")
     .eq("booking_id", id)
     .order("created_at", { ascending: true });
+  if (historyError) {
+    console.error("getMyRentalById history failed:", historyError.message);
+    throw new Error("Could not load the rental status history. Please refresh the page and try again.");
+  }
 
   const productImages = booking.rental_products?.products?.product_images ?? [];
   const primaryImage = productImages.find((image: any) => image.is_primary && image.variant_id === null)
