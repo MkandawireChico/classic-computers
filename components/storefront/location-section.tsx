@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getSiteMedia } from "@/lib/data/site-media";
 import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
 import { getPublicStorageUrl } from "@/lib/storage";
@@ -13,119 +14,72 @@ export async function LocationSection() {
   if (!businessInfo) return null;
 
   const storePhotoUrl = storePhoto ? getPublicStorageUrl("site-media", storePhoto.storage_path) : null;
-  const directionsUrl =
-    businessInfo.address.trim() !== ""
-      ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`
-      : null;
+  const directionsUrl = businessInfo.address.trim() !== ""
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`
+    : null;
 
   return (
-    <section aria-labelledby="location-heading" className="section-shell pb-16 sm:pb-20 lg:pb-24">
-      <div className="overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-cyan-50/60 p-5 shadow-xl shadow-brand-900/5 sm:p-8 lg:p-10">
-        <div className={`grid items-center gap-7 ${storePhotoUrl ? "md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-10" : ""}`}>
-          {storePhoto && storePhotoUrl ? (
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-brand-100 shadow-lg shadow-brand-900/10 ring-1 ring-white/80">
-              <Image
-                src={storePhotoUrl}
-                alt={storePhoto.alt_text}
-                fill
-                sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1279px) 40vw, 520px"
-                className="object-cover"
-              />
-            </div>
-          ) : null}
-          <div>
-            <div className="mb-6 space-y-3">
-              <p className="inline-flex rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-700 shadow-sm">
-                Find us
-              </p>
-              <h2 id="location-heading" className="text-h2 font-extrabold leading-tight text-slate-900">
-                Visit us <span className="text-brand-700">or get in touch</span>
-              </h2>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                We&apos;re here to help with your computer and technology needs.
-              </p>
-            </div>
-            <div className="grid gap-4 text-base text-slate-700 xl:grid-cols-2">
-              <div className="space-y-3 rounded-2xl border border-brand-100 bg-white/90 p-5 shadow-md shadow-brand-900/5 sm:p-6">
-                <p className="font-bold text-brand-800">{businessInfo.name}</p>
-                {businessInfo.address.trim() !== "" ? <p className="leading-relaxed text-slate-700">{businessInfo.address}</p> : null}
-                {hours?.enabled && hours.schedule ? <p className="border-t border-brand-100 pt-3 text-sm leading-relaxed text-slate-600">{hours.schedule}</p> : null}
-                {directionsUrl ? (
-                  <a
-                    href={directionsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-bold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-                  >
-                    Get directions
-                    <span aria-hidden="true" className="ml-1.5">↗</span>
-                  </a>
-                ) : null}
-              </div>
-              <div className="space-y-3 rounded-2xl border border-cyan-100 bg-white/90 p-5 shadow-md shadow-cyan-900/5 sm:p-6">
-                {businessInfo.phone ? (
-                  <a href={`tel:${businessInfo.phone}`} aria-label={`Call ${businessInfo.phone}`} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><PhoneIcon /></span>
-                    <span>{businessInfo.phone}</span>
-                  </a>
-                ) : null}
-                {businessInfo.phone_alt && businessInfo.phone_alt !== businessInfo.phone ? (
-                  <a href={`tel:${businessInfo.phone_alt}`} aria-label={businessInfo.phone_alt} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><PhoneIcon /></span>
-                    <span>{businessInfo.phone_alt}</span>
-                  </a>
-                ) : null}
-                {businessInfo.email ? (
-                  <a href={`mailto:${businessInfo.email}`} aria-label={`Email ${businessInfo.email}`} className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><EmailIcon /></span>
-                    <span className="min-w-0 break-all">{businessInfo.email}</span>
-                  </a>
-                ) : null}
-                {businessInfo.whatsapp ? (
-                  <p>
-                    <a
-                      href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Message us on WhatsApp"
-                      className="flex min-h-14 items-center gap-3 rounded-xl p-2 font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
-                    >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"><WhatsAppIcon /></span>
-                      <span>{businessInfo.whatsapp}</span>
-                    </a>
-                  </p>
-                ) : null}
-              </div>
+    <section aria-labelledby="location-heading" className="border-t border-slate-200 bg-white">
+      <div className="section-shell grid gap-8 py-14 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14 lg:py-20">
+        {storePhotoUrl ? (
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+            <Image
+              src={storePhotoUrl}
+              alt={storePhoto?.alt_text ?? "Classic Computers store in Blantyre"}
+              fill
+              sizes="(max-width: 1023px) 100vw, 52vw"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="flex min-h-[260px] flex-col justify-between rounded-xl border border-slate-200 bg-[#f1f5f7] p-7 sm:min-h-[340px] sm:p-9">
+            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700">Classic Computers</p>
+            <div>
+              <h3 className="max-w-md text-3xl font-extrabold leading-tight tracking-tight text-[#10243a]">Your local technology shop in Blantyre.</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">Visit us for product enquiries and service support.</p>
             </div>
           </div>
+        )}
+
+        <div className="min-w-0">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Find our shop</p>
+          <h2 id="location-heading" className="mt-3 text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-[#10243a] sm:text-4xl">
+            Visit Classic Computers in Blantyre.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+            Visit the shop or contact the team for help with products, rentals, repairs and business supply.
+          </p>
+
+          <div className="mt-7 divide-y divide-slate-200 border-y border-slate-200">
+            {businessInfo.address.trim() !== "" ? (
+              <div className="py-4">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Address</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-slate-800">{businessInfo.address}</p>
+                {directionsUrl ? (
+                  <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-8 items-center text-sm font-bold text-brand-800 underline underline-offset-4 hover:text-brand-950">
+                    Get directions ↗
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+            {hours?.enabled && hours.schedule ? (
+              <div className="py-4">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Business hours</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-slate-800">{hours.schedule}</p>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+            {businessInfo.phone ? <a href={`tel:${businessInfo.phone}`} className="font-bold text-brand-800 hover:text-brand-950">{businessInfo.phone}</a> : null}
+            {businessInfo.email ? <a href={`mailto:${businessInfo.email}`} className="font-bold text-brand-800 hover:text-brand-950">{businessInfo.email}</a> : null}
+            {businessInfo.whatsapp ? <a href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="font-bold text-brand-800 hover:text-brand-950">WhatsApp</a> : null}
+          </div>
+          <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50">
+            Contact our team
+          </Link>
         </div>
       </div>
     </section>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-      <path d="M7.5 3.5h2l1.25 4-1.75 1.75a14.5 14.5 0 0 0 5.75 5.75l1.75-1.75 4 1.25v2c0 1.1-.9 2-2 2C11.6 18.5 5.5 12.4 5.5 5.5c0-1.1.9-2 2-2Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function EmailIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function WhatsAppIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-      <path d="M20 11.5a8 8 0 0 1-11.9 7L4 20l1.5-4.1A8 8 0 1 1 20 11.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M9 8.5c.25-.45.55-.45.8-.08l.7 1c.18.25.15.48-.08.7l-.5.5c.45.8 1.1 1.45 1.9 1.9l.5-.5c.22-.23.45-.26.7-.08l1 .7c.37.25.37.55-.08.8-.55.32-1.2.27-1.9-.12a8.2 8.2 0 0 1-2.82-2.82c-.39-.7-.44-1.35-.12-1.9Z" fill="currentColor" />
-    </svg>
   );
 }
