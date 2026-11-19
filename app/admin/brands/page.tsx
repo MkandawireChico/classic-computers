@@ -1,4 +1,5 @@
 import { requirePermission } from "@/lib/auth/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { getBrands } from "@/lib/data/brands";
 import { BrandsManager } from "@/components/admin/brands-manager";
 
@@ -8,7 +9,7 @@ export default async function AdminBrandsPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-gray-900">Brands</h1>
+      <AdminPageHeader eyebrow="Catalogue · Organisation" title="Brands" description="Manage the brands associated with products in the store." />
       <BrandsManager brands={brands} />
     </div>
   );
