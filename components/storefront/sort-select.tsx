@@ -14,7 +14,8 @@ export function SortSelect() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const current = searchParams.get("sort") ?? "featured";
+  const requestedSort = searchParams.get("sort") ?? "featured";
+  const current = SORT_OPTIONS.some((option) => option.value === requestedSort) ? requestedSort : "featured";
 
   function handleChange(value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -24,7 +25,8 @@ export function SortSelect() {
       params.set("sort", value);
     }
     params.delete("page");
-    router.push(`${pathname}?${params.toString()}`);
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
   }
 
   return (
