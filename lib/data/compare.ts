@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { getPublicStorageUrl } from "@/lib/storage";
 
 export interface CompareProduct {
   id: string;
@@ -67,7 +68,7 @@ export async function getCompareProducts(productIds: string[]): Promise<CompareP
         .sort((a: any, b: any) => a.display_order - b.display_order);
       const primaryImage = images.find((image: any) => image.is_primary) ?? images[0] ?? null;
       const imageUrl = primaryImage?.storage_path
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${primaryImage.storage_path}`
+        ? getPublicStorageUrl("product-images", primaryImage.storage_path)
         : null;
 
       return {
