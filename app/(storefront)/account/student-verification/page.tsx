@@ -1,3 +1,4 @@
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import Link from "next/link";
 import { getMyStudentVerification } from "@/lib/data/account-student";
 import { Badge } from "@/components/ui/badge";
@@ -32,13 +33,7 @@ export default async function AccountStudentVerificationPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-white to-brand-50/70 p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">My benefits</p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Student verification</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-          Submit your student details for staff review. Once approved, you can access active offers on eligible products while signed in.
-        </p>
-      </div>
+      <AccountPageHeader eyebrow="Benefits · Student programme" title="Student verification" description="Submit your student details for staff review. Once approved, you can access active offers on eligible products while signed in." />
 
       {verification ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
