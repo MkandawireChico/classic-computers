@@ -36,7 +36,11 @@ export function AddToCartButton({
         return;
       }
 
-      trackInterestEvent({ name: "add_to_cart", productId });
+      try {
+        trackInterestEvent({ name: "add_to_cart", productId });
+      } catch (analyticsError) {
+        console.warn("Cart analytics could not be recorded:", analyticsError);
+      }
       if (buyNow) {
         router.push("/checkout");
         return;
@@ -55,7 +59,7 @@ export function AddToCartButton({
     <div className="flex-1">
       <Button
         variant={buyNow ? "outline" : "primary"}
-        className={`min-h-12 w-full rounded-xl font-bold shadow-sm transition-all hover:-translate-y-0.5 ${buyNow ? "border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100" : "bg-emerald-700 text-white shadow-emerald-900/10 hover:bg-emerald-800"}`}
+        className={`min-h-12 w-full rounded-lg font-bold shadow-sm transition-colors ${buyNow ? "border border-brand-300 bg-white text-brand-800 hover:bg-brand-50" : "bg-[#123653] text-white hover:bg-brand-800"}`}
         onClick={handleClick}
         isLoading={isPending}
         disabled={disabled || isPending}

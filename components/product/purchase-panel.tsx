@@ -72,10 +72,24 @@ export function PurchasePanel({
     return offer.variantId === null || offer.variantId === undefined;
   }) ?? null;
   const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
+  const quickSpecifications = product.specifications.slice(0, 4);
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <div className="rounded-2xl bg-slate-50 px-4 py-4 sm:px-5">
+      {quickSpecifications.length > 0 ? (
+        <section aria-label="Key product specifications" className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Key specifications</p>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+            {quickSpecifications.map((spec) => (
+              <div key={spec.key} className="min-w-0">
+                <dt className="text-[11px] font-medium text-slate-500">{spec.label}</dt>
+                <dd className="mt-0.5 break-words text-sm font-bold text-navy-950">{spec.value}{spec.unit ? " " + spec.unit : ""}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ) : null}
+      <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Price</p>
         <div className="flex flex-wrap items-baseline gap-2">
         {onSale ? (
@@ -164,24 +178,24 @@ export function PurchasePanel({
       </div>
 
       {rentalOffer ? (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-900">Rental pricing</p>
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Rental pricing</p>
           <div className="mt-2 flex items-center justify-between gap-3">
             <div>
-              <p className="text-lg font-bold text-amber-950">{rentalPrice ? formatMoney(rentalPrice) : "Quote on request"}</p>
+              <p className="text-lg font-bold text-navy-950">{rentalPrice ? formatMoney(rentalPrice) : "Quote on request"}</p>
               <p className="text-xs text-slate-700">
                 {rentalOffer.dailyRate ? `${formatMoney(rentalOffer.dailyRate)}/day` : ""}
                 {rentalOffer.weeklyRate ? ` · ${formatMoney(rentalOffer.weeklyRate)}/week` : ""}
                 {rentalOffer.monthlyRate ? ` · ${formatMoney(rentalOffer.monthlyRate)}/month` : ""}
               </p>
             </div>
-            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-navy-900 ring-1 ring-emerald-200">
+            <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-navy-900 ring-1 ring-slate-200">
               {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
             </span>
           </div>
           <Link
             href={`/rentals?product=${encodeURIComponent(product.id)}&variant=${encodeURIComponent(effectiveVariantId ?? rentalOffer.variantId ?? "")}`}
-            className="mt-3 inline-flex w-full items-center justify-center rounded-card border border-brand-600 bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="mt-3 inline-flex w-full items-center justify-center rounded-lg border border-brand-300 bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             Rent Now
           </Link>

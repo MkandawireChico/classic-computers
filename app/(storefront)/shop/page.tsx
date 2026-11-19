@@ -26,7 +26,7 @@ export default async function ShopPage({
   );
 
   return (
-    <main className="min-h-screen bg-slate-50/60">
+    <main className="min-h-screen bg-[#f4f7f9]">
       <div className="section-shell py-6 sm:py-9 lg:py-11">
         <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
           <Link href="/" className="hover:text-brand-700">Home</Link>
@@ -34,16 +34,16 @@ export default async function ShopPage({
           <span aria-current="page" className="text-slate-700">Shop</span>
         </nav>
 
-        <header className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#17344d] via-[#1d4562] to-[#17617b] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">The Classic Computers store</p>
+        <header className="border-b border-slate-200 bg-white px-5 py-7 sm:px-8 sm:py-9">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Classic Computers catalogue</p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Find the right technology.</h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
-                Explore computers, accessories and electronics, with local support from our Blantyre team.
+              <h1 className="text-3xl font-extrabold tracking-[-0.045em] text-[#10243a] sm:text-4xl">Shop computers and ICT equipment.</h1>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+                Compare products, check availability and find equipment for home, study or work.
               </p>
             </div>
-            <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur-sm">
+            <div className="w-full max-w-xl border border-slate-200 bg-slate-50 p-2">
               <ShopSearch initialQuery={filters.query ?? ""} />
             </div>
           </div>
