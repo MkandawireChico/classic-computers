@@ -57,7 +57,7 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
     return { success: false, error: "A quotation cannot be issued for a completed or cancelled repair." };
   }
 
-  const { data: document, error: documentError } = await (supabase.from("business_documents") as any)
+  const { data: document, error: documentError } = await ((supabase.from("business_documents") as any) as any)
     .insert({
       document_type: "quotation",
       source_type: "repair",
@@ -95,7 +95,7 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
     line_total: Math.round(line.quantity * line.unitPrice * 100) / 100,
     sort_order: index,
   }));
-  const { error: itemError } = await (supabase.from("business_document_items") as any).insert(items);
+  const { error: itemError } = await ((supabase.from("business_document_items") as any) as any).insert(items);
   if (itemError) {
     console.error("createRepairQuotation item insert failed:", itemError.message);
     return { success: false, error: "The quotation was saved as a draft, but its line items could not be saved. Contact an administrator before retrying." };
