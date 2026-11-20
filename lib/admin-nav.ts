@@ -33,6 +33,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: "/admin/brands", label: "Brands", permission: "products.read" },
       { href: "/admin/inventory", label: "Inventory", permission: "inventory.read" },
       { href: "/admin/orders", label: "Orders", permission: "orders.read" },
+      { href: "/admin/documents", label: "Quotations & Invoices", permission: null, anyPermissions: ["orders.read", "repairs.read", "rentals.read"] },
       { href: "/admin/discounts", label: "Discounts", permission: "settings.write" },
       { href: "/admin/customers", label: "Customers", permission: "customers.read" },
       { href: "/admin/analytics", label: "Customer interest analytics", permission: "reports.read" },
