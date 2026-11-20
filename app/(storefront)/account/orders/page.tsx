@@ -62,7 +62,7 @@ export default async function OrdersPage() {
                     </Badge>
                   </div>
                   <p className="mt-2 text-sm text-slate-600">
-                    {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })} · Payment {order.payment_status.replace(/_/g, " ")}
+                    {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })}
                   </p>
                 </div>
                 <div className="text-right">
