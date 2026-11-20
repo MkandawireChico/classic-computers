@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getMyPermissions } from "@/lib/auth/permissions";
 import { ConvertQuotationToInvoiceButton } from "@/components/admin/convert-quotation-to-invoice-button";
 import { InvoiceTransactionControls } from "@/components/admin/invoice-transaction-controls";
+import { StaffQuotationDecisionControls } from "@/components/admin/staff-quotation-decision-controls";
 import { createClient } from "@/lib/supabase/server";
 import { formatMoney } from "@/lib/format/money";
 import { PrintDocumentButton } from "@/components/admin/print-document-button";
@@ -31,6 +32,12 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
     .select("description,quantity,unit_price,line_total,sort_order")
     .eq("document_id", document.id)
     .order("sort_order", { ascending: true });
+  const { data: decision } = document.document_type === "quotation"
+    ? await (supabase.from("business_document_decisions") as any)
+      .select("decision,decision_channel,comment,created_at")
+      .eq("document_id", document.id)
+      .maybeSingle()
+    : { data: null };
   const { data: transactions } = document.document_type === "invoice"
     ? await (supabase.from("business_document_transactions") as any)
       .select("id,transaction_type,amount,provider,provider_reference,notes,created_at")
@@ -42,6 +49,11 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   const outstanding = Math.max(0, Number(document.grand_total) - paid);
   const refundable = Math.max(0, paid - refunded);
   const canRecordTransactions = document.document_type === "invoice" && (
+    document.source_type === "order" ? permissions.has("orders.write")
+    : document.source_type === "rental" ? permissions.has("rentals.write")
+    : permissions.has("repairs.write")
+  );
+  const canRecordDecision = document.document_type === "quotation" && document.status === "issued" && (
     document.source_type === "order" ? permissions.has("orders.write")
     : document.source_type === "rental" ? permissions.has("rentals.write")
     : permissions.has("repairs.write")
@@ -141,6 +153,8 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
           </footer>
         </div>
       </article>
+      {decision ? <section className="rounded-2xl border border-slate-200 bg-white p-4 print:hidden"><p className="font-bold capitalize text-slate-950">Customer {decision.decision}</p><p className="mt-1 text-xs text-slate-500">{decision.decision_channel === "staff_recorded" ? "Recorded by staff" : "Customer account response"} · {new Date(decision.created_at).toLocaleString("en-GB", { timeZone: "Africa/Blantyre" })}</p>{decision.comment ? <p className="mt-2 text-sm text-slate-700">{decision.comment}</p> : null}</section> : null}
+      {canRecordDecision ? <div className="print:hidden"><StaffQuotationDecisionControls documentId={document.id} /></div> : null}
       {document.document_type === "invoice" ? (
         <section className="space-y-4 print:hidden">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
