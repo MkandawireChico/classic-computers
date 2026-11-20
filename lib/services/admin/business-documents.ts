@@ -273,7 +273,7 @@ const businessQuotationSchema = z.object({
   customerEmail: z.string().trim().email().max(254).optional().or(z.literal("")),
   customerPhone: z.string().trim().max(40).optional().or(z.literal("")),
   billingAddress: z.string().trim().max(500).optional().default(""),
-  lines: z.array(lineSchema).min(1).max(40),
+  lines: z.array(lineSchema.extend({ productId: z.string().uuid().optional(), variantId: z.string().uuid().optional() })).min(1).max(40),
   discountAmount: z.coerce.number().min(0).default(0),
   discountReason: z.string().trim().max(300).optional().default(""),
   notes: z.string().trim().max(2000).optional().default(""),
