@@ -71,6 +71,9 @@ begin
       new.document_number := nextval('public.invoice_number_seq');
     end if;
   end if;
+  if tg_op = 'UPDATE' and old.status <> 'draft' then
+    raise exception 'Issued documents are locked. Create a revision instead.';
+  end if;
   if new.discount_amount > 0 then
     if new.discount_reason is null or length(trim(new.discount_reason)) < 3 then
       raise exception 'A reason is required for an authorised discount.';
@@ -80,6 +83,15 @@ begin
     new.discount_authorized_by := null;
   end if;
   if new.created_by is null then new.created_by := auth.uid(); end if;
+  if new.status = 'issued' then
+    select coalesce(sum(line_total), 0) into new.subtotal
+    from public.business_document_items where document_id = new.id;
+  end if;
+  if new.discount_amount > new.subtotal then raise exception 'Discount exceeds the selling subtotal.'; end if;
+  new.taxable_amount := round(new.subtotal - new.discount_amount, 2);
+  new.vat_amount := round(new.taxable_amount * new.vat_rate / 100, 2);
+  new.ppda_amount := round(new.taxable_amount * new.ppda_rate / 100, 2);
+  new.grand_total := new.taxable_amount + new.vat_amount + new.ppda_amount;
   new.updated_at := now();
   return new;
 end;
@@ -93,7 +105,7 @@ create or replace function public.guard_business_document_item_write()
 returns trigger
 language plpgsql
 set search_path = public
-as $$
+as $
 declare
   v_document public.business_documents%rowtype;
 begin
@@ -106,6 +118,7 @@ begin
     raise exception 'Issued documents are locked. Create a revision instead.';
   end if;
   if tg_op = 'DELETE' then return old; end if;
+  new.line_total := round(new.quantity * new.unit_price, 2);
   return new;
 end;
 $;
