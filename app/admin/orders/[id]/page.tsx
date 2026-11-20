@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format/money";
 import { OrderStatusControls } from "@/components/admin/order-status-controls";
 import { InternalNotesEditor } from "@/components/admin/internal-notes-editor";
+import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("orders.read");
@@ -14,12 +15,13 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Order {order.order_number}</h1>
-        <p className="text-sm text-gray-500">
-          {new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
-        </p>
-      </div>
+      <AdminDetailHeader
+        eyebrow="Commerce · Order desk"
+        title={`Order ${order.order_number}`}
+        description={`Placed ${new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}. Review items, customer details, payment and fulfilment.`}
+        backHref="/admin/orders"
+        backLabel="Back to orders"
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
