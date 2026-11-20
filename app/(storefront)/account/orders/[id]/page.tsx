@@ -40,7 +40,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         <Badge variant="neutral">{order.fulfillment_type === "pickup" ? "Pickup" : "Delivery"}</Badge>
       </div>
 
-      {paymentProvider && paymentCopyDetails && order.payment_status !== "paid" ? (
+      {paymentProvider && paymentCopyDetails && order.payment_status === "unpaid" ? (
         <section className="rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="order-payment-heading">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">Payment still required</p>
           <h2 id="order-payment-heading" className="mt-1 text-lg font-bold text-slate-950">
@@ -66,6 +66,21 @@ export default async function OrderDetailPage({ params }: { params: { id: string
             {walletNumber ? <CopyPaymentValue value={walletNumber} label="wallet number" /> : null}
             <CopyPaymentValue value={paymentCopyDetails} label="payment details" />
           </div>
+        </section>
+      ) : null}
+
+      {order.payment_status === "partial" ? (
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6" aria-live="polite">
+          <p className="text-sm font-bold text-amber-950">Partial payment recorded</p>
+          <p className="mt-1 text-sm leading-6 text-amber-900">
+            Our payment records do not yet show a verified remaining balance. Contact our team before sending another payment so we confirm the exact amount due.
+          </p>
+        </section>
+      ) : null}
+      {order.payment_status === "refunded" ? (
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <p className="text-sm font-bold text-slate-900">Payment marked as refunded</p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">Contact our team if you need the refund transaction details.</p>
         </section>
       ) : null}
 
