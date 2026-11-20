@@ -57,6 +57,7 @@ declare
   v_actor uuid := auth.uid();
   v_order_total numeric(12,2);
   v_order_currency text;
+  v_order_status public.order_status_enum;
   v_paid numeric(12,2);
   v_refunded numeric(12,2);
   v_net numeric(12,2);
@@ -86,14 +87,18 @@ begin
     raise exception 'Amount must be greater than zero and have no more than two decimal places';
   end if;
 
-  select o.total, o.currency
-    into v_order_total, v_order_currency
+  select o.total, o.currency, o.order_status
+    into v_order_total, v_order_currency, v_order_status
     from public.orders o
     where o.id = p_order_id
     for update;
 
   if not found then
     raise exception 'Order not found';
+  end if;
+
+  if v_type = 'payment' and v_order_status in ('cancelled', 'refunded') then
+    raise exception 'A payment cannot be recorded against a cancelled or refunded order';
   end if;
 
   if upper(v_order_currency) <> v_currency then
