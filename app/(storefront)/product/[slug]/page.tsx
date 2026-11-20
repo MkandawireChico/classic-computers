@@ -214,7 +214,6 @@ export default async function ProductPage({ params }: { params: Params }) {
               <div className="border-t border-slate-100 pt-5">
                 <PurchasePanel
                   product={product}
-                  businessInfo={businessInfo}
                   isAuthenticated={isAuthenticated}
                   initialSavedVariantIds={initialSavedVariantIds}
                   initialProductLevelSaved={initialProductLevelSaved}
