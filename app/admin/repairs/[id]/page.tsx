@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requirePermission } from "@/lib/auth/permissions";
-import { getAdminRepairById, listTechnicians } from "@/lib/data/admin/repairs";
+import { getAdminRepairById, listTechnicians, listRepairStockOptions } from "@/lib/data/admin/repairs";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { RepairDetailControls } from "@/components/admin/repair-detail-controls";
 import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
@@ -8,7 +8,11 @@ import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 export default async function AdminRepairDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("repairs.read");
 
-  const [repair, technicians] = await Promise.all([getAdminRepairById(params.id), listTechnicians()]);
+  const [repair, technicians, stockOptions] = await Promise.all([
+    getAdminRepairById(params.id),
+    listTechnicians(),
+    listRepairStockOptions(),
+  ]);
   if (!repair) notFound();
 
   return (
@@ -47,7 +51,7 @@ export default async function AdminRepairDetailPage({ params }: { params: { id: 
           </div>
 
           <div className="mt-6">
-            <RepairDetailControls repair={repair} technicians={technicians} />
+            <RepairDetailControls repair={repair} technicians={technicians} stockOptions={stockOptions} />
           </div>
         </Card>
 
