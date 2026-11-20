@@ -39,7 +39,7 @@ function productListSelect(requireMatchingInventory = false) {
   brand:brands ( id, name, slug ),
   category:categories ( id, name, slug ),
   product_images ( id, storage_path, alt_text, display_order, is_primary, variant_id ),
-  ${inventoryRelation} ( status, variant_id )
+  ${inventoryRelation} ( status, variant_id ),\n  catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants )
 `;
 }
 
@@ -147,10 +147,10 @@ export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
   }
 
   if (typeof filters.minPrice === "number") {
-    query = query.gte("base_price", filters.minPrice);
+    query = query.gte("catalogue_price.display_price", filters.minPrice);
   }
   if (typeof filters.maxPrice === "number") {
-    query = query.lte("base_price", filters.maxPrice);
+    query = query.lte("catalogue_price.display_price", filters.maxPrice);
   }
 
   if (filters.query && filters.query.trim().length > 0) {
@@ -163,10 +163,10 @@ export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
       query = query.order("created_at", { ascending: false });
       break;
     case "price_asc":
-      query = query.order("base_price", { ascending: true });
+      query = query.order("display_price", { ascending: true, foreignTable: "catalogue_price" });
       break;
     case "price_desc":
-      query = query.order("base_price", { ascending: false });
+      query = query.order("display_price", { ascending: false, foreignTable: "catalogue_price" });
       break;
     case "name":
       query = query.order("name", { ascending: true });
