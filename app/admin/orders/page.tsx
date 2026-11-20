@@ -63,7 +63,7 @@ export default async function AdminOrdersPage({
         </select>
         <select name="payment" defaultValue={paymentStatus ?? ""} className="rounded-card border border-surface-border px-3 py-1.5 text-sm">
           <option value="">All payment statuses</option>
-          {["unpaid", "paid", "partial", "refunded"].map((s) => (
+          {["unpaid", "paid", "partial", "partially_refunded", "refunded"].map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
