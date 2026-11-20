@@ -7,9 +7,9 @@ import { formatMoney } from "@/lib/format/money";
 import { calculateDocumentPricing } from "@/lib/documents/pricing";
 import { createBusinessQuotationAction } from "@/app/admin/documents/actions";
 
-type Option = { id: string; label: string; description: string; unitPrice: number; sourceId?: string };
+type Option = { id: string; label: string; description: string; unitPrice: number; sourceId?: string; productId?: string; variantId?: string };
 type Customer = { id: string; name: string; phone: string | null };
-type Line = { description: string; quantity: number; unitPrice: number; optionId: string };
+type Line = { description: string; quantity: number; unitPrice: number; optionId: string; productId?: string; variantId?: string };
 
 export function BusinessQuotationBuilder({ products, rentals, customers, allowSales, allowRentals }: { products: Option[]; rentals: Option[]; customers: Customer[]; allowSales: boolean; allowRentals: boolean }) {
   const router = useRouter();
@@ -53,7 +53,7 @@ export function BusinessQuotationBuilder({ products, rentals, customers, allowSa
   function chooseOption(index: number, optionId: string) {
     const option = options.find((item) => item.id === optionId);
     updateLine(index, option
-      ? { optionId, description: option.description, unitPrice: option.unitPrice }
+      ? { optionId, description: option.description, unitPrice: option.unitPrice, productId: option.productId, variantId: option.variantId }
       : { optionId: "", description: "", unitPrice: 0 });
   }
 
@@ -65,7 +65,7 @@ export function BusinessQuotationBuilder({ products, rentals, customers, allowSa
           sourceType, ...(sourceId ? { sourceId } : {}),
           ...(customerId ? { customerId } : {}),
           customerName, customerEmail, customerPhone, billingAddress,
-          lines: lines.map(({ description, quantity, unitPrice }) => ({ description, quantity, unitPrice })),
+          lines: lines.map(({ description, quantity, unitPrice, productId, variantId }) => ({ description, quantity, unitPrice, productId, variantId })),
           discountAmount, discountReason, notes,
           ...(validUntil ? { validUntil } : {}),
         });
