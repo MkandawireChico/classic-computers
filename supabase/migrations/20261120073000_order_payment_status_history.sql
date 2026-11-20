@@ -72,3 +72,6 @@ create trigger audit_order_payment_status_trigger
 
 comment on table public.order_payment_history is
   'Append-only history of order payment-status changes. Does not represent individual payment transactions or partial amounts.';
+
+-- Trigger functions are not application RPC endpoints.
+revoke all on function public.audit_order_payment_status_change() from public, anon, authenticated;
