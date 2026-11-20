@@ -6,7 +6,7 @@ export function RelatedProducts({ products }: { products: ProductListItem[] }) {
 
   return (
     <section className="mt-16" aria-labelledby="related-heading">
-      <h2 id="related-heading" className="mb-6 text-2xl font-bold text-gray-900">
+      <h2 id="related-heading" className="mb-6 text-2xl font-bold text-navy-900">
         You might also like
       </h2>
       <ProductGrid products={products} />
