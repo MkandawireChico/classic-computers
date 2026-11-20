@@ -13,6 +13,7 @@ const GROUPS = [
   ] },
   { title: "My activity", links: [
     ["/account/orders", "My orders", "bag"],
+    ["/account/quotations", "My quotations", "file-text"],
     ["/account/reviews", "My reviews", "star"],
     ["/account/repairs", "My repairs", "wrench"],
     ["/account/rentals", "My rentals", "calendar"],
@@ -42,6 +43,7 @@ function Icon({ name }: { name: string }) {
     heart: "M20.8 8.6c0 5.2-8.8 11-8.8 11S3.2 13.8 3.2 8.6A4.6 4.6 0 0 1 12 6.5a4.6 4.6 0 0 1 8.8 2.1Z",
     compare: "M8 4H4v16h4M16 4h4v16h-4M9 8h6m-6 4h6m-6 4h6",
     bell: "M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9Zm4 13h4",
+    "file-text": "M7 3h7l5 5v13H7zM14 3v6h5M10 13h6m-6 4h6",
     star: "m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z",
   };
 
