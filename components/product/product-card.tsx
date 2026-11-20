@@ -83,7 +83,7 @@ export function ProductCard({
               ) : (
                 <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
               )}
-              <span className="mt-1 text-[10px] font-medium text-slate-500">{product.has_active_variants ? "Starting configuration · " : ""}Excludes VAT and PPDA</span>
+              <span className="mt-1 text-[10px] font-medium text-slate-500">{product.has_active_variants ? "Starting price · " : ""}Excludes VAT and PPDA</span>
             </div>
             {product.condition !== "new" ? (
               <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-slate-600">{product.condition}</span>
