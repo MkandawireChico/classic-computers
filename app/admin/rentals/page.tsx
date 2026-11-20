@@ -73,7 +73,7 @@ export default async function AdminRentalsPage({
                   </td>
                   <td className="p-3 text-gray-700">{r.customer_name ?? r.guest_name ?? "—"}</td>
                   <td className="p-3 text-gray-600">
-                    <a className="text-brand-600 hover:underline">{r.start_date} – {r.end_date}</a> (×{r.quantity})
+                    <span>{r.start_date} – {r.end_date}</span> (×{r.quantity})
                   </td>
                   <td className="p-3">
                     <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>{r.status}</Badge>
