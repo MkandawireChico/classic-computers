@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AccountPageHeader } from "@/components/storefront/account-page-header";
 import Image from "next/image";
 import { getMyOrderById } from "@/lib/data/orders";
 import { Badge } from "@/components/ui/badge";
@@ -28,19 +29,16 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
   return (
     <div className="space-y-6">
-      <header className="border-b border-slate-200 pb-5">
-      <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-800">Order details</p>
-      <h1 className="mt-1 break-all text-2xl font-extrabold text-slate-950 sm:text-3xl">{order.order_number}</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        {new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
-      </p>
-
-      <div className="mt-4 flex flex-wrap gap-2">
+      <AccountPageHeader
+        eyebrow="Purchases · Order details"
+        title={order.order_number}
+        description={`Placed ${new Date(order.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}. Follow payment and fulfilment progress for this purchase.`}
+      />
+      <div className="flex flex-wrap gap-2">
         <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
-        <Badge variant={order.payment_status === "paid" ? "success" : "warning"}>{order.payment_status.replace(/_/g, " ")}</Badge>
+        <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" ? "neutral" : "warning"}>{order.payment_status.replace(/_/g, " ")}</Badge>
         <Badge variant="neutral">{order.fulfillment_type === "pickup" ? "Pickup" : "Delivery"}</Badge>
       </div>
-      </header>
 
       {paymentProvider && paymentCopyDetails && order.payment_status !== "paid" ? (
         <section className="rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="order-payment-heading">
