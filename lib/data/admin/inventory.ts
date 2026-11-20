@@ -70,7 +70,7 @@ export async function listInventory(filters: InventoryFilters) {
     return { items: [] as AdminInventoryRow[], total: 0, page, pageSize };
   }
 
-  let items: AdminInventoryRow[] = (data ?? []).map((row: any) => ({
+  const items: AdminInventoryRow[] = (data ?? []).map((row: any) => ({
     id: row.id,
     product_id: row.product_id,
     variant_id: row.variant_id,
