@@ -90,8 +90,8 @@ export function PurchasePanel({
           </dl>
         </section>
       ) : null}
-      <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Price</p>
+      <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Catalogue price</p>
         <div className="flex flex-wrap items-baseline gap-2">
         {onSale ? (
           <>
@@ -102,6 +102,7 @@ export function PurchasePanel({
             <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
         )}
         </div>
+        <p className="mt-2 text-xs leading-5 text-slate-600">Displayed price excludes VAT and PPDA. These are calculated separately on quotations and invoices.</p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
