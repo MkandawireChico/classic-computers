@@ -20,6 +20,7 @@ export interface ProductImage {
 }
 
 export interface ProductSpecification {
+  variant_id: string | null;
   key: string;
   label: string;
   value: string;
