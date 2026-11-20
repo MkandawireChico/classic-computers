@@ -38,6 +38,7 @@ export function PurchasePanel({
     availableQuantity: number;
   }>;
 }) {
+  const specifications = product.specifications;
   const hasVariants = product.variants.length > 0;
   const activeVariants = useMemo(
     () => product.variants.filter((variant) => variant.status === "active"),
@@ -77,19 +78,19 @@ export function PurchasePanel({
   }) ?? null;
   const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
   const quickSpecifications = useMemo(() => {
-    const byKey = new Map<string, (typeof product.specifications)[number]>();
-    product.specifications
+    const byKey = new Map<string, (typeof specifications)[number]>();
+    specifications
       .filter((spec) => spec.variant_id === null)
       .forEach((spec) => byKey.set(spec.key, spec));
     if (selectedVariantId) {
-      product.specifications
+      specifications
         .filter((spec) => spec.variant_id === selectedVariantId)
         .forEach((spec) => byKey.set(spec.key, spec));
     }
     return [...byKey.values()]
       .sort((a, b) => a.display_order - b.display_order)
       .slice(0, 4);
-  }, [product.specifications, selectedVariantId]);
+  }, [specifications, selectedVariantId]);
 
   return (
     <div className="space-y-4 sm:space-y-5">
