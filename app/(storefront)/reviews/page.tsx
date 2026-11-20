@@ -1,6 +1,7 @@
 import { getPublicReviewsPage, getReviewStats } from "@/lib/data/reviews";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { redirect } from "next/navigation";
 import { Pagination } from "@/components/storefront/pagination";
 import { RatingBreakdown } from "@/components/storefront/rating-breakdown";
 import type { ReviewType } from "@/types/catalog";
@@ -34,6 +35,8 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
     getReviewStats(),
     getCurrentUser(),
   ]);
+  if (stats.totalReviews === 0) redirect("/");
+
   const categories = reviewType ? [reviewType] : REVIEW_TYPES;
   const distribution = categories.reduce(
     (combined, type) => {
