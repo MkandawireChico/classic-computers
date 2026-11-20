@@ -34,7 +34,7 @@ export default async function ShopPage({
           <span aria-current="page" className="text-slate-700">Shop</span>
         </nav>
 
-        <header className="border-b border-slate-200 bg-white px-5 py-7 sm:px-8 sm:py-9">
+        <header className="rounded-2xl border border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-9">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Classic Computers catalogue</p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
@@ -60,7 +60,7 @@ export default async function ShopPage({
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
                   {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-500">Prices shown in Malawi Kwacha</p>
+                <p className="mt-0.5 text-xs text-slate-500">Catalogue prices in MWK, excluding VAT and PPDA</p>
               </div>
               <SortSelect />
             </div>
