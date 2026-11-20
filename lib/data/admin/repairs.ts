@@ -61,6 +61,43 @@ export async function listAdminRepairs(filters: RepairFilters) {
   return { items, total: count ?? items.length, page, pageSize };
 }
 
+export interface AdminRepairOverview {
+  active: number;
+  awaitingApproval: number;
+  readyForPickup: number;
+  unassigned: number;
+  agedOver7Days: number;
+  agedOver14Days: number;
+}
+
+export async function getAdminRepairOverview(): Promise<AdminRepairOverview> {
+  const supabase = createClient();
+  const activeStatuses = ["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup"];
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+  const count = async (configure: (query: any) => any) => {
+    let query = (supabase.from("repair_tickets") as any).select("id", { count: "exact", head: true });
+    query = configure(query);
+    const { count: total, error } = await query;
+    if (error) {
+      console.error("getAdminRepairOverview failed:", error.message);
+      return 0;
+    }
+    return total ?? 0;
+  };
+
+  const [active, awaitingApproval, readyForPickup, unassigned, agedOver7Days, agedOver14Days] = await Promise.all([
+    count((query) => query.in("status", activeStatuses)),
+    count((query) => query.eq("status", "awaiting_approval")),
+    count((query) => query.eq("status", "ready_for_pickup")),
+    count((query) => query.in("status", activeStatuses).is("assigned_technician_id", null)),
+    count((query) => query.in("status", activeStatuses).lt("created_at", sevenDaysAgo)),
+    count((query) => query.in("status", activeStatuses).lt("created_at", fourteenDaysAgo)),
+  ]);
+
+  return { active, awaitingApproval, readyForPickup, unassigned, agedOver7Days, agedOver14Days };
+}
+
 export interface AdminRepairDetail {
   id: string;
   ticket_number: string;
