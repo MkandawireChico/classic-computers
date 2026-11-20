@@ -96,8 +96,8 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 {order.statusHistory.map((event, i) => (
                   <li key={i} className="text-sm text-gray-600">
                     <span className="font-medium capitalize text-gray-900">{event.to_status.replace(/_/g, " ")}</span>
-                    {" — "}
-                    {new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                    {event.from_status ? <span className="text-xs text-slate-500"> · from {event.from_status.replace(/_/g, " ")}</span> : null}
+                    <span className="mt-1 block text-xs text-slate-500">{new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</span>
                   </li>
                 ))}
               </ol>
