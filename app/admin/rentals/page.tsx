@@ -46,7 +46,27 @@ export default async function AdminRentalsPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-3 md:hidden">
+        {result.items.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">No rentals found.</div>
+        ) : result.items.map((r) => (
+          <Link key={r.id} href={`/admin/rentals/${r.id}`} className="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-200">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-slate-950">{r.product_name ?? "Rental booking"}</p>
+                <p className="mt-1 truncate text-sm text-slate-600">{r.customer_name ?? r.guest_name ?? "Customer not recorded"}</p>
+              </div>
+              <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>{r.status}</Badge>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
+              <span>{r.start_date} to {r.end_date} · Qty {r.quantity}</span>
+              <span className="font-semibold text-brand-700">Open booking →</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
         <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
