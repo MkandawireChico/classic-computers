@@ -29,12 +29,20 @@ export async function updateSetting(key: string, value: Record<string, unknown>)
     throw e;
   }
 
+  if (key === "repair_settings") {
+    const rate = value.internal_labour_rate_mwk_per_hour;
+    if (rate !== "" && (typeof rate !== "number" || !Number.isFinite(rate) || rate < 0 || rate > 1000000)) {
+      return { success: false, error: "Enter a valid hourly internal labour cost between MWK 0 and MWK 1,000,000." };
+    }
+  }
+
   const supabase = createClient();
-  // .update() on an existing row, never insert-or-overwrite-blind — the
-  // key already exists (seeded in Phase 2), and the admin UI shows the
-  // CURRENT value before editing (section 25: "do not overwrite existing
-  // seeded information without reviewing the current values").
-  const { error } = await (supabase.from("site_settings") as any).update({ value }).eq("key", key);
+  // Preserve settings keys not represented by the current editor.
+  const { data: existing, error: readError } = await (supabase.from("site_settings") as any)
+    .select("value").eq("key", key).maybeSingle();
+  if (readError || !existing) return { success: false, error: "Could not load the existing setting." };
+  const mergedValue = { ...(existing.value ?? {}), ...value };
+  const { error } = await (supabase.from("site_settings") as any).update({ value: mergedValue }).eq("key", key);
   if (error) return { success: false, error: "Could not update setting." };
   return { success: true };
 }
