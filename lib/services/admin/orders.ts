@@ -153,3 +153,55 @@ export async function updateInternalNotes(orderId: string, internalNotes: string
   }
   return { success: true };
 }
+
+const paymentTransactionSchema = z.object({
+  orderId: z.string().uuid(),
+  transactionType: z.enum(["payment", "refund"]),
+  provider: z.string().trim().min(1).max(80),
+  amount: z.number().positive().finite(),
+  currency: z.string().trim().length(3).default("MWK"),
+  providerReference: z.string().trim().max(120).optional().or(z.literal("")),
+});
+
+export async function recordPaymentTransaction(input: unknown): Promise<ServiceResult> {
+  const guardResult = await guard();
+  if (guardResult) return guardResult;
+
+  const parsed = paymentTransactionSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Enter a valid transaction type, provider and amount." };
+
+  const value = parsed.data;
+  const supabase = createClient();
+  const { error } = await supabase.rpc("record_order_payment_transaction", {
+    p_order_id: value.orderId,
+    p_transaction_type: value.transactionType,
+    p_provider: value.provider,
+    p_amount: value.amount,
+    p_currency: value.currency.toUpperCase(),
+    p_provider_reference: value.providerReference || null,
+  });
+
+  if (error) {
+    console.error("recordPaymentTransaction failed:", {
+      orderId: value.orderId,
+      code: error.code,
+      message: error.message,
+    });
+    const message = error.message.toLowerCase();
+    if (message.includes("exceeds the outstanding")) {
+      return { success: false, error: "This amount exceeds the remaining order balance." };
+    }
+    if (message.includes("exceeds the verified amount")) {
+      return { success: false, error: "The refund exceeds the verified amount received." };
+    }
+    if (message.includes("duplicate key")) {
+      return { success: false, error: "This provider reference has already been recorded." };
+    }
+    if (message.includes("permission")) {
+      return { success: false, error: "You do not have permission to record payment transactions." };
+    }
+    return { success: false, error: "Could not record this transaction. Check the details and try again." };
+  }
+
+  return { success: true };
+}
