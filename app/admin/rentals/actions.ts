@@ -28,3 +28,20 @@ export async function setRentalChargeAction(input: unknown) {
   }
   return result;
 }
+
+export async function recordRentalPaymentAction(input: unknown) {
+  const result = await rentalService.recordRentalPayment(input);
+  if (result.success && typeof input === "object" && input && "bookingId" in input) {
+    revalidatePath(`/admin/rentals/${(input as any).bookingId}`);
+    revalidatePath("/admin/rentals");
+  }
+  return result;
+}
+
+export async function recordRentalConditionAction(input: unknown) {
+  const result = await rentalService.recordRentalCondition(input);
+  if (result.success && typeof input === "object" && input && "bookingId" in input) {
+    revalidatePath(`/admin/rentals/${(input as any).bookingId}`);
+  }
+  return result;
+}
