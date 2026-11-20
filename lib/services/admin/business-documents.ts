@@ -211,3 +211,55 @@ export async function convertAcceptedQuotationToInvoice(input: unknown): Promise
 
   return { success: true, invoiceId: invoice.id, invoiceNumber: Number(invoice.document_number) };
 }
+
+
+const transactionSchema = z.object({
+  documentId: z.string().uuid(),
+  transactionType: z.enum(["payment", "refund"]),
+  amount: z.coerce.number().positive().max(999999999),
+  provider: z.string().trim().min(2).max(80),
+  providerReference: z.string().trim().min(3).max(120),
+  providerChecked: z.literal(true),
+  notes: z.string().trim().max(500).optional().default(""),
+});
+
+export async function recordBusinessDocumentTransaction(input: unknown): Promise<ServiceResult> {
+  const parsed = transactionSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Check the payment details and try again." };
+
+  const supabase = createClient();
+  const { data: document, error: documentError } = await (supabase.from("business_documents") as any)
+    .select("id,document_type,source_type")
+    .eq("id", parsed.data.documentId)
+    .maybeSingle();
+  if (documentError || !document || document.document_type !== "invoice") {
+    return { success: false, error: "Invoice not found." };
+  }
+
+  const permission = document.source_type === "order" ? "orders.write"
+    : document.source_type === "rental" ? "rentals.write" : "repairs.write";
+  try {
+    await requirePermission(permission);
+  } catch (error) {
+    if (error instanceof AuthorizationError) return { success: false, error: "You don't have permission to record transactions for this invoice." };
+    throw error;
+  }
+
+  const { error } = await (supabase.from("business_document_transactions") as any).insert({
+    document_id: parsed.data.documentId,
+    transaction_type: parsed.data.transactionType,
+    amount: parsed.data.amount,
+    currency: "MWK",
+    provider: parsed.data.provider,
+    provider_reference: parsed.data.providerReference,
+    provider_checked: parsed.data.providerChecked,
+    notes: parsed.data.notes || null,
+  });
+  if (error) {
+    console.error("recordBusinessDocumentTransaction failed:", error.message);
+    return { success: false, error: error.message.includes("outstanding") || error.message.includes("Refund") || error.message.includes("blocked")
+      ? error.message
+      : "The transaction was not recorded. Check the reference and confirm the provider account." };
+  }
+  return { success: true };
+}
