@@ -70,7 +70,7 @@ export default async function CategoryShopPage({
       <div className="section-shell py-6 sm:py-9 lg:py-11">
       <CategoryInterestTracker categoryId={category.id} />
       <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
-        <a href="/shop" className="hover:text-brand-700">Shop</a>
+        <Link href="/shop" className="hover:text-brand-700">Shop</Link>
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
         <span className="text-slate-700">{categoryName}</span>
       </nav>
@@ -84,7 +84,7 @@ export default async function CategoryShopPage({
       </header>
 
       <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
-        <aside aria-label="Filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32">
+        <aside aria-label="Filters" className="h-fit lg:sticky lg:top-32 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
           <ShopFilters brands={brands} categories={categories} />
         </aside>
 
