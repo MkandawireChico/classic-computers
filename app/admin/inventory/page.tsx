@@ -51,7 +51,28 @@ export default async function AdminInventoryPage({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-3 md:hidden">
+        {result.items.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">No inventory records found.</div>
+        ) : result.items.map((row) => (
+          <Link key={row.id} href={`/admin/inventory/${row.id}`} className="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-200">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-slate-950">{row.product_name}</p>
+                {row.variant_name ? <p className="mt-0.5 text-sm text-slate-600">{row.variant_name}</p> : null}
+                <p className="mt-1 text-xs text-slate-500">SKU: {row.sku || "Not recorded"}</p>
+              </div>
+              <Badge variant={STATUS_VARIANT[row.status] ?? "neutral"}>{row.status.replace(/_/g, " ")}</Badge>
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm">
+              <span className="text-slate-600">On hand: <strong className="text-slate-950">{row.quantity_on_hand}</strong> · Threshold: {row.low_stock_threshold}</span>
+              <span className="text-xs font-semibold text-brand-700">Adjust →</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
         <table className="w-full min-w-[700px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
