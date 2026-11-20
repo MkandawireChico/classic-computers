@@ -52,10 +52,14 @@ export default async function WishlistPage() {
                 <Link href={`/product/${product.slug}`} className="text-base font-bold text-slate-900 hover:text-brand-600">
                   {product.name}
                 </Link>
-                <div className="mt-2 flex items-center gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="text-lg font-bold text-slate-900">
-                    {formatMoney(salePrice !== null && salePrice < price ? salePrice : price)}
+                    {product.has_active_variants && variantId === null ? "From " : ""}
+                    {formatMoney(salePrice !== null && salePrice > 0 && salePrice < price ? salePrice : price)}
                   </span>
+                  {salePrice !== null && salePrice > 0 && salePrice < price ? (
+                    <span className="text-xs font-medium text-slate-400 line-through">{formatMoney(price)}</span>
+                  ) : null}
                   <StockBadge status={inventoryStatus as any} />
                 </div>
               </div>
