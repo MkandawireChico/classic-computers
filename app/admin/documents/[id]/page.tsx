@@ -10,7 +10,7 @@ import { PrintDocumentButton } from "@/components/admin/print-document-button";
 export default async function AdminBusinessDocumentPage({ params }: { params: { id: string } }) {
   const permissions = await getMyPermissions();
   const supabase = createClient();
-  const { data: document } = await (supabase.from("business_documents") as any)
+  const { data: document } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_type,document_number,source_type,source_id,customer_name,customer_email,customer_phone,billing_address,status,subtotal,discount_amount,discount_reason,discount_authorized_by,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,terms,valid_until,issued_at,created_at")
     .eq("id", params.id)
     .maybeSingle();
@@ -28,18 +28,18 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   const { data: discountApprover } = document.discount_authorized_by
     ? await (supabase.from("profiles") as any).select("full_name").eq("id", document.discount_authorized_by).maybeSingle()
     : { data: null };
-  const { data: items } = await (supabase.from("business_document_items") as any)
+  const { data: items } = await ((supabase as any).from("business_document_items") as any)
     .select("description,quantity,unit_price,line_total,sort_order")
     .eq("document_id", document.id)
     .order("sort_order", { ascending: true });
   const { data: decision } = document.document_type === "quotation"
-    ? await (supabase.from("business_document_decisions") as any)
+    ? await ((supabase as any).from("business_document_decisions") as any)
       .select("decision,decision_channel,comment,created_at")
       .eq("document_id", document.id)
       .maybeSingle()
     : { data: null };
   const { data: transactions } = document.document_type === "invoice"
-    ? await (supabase.from("business_document_transactions") as any)
+    ? await ((supabase as any).from("business_document_transactions") as any)
       .select("id,transaction_type,amount,provider,provider_reference,notes,created_at")
       .eq("document_id", document.id)
       .order("created_at", { ascending: false })
