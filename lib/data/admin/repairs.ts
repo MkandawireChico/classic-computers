@@ -186,6 +186,7 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
       taxable_amount: Number(latest.taxable_amount),
       grand_total: Number(latest.grand_total),
     } : null,
+    finalInvoice,
   };
 }
 
