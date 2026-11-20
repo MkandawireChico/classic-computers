@@ -23,6 +23,8 @@ export function StockAdjustForm({ inventoryId, onDone }: { inventoryId: string; 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isPending || delta === 0) return;
+    if (delta < 0 && !window.confirm(`Reduce stock by ${Math.abs(delta)} units? Check the physical stock count before confirming.`)) return;
     setError(null);
     startTransition(async () => {
       const result = await adjustInventoryAction({ inventoryId, movementType, quantityDelta: delta, note });
@@ -58,6 +60,7 @@ export function StockAdjustForm({ inventoryId, onDone }: { inventoryId: string; 
         <label className="text-xs font-medium text-gray-700">Change (+/-)</label>
         <input
           type="number"
+          step="1"
           value={delta}
           onChange={(e) => setDelta(Number(e.target.value))}
           className="w-24 rounded-card border border-surface-border px-2 py-1.5 text-sm"
@@ -67,6 +70,7 @@ export function StockAdjustForm({ inventoryId, onDone }: { inventoryId: string; 
         <label className="text-xs font-medium text-gray-700">Note</label>
         <input
           value={note}
+          maxLength={500}
           onChange={(e) => setNote(e.target.value)}
           className="rounded-card border border-surface-border px-2 py-1.5 text-sm"
         />
