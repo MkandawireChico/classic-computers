@@ -300,13 +300,14 @@ export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepair
   const ids = technicians.map((technician) => technician.id);
   const [ticketResult, completionResult] = await Promise.all([
     (supabase.from("repair_tickets") as any)
-      .select("assigned_technician_id,status")
+      .select("id,assigned_technician_id,status")
       .in("assigned_technician_id", ids),
     (supabase.from("repair_status_history" as any) as any)
-      .select("ticket_id,created_at")
+      .select("assigned_technician_id")
       .eq("to_status", "completed")
       .eq("is_baseline", false)
-      .gte("created_at", since),
+      .gte("created_at", since)
+      .in("assigned_technician_id", ids),
   ]);
 
   if (ticketResult.error) console.error("Technician repair assignments unavailable:", ticketResult.error.message);
@@ -315,10 +316,7 @@ export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepair
   const activeStatuses = new Set(["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup"]);
   const activeByTechnician = new Map<string, number>();
   const technicianByTicket = new Map<string, string>();
-  const { data: ticketRows } = await (supabase.from("repair_tickets") as any)
-    .select("id,assigned_technician_id,status")
-    .in("assigned_technician_id", ids);
-  for (const ticket of ticketRows ?? []) {
+  for (const ticket of ticketResult.data ?? []) {
     if (!ticket.assigned_technician_id) continue;
     technicianByTicket.set(ticket.id, ticket.assigned_technician_id);
     if (activeStatuses.has(ticket.status)) {
@@ -328,7 +326,7 @@ export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepair
 
   const completedByTechnician = new Map<string, number>();
   for (const completion of completionResult.data ?? []) {
-    const technicianId = technicianByTicket.get(completion.ticket_id);
+    const technicianId = completion.assigned_technician_id;
     if (technicianId) completedByTechnician.set(technicianId, (completedByTechnician.get(technicianId) ?? 0) + 1);
   }
 
