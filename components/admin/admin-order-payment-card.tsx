@@ -61,6 +61,8 @@ export function AdminOrderPaymentCard({
         <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs leading-5 text-emerald-800">Payment is recorded as received. Retain the bank or mobile-money transaction record for reconciliation.</p>
       ) : paymentStatus === "refunded" && hasVerifiedTransactions ? (
         <p className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600">The verified transaction ledger records the refund.</p>
+      ) : paymentStatus === "partially_refunded" && hasVerifiedTransactions ? (
+        <p className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-700">A partial refund is recorded. The order balance is not treated as a customer payment due. Review the transaction ledger before processing another adjustment.</p>
       ) : (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900">{paymentStatus === "paid" || paymentStatus === "refunded" ? "This is a historical payment status without transaction-level evidence. Review the original provider records before processing a new payment or refund." : "Do not mark as paid from a customer-supplied reference alone. Confirm the funds have reached the business account."}</p>
       )}
