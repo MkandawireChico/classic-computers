@@ -52,7 +52,7 @@ export function SpecificationsTable({ specifications }: { specifications: Produc
     <div className="grid gap-4 md:grid-cols-2">
       {orderedGroups.map((group) => (
         <section key={group.title} aria-label={group.title} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <h3 className="border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-[#17344d]">
+          <h3 className="border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-navy-900">
             {group.title}
           </h3>
           <table className="w-full text-sm leading-6">
