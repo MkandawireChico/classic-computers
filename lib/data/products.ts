@@ -267,8 +267,8 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     null;
 
   const specifications = (row.product_specifications ?? [])
-    .filter((s: any) => s.variant_id === null)
     .map((s: any) => ({
+      variant_id: s.variant_id ?? null,
       key: s.specification_definitions?.key ?? "",
       label: s.specification_definitions?.label ?? "",
       value: s.value,
