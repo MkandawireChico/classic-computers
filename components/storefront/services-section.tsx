@@ -29,12 +29,12 @@ const SERVICES = [
 
 export function ServicesSection() {
   return (
-    <section aria-labelledby="services-heading" className="bg-[#f3f5f6]">
+    <section aria-labelledby="services-heading" className="bg-surface-muted">
       <div className="section-shell py-16 sm:py-20 lg:py-24">
         <div className="mb-10 grid gap-5 border-b border-slate-300 pb-8 sm:mb-12 sm:pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-700">More services</p>
-            <h2 id="services-heading" className="mt-4 max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#102033] sm:text-4xl lg:text-5xl">
+            <h2 id="services-heading" className="mt-4 max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-navy-900 sm:text-4xl lg:text-5xl">
               Rentals, repairs and
               <span className="block text-brand-700">student deals.</span>
             </h2>
@@ -47,10 +47,10 @@ export function ServicesSection() {
             <Link key={service.href} href={service.href} className="group flex min-h-[280px] flex-col bg-white p-6 transition-colors hover:bg-[#f8fbfc] sm:p-8 lg:min-h-[320px]">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs text-slate-400">{service.number}</span>
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e8f5fa] text-brand-800 transition duration-300 group-hover:scale-105 group-hover:bg-brand-700 group-hover:text-white">{service.icon}</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-800 transition duration-300 group-hover:scale-105 group-hover:bg-brand-700 group-hover:text-white">{service.icon}</span>
               </div>
               <div className="mt-auto pt-12">
-                <h3 className="text-xl font-bold tracking-tight text-[#102033] sm:text-2xl">{service.title}</h3>
+                <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">{service.title}</h3>
                 <p className="mt-3 min-h-[52px] text-sm leading-6 text-slate-600">{service.description}</p>
                 <span className="mt-6 inline-flex items-center gap-3 text-sm font-extrabold text-brand-800 transition group-hover:gap-5">
                   {service.action} <span aria-hidden="true">↗</span>
