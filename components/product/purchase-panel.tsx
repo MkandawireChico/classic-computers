@@ -75,9 +75,10 @@ export function PurchasePanel({
   }) ?? null;
   const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
   const quickSpecifications = useMemo(() => {
-    const byKey = new Map(product.specifications
+    const byKey = new Map<string, (typeof product.specifications)[number]>();
+    product.specifications
       .filter((spec) => spec.variant_id === null)
-      .map((spec) => [spec.key, spec]));
+      .forEach((spec) => byKey.set(spec.key, spec));
     if (selectedVariantId) {
       product.specifications
         .filter((spec) => spec.variant_id === selectedVariantId)
