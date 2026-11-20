@@ -68,11 +68,11 @@ export function RepairDetailControls({
     ? (repair.loggedMinutes / 60) * repair.internalLabourRate
     : null;
   const totalRecordedCost = labourCost !== null ? repair.partsCostTotal + labourCost : null;
-  const partsBalance = repair.latestQuotation
-    ? repair.latestQuotation.taxable_amount - repair.partsCostTotal
-    : null;
-  const estimatedContribution = repair.latestQuotation && totalRecordedCost !== null
-    ? repair.latestQuotation.taxable_amount - totalRecordedCost
+  const revenueBasis = repair.finalInvoice?.taxable_amount ?? repair.latestQuotation?.taxable_amount ?? null;
+  const revenueBasisLabel = repair.finalInvoice ? "Final invoice" : "Provisional quotation";
+  const partsBalance = revenueBasis !== null ? revenueBasis - repair.partsCostTotal : null;
+  const estimatedContribution = revenueBasis !== null && totalRecordedCost !== null
+    ? revenueBasis - totalRecordedCost
     : null;
 
   return (
@@ -97,13 +97,13 @@ export function RepairDetailControls({
             <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{loggedHours}h {loggedRemainder}m</p>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-3">
-            <p className="text-xs text-slate-500">Customer selling price, before tax</p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{repair.latestQuotation ? formatMoney(repair.latestQuotation.taxable_amount) : "Not quoted"}</p>
+            <p className="text-xs text-slate-500">{repair.finalInvoice ? "Final invoiced selling price, before tax" : "Quoted selling price, before tax"}</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{revenueBasis !== null ? formatMoney(revenueBasis) : "Not quoted"}</p>
           </div>
         </div>
         {partsBalance !== null ? (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 text-sm">
-            <span className="font-medium text-slate-700">Selling price less parts cost</span>
+            <span className="font-medium text-slate-700">{revenueBasisLabel} less parts cost</span>
             <span className="font-semibold tabular-nums text-slate-900">{formatMoney(partsBalance)}</span>
           </div>
         ) : null}
@@ -114,12 +114,12 @@ export function RepairDetailControls({
             <p className="mt-1 text-xs text-slate-500">{repair.internalLabourRate !== null ? `Rate: ${formatMoney(repair.internalLabourRate)} per hour` : "Set an internal hourly rate in Admin Settings → Repair settings."}</p>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-3">
-            <p className="text-xs text-slate-500">Estimated contribution after recorded costs</p>
+            <p className="text-xs text-slate-500">{repair.finalInvoice ? "Estimated contribution against invoice" : "Provisional contribution against quotation"}</p>
             <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{estimatedContribution !== null ? formatMoney(estimatedContribution) : "Incomplete"}</p>
-            <p className="mt-1 text-xs text-slate-500">{totalRecordedCost !== null ? `Recorded parts and labour: ${formatMoney(totalRecordedCost)}` : "Requires a configured labour rate and quotation."}</p>
+            <p className="mt-1 text-xs text-slate-500">{totalRecordedCost !== null ? `Recorded parts and labour: ${formatMoney(totalRecordedCost)} · Basis: ${revenueBasisLabel.toLowerCase()}` : "Requires a configured labour rate and quotation."}</p>
           </div>
         </div>
-        <p className="mt-2 text-xs leading-5 text-slate-500">Estimate uses the latest quotation before tax, recorded parts cost and configured labour rate. Excludes overheads, unlogged work, warranty costs and later invoice adjustments. Not an accounting profit figure.</p>
+        <p className="mt-2 text-xs leading-5 text-slate-500">Estimate uses the final invoice before tax when available. Until invoicing, the quotation-based figure is provisional. Uses recorded parts and configured labour rate. Excludes overheads, unlogged work and warranty costs. Not an accounting profit figure.</p>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">
@@ -132,6 +132,14 @@ export function RepairDetailControls({
         </div>
         {repair.finalInvoice ? (
           <>
+            {repair.latestQuotation ? (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 p-3 text-sm">
+                <span className="text-slate-600">Quotation #{repair.latestQuotation.document_number} to invoice variance, before tax</span>
+                <span className={repair.finalInvoice.taxable_amount - repair.latestQuotation.taxable_amount >= 0 ? "font-semibold tabular-nums text-slate-900" : "font-semibold tabular-nums text-rose-700"}>
+                  {formatMoney(repair.finalInvoice.taxable_amount - repair.latestQuotation.taxable_amount)}
+                </span>
+              </div>
+            ) : null}
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Invoiced before tax</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.taxable_amount)}</p></div>
               <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Invoice total</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.grand_total)}</p></div>
