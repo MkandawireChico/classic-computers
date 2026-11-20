@@ -64,6 +64,11 @@ export default async function OrdersPage() {
                   <p className="mt-2 text-sm text-slate-600">
                     {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })}
                   </p>
+                  <div className="mt-2">
+                    <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" ? "neutral" : "warning"}>
+                      Payment {order.payment_status.replace(/_/g, " ")}
+                    </Badge>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-base font-bold text-slate-950 sm:text-lg">{formatMoney(order.total)}</p>
