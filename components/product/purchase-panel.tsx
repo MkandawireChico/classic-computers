@@ -6,21 +6,17 @@ import { formatMoney } from "@/lib/format/money";
 import { StockBadge } from "./stock-badge";
 import { AddToCartButton } from "./add-to-cart-button";
 import { WishlistButton } from "./wishlist-button";
-import { BuyNowLink } from "./buy-now-link";
 import { useProductVariant } from "./product-variant-context";
-import type { BusinessInfo } from "@/lib/data/site-settings";
 import type { ProductDetail } from "@/types/catalog";
 
 export function PurchasePanel({
   product,
-  businessInfo,
   isAuthenticated,
   initialSavedVariantIds,
   initialProductLevelSaved,
   rentalOffers = [],
 }: {
   product: ProductDetail;
-  businessInfo: BusinessInfo | null;
   isAuthenticated: boolean;
   initialSavedVariantIds: string[];
   initialProductLevelSaved: boolean;
@@ -237,17 +233,6 @@ export function PurchasePanel({
         </div>
       ) : null}
 
-      <BuyNowLink
-        businessInfo={businessInfo}
-        product={{
-          name: product.name,
-          sku: product.sku,
-          slug: product.slug,
-          variantName: selectedVariant?.name ?? null,
-          variantSku: selectedVariant?.sku ?? null,
-          unitPrice: effectivePrice,
-        }}
-      />
 
     </div>
   );
