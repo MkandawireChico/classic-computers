@@ -11,6 +11,7 @@ import { getProductReviews, getProductRatingSummary } from "@/lib/data/reviews";
 import { RatingBreakdown } from "@/components/storefront/rating-breakdown";
 import { ReviewPhotos } from "@/components/storefront/review-photos";
 import { ProductGallery } from "@/components/product/product-gallery";
+import { ProductVariantProvider } from "@/components/product/product-variant-context";
 import { PurchasePanel } from "@/components/product/purchase-panel";
 import { SpecificationsTable } from "@/components/product/specifications-table";
 import { ProductEnquiry } from "@/components/product/product-enquiry";
@@ -160,6 +161,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <span aria-current="page" className="min-w-0 text-slate-600">{product.name}</span>
         </nav>
 
+        <ProductVariantProvider initialVariantId={schemaVariant?.id ?? null}>
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-8 xl:gap-10">
           <div className="min-w-0">
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm sm:rounded-3xl sm:p-5">
