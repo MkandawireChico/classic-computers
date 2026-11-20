@@ -2293,7 +2293,7 @@ export const Constants = {
         "cancelled",
         "refunded",
       ],
-      payment_status_enum: ["unpaid", "paid", "refunded", "partial"],
+      payment_status_enum: ["unpaid", "paid", "refunded", "partial", "partially_refunded"],
       product_status_enum: ["draft", "published", "archived"],
       product_type_enum: [
         "laptop",
