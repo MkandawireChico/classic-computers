@@ -184,9 +184,35 @@ export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
     return { items: [], total: 0, page, pageSize };
   }
 
+  const total = count ?? data?.length ?? 0;
+  const lastPage = Math.max(1, Math.ceil(total / pageSize));
+
+  // Keep stale or manually edited page URLs from rendering an empty
+  // catalogue when matching products still exist.
+  if (page > lastPage) {
+    const correctedPage = lastPage;
+    const correctedFrom = (correctedPage - 1) * pageSize;
+    const { data: correctedData, error: correctedError } = await query.range(
+      correctedFrom,
+      correctedFrom + pageSize - 1,
+    );
+
+    if (correctedError) {
+      console.error("searchShop page correction failed:", correctedError.message);
+      return { items: [], total, page: correctedPage, pageSize };
+    }
+
+    return {
+      items: (correctedData ?? []).map((row: any) => toListItem(row)),
+      total,
+      page: correctedPage,
+      pageSize,
+    };
+  }
+
   const items = (data ?? []).map((row: any) => toListItem(row));
 
-  return { items, total: count ?? items.length, page, pageSize };
+  return { items, total, page, pageSize };
 }
 
 export const getProductBySlug = cache(async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
