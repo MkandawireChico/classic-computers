@@ -105,9 +105,10 @@ begin
   if v_document.status <> 'draft' then
     raise exception 'Issued documents are locked. Create a revision instead.';
   end if;
-  return coalesce(new, old);
+  if tg_op = 'DELETE' then return old; end if;
+  return new;
 end;
-$$;
+$;
 
 create trigger guard_business_document_item_write_trigger
 before insert or update or delete on public.business_document_items
