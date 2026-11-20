@@ -30,17 +30,19 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
-      <div className="section-shell flex h-[4.25rem] items-center justify-between gap-3 lg:h-[4.75rem]">
-        <Link href="/" aria-label="Classic Computers home" className="flex min-w-0 shrink-0 items-center">
+      <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[4.75rem]">
+        <Link href="/" aria-label="Classic Computers home" className="flex min-w-0 shrink items-center gap-2.5 sm:gap-3">
           {logoUrl ? (
-            <span className="relative block h-10 w-[4.5rem] overflow-hidden sm:h-11 sm:w-20">
-              <Image src={logoUrl} alt={logo?.alt_text ?? "Classic Computers"} fill sizes="80px" className="object-contain object-left" />
+            <span className="relative block h-10 w-[3.8rem] shrink-0 overflow-hidden sm:h-11 sm:w-[4.5rem]">
+              <Image src={logoUrl} alt="" fill sizes="72px" className="object-contain object-left" />
             </span>
           ) : (
-            <span className="text-lg font-extrabold tracking-tight text-navy-950 sm:text-xl">
-              Classic <span className="text-brand-700">Computers</span>
-            </span>
+            <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-950 text-sm font-black tracking-tight text-white">CC</span>
           )}
+          <span className="min-w-0 leading-none">
+            <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.12em] text-navy-950 sm:text-[13px] sm:tracking-[0.15em]">Classic Computers</span>
+            <span className="mt-1.5 block text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500 sm:text-[10px]">Blantyre, Malawi</span>
+          </span>
         </Link>
 
         <div className="hidden min-w-0 flex-1 justify-end px-5 lg:flex">
