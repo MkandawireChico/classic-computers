@@ -24,7 +24,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
   }, [productId, visibleImages]);
 
   function selectImage(index: number) {
-    if (index === activeIndex || index < 0 || index >= images.length) return;
+    if (index === activeIndex || index < 0 || index >= visibleImages.length) return;
     trackInterestEvent({ name: "product_gallery_opened", productId });
     setActiveIndex(index);
   }
@@ -57,7 +57,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
           <>
             <button
               type="button"
-              onClick={() => selectImage((activeIndex - 1 + images.length) % visibleImages.length)}
+              onClick={() => selectImage((activeIndex - 1 + visibleImages.length) % visibleImages.length)}
               aria-label="Show previous product image"
               className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-xl font-semibold text-slate-800 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
@@ -65,7 +65,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
             </button>
             <button
               type="button"
-              onClick={() => selectImage((activeIndex + 1) % images.length)}
+              onClick={() => selectImage((activeIndex + 1) % visibleImages.length)}
               aria-label="Show next product image"
               className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-xl font-semibold text-slate-800 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
@@ -78,14 +78,14 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
         ) : null}
       </div>
 
-      {images.length > 1 ? (
+      {visibleImages.length > 1 ? (
         <div className="mt-4 flex gap-3 overflow-x-auto pb-2" role="group" aria-label="Choose product image">
           {visibleImages.map((image, index) => (
             <button
               key={image.id}
               type="button"
               onClick={() => selectImage(index)}
-              aria-label={`Show image ${index + 1} of ${images.length}`}
+              aria-label={`Show image ${index + 1} of ${visibleImages.length}`}
               aria-pressed={index === activeIndex}
               className={`relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xl border-2 bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
                 index === activeIndex ? "border-brand-500 shadow-sm" : "border-slate-200 hover:border-brand-300"
