@@ -72,7 +72,10 @@ begin
     end if;
   end if;
   if tg_op = 'UPDATE' and old.status <> 'draft' then
-    if old.status = 'issued' and new.status in ('accepted', 'rejected') then
+    if (old.status = 'issued' and new.status in ('accepted', 'rejected'))
+      or (old.document_type = 'invoice'
+        and old.status in ('issued','partially_paid','paid','partially_refunded')
+        and new.status in ('issued','partially_paid','paid','partially_refunded','refunded')) then
       new.updated_at := now();
       return new;
     end if;
