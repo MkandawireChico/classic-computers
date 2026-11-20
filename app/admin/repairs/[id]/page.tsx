@@ -3,6 +3,7 @@ import { requirePermission } from "@/lib/auth/permissions";
 import { getAdminRepairById, listTechnicians } from "@/lib/data/admin/repairs";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { RepairDetailControls } from "@/components/admin/repair-detail-controls";
+import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 
 export default async function AdminRepairDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("repairs.read");
@@ -12,12 +13,13 @@ export default async function AdminRepairDetailPage({ params }: { params: { id: 
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{repair.ticket_number}</h1>
-        <p className="text-sm text-gray-500">
-          {new Date(repair.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
-        </p>
-      </div>
+      <AdminDetailHeader
+        eyebrow="Operations · Service desk"
+        title={repair.ticket_number}
+        description={`${repair.device_type}${repair.brand ? " · " + repair.brand : ""}${repair.model ? " " + repair.model : ""}. Booked ${new Date(repair.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}.`}
+        backHref="/admin/repairs"
+        backLabel="Back to repairs"
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
