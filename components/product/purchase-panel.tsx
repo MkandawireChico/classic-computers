@@ -146,7 +146,10 @@ export function PurchasePanel({
       ) : null}
 
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Purchase options</p>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Purchase options</p>
+          <span className="text-[11px] text-slate-500">Select how you want to proceed</span>
+        </div>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <AddToCartButton
           productId={product.id}
