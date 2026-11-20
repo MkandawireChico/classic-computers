@@ -99,16 +99,18 @@ export async function getAdminRepairOverview(): Promise<AdminRepairOverview> {
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { data: completions, error: completionError } = await (supabase.from("repair_status_history" as any) as any)
-    .select("ticket_id,created_at").eq("to_status", "completed").eq("is_baseline", false).gte("created_at", thirtyDaysAgo);
+    .select("ticket_id,created_at").eq("to_status", "completed").eq("is_baseline", false).gte("created_at", thirtyDaysAgo).order("created_at", { ascending: true });
   let completedLast30Days = 0;
   let averageTurnaroundDays: number | null = null;
   if (!completionError && completions?.length) {
-    const ticketIds = [...new Set(completions.map((row: any) => row.ticket_id))];
+    const firstCompletionByTicket = new Map<string, string>();
+    for (const row of completions) if (!firstCompletionByTicket.has(row.ticket_id)) firstCompletionByTicket.set(row.ticket_id, row.created_at);
+    const ticketIds = [...firstCompletionByTicket.keys()];
     const { data: tickets } = await (supabase.from("repair_tickets") as any).select("id,created_at").in("id", ticketIds);
     const createdAtById = new Map((tickets ?? []).map((ticket: any) => [ticket.id, new Date(ticket.created_at).getTime()]));
-    const durations = completions.map((row: any) => {
-      const start = createdAtById.get(row.ticket_id);
-      return typeof start === "number" ? (new Date(row.created_at).getTime() - start) / 86400000 : null;
+    const durations = [...firstCompletionByTicket.entries()].map(([ticketId, completedAt]) => {
+      const start = createdAtById.get(ticketId);
+      return typeof start === "number" ? (new Date(completedAt).getTime() - start) / 86400000 : null;
     }).filter((value: number | null): value is number => value !== null && value >= 0);
     completedLast30Days = durations.length;
     averageTurnaroundDays = durations.length
@@ -303,11 +305,12 @@ export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepair
       .select("id,assigned_technician_id,status")
       .in("assigned_technician_id", ids),
     (supabase.from("repair_status_history" as any) as any)
-      .select("assigned_technician_id")
+       .select("ticket_id,assigned_technician_id,created_at")
       .eq("to_status", "completed")
       .eq("is_baseline", false)
       .gte("created_at", since)
-      .in("assigned_technician_id", ids),
+      .in("assigned_technician_id", ids)
+      .order("created_at", { ascending: true }),
   ]);
 
   if (ticketResult.error) console.error("Technician repair assignments unavailable:", ticketResult.error.message);
@@ -315,17 +318,18 @@ export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepair
 
   const activeStatuses = new Set(["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup"]);
   const activeByTechnician = new Map<string, number>();
-  const technicianByTicket = new Map<string, string>();
   for (const ticket of ticketResult.data ?? []) {
     if (!ticket.assigned_technician_id) continue;
-    technicianByTicket.set(ticket.id, ticket.assigned_technician_id);
     if (activeStatuses.has(ticket.status)) {
       activeByTechnician.set(ticket.assigned_technician_id, (activeByTechnician.get(ticket.assigned_technician_id) ?? 0) + 1);
     }
   }
 
   const completedByTechnician = new Map<string, number>();
+  const completedTicketIds = new Set<string>();
   for (const completion of completionResult.data ?? []) {
+    if (completedTicketIds.has(completion.ticket_id)) continue;
+    completedTicketIds.add(completion.ticket_id);
     const technicianId = completion.assigned_technician_id;
     if (technicianId) completedByTechnician.set(technicianId, (completedByTechnician.get(technicianId) ?? 0) + 1);
   }
