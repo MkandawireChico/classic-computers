@@ -44,6 +44,9 @@ export interface ProductListItem {
   name: string;
   base_price: number;
   sale_price: number | null;
+  display_price: number;
+  regular_price: number;
+  has_active_variants: boolean;
   condition: ProductCondition;
   is_featured: boolean;
   brand: { id: string; name: string; slug: string } | null;
