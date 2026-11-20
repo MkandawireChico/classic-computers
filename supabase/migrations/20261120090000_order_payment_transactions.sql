@@ -7,8 +7,15 @@ create table public.order_payment_transactions (
   order_id uuid not null references public.orders(id) on delete cascade,
   transaction_type text not null check (transaction_type in ('payment', 'refund')),
   provider text not null check (length(trim(provider)) between 1 and 80),
-  amount numeric not null check (amount > 0 and amount = round(amount, 2) and amount <= 9999999999.99),
-  currency text not null default 'MWK' check (currency ~ '^[A-Z]{3}
+  amount numeric not null check (
+    amount > 0
+    and amount = round(amount, 2)
+    and amount <= 9999999999.99
+  ),
+  currency text not null default 'MWK' check (currency ~ '^[A-Z]{3}$'),
+  provider_reference text check (
+    provider_reference is null or char_length(provider_reference) <= 120
+  ),
   created_at timestamptz not null default now()
 );
 
