@@ -104,6 +104,8 @@ create table public.rental_condition_reports (
 );
 create index rental_condition_reports_booking_idx
   on public.rental_condition_reports(booking_id, created_at);
+create unique index rental_condition_reports_event_uidx
+  on public.rental_condition_reports(booking_id, event_type);
 alter table public.rental_condition_reports enable row level security;
 create policy "customer can read own rental condition reports"
   on public.rental_condition_reports for select to authenticated
