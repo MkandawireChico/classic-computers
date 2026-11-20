@@ -75,6 +75,14 @@ begin
   if not found then
     raise exception 'This quotation is no longer awaiting a decision.';
   end if;
+  if new.decision = 'accepted' then
+    update public.repair_tickets
+    set quote_approved_at = new.created_at
+    where id = (
+      select source_id from public.business_documents
+      where id = new.document_id and source_type = 'repair'
+    );
+  end if;
   return new;
 end;
 $$;
