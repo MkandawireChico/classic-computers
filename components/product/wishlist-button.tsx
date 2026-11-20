@@ -10,16 +10,23 @@ import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 export function WishlistButton({
   productId,
   variantId,
-  initialInWishlist,
+  initialSavedVariantIds,
+  initialProductLevelSaved,
 }: {
   productId: string;
   variantId: string | null;
-  initialInWishlist: boolean;
+  initialSavedVariantIds: string[];
+  initialProductLevelSaved: boolean;
 }) {
   const router = useRouter();
-  const [inWishlist, setInWishlist] = useState(initialInWishlist);
+  const [savedOverrides, setSavedOverrides] = useState<Record<string, boolean>>({});
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const entryKey = variantId ?? "product";
+  const initiallySaved = variantId
+    ? initialSavedVariantIds.includes(variantId)
+    : initialProductLevelSaved;
+  const inWishlist = savedOverrides[entryKey] ?? initiallySaved;
 
   async function handleClick() {
     if (isPending) return;
@@ -38,7 +45,7 @@ export function WishlistButton({
           console.warn("Wishlist analytics could not be recorded:", analyticsError);
         }
       }
-      setInWishlist(result.inWishlist);
+      setSavedOverrides((current) => ({ ...current, [entryKey]: result.inWishlist }));
       router.refresh();
     } catch {
       setError("We couldn't update your wishlist. Check your connection and try again.");
