@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { getAdminRepairOverview, listAdminRepairs } from "@/lib/data/admin/repairs";
+import { getAdminRepairOverview, getAdminRepairTechnicianPerformance, listAdminRepairs } from "@/lib/data/admin/repairs";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
 
@@ -27,7 +27,11 @@ export default async function AdminRepairsPage({
   const query = typeof searchParams.q === "string" ? searchParams.q : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
 
-  const [result, overview] = await Promise.all([listAdminRepairs({ status, query, page, pageSize: 25 }), getAdminRepairOverview()]);
+  const [result, overview, technicianPerformance] = await Promise.all([
+    listAdminRepairs({ status, query, page, pageSize: 25 }),
+    getAdminRepairOverview(),
+    getAdminRepairTechnicianPerformance(),
+  ]);
 
   return (
     <div>
@@ -50,6 +54,62 @@ export default async function AdminRepairsPage({
             <p className="mt-1 text-xs text-slate-500">{metric.detail}</p>
           </div>
         ))}
+      </section>
+
+      <section aria-label="Technician performance" className="mb-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 px-4 py-4 sm:px-5">
+          <h2 className="font-semibold text-slate-950">Technician workload</h2>
+          <p className="mt-1 text-xs text-slate-500">Current active assignments, repairs completed in the last 30 days, and work hours logged in the last 30 days.</p>
+        </div>
+        {technicianPerformance.length === 0 ? (
+          <p className="p-5 text-sm text-slate-500">No technician accounts are assigned the technician role.</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3">
+              {technicianPerformance.map((technician) => (
+                <div key={technician.id} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                  <p className="font-semibold text-slate-900">{technician.name ?? "Technician"}</p>
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    <div>
+                      <p className="text-xl font-bold tabular-nums text-slate-950">{technician.activeTickets}</p>
+                      <p className="text-[11px] text-slate-500">Active</p>
+                    </div>
+                    <div>
+                      <p className="text-xl font-bold tabular-nums text-emerald-700">{technician.completedLast30Days}</p>
+                      <p className="text-[11px] text-slate-500">Completed</p>
+                    </div>
+                    <div>
+                      <p className="text-xl font-bold tabular-nums text-blue-700">{(technician.loggedMinutesLast30Days / 60).toFixed(1)}h</p>
+                      <p className="text-[11px] text-slate-500">Logged</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="overflow-x-auto border-t border-slate-100">
+              <table className="w-full min-w-[520px] text-sm">
+                <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Technician</th>
+                    <th className="px-4 py-3 text-right font-semibold">Active tickets</th>
+                    <th className="px-4 py-3 text-right font-semibold">Completed · 30d</th>
+                    <th className="px-4 py-3 text-right font-semibold">Logged hours · 30d</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {technicianPerformance.map((technician) => (
+                    <tr key={technician.id}>
+                      <td className="px-4 py-3 font-medium text-slate-800">{technician.name ?? "Technician"}</td>
+                      <td className="px-4 py-3 text-right tabular-nums">{technician.activeTickets}</td>
+                      <td className="px-4 py-3 text-right tabular-nums">{technician.completedLast30Days}</td>
+                      <td className="px-4 py-3 text-right tabular-nums">{(technician.loggedMinutesLast30Days / 60).toFixed(1)}h</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </section>
 
       <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get">
