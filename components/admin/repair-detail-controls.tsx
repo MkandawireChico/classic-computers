@@ -43,7 +43,8 @@ export function RepairDetailControls({
   const [isInternal, setIsInternal] = useState(true);
   const [quote, setQuote] = useState(repair.quote_amount ?? 0);
   const [partForm, setPartForm] = useState({ partName: "", cost: 0, quantity: 1 });
-  const [stockInventoryId, setStockInventoryId] = useState("");\n  const [workLog, setWorkLog] = useState({ workDate: new Date().toISOString().slice(0, 10), durationMinutes: 30, workPerformed: "" });
+  const [stockInventoryId, setStockInventoryId] = useState("");
+  const [workLog, setWorkLog] = useState({ workDate: new Date().toISOString().slice(0, 10), durationMinutes: 30, workPerformed: "" });
   const selectedStockOption = stockOptions.find((option) => option.inventory_id === stockInventoryId) ?? null;
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
