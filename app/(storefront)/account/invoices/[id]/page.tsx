@@ -5,14 +5,14 @@ import { AccountPageHeader } from "@/components/storefront/account-page-header";
 
 export default async function AccountInvoiceDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
-  const { data: invoice } = await (supabase.from("business_documents") as any)
+  const { data: invoice } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_number,source_type,status,subtotal,discount_amount,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,created_at,issued_at")
     .eq("id", params.id).eq("document_type", "invoice").maybeSingle();
   if (!invoice) notFound();
 
   const [{ data: items }, { data: transactions }] = await Promise.all([
-    (supabase.from("business_document_items") as any).select("id,description,quantity,unit_price,line_total").eq("document_id", invoice.id).order("created_at", { ascending: true }),
-    (supabase.from("business_document_transactions") as any).select("id,transaction_type,amount,provider,provider_reference,created_at").eq("document_id", invoice.id).order("created_at", { ascending: true }),
+    ((supabase as any).from("business_document_items") as any).select("id,description,quantity,unit_price,line_total").eq("document_id", invoice.id).order("created_at", { ascending: true }),
+    ((supabase as any).from("business_document_transactions") as any).select("id,transaction_type,amount,provider,provider_reference,created_at").eq("document_id", invoice.id).order("created_at", { ascending: true }),
   ]);
   const paid = (transactions ?? []).filter((x: any) => x.transaction_type === "payment").reduce((sum: number, x: any) => sum + Number(x.amount), 0);
   const refunded = (transactions ?? []).filter((x: any) => x.transaction_type === "refund").reduce((sum: number, x: any) => sum + Number(x.amount), 0);
