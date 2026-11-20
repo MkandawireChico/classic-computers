@@ -231,5 +231,7 @@ with check (
   )
 );
 
+grant usage, select on sequence public.quotation_number_seq to authenticated;
+grant usage, select on sequence public.invoice_number_seq to authenticated;
 grant select, insert, update on public.business_documents to authenticated;
 grant select, insert, update, delete on public.business_document_items to authenticated;
