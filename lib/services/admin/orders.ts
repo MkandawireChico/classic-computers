@@ -125,13 +125,13 @@ export async function recordPaymentTransaction(input: unknown): Promise<ServiceR
 
   const value = parsed.data;
   const supabase = createClient();
-  const { error } = await supabase.rpc("record_order_payment_transaction", {
-    p_order_id: value.orderId,
-    p_transaction_type: value.transactionType,
-    p_provider: value.provider,
-    p_amount: value.amount,
-    p_currency: value.currency.toUpperCase(),
-    p_provider_reference: value.providerReference || null,
+  const { error } = await supabase.from("order_payment_transactions").insert({
+    order_id: value.orderId,
+    transaction_type: value.transactionType,
+    provider: value.provider,
+    amount: value.amount,
+    currency: value.currency.toUpperCase(),
+    provider_reference: value.providerReference || null,
   });
 
   if (error) {
