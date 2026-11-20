@@ -71,8 +71,10 @@ export async function listAdminOrders(filters: AdminOrderFilters) {
 
   const totals = new Map<string, number>();
   const ledgerOrders = new Set<string>();
+  const refundedOrders = new Set<string>();
   for (const transaction of transactionResult.data ?? []) {
     ledgerOrders.add(transaction.order_id);
+    if (transaction.transaction_type === "refund") refundedOrders.add(transaction.order_id);
     const amount = Number(transaction.amount) * (transaction.transaction_type === "refund" ? -1 : 1);
     totals.set(transaction.order_id, (totals.get(transaction.order_id) ?? 0) + amount);
   }
@@ -84,7 +86,9 @@ export async function listAdminOrders(filters: AdminOrderFilters) {
     // Their actual balance is unknown until staff reconcile verified evidence.
     const outstandingBalance = !ledgerRecorded && row.payment_status !== "unpaid"
       ? null
-      : Math.max(Number(row.total) - verifiedReceived, 0);
+      : refundedOrders.has(row.id)
+        ? 0
+        : Math.max(Number(row.total) - verifiedReceived, 0);
 
     return {
       id: row.id,
