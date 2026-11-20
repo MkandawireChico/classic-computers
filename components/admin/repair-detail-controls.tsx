@@ -13,6 +13,7 @@ import {
   addRepairUpdateAction,
   addRepairPartAction,
   removeRepairPartAction,
+  addRepairWorkLogAction,
 } from "@/app/admin/repairs/actions";
 import type { AdminRepairDetail, RepairStockOption } from "@/lib/data/admin/repairs";
 
