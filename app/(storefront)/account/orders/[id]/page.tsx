@@ -83,7 +83,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           </p>
         </section>
       ) : null}
-      {!hasVerifiedTransactions && ["paid", "partial", "refunded"].includes(order.payment_status) ? (
+      {!hasVerifiedTransactions && ["paid", "partial"].includes(order.payment_status) ? (
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
           <p className="text-sm font-bold text-slate-900">Payment record</p>
           <p className="mt-1 text-sm leading-6 text-slate-600">
