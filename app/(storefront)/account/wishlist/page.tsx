@@ -42,7 +42,7 @@ export default async function WishlistPage() {
                     alt={product.primary_image.alt_text ?? product.name}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover"
+                    className="object-contain p-4"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">Image unavailable</div>
