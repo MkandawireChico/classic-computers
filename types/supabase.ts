@@ -1987,17 +1987,6 @@ export type Database = {
         Returns: boolean
       }
       has_role: { Args: { role_name: string; uid: string }; Returns: boolean }
-      record_order_payment_transaction: {
-        Args: {
-          p_order_id: string
-          p_transaction_type: string
-          p_provider: string
-          p_amount: number
-          p_currency?: string
-          p_provider_reference?: string | null
-        }
-        Returns: string
-      }
       log_audit_event: {
         Args: {
           p_action: string
