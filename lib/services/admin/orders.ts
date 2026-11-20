@@ -137,6 +137,9 @@ export async function recordPaymentTransaction(input: unknown): Promise<ServiceR
     if (message.includes("exceeds the verified amount")) {
       return { success: false, error: "The refund exceeds the verified amount received." };
     }
+    if (message.includes("after a refund")) {
+      return { success: false, error: "This order has a recorded refund. Additional payments are disabled." };
+    }
     if (message.includes("duplicate key")) {
       return { success: false, error: "This provider reference has already been recorded." };
     }
