@@ -71,6 +71,13 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
           return aDisplay - bDisplay || aRegular - bRegular || a.created_at.localeCompare(b.created_at);
         });
       const startingVariant = activeVariants[0] ?? null;
+      const startingRegular = startingVariant ? Number(startingVariant.price) : Number(p.base_price);
+      const startingSale = startingVariant?.sale_price === null || startingVariant?.sale_price === undefined
+        ? null
+        : Number(startingVariant.sale_price);
+      const startingDisplay = startingSale !== null && startingSale > 0 && startingSale < startingRegular
+        ? startingSale
+        : startingRegular;
       const priceVariant = selectedVariant ?? startingVariant;
       const images = (p.product_images ?? []).filter((i: any) => i.variant_id === variantId);
       const fallbackImages = (p.product_images ?? []).filter((i: any) => i.variant_id === null);
