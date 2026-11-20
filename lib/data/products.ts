@@ -236,7 +236,7 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
       brand:brands ( id, name, slug ),
       category:categories ( id, name, slug ),
       product_images ( id, storage_path, alt_text, display_order, is_primary, variant_id ),
-      product_variants ( id, sku, name, price, sale_price, is_default, status ),
+      product_variants ( id, sku, name, price, sale_price, is_default, status, created_at ),
       inventory:storefront_inventory_status ( status, variant_id ),
       product_specifications (
         value,
