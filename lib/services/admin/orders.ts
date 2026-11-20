@@ -17,7 +17,8 @@ const ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
 };
 
 const PAYMENT_STATUS_TRANSITIONS: Record<string, string[]> = {
-  unpaid: ["paid", "partial"],
+  // Partial payments are not enabled until the system records received amounts
+  // in a dedicated payment ledger. Never mark an untracked partial receipt.
   partial: ["paid", "refunded"],
   paid: ["refunded"],
   refunded: [],
