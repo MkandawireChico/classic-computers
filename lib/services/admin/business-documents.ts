@@ -67,7 +67,7 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
     return { success: false, error: "A quotation cannot be issued for a completed or cancelled repair." };
   }
 
-  const { data: document, error: documentError } = await ((supabase.from("business_documents") as any) as any)
+  const { data: document, error: documentError } = await (((supabase as any).from("business_documents") as any) as any)
     .insert({
       document_type: "quotation",
       source_type: "repair",
@@ -105,13 +105,13 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
     line_total: Math.round(line.quantity * line.unitPrice * 100) / 100,
     sort_order: index,
   }));
-  const { error: itemError } = await ((supabase.from("business_document_items") as any) as any).insert(items);
+  const { error: itemError } = await (((supabase as any).from("business_document_items") as any) as any).insert(items);
   if (itemError) {
     console.error("createRepairQuotation item insert failed:", itemError.message);
     return { success: false, error: "The quotation was saved as a draft, but its line items could not be saved. Contact an administrator before retrying." };
   }
 
-  const { error: issueError } = await (supabase.from("business_documents") as any)
+  const { error: issueError } = await ((supabase as any).from("business_documents") as any)
     .update({ status: "issued", issued_at: new Date().toISOString() })
     .eq("id", document.id)
     .eq("status", "draft");
@@ -134,7 +134,7 @@ export async function convertAcceptedQuotationToInvoice(input: unknown): Promise
   if (!parsed.success) return { success: false, error: "Invalid quotation reference." };
 
   const supabase = createClient();
-  const { data: quotation, error: quoteError } = await (supabase.from("business_documents") as any)
+  const { data: quotation, error: quoteError } = await ((supabase as any).from("business_documents") as any)
     .select("*")
     .eq("id", parsed.data.quotationId)
     .maybeSingle();
@@ -147,20 +147,20 @@ export async function convertAcceptedQuotationToInvoice(input: unknown): Promise
     return { success: false, error: "You don't have permission to invoice this quotation." };
   }
 
-  const { data: existing } = await (supabase.from("business_documents") as any)
+  const { data: existing } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_number")
     .eq("origin_document_id", quotation.id)
     .eq("document_type", "invoice")
     .maybeSingle();
   if (existing) return { success: true, invoiceId: existing.id, invoiceNumber: Number(existing.document_number) };
 
-  const { data: quoteItems, error: itemsError } = await (supabase.from("business_document_items") as any)
+  const { data: quoteItems, error: itemsError } = await ((supabase as any).from("business_document_items") as any)
     .select("description,quantity,unit_price,line_total,product_id,variant_id,sort_order")
     .eq("document_id", quotation.id)
     .order("sort_order", { ascending: true });
   if (itemsError || !quoteItems?.length) return { success: false, error: "The quotation has no saved line items." };
 
-  const { data: invoice, error: invoiceError } = await (supabase.from("business_documents") as any)
+  const { data: invoice, error: invoiceError } = await ((supabase as any).from("business_documents") as any)
     .insert({
       document_type: "invoice",
       source_type: quotation.source_type,
@@ -202,13 +202,13 @@ export async function convertAcceptedQuotationToInvoice(input: unknown): Promise
     variant_id: item.variant_id,
     sort_order: item.sort_order,
   }));
-  const { error: insertItemsError } = await (supabase.from("business_document_items") as any).insert(invoiceItems);
+  const { error: insertItemsError } = await ((supabase as any).from("business_document_items") as any).insert(invoiceItems);
   if (insertItemsError) {
     console.error("Invoice item copy failed:", insertItemsError.message);
     return { success: false, error: "The invoice draft exists but its line items were not copied. Contact an administrator before retrying." };
   }
 
-  const { error: issueError } = await (supabase.from("business_documents") as any)
+  const { error: issueError } = await ((supabase as any).from("business_documents") as any)
     .update({ status: "issued", issued_at: new Date().toISOString() })
     .eq("id", invoice.id)
     .eq("status", "draft");
@@ -233,7 +233,7 @@ export async function recordBusinessDocumentTransaction(input: unknown): Promise
   if (!parsed.success) return { success: false, error: "Check the payment details and try again." };
 
   const supabase = createClient();
-  const { data: document, error: documentError } = await (supabase.from("business_documents") as any)
+  const { data: document, error: documentError } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_type,source_type")
     .eq("id", parsed.data.documentId)
     .maybeSingle();
@@ -245,7 +245,7 @@ export async function recordBusinessDocumentTransaction(input: unknown): Promise
     return { success: false, error: "You don't have permission to record transactions for this invoice." };
   }
 
-  const { error } = await (supabase.from("business_document_transactions") as any).insert({
+  const { error } = await ((supabase as any).from("business_document_transactions") as any).insert({
     document_id: parsed.data.documentId,
     transaction_type: parsed.data.transactionType,
     amount: parsed.data.amount,
@@ -304,7 +304,7 @@ export async function createBusinessQuotation(input: unknown): Promise<ServiceRe
   }
 
   const supabase = createClient();
-  const { data: document, error } = await (supabase.from("business_documents") as any).insert({
+  const { data: document, error } = await ((supabase as any).from("business_documents") as any).insert({
     document_type: "quotation",
     source_type: d.sourceType,
     source_id: d.sourceId || null,
@@ -342,13 +342,13 @@ export async function createBusinessQuotation(input: unknown): Promise<ServiceRe
     product_id: line.productId || null,
     variant_id: line.variantId || null,
   }));
-  const { error: lineError } = await (supabase.from("business_document_items") as any).insert(rows);
+  const { error: lineError } = await ((supabase as any).from("business_document_items") as any).insert(rows);
   if (lineError) {
     console.error("createBusinessQuotation line insert failed:", lineError.message);
     return { success: false, error: "The quotation draft was created but its line items could not be saved. Contact an administrator before retrying." };
   }
 
-  const { error: issueError } = await (supabase.from("business_documents") as any)
+  const { error: issueError } = await ((supabase as any).from("business_documents") as any)
     .update({ status: "issued", issued_at: new Date().toISOString() })
     .eq("id", document.id)
     .eq("status", "draft");
