@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { convertAcceptedQuotationToInvoice } from "@/lib/services/admin/business-documents";
+import { convertAcceptedQuotationToInvoice, recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
 
 export async function convertQuotationToInvoiceAction(quotationId: string) {
   const result = await convertAcceptedQuotationToInvoice({ quotationId });
@@ -13,7 +13,6 @@ export async function convertQuotationToInvoiceAction(quotationId: string) {
 }
 
 
-import { recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
 
 export async function recordBusinessDocumentTransactionAction(input: unknown) {
   const result = await recordBusinessDocumentTransaction(input);
