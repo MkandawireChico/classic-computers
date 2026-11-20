@@ -1,18 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { getPublicStorageUrl } from "@/lib/storage";
 import { trackInterestEvent } from "@/lib/client/customer-interest-analytics";
 import type { ProductImage } from "@/types/catalog";
+import { useProductVariant } from "./product-variant-context";
 
 export function ProductGallery({ images, productName, productId }: { images: ProductImage[]; productName: string; productId: string }) {
+  const { selectedVariantId } = useProductVariant();
+  const visibleImages = useMemo(() => {
+    const productImages = images.filter((image) => image.variant_id === null);
+    const selectedVariantImages = selectedVariantId
+      ? images.filter((image) => image.variant_id === selectedVariantId)
+      : [];
+    return [...productImages, ...selectedVariantImages];
+  }, [images, selectedVariantId]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const active = images[Math.min(activeIndex, Math.max(images.length - 1, 0))] ?? null;
+  const active = visibleImages[Math.min(activeIndex, Math.max(visibleImages.length - 1, 0))] ?? null;
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [productId, images]);
+  }, [productId, visibleImages]);
 
   function selectImage(index: number) {
     if (index === activeIndex || index < 0 || index >= images.length) return;
@@ -20,7 +29,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
     setActiveIndex(index);
   }
 
-  if (images.length === 0) {
+  if (visibleImages.length === 0) {
     return (
       <div
         role="img"
@@ -44,11 +53,11 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-contain p-5 sm:p-8"
         />
-        {images.length > 1 ? (
+        {visibleImages.length > 1 ? (
           <>
             <button
               type="button"
-              onClick={() => selectImage((activeIndex - 1 + images.length) % images.length)}
+              onClick={() => selectImage((activeIndex - 1 + images.length) % visibleImages.length)}
               aria-label="Show previous product image"
               className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-xl font-semibold text-slate-800 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
@@ -63,7 +72,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
               <span aria-hidden="true">›</span>
             </button>
             <span className="absolute bottom-3 right-3 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold tabular-nums text-white" aria-live="polite">
-              {activeIndex + 1} / {images.length}
+              {activeIndex + 1} / {visibleImages.length}
             </span>
           </>
         ) : null}
@@ -71,7 +80,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
 
       {images.length > 1 ? (
         <div className="mt-4 flex gap-3 overflow-x-auto pb-2" role="group" aria-label="Choose product image">
-          {images.map((image, index) => (
+          {visibleImages.map((image, index) => (
             <button
               key={image.id}
               type="button"
