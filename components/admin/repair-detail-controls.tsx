@@ -14,7 +14,7 @@ import {
   addRepairPartAction,
   removeRepairPartAction,
 } from "@/app/admin/repairs/actions";
-import type { AdminRepairDetail } from "@/lib/data/admin/repairs";
+import type { AdminRepairDetail, RepairStockOption } from "@/lib/data/admin/repairs";
 
 const NEXT_STATUS: Record<string, string[]> = {
   checked_in: ["diagnosing", "cancelled"],
@@ -30,9 +30,11 @@ const NEXT_STATUS: Record<string, string[]> = {
 export function RepairDetailControls({
   repair,
   technicians,
+  stockOptions,
 }: {
   repair: AdminRepairDetail;
   technicians: Array<{ id: string; name: string | null }>;
+  stockOptions: RepairStockOption[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -41,6 +43,7 @@ export function RepairDetailControls({
   const [isInternal, setIsInternal] = useState(true);
   const [quote, setQuote] = useState(repair.quote_amount ?? 0);
   const [partForm, setPartForm] = useState({ partName: "", cost: 0, quantity: 1 });
+  const [stockInventoryId, setStockInventoryId] = useState("");
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
     if (isPending) return;
@@ -194,7 +197,37 @@ export function RepairDetailControls({
             ))}
           </div>
         )}
-        <div className="mt-2 flex flex-wrap items-end gap-2">
+        <div className="mt-2 space-y-2">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-700">Link to stocked item (optional)</label>
+            <select
+              value={stockInventoryId}
+              onChange={(e) => {
+                const selected = stockOptions.find((option) => option.inventory_id === e.target.value);
+                setStockInventoryId(e.target.value);
+                if (selected) {
+                  setPartForm((current) => ({
+                    ...current,
+                    partName: selected.variant_name
+                      ? `${selected.product_name} · ${selected.variant_name}`
+                      : selected.product_name,
+                  }));
+                }
+              }}
+              className="w-full rounded-card border border-surface-border px-2 py-2 text-sm"
+            >
+              <option value="">Non-stocked / manually recorded part</option>
+              {stockOptions.map((option) => (
+                <option key={option.inventory_id} value={option.inventory_id}>
+                  {option.product_name}{option.variant_name ? ` · ${option.variant_name}` : ""} · {option.sku || "No SKU"} · {option.quantity_on_hand} available
+                </option>
+              ))}
+            </select>
+          </div>
+          {stockInventoryId ? (
+            <p className="text-xs text-amber-700">Adding this part deducts the requested quantity from inventory and records the movement against this repair.</p>
+          ) : null}
+          <div className="flex flex-wrap items-end gap-2">
           <input
             placeholder="Part name"
             value={partForm.partName}
@@ -231,21 +264,23 @@ export function RepairDetailControls({
                   partName: partForm.partName,
                   cost: partForm.cost,
                   quantity: partForm.quantity,
-                  productId: null,
-                  variantId: null,
+                  productId: stockOptions.find((option) => option.inventory_id === stockInventoryId)?.product_id ?? null,
+                  variantId: stockOptions.find((option) => option.inventory_id === stockInventoryId)?.variant_id ?? null,
                 });
-                if (result.success) setPartForm({ partName: "", cost: 0, quantity: 1 });
+                if (result.success) {
+                  setPartForm({ partName: "", cost: 0, quantity: 1 });
+                  setStockInventoryId("");
+                }
                 return result;
               })
             }
           >
             Add part
           </Button>
+          </div>
         </div>
         <p className="mt-1 text-xs text-gray-500">
-          This quick-add records a non-stocked part. Linking a part to a real catalogue product
-          (to deduct inventory) is available from the product picker in a future refinement — see
-          the Phase 6 report.
+          Stock-linked parts deduct inventory. Manual entries record labour or components not held in the catalogue.
         </p>
       </div>
     </div>
