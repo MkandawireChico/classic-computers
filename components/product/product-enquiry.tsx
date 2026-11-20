@@ -20,7 +20,13 @@ export function ProductEnquiry({
   const showBoth = showWhatsApp && businessInfo.whatsapp && businessInfo.phone && phoneHref;
 
   return (
-    <div className="border-t border-surface-border pt-4">
+    <section aria-label="Product enquiries" className="border-t border-surface-border pt-4">
+      <div className="mb-3">
+        <h2 className="text-sm font-bold text-slate-900">Have a question about this product?</h2>
+        <p className="mt-1 text-xs leading-5 text-slate-600">
+          Ask about specifications, compatibility or availability. Use the purchase options above to place an order.
+        </p>
+      </div>
       <div className={`grid w-full gap-2 sm:gap-3 ${showBoth ? "grid-cols-2" : "grid-cols-1"}`}>
         {showWhatsApp && businessInfo.whatsapp ? (
           <TrackedEnquiryLink
@@ -65,6 +71,6 @@ export function ProductEnquiry({
           </TrackedEnquiryLink>
         ) : null}
       </div>
-    </div>
+    </section>
   );
 }
