@@ -21,7 +21,8 @@ export function BuyNowLink({
     `Product: ${product.name}`,
     `SKU: ${product.variantSku ?? product.sku}`,
     product.variantName ? `Selected configuration: ${product.variantName}` : null,
-    `Price: ${formatMoney(product.unitPrice)}`,
+    `Catalogue price: ${formatMoney(product.unitPrice)} (excluding VAT and PPDA)`,
+    "VAT and PPDA will be calculated separately on the quotation or invoice.",
     `Product link: ${productUrl}`,
   ]
     .filter(Boolean)
