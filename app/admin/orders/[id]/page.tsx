@@ -15,8 +15,10 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
   const order = await getAdminOrderById(params.id);
   if (!order) notFound();
 
-  const totalReceived = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : -Number(transaction.amount)), 0);
-  const outstandingBalance = Math.max(order.total - totalReceived, 0);
+  const totalPaid = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : 0), 0);
+  const totalRefunded = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "refund" ? Number(transaction.amount) : 0), 0);
+  const totalReceived = totalPaid - totalRefunded;
+  const outstandingBalance = totalRefunded > 0 ? 0 : Math.max(order.total - totalReceived, 0);
   const refundableBalance = Math.max(totalReceived, 0);
   const needsLegacyReconciliation = order.paymentTransactions.length === 0 && order.payment_status !== "unpaid";
 
@@ -126,6 +128,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-slate-600"><span>Verified net received</span><strong className="text-slate-900">{formatMoney(totalReceived)}</strong></div>
               <div className="flex justify-between text-slate-600"><span>Outstanding</span><strong className="text-slate-900">{formatMoney(outstandingBalance)}</strong></div>
+              <div className="flex justify-between text-slate-600"><span>Total refunded</span><strong className="text-slate-900">{formatMoney(totalRefunded)}</strong></div>
               <div className="flex justify-between text-slate-600"><span>Available to refund</span><strong className="text-slate-900">{formatMoney(refundableBalance)}</strong></div>
             </div>
           </Card>
