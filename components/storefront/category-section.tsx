@@ -21,7 +21,7 @@ export async function CategorySection() {
         <div className="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:pb-7">
           <div className="max-w-2xl">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Shop the catalogue</p>
-            <h2 id="shop-by-category-heading" className="mt-3 text-3xl font-bold leading-tight tracking-[-0.045em] text-[#10243a] sm:text-4xl">
+            <h2 id="shop-by-category-heading" className="mt-3 text-3xl font-bold leading-tight tracking-[-0.045em] text-navy-900 sm:text-4xl">
               Find the equipment you need.
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
@@ -49,7 +49,7 @@ export async function CategorySection() {
                 aria-label={`Browse ${name}`}
               >
                 <span className="min-w-0">
-                  <span className="block text-lg font-bold tracking-tight text-[#10243a] transition-colors group-hover:text-brand-800 sm:text-xl">{name}</span>
+                  <span className="block text-lg font-bold tracking-tight text-navy-900 transition-colors group-hover:text-brand-800 sm:text-xl">{name}</span>
                   <span className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-slate-500 transition-colors group-hover:text-brand-700">
                     View products <span aria-hidden="true">↗</span>
                   </span>
