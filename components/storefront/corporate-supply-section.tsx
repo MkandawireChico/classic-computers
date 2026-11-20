@@ -26,7 +26,7 @@ export async function CorporateSupplySection() {
             Tell us which computers and equipment your organisation needs. Our team will review your requirements and respond with the next steps.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link href="/corporate/enquire" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-lg bg-[#123653] px-6 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+            <Link href="/corporate/enquire" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-lg bg-navy-900 px-6 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
               Request a quotation <span aria-hidden="true">↗</span>
             </Link>
             <Link href="/contact" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
