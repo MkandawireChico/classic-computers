@@ -56,7 +56,7 @@ export default async function NewBusinessQuotationPage() {
   return (
     <div className="space-y-6">
       <AdminDetailHeader eyebrow="Commerce · Customer documents" title="New quotation" description="Prepare a product sales or equipment rental quotation. Catalogue prices remain VAT-exclusive." backHref="/admin/documents" backLabel="Back to documents" />
-      <BusinessQuotationBuilder products={productOptions} rentals={rentalOptions as any} customers={customers} />
+      <BusinessQuotationBuilder products={productOptions} rentals={rentalOptions as any} customers={customers} allowSales={permissions.has("orders.write")} allowRentals={permissions.has("rentals.write")} />
     </div>
   );
 }
