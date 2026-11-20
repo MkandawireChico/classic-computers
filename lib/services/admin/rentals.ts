@@ -160,7 +160,7 @@ export async function updateRentalStatus(input: unknown): Promise<ServiceResult>
   };
   const conditionEvent = requiredConditionEvent[newStatus];
   if (conditionEvent) {
-    const { data: report, error: reportError } = await (supabase.from("rental_condition_reports") as any)
+    const { data: report, error: reportError } = await ((supabase as any).from("rental_condition_reports") as any)
       .select("id")
       .eq("booking_id", bookingId)
       .eq("event_type", conditionEvent)
@@ -282,7 +282,7 @@ export async function setRentalCharge(input: unknown): Promise<ServiceResult> {
   if (!parsed.success) return { success: false, error: "Invalid amount." };
 
   const supabase = createClient();
-  const { data: transactions, error: transactionError } = await (supabase.from("rental_payment_transactions") as any)
+  const { data: transactions, error: transactionError } = await ((supabase as any).from("rental_payment_transactions") as any)
     .select("transaction_type, amount")
     .eq("booking_id", parsed.data.bookingId);
   if (transactionError) return { success: false, error: "Could not verify existing rental payments before changing the charge." };
@@ -313,7 +313,7 @@ export async function recordRentalPayment(input: unknown): Promise<ServiceResult
   if (!parsed.success) return { success: false, error: "Enter a valid transaction type, provider and amount." };
   const value = parsed.data;
   const supabase = createClient();
-  const { error } = await (supabase.from("rental_payment_transactions") as any).insert({
+  const { error } = await ((supabase as any).from("rental_payment_transactions") as any).insert({
     booking_id: value.bookingId,
     transaction_type: value.transactionType,
     provider: value.provider,
@@ -349,7 +349,7 @@ export async function recordRentalCondition(input: unknown): Promise<ServiceResu
   if (!parsed.success) return { success: false, error: "Choose a condition and enter notes of at least 3 characters." };
   const value = parsed.data;
   const supabase = createClient();
-  const { error } = await (supabase.from("rental_condition_reports") as any).insert({
+  const { error } = await ((supabase as any).from("rental_condition_reports") as any).insert({
     booking_id: value.bookingId,
     event_type: value.eventType,
     condition: value.condition,
