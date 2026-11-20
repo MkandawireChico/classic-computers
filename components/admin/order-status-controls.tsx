@@ -20,15 +20,21 @@ const NEXT_STATUS: Record<string, string[]> = {
 export function OrderStatusControls({
   orderId,
   currentStatus,
+  fulfillmentType,
 }: {
   orderId: string;
   currentStatus: string;
+  fulfillmentType: string;
 }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const statusOptions = NEXT_STATUS[currentStatus] ?? [];
+  const statusOptions = (NEXT_STATUS[currentStatus] ?? []).filter((status) => {
+    if (status === "ready_for_pickup") return fulfillmentType === "pickup";
+    if (status === "out_for_delivery") return fulfillmentType === "delivery";
+    return true;
+  });
 
   async function handleStatus(newStatus: string) {
     if (isPending) return;
