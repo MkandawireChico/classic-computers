@@ -115,3 +115,99 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
 
   return { success: true, documentId: document.id, documentNumber: Number(document.document_number) };
 }
+
+
+const convertSchema = z.object({ quotationId: z.string().uuid() });
+
+export async function convertAcceptedQuotationToInvoice(input: unknown): Promise<ServiceResult & { invoiceId?: string; invoiceNumber?: number }> {
+  const parsed = convertSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Invalid quotation reference." };
+
+  const supabase = createClient();
+  const { data: quotation, error: quoteError } = await (supabase.from("business_documents") as any)
+    .select("*")
+    .eq("id", parsed.data.quotationId)
+    .maybeSingle();
+  if (quoteError || !quotation) return { success: false, error: "Quotation not found." };
+  if (quotation.document_type !== "quotation" || quotation.status !== "accepted") {
+    return { success: false, error: "Only customer-accepted quotations can become invoices." };
+  }
+
+  const permission = quotation.source_type === "order" ? "orders.write"
+    : quotation.source_type === "rental" ? "rentals.write" : "repairs.write";
+  try {
+    await requirePermission(permission);
+  } catch (error) {
+    if (error instanceof AuthorizationError) return { success: false, error: "You don't have permission to invoice this quotation." };
+    throw error;
+  }
+
+  const { data: existing } = await (supabase.from("business_documents") as any)
+    .select("id,document_number")
+    .eq("origin_document_id", quotation.id)
+    .eq("document_type", "invoice")
+    .maybeSingle();
+  if (existing) return { success: true, invoiceId: existing.id, invoiceNumber: Number(existing.document_number) };
+
+  const { data: quoteItems, error: itemsError } = await (supabase.from("business_document_items") as any)
+    .select("description,quantity,unit_price,line_total,product_id,variant_id,sort_order")
+    .eq("document_id", quotation.id)
+    .order("sort_order", { ascending: true });
+  if (itemsError || !quoteItems?.length) return { success: false, error: "The quotation has no saved line items." };
+
+  const { data: invoice, error: invoiceError } = await (supabase.from("business_documents") as any)
+    .insert({
+      document_type: "invoice",
+      source_type: quotation.source_type,
+      source_id: quotation.source_id,
+      origin_document_id: quotation.id,
+      customer_id: quotation.customer_id,
+      customer_name: quotation.customer_name,
+      customer_email: quotation.customer_email,
+      customer_phone: quotation.customer_phone,
+      billing_address: quotation.billing_address,
+      currency: quotation.currency,
+      status: "draft",
+      subtotal: quotation.subtotal,
+      discount_amount: quotation.discount_amount,
+      discount_reason: quotation.discount_reason,
+      taxable_amount: quotation.taxable_amount,
+      vat_rate: quotation.vat_rate,
+      vat_amount: quotation.vat_amount,
+      ppda_rate: quotation.ppda_rate,
+      ppda_amount: quotation.ppda_amount,
+      grand_total: quotation.grand_total,
+      notes: quotation.notes,
+      terms: quotation.terms,
+    })
+    .select("id,document_number")
+    .single();
+  if (invoiceError || !invoice) {
+    console.error("convertAcceptedQuotationToInvoice failed:", invoiceError?.message);
+    return { success: false, error: "Could not create the invoice. Check the document migration is installed." };
+  }
+
+  const invoiceItems = quoteItems.map((item: any) => ({
+    document_id: invoice.id,
+    description: item.description,
+    quantity: item.quantity,
+    unit_price: item.unit_price,
+    line_total: item.line_total,
+    product_id: item.product_id,
+    variant_id: item.variant_id,
+    sort_order: item.sort_order,
+  }));
+  const { error: insertItemsError } = await (supabase.from("business_document_items") as any).insert(invoiceItems);
+  if (insertItemsError) {
+    console.error("Invoice item copy failed:", insertItemsError.message);
+    return { success: false, error: "The invoice draft exists but its line items were not copied. Contact an administrator before retrying." };
+  }
+
+  const { error: issueError } = await (supabase.from("business_documents") as any)
+    .update({ status: "issued", issued_at: new Date().toISOString() })
+    .eq("id", invoice.id)
+    .eq("status", "draft");
+  if (issueError) return { success: false, error: "The invoice draft exists but could not be issued." };
+
+  return { success: true, invoiceId: invoice.id, invoiceNumber: Number(invoice.document_number) };
+}
