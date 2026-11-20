@@ -32,10 +32,10 @@ export async function LocationSection() {
             />
           </div>
         ) : (
-          <div className="flex min-h-[260px] flex-col justify-between rounded-xl border border-slate-200 bg-[#f1f5f7] p-7 sm:min-h-[340px] sm:p-9">
+          <div className="flex min-h-[260px] flex-col justify-between rounded-xl border border-slate-200 bg-surface-muted p-7 sm:min-h-[340px] sm:p-9">
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700">Classic Computers</p>
             <div>
-              <h3 className="max-w-md text-3xl font-extrabold leading-tight tracking-tight text-[#10243a]">Your local technology shop in Blantyre.</h3>
+              <h3 className="max-w-md text-3xl font-extrabold leading-tight tracking-tight text-navy-900">Your local technology shop in Blantyre.</h3>
               <p className="mt-3 text-sm leading-6 text-slate-600">Visit us for product enquiries and service support.</p>
             </div>
           </div>
@@ -43,7 +43,7 @@ export async function LocationSection() {
 
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Find our shop</p>
-          <h2 id="location-heading" className="mt-3 text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-[#10243a] sm:text-4xl">
+          <h2 id="location-heading" className="mt-3 text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-navy-900 sm:text-4xl">
             Visit Classic Computers in Blantyre.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
