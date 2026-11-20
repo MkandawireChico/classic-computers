@@ -116,7 +116,7 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
       .select("from_status, to_status, created_at")
       .eq("order_id", orderId)
       .order("created_at", { ascending: true }),
-    ((supabase.from as any)("order_payment_history"))
+    supabase.from("order_payment_history")
       .select("from_status, to_status, created_at")
       .eq("order_id", orderId)
       .order("created_at", { ascending: true }),
