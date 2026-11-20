@@ -157,7 +157,7 @@ using (
   )
 )
 with check (
-  status = 'draft' and (
+  status in ('draft','issued') and (
     (source_type = 'repair' and public.has_permission(auth.uid(), 'repairs.write'))
     or (source_type = 'order' and public.has_permission(auth.uid(), 'orders.write'))
     or (source_type = 'rental' and public.has_permission(auth.uid(), 'rentals.write'))
