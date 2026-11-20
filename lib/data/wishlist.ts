@@ -72,21 +72,26 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
         });
       const startingVariant = activeVariants[0] ?? null;
       const startingRegular = startingVariant ? Number(startingVariant.price) : Number(p.base_price);
-      const startingSale = startingVariant?.sale_price === null || startingVariant?.sale_price === undefined
+      const startingSaleValue = startingVariant ? startingVariant.sale_price : p.sale_price;
+      const startingSale = startingSaleValue === null || startingSaleValue === undefined
         ? null
-        : Number(startingVariant.sale_price);
+        : Number(startingSaleValue);
       const startingDisplay = startingSale !== null && startingSale > 0 && startingSale < startingRegular
         ? startingSale
         : startingRegular;
       const priceVariant = selectedVariant ?? startingVariant;
-      const images = (p.product_images ?? []).filter((i: any) => i.variant_id === variantId);
+      const effectiveVariantId = selectedVariant?.id ?? startingVariant?.id ?? null;
+      const imageVariantId = variantId ?? effectiveVariantId;
+      const images = (p.product_images ?? []).filter((i: any) => i.variant_id === imageVariantId);
       const fallbackImages = (p.product_images ?? []).filter((i: any) => i.variant_id === null);
       const primary = images.find((i: any) => i.is_primary)
         ?? images[0]
         ?? fallbackImages.find((i: any) => i.is_primary)
         ?? fallbackImages[0]
-        ?? (variantId === null ? (p.product_images ?? []).find((i: any) => i.is_primary) ?? (p.product_images ?? [])[0] ?? null : null);
-      const inventoryRows = (p.inventory ?? []).filter((i: any) => i.variant_id === variantId);
+        ?? (p.product_images ?? []).find((i: any) => i.is_primary)
+        ?? (p.product_images ?? [])[0]
+        ?? null;
+      const inventoryRows = (p.inventory ?? []).filter((i: any) => i.variant_id === effectiveVariantId);
       const price = priceVariant ? Number(priceVariant.price) : Number(p.base_price);
       const salePrice = priceVariant
         ? (priceVariant.sale_price === null ? null : Number(priceVariant.sale_price))
