@@ -22,7 +22,7 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   const canConvert = document.document_type === "quotation" && document.status === "accepted" && (
     document.source_type === "order" ? permissions.has("orders.write")
     : document.source_type === "rental" ? permissions.has("rentals.write")
-    : permissions.has("repairs.write")
+    : document.source_type === "repair" ? permissions.has("repairs.write") : ["orders.write", "repairs.write", "rentals.write"].some((key) => permissions.has(key))
   );
 
   const { data: discountApprover } = document.discount_authorized_by
@@ -51,12 +51,12 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   const canRecordTransactions = document.document_type === "invoice" && (
     document.source_type === "order" ? permissions.has("orders.write")
     : document.source_type === "rental" ? permissions.has("rentals.write")
-    : permissions.has("repairs.write")
+    : document.source_type === "repair" ? permissions.has("repairs.write") : ["orders.write", "repairs.write", "rentals.write"].some((key) => permissions.has(key))
   );
   const canRecordDecision = document.document_type === "quotation" && document.status === "issued" && (
     document.source_type === "order" ? permissions.has("orders.write")
     : document.source_type === "rental" ? permissions.has("rentals.write")
-    : permissions.has("repairs.write")
+    : document.source_type === "repair" ? permissions.has("repairs.write") : ["orders.write", "repairs.write", "rentals.write"].some((key) => permissions.has(key))
   );
   const isQuotation = document.document_type === "quotation";
   const date = new Date(document.issued_at ?? document.created_at).toLocaleDateString("en-GB", { timeZone: "Africa/Blantyre" });
