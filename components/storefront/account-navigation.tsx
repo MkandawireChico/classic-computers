@@ -14,6 +14,7 @@ const GROUPS = [
   { title: "My activity", links: [
     ["/account/orders", "My orders", "bag"],
     ["/account/quotations", "My quotations", "file-text"],
+    ["/account/invoices", "My invoices", "file-text"],
     ["/account/reviews", "My reviews", "star"],
     ["/account/repairs", "My repairs", "wrench"],
     ["/account/rentals", "My rentals", "calendar"],
