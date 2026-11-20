@@ -190,6 +190,7 @@ export function PurchasePanel({
                 {rentalOffer.weeklyRate ? ` · ${formatMoney(rentalOffer.weeklyRate)}/week` : ""}
                 {rentalOffer.monthlyRate ? ` · ${formatMoney(rentalOffer.monthlyRate)}/month` : ""}
               </p>
+              <p className="mt-1 text-[11px] font-medium text-slate-500">Rental rate excludes VAT and PPDA.</p>
             </div>
             <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-navy-900 ring-1 ring-slate-200">
               {rentalOffer.availableQuantity > 0 ? `${rentalOffer.availableQuantity} available` : "Unavailable"}
