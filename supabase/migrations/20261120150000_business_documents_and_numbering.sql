@@ -72,6 +72,10 @@ begin
     end if;
   end if;
   if tg_op = 'UPDATE' and old.status <> 'draft' then
+    if old.status = 'issued' and new.status in ('accepted', 'rejected') then
+      new.updated_at := now();
+      return new;
+    end if;
     raise exception 'Issued documents are locked. Create a revision instead.';
   end if;
   if new.discount_amount > 0 then
