@@ -87,9 +87,16 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
   if (error || !booking) return null;
 
   const { data: history } = await (supabase.from("rental_status_history") as any)
-    .select("from_status, to_status, created_at, changed_by, note, profiles:changed_by ( full_name )")
+    .select("from_status, to_status, created_at, changed_by, note")
     .eq("booking_id", id)
     .order("created_at", { ascending: true });
+
+  const historyRows = history ?? [];
+  const actorIds = Array.from(new Set(historyRows.map((entry: any) => entry.changed_by).filter(Boolean)));
+  const { data: profiles } = actorIds.length
+    ? await (supabase.from("profiles") as any).select("id, full_name").in("id", actorIds)
+    : { data: [] };
+  const actorNames = new Map((profiles ?? []).map((profile: any) => [profile.id, profile.full_name]));
 
   return {
     id: booking.id,
@@ -109,11 +116,11 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
     product_name: booking.rental_products?.products?.name ?? null,
     rental_product_id: booking.rental_product_id,
     product_id: booking.rental_products?.product_id ?? null,
-    statusHistory: (history ?? []).map((entry: any) => ({
+    statusHistory: historyRows.map((entry: any) => ({
       from_status: entry.from_status,
       to_status: entry.to_status,
       created_at: entry.created_at,
-      changed_by_name: entry.profiles?.full_name ?? null,
+      changed_by_name: entry.changed_by ? actorNames.get(entry.changed_by) ?? null : null,
       note: entry.note ?? null,
     })),
   };
