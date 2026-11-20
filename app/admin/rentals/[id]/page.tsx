@@ -4,6 +4,7 @@ import { getAdminRentalById } from "@/lib/data/admin/rentals";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { RentalDetailControls } from "@/components/admin/rental-detail-controls";
 import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
+import { RentalLedgerControls } from "@/components/admin/rental-ledger-controls";
 
 export default async function AdminRentalDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("rentals.read");
@@ -58,6 +59,8 @@ export default async function AdminRentalDetailPage({ params }: { params: { id: 
           {!rental.customer_id ? <p className="mt-2 text-xs text-slate-500">Guest booking</p> : <p className="mt-2 text-xs text-slate-500">Registered customer</p>}
         </Card>
       </div>
+
+      <RentalLedgerControls rental={rental} />
     </div>
   );
 }
