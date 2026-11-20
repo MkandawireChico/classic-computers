@@ -37,8 +37,8 @@ create or replace function public.audit_order_payment_status_change()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
-as $$
+set search_path = ''
+as $
 begin
   if old.payment_status is distinct from new.payment_status then
     insert into public.order_payment_history (
