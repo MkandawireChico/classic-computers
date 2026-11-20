@@ -43,7 +43,7 @@ export function RepairDetailControls({
   const [isInternal, setIsInternal] = useState(true);
   const [quote, setQuote] = useState(repair.quote_amount ?? 0);
   const [partForm, setPartForm] = useState({ partName: "", cost: 0, quantity: 1 });
-  const [stockInventoryId, setStockInventoryId] = useState("");
+  const [stockInventoryId, setStockInventoryId] = useState("");\n  const [workLog, setWorkLog] = useState({ workDate: new Date().toISOString().slice(0, 10), durationMinutes: 30, workPerformed: "" });
   const selectedStockOption = stockOptions.find((option) => option.inventory_id === stockInventoryId) ?? null;
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
@@ -175,7 +175,33 @@ export function RepairDetailControls({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-medium uppercase text-gray-500">Parts used</p>
+        <div>
+        <p className="mb-2 text-xs font-medium uppercase text-gray-500">Technician work log</p>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <label className="text-xs font-medium text-slate-600">Work date
+            <input type="date" value={workLog.workDate} onChange={(e) => setWorkLog((v) => ({ ...v, workDate: e.target.value }))} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+          </label>
+          <label className="text-xs font-medium text-slate-600">Time spent (minutes)
+            <input type="number" min="1" max="1440" step="1" value={workLog.durationMinutes} onChange={(e) => setWorkLog((v) => ({ ...v, durationMinutes: Number(e.target.value) }))} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+          </label>
+          <label className="text-xs font-medium text-slate-600 sm:col-span-3">Work performed
+            <textarea rows={3} maxLength={2000} value={workLog.workPerformed} onChange={(e) => setWorkLog((v) => ({ ...v, workPerformed: e.target.value }))} placeholder="Record diagnosis, tests, repairs and results" className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+          </label>
+        </div>
+        <div className="mt-2 flex justify-end">
+          <Button size="sm" isLoading={isPending} disabled={isPending || workLog.workPerformed.trim().length < 3 || !Number.isInteger(workLog.durationMinutes) || workLog.durationMinutes < 1 || workLog.durationMinutes > 1440 || !workLog.workDate} onClick={() => run(async () => { const result = await addRepairWorkLogAction({ ticketId: repair.id, ...workLog }); if (result.success) setWorkLog((v) => ({ ...v, workPerformed: "" })); return result; })}>Save work log</Button>
+        </div>
+        <div className="mt-3 space-y-2">
+          {repair.workLogs.length === 0 ? <p className="text-sm text-slate-500">No technician work recorded yet.</p> : repair.workLogs.map((entry) => (
+            <div key={entry.id} className="rounded-xl border border-slate-200 p-3">
+              <div className="flex flex-wrap justify-between gap-2 text-xs text-slate-500"><span>{entry.technician_name ?? "Technician"} · {entry.work_date}</span><span>{entry.duration_minutes} minutes</span></div>
+              <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{entry.work_performed}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="mb-2 text-xs font-medium uppercase text-gray-500">Parts used</p>
         {repair.parts.length === 0 ? (
           <p className="text-sm text-gray-500">No parts recorded.</p>
         ) : (
@@ -183,7 +209,7 @@ export function RepairDetailControls({
             {repair.parts.map((p) => (
               <div key={p.id} className="flex items-center justify-between rounded-card border border-surface-border p-2 text-sm">
                 <span>
-                  {p.part_name} × {p.quantity} — {formatMoney(p.cost)}
+                  {p.part_name} × {p.quantity} — {formatMoney(p.cost * p.quantity)} total
                   {p.inventory_movement_id ? <Badge variant="info" className="ml-2">Stock deducted</Badge> : null}
                 </span>
                 <button
