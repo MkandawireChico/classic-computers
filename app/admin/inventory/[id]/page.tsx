@@ -4,6 +4,7 @@ import { getInventoryDetail, getInventoryMovements } from "@/lib/data/admin/inve
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StockAdjustForm } from "@/components/admin/stock-adjust-form";
+import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 
 export default async function InventoryDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("inventory.read");
@@ -16,15 +17,13 @@ export default async function InventoryDetailPage({ params }: { params: { id: st
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{inventory.products?.name}</h1>
-        {inventory.product_variants?.name ? (
-          <p className="text-sm text-gray-500">{inventory.product_variants.name}</p>
-        ) : null}
-        <p className="mt-1 text-sm text-gray-600">
-          {inventory.quantity_on_hand} on hand · <Badge variant="neutral">{inventory.status.replace(/_/g, " ")}</Badge>
-        </p>
-      </div>
+      <AdminDetailHeader
+        eyebrow="Commerce · Stock control"
+        title={inventory.products?.name ?? "Inventory item"}
+        description={`${inventory.product_variants?.name ? inventory.product_variants.name + " · " : ""}${inventory.quantity_on_hand} units on hand · ${inventory.status.replace(/_/g, " ")}. Review stock adjustments and movement history.`}
+        backHref="/admin/inventory"
+        backLabel="Back to inventory"
+      />
 
       <Card>
         <CardHeader>
