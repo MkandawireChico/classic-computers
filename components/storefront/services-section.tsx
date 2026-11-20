@@ -44,7 +44,7 @@ export function ServicesSection() {
 
         <div className="grid gap-px overflow-hidden border border-slate-300 bg-slate-300 md:grid-cols-3">
           {SERVICES.map((service) => (
-            <Link key={service.href} href={service.href} className="group flex min-h-[280px] flex-col bg-white p-6 transition-colors hover:bg-[#f8fbfc] sm:p-8 lg:min-h-[320px]">
+            <Link key={service.href} href={service.href} className="group flex min-h-[280px] flex-col bg-white p-6 transition-colors hover:bg-surface-muted sm:p-8 lg:min-h-[320px]">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs text-slate-400">{service.number}</span>
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-800 transition duration-300 group-hover:scale-105 group-hover:bg-brand-700 group-hover:text-white">{service.icon}</span>
