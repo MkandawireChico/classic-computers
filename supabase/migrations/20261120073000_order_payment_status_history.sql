@@ -38,7 +38,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   if old.payment_status is distinct from new.payment_status then
     insert into public.order_payment_history (
