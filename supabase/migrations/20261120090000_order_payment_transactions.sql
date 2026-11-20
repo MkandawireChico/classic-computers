@@ -37,18 +37,18 @@ create policy "orders.read can read verified payment transactions"
   for select to authenticated
   using (public.has_permission((select auth.uid()), 'orders.read'));
 
-revoke all on table public.order_payment_transactions from anon, authenticated;
-grant select on table public.order_payment_transactions to authenticated;
+create policy "orders.write can record verified payment transactions"
+  on public.order_payment_transactions
+  for insert to authenticated
+  with check (public.has_permission((select auth.uid()), 'orders.write'));
 
-create or replace function public.record_order_payment_transaction(
-  p_order_id uuid,
-  p_transaction_type text,
-  p_provider text,
-  p_amount numeric,
-  p_currency text default 'MWK',
-  p_provider_reference text default null
-)
-returns uuid
+revoke all on table public.order_payment_transactions from anon, authenticated;
+grant select, insert on table public.order_payment_transactions to authenticated;
+
+-- This trigger validates each transaction while holding the order row lock.
+-- The lock prevents concurrent staff entries from overpaying or over-refunding.
+create or replace function public.validate_order_payment_transaction()
+returns trigger
 language plpgsql
 security definer
 set search_path = ''
@@ -61,47 +61,42 @@ declare
   v_paid numeric(12,2);
   v_refunded numeric(12,2);
   v_net numeric(12,2);
-  v_transaction_id uuid;
-  v_type text := lower(trim(p_transaction_type));
-  v_provider text := trim(p_provider);
-  v_currency text := upper(trim(p_currency));
-  v_reference text := nullif(trim(coalesce(p_provider_reference, '')), '');
 begin
-  if v_actor is null then
-    raise exception 'Authentication required';
-  end if;
-
-  if not public.has_permission(v_actor, 'orders.write') then
+  if v_actor is null or not public.has_permission(v_actor, 'orders.write') then
     raise exception 'You do not have permission to record order payments';
   end if;
 
-  if v_type not in ('payment', 'refund') then
+  if new.transaction_type not in ('payment', 'refund') then
     raise exception 'Transaction type must be payment or refund';
   end if;
 
-  if v_provider = '' or char_length(v_currency) <> 3 then
-    raise exception 'A provider and valid currency are required';
+  if new.provider is null or length(trim(new.provider)) = 0 then
+    raise exception 'A payment provider is required';
   end if;
 
-  if p_amount is null or p_amount <= 0 or round(p_amount, 2) <> p_amount then
+  if new.amount is null or new.amount <= 0 or round(new.amount, 2) <> new.amount then
     raise exception 'Amount must be greater than zero and have no more than two decimal places';
   end if;
+
+  new.provider := trim(new.provider);
+  new.currency := upper(trim(new.currency));
+  new.provider_reference := nullif(trim(coalesce(new.provider_reference, '')), '');
 
   select o.total, o.currency, o.order_status
     into v_order_total, v_order_currency, v_order_status
     from public.orders o
-    where o.id = p_order_id
+    where o.id = new.order_id
     for update;
 
   if not found then
     raise exception 'Order not found';
   end if;
 
-  if v_type = 'payment' and v_order_status in ('cancelled', 'refunded') then
+  if new.transaction_type = 'payment' and v_order_status in ('cancelled', 'refunded') then
     raise exception 'A payment cannot be recorded against a cancelled or refunded order';
   end if;
 
-  if upper(v_order_currency) <> v_currency then
+  if upper(v_order_currency) <> new.currency then
     raise exception 'Transaction currency does not match the order currency';
   end if;
 
@@ -110,62 +105,85 @@ begin
     coalesce(sum(t.amount) filter (where t.transaction_type = 'refund'), 0)
     into v_paid, v_refunded
     from public.order_payment_transactions t
-    where t.order_id = p_order_id;
+    where t.order_id = new.order_id;
 
   v_net := v_paid - v_refunded;
 
-  if v_type = 'payment' and v_net + p_amount > v_order_total then
+  if new.transaction_type = 'payment' and v_net + new.amount > v_order_total then
     raise exception 'Payment exceeds the outstanding order balance';
   end if;
 
-  if v_type = 'refund' and p_amount > v_net then
+  if new.transaction_type = 'refund' and new.amount > v_net then
     raise exception 'Refund exceeds the verified amount received';
   end if;
 
-  insert into public.order_payment_transactions (
-    order_id, transaction_type, provider, amount, currency, provider_reference
-  ) values (
-    p_order_id, v_type, v_provider, p_amount, v_currency, v_reference
-  )
-  returning id into v_transaction_id;
+  return new;
+end;
+$$;
 
-  if v_type = 'payment' then
-    v_net := v_net + p_amount;
-  else
-    v_net := v_net - p_amount;
-  end if;
+create or replace function public.apply_order_payment_transaction()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_order_total numeric(12,2);
+  v_paid numeric(12,2);
+  v_refunded numeric(12,2);
+  v_net numeric(12,2);
+begin
+  select o.total into v_order_total
+    from public.orders o
+    where o.id = new.order_id;
+
+  select
+    coalesce(sum(t.amount) filter (where t.transaction_type = 'payment'), 0),
+    coalesce(sum(t.amount) filter (where t.transaction_type = 'refund'), 0)
+    into v_paid, v_refunded
+    from public.order_payment_transactions t
+    where t.order_id = new.order_id;
+
+  v_net := v_paid - v_refunded;
 
   update public.orders
     set payment_status = case
       when v_net >= v_order_total then 'paid'::public.payment_status_enum
       when v_net > 0 then 'partial'::public.payment_status_enum
-      when v_type = 'refund' then 'refunded'::public.payment_status_enum
+      when v_refunded > 0 then 'refunded'::public.payment_status_enum
       else 'unpaid'::public.payment_status_enum
     end
-    where id = p_order_id;
+    where id = new.order_id;
 
   perform public.log_audit_event(
-    case when v_type = 'payment' then 'order.payment_recorded' else 'order.refund_recorded' end,
+    case when new.transaction_type = 'payment' then 'order.payment_recorded' else 'order.refund_recorded' end,
     'order',
-    p_order_id,
+    new.order_id,
     jsonb_build_object(
-      'transaction_id', v_transaction_id,
-      'transaction_type', v_type,
-      'provider', v_provider,
-      'amount', p_amount,
-      'currency', v_currency,
-      'provider_reference', v_reference
+      'transaction_id', new.id,
+      'transaction_type', new.transaction_type,
+      'provider', new.provider,
+      'amount', new.amount,
+      'currency', new.currency,
+      'provider_reference', new.provider_reference
     )
   );
 
-  return v_transaction_id;
+  return new;
 end;
 $$;
 
-revoke all on function public.record_order_payment_transaction(uuid, text, text, numeric, text, text)
-  from public, anon, authenticated;
-grant execute on function public.record_order_payment_transaction(uuid, text, text, numeric, text, text)
-  to authenticated;
+create trigger validate_order_payment_transaction_trigger
+  before insert on public.order_payment_transactions
+  for each row execute function public.validate_order_payment_transaction();
+
+create trigger apply_order_payment_transaction_trigger
+  after insert on public.order_payment_transactions
+  for each row execute function public.apply_order_payment_transaction();
+
+-- Trigger functions are not application RPC endpoints.
+revoke all on function public.validate_order_payment_transaction() from public, anon, authenticated;
+revoke all on function public.apply_order_payment_transaction() from public, anon, authenticated;
 
 comment on table public.order_payment_transactions is
-  'Append-only verified payments and refunds. Rows are created only through record_order_payment_transaction after staff verification.';
+  'Append-only verified payments and refunds. Inserts require orders.write and are validated and reconciled by database triggers.';
