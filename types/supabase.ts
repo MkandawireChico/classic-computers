@@ -741,6 +741,41 @@ export type Database = {
           },
         ]
       }
+      order_payment_history: {
+        Row: {
+          id: string
+          order_id: string
+          from_status: Database["public"]["Enums"]["payment_status_enum"] | null
+          to_status: Database["public"]["Enums"]["payment_status_enum"]
+          changed_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          from_status?: Database["public"]["Enums"]["payment_status_enum"] | null
+          to_status: Database["public"]["Enums"]["payment_status_enum"]
+          changed_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          from_status?: Database["public"]["Enums"]["payment_status_enum"] | null
+          to_status?: Database["public"]["Enums"]["payment_status_enum"]
+          changed_by?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_payment_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string
