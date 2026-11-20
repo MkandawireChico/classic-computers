@@ -98,7 +98,16 @@ export default async function AdminOrdersPage({
               <Badge variant={PAYMENT_VARIANT[o.payment_status] ?? "neutral"}>{o.payment_status}</Badge>
               <span className="text-xs capitalize text-slate-500">{o.fulfillment_type}</span>
             </div>
-            <p className="mt-3 text-[11px] text-slate-400">{new Date(o.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</p>
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <p className="text-[11px] text-slate-400">{new Date(o.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</p>
+              <p className="text-xs font-semibold tabular-nums text-slate-700">
+                {o.outstanding_balance === null
+                  ? "Legacy balance needs review"
+                  : o.outstanding_balance > 0
+                    ? `Due ${formatMoney(o.outstanding_balance)}`
+                    : "No balance due"}
+              </p>
+            </div>
           </Link>
         ))}
       </div>
@@ -112,13 +121,14 @@ export default async function AdminOrdersPage({
               <th className="p-3">Total</th>
               <th className="p-3">Status</th>
               <th className="p-3">Payment</th>
+              <th className="p-3">Balance</th>
               <th className="p-3">Fulfillment</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-border">
             {result.items.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-gray-500">
+                <td colSpan={7} className="p-6 text-center text-gray-500">
                   No orders found.
                 </td>
               </tr>
@@ -139,6 +149,9 @@ export default async function AdminOrdersPage({
                     <Badge variant={STATUS_VARIANT[o.order_status] ?? "neutral"}>{o.order_status.replace(/_/g, " ")}</Badge>
                   </td>
                   <td className="p-3"><Badge variant={PAYMENT_VARIANT[o.payment_status] ?? "neutral"}>{o.payment_status}</Badge></td>
+                  <td className="p-3 text-xs font-semibold tabular-nums text-slate-700">
+                    {o.outstanding_balance === null ? "Review legacy record" : o.outstanding_balance > 0 ? formatMoney(o.outstanding_balance) : "Settled"}
+                  </td>
                   <td className="p-3 text-gray-600 capitalize">{o.fulfillment_type}</td>
                 </tr>
               ))
