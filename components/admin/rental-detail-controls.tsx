@@ -87,10 +87,11 @@ export function RentalDetailControls({ rental }: { rental: AdminRentalDetail }) 
       </div>
 
       <div>
-        <p className="mb-1 text-xs font-medium uppercase text-gray-500">Charge (MWK)</p>
+        <p className="mb-1 text-xs font-medium uppercase text-gray-500">Agreed rental charge (MWK)</p>
+        <p className="mb-2 text-xs text-slate-500">Recording a charge does not confirm payment. Verify deposits and balances separately before handing over equipment.</p>
         <div className="flex items-center gap-2">
           <input type="number" min="0" step="0.01" value={charge} onChange={(e) => setCharge(Number(e.target.value))} className="w-32 rounded-card border border-surface-border px-2 py-1.5 text-sm" />
-          <Button size="sm" variant="outline" disabled={isPending || !Number.isFinite(charge) || charge < 0} isLoading={isPending} onClick={() => run(() => setRentalChargeAction({ bookingId: rental.id, totalCharge: charge }))}>
+          <Button size="sm" variant="outline" disabled={isPending || !Number.isFinite(charge) || charge < 0 || !Number.isInteger(Math.round(charge * 100))} isLoading={isPending} onClick={() => run(() => setRentalChargeAction({ bookingId: rental.id, totalCharge: charge }))}>
             Save
           </Button>
         </div>
