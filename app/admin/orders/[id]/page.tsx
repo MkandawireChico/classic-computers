@@ -190,22 +190,38 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             <div className="mb-3 flex gap-2">
               <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
             </div>
-            <OrderStatusControls orderId={order.id} currentStatus={order.order_status} />
+            <OrderStatusControls
+              orderId={order.id}
+              currentStatus={order.order_status}
+              fulfillmentType={order.fulfillment_type}
+            />
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>Customer</CardTitle>
             </CardHeader>
-            <p className="text-sm text-gray-900">{order.customer_name ?? order.guest_name ?? "—"}</p>
-            {order.customer_phone || order.guest_phone ? (
-              <p className="text-sm text-gray-600">{order.customer_phone ?? order.guest_phone}</p>
-            ) : null}
-            {order.guest_email ? <p className="text-sm text-gray-600">{order.guest_email}</p> : null}
-            {!order.customer_id ? <Badge variant="neutral" className="mt-2">Guest order</Badge> : null}
-            <p className="mt-2 text-xs text-gray-500 capitalize">
-              {order.fulfillment_type} · {order.payment_method.replace(/_/g, " ")}
-            </p>
+            <div className="space-y-2 text-sm">
+              <div>
+                <p className="font-semibold text-slate-950">{order.customer_name ?? order.guest_name ?? "Customer details unavailable"}</p>
+                <p className="text-xs text-slate-500">{order.customer_id ? "Registered customer" : "Guest checkout"}</p>
+              </div>
+              {order.customer_phone || order.guest_phone ? (
+                <a href={`tel:${order.customer_phone ?? order.guest_phone}`} className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:border-brand-300 hover:text-brand-800">
+                  <span aria-hidden="true">☎</span>{order.customer_phone ?? order.guest_phone}
+                </a>
+              ) : <p className="text-xs text-slate-500">No phone number supplied.</p>}
+              {order.guest_email ? (
+                <a href={`mailto:${order.guest_email}`} className="block break-all text-sm font-medium text-brand-700 hover:text-brand-900">{order.guest_email}</a>
+              ) : null}
+              {!order.customer_id ? <Badge variant="neutral">Guest order</Badge> : null}
+              <div className="border-t border-slate-100 pt-3 text-xs text-slate-500">
+                <p className="capitalize">{order.fulfillment_type} · {order.payment_method.replace(/_/g, " ")}</p>
+                {order.delivery_snapshot?.phone && order.delivery_snapshot.phone !== (order.customer_phone ?? order.guest_phone) ? (
+                  <p className="mt-1">Delivery contact: {order.delivery_snapshot.phone}</p>
+                ) : null}
+              </div>
+            </div>
           </Card>
 
           {order.notes ? (
