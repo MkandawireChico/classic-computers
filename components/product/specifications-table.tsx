@@ -1,4 +1,8 @@
+"use client";
+
+import { useMemo } from "react";
 import type { ProductSpecification } from "@/types/catalog";
+import { useProductVariant } from "./product-variant-context";
 
 const SPEC_GROUPS = [
   { title: "Performance", keys: ["processor", "processor_generation", "ram", "graphics"] },
@@ -17,10 +21,24 @@ function groupForSpecification(key: string): string {
 }
 
 export function SpecificationsTable({ specifications }: { specifications: ProductSpecification[] }) {
-  if (specifications.length === 0) return null;
+  const { selectedVariantId } = useProductVariant();
+  const visibleSpecifications = useMemo(() => {
+    const byKey = new Map<string, ProductSpecification>();
+    for (const spec of specifications) {
+      if (spec.variant_id === null) byKey.set(spec.key, spec);
+    }
+    if (selectedVariantId) {
+      for (const spec of specifications) {
+        if (spec.variant_id === selectedVariantId) byKey.set(spec.key, spec);
+      }
+    }
+    return [...byKey.values()].sort((a, b) => a.display_order - b.display_order);
+  }, [specifications, selectedVariantId]);
+
+  if (visibleSpecifications.length === 0) return null;
 
   const groups = new Map<string, ProductSpecification[]>();
-  for (const spec of [...specifications].sort((a, b) => a.display_order - b.display_order)) {
+  for (const spec of visibleSpecifications) {
     const title = groupForSpecification(spec.key);
     const current = groups.get(title) ?? [];
     current.push(spec);
