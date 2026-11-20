@@ -75,7 +75,7 @@ export default async function ShopPage({
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
                   {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-500">Catalogue prices in MWK, excluding VAT and PPDA</p>
+                <p className="mt-0.5 text-xs text-slate-500">Starting prices in MWK, excluding VAT and PPDA</p>
               </div>
               <SortSelect />
             </div>
