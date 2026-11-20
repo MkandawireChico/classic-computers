@@ -35,6 +35,10 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
     Number(Boolean(searchParams.get("min") || searchParams.get("max"))) +
     Number(availableOnly);
 
+  useEffect(() => {
+    setFiltersOpen(activeFilterCount > 0);
+  }, [activeFilterCount]);
+
   function updateParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
     mutate(params);
