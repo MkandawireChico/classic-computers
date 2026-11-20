@@ -101,7 +101,7 @@ const paymentTransactionSchema = z.object({
   orderId: z.string().uuid(),
   transactionType: z.enum(["payment", "refund"]),
   provider: z.string().trim().min(1).max(80),
-  amount: z.number().positive().finite().refine((value) => Number.isInteger(value * 100), "Amount must have no more than two decimal places."),
+  amount: z.number().positive().finite().refine((value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-7, "Amount must have no more than two decimal places."),
   currency: z.string().trim().length(3).default("MWK"),
   providerReference: z.string().trim().max(120).optional().or(z.literal("")),
 });
