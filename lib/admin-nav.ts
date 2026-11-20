@@ -66,9 +66,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         anyPermissions: ["customers.read", "rentals.read", "repairs.read", "students.read", "orders.read"],
       },
       { href: "/admin/users", label: "Staff & Roles", permission: "users.manage" },
-      // The email delivery queue has its own link above. The in-app admin
-      // notification list and audit-log viewer remain deferred; neither
-      // should be linked here until those pages are implemented.
+      { href: "/admin/activity", label: "Activity log", permission: "audit_logs.read" },
     ],
   },
 ];
