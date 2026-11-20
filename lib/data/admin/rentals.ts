@@ -69,7 +69,7 @@ export interface AdminRentalDetail extends AdminRentalListItem {
   guest_phone: string | null;
   guest_email: string | null;
   customer_id: string | null;
-  statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
+  statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string; changed_by_name: string | null; note: string | null }>;
 }
 
 export async function getAdminRentalById(id: string): Promise<AdminRentalDetail | null> {
@@ -87,7 +87,7 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
   if (error || !booking) return null;
 
   const { data: history } = await (supabase.from("rental_status_history") as any)
-    .select("from_status, to_status, created_at")
+    .select("from_status, to_status, created_at, changed_by, note, profiles:changed_by ( full_name )")
     .eq("booking_id", id)
     .order("created_at", { ascending: true });
 
@@ -109,6 +109,12 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
     product_name: booking.rental_products?.products?.name ?? null,
     rental_product_id: booking.rental_product_id,
     product_id: booking.rental_products?.product_id ?? null,
-    statusHistory: history ?? [],
+    statusHistory: (history ?? []).map((entry: any) => ({
+      from_status: entry.from_status,
+      to_status: entry.to_status,
+      created_at: entry.created_at,
+      changed_by_name: entry.profiles?.full_name ?? null,
+      note: entry.note ?? null,
+    })),
   };
 }
