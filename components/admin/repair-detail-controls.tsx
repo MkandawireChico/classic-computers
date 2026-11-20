@@ -64,8 +64,15 @@ export function RepairDetailControls({
 
   const loggedHours = Math.floor(repair.loggedMinutes / 60);
   const loggedRemainder = repair.loggedMinutes % 60;
+  const labourCost = repair.internalLabourRate !== null
+    ? (repair.loggedMinutes / 60) * repair.internalLabourRate
+    : null;
+  const totalRecordedCost = labourCost !== null ? repair.partsCostTotal + labourCost : null;
   const partsBalance = repair.latestQuotation
     ? repair.latestQuotation.taxable_amount - repair.partsCostTotal
+    : null;
+  const estimatedContribution = repair.latestQuotation && totalRecordedCost !== null
+    ? repair.latestQuotation.taxable_amount - totalRecordedCost
     : null;
 
   return (
@@ -100,7 +107,19 @@ export function RepairDetailControls({
             <span className="font-semibold tabular-nums text-slate-900">{formatMoney(partsBalance)}</span>
           </div>
         ) : null}
-        <p className="mt-2 text-xs leading-5 text-slate-500">This is a preliminary contribution after recorded parts only. Technician time is shown separately. Labour cost, other overheads and any final invoice adjustments are not included.</p>
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
+            <p className="text-xs text-slate-500">Estimated internal labour cost</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{labourCost !== null ? formatMoney(labourCost) : "Rate not configured"}</p>
+            <p className="mt-1 text-xs text-slate-500">{repair.internalLabourRate !== null ? `Rate: ${formatMoney(repair.internalLabourRate)} per hour` : "Set an internal hourly rate in Admin Settings → Repair settings."}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
+            <p className="text-xs text-slate-500">Estimated contribution after recorded costs</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{estimatedContribution !== null ? formatMoney(estimatedContribution) : "Incomplete"}</p>
+            <p className="mt-1 text-xs text-slate-500">{totalRecordedCost !== null ? `Recorded parts and labour: ${formatMoney(totalRecordedCost)}` : "Requires a configured labour rate and quotation."}</p>
+          </div>
+        </div>
+        <p className="mt-2 text-xs leading-5 text-slate-500">Estimate uses the latest quotation before tax, recorded parts cost and configured labour rate. Excludes overheads, unlogged work, warranty costs and later invoice adjustments. Not an accounting profit figure.</p>
       </section>
 
       <div>
