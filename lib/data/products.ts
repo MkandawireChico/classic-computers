@@ -40,7 +40,7 @@ function productListSelect(requireMatchingInventory = false) {
   category:categories ( id, name, slug ),
   product_images ( id, storage_path, alt_text, display_order, is_primary, variant_id ),
   ${inventoryRelation} ( status, variant_id ),
-  catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants )
+  product_variants ( id, price, sale_price, status, created_at )
 `;
 }
 
@@ -76,6 +76,17 @@ function toListItem(row: any): ProductListItem {
   const cataloguePrice = Array.isArray(row.catalogue_price)
     ? row.catalogue_price[0]
     : row.catalogue_price;
+  const activeVariants = (row.product_variants ?? [])
+    .filter((variant: any) => variant.status === "active")
+    .sort((a: any, b: any) => {
+      const aPrice = getValidSalePrice(a.sale_price, Number(a.price)) ?? Number(a.price);
+      const bPrice = getValidSalePrice(b.sale_price, Number(b.price)) ?? Number(b.price);
+      return aPrice - bPrice || Number(a.price) - Number(b.price) || a.created_at.localeCompare(b.created_at);
+    });
+  const startingVariant = activeVariants[0] ?? null;
+  const startingVariantPrice = startingVariant
+    ? getValidSalePrice(startingVariant.sale_price, Number(startingVariant.price)) ?? Number(startingVariant.price)
+    : null;
 
   return {
     id: row.id,
@@ -84,9 +95,9 @@ function toListItem(row: any): ProductListItem {
     name: row.name,
     base_price: Number(row.base_price),
     sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
-    display_price: Number(cataloguePrice?.display_price ?? row.base_price),
-    regular_price: Number(cataloguePrice?.regular_price ?? row.base_price),
-    has_active_variants: Boolean(cataloguePrice?.has_active_variants),
+    display_price: Number(cataloguePrice?.display_price ?? startingVariantPrice ?? getValidSalePrice(row.sale_price, Number(row.base_price)) ?? row.base_price),
+    regular_price: Number(cataloguePrice?.regular_price ?? startingVariant?.price ?? row.base_price),
+    has_active_variants: Boolean(cataloguePrice?.has_active_variants ?? startingVariant),
     condition: row.condition,
     is_featured: row.is_featured,
     brand: row.brand ?? null,
@@ -119,106 +130,97 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductListItem[]>
 
 export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
   const supabase = createClient();
-  const page = filters.page && filters.page > 0 ? filters.page : 1;
+  let page = filters.page && filters.page > 0 ? filters.page : 1;
   const pageSize = filters.pageSize && filters.pageSize > 0 ? filters.pageSize : 24;
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
 
-  let query: any = supabase
-    .from("products")
-    .select(productListSelect(filters.availableOnly), { count: "exact" })
-    .eq("status", "published");
-
-  if (filters.availableOnly) {
-    query = query.in("inventory.status", ["in_stock", "low_stock"]);
-  }
-
+  let categoryId: string | null = null;
   if (filters.categorySlug) {
-    // Resolve slug -> id first so the filter stays a normal equality check.
-    const { data: category } = await (supabase
+    const { data: category, error: categoryError } = await (supabase
       .from("categories") as any)
       .select("id")
       .eq("slug", filters.categorySlug)
       .maybeSingle();
-    if (category) {
-      query = query.eq("category_id", category.id);
-    } else {
+    if (categoryError || !category) {
       return { items: [], total: 0, page, pageSize };
     }
+    categoryId = category.id;
   }
 
+  let brandIds: string[] | null = null;
   if (filters.brandSlugs && filters.brandSlugs.length > 0) {
-    const { data: brands } = await (supabase.from("brands") as any).select("id").in("slug", filters.brandSlugs);
-    const ids = (brands ?? []).map((b: any) => b.id);
-    if (ids.length === 0) return { items: [], total: 0, page, pageSize };
-    query = query.in("brand_id", ids);
-  }
-
-  if (typeof filters.minPrice === "number") {
-    query = query.gte("catalogue_price.display_price", filters.minPrice);
-  }
-  if (typeof filters.maxPrice === "number") {
-    query = query.lte("catalogue_price.display_price", filters.maxPrice);
-  }
-
-  if (filters.query && filters.query.trim().length > 0) {
-    const term = filters.query.trim().replace(/[%_]/g, "");
-    query = query.or(`name.ilike.%${term}%,sku.ilike.%${term}%,description.ilike.%${term}%`);
-  }
-
-  switch (filters.sort) {
-    case "newest":
-      query = query.order("created_at", { ascending: false });
-      break;
-    case "price_asc":
-      query = query.order("display_price", { ascending: true, foreignTable: "catalogue_price" });
-      break;
-    case "price_desc":
-      query = query.order("display_price", { ascending: false, foreignTable: "catalogue_price" });
-      break;
-    case "name":
-      query = query.order("name", { ascending: true });
-      break;
-    case "featured":
-    default:
-      query = query.order("is_featured", { ascending: false }).order("created_at", { ascending: false });
-      break;
-  }
-
-  const { data, error, count } = await query.range(from, to);
-
-  if (error) {
-    console.error("searchShop failed:", error.message);
-    return { items: [], total: 0, page, pageSize };
-  }
-
-  const total = count ?? data?.length ?? 0;
-  const lastPage = Math.max(1, Math.ceil(total / pageSize));
-
-  // Keep stale or manually edited page URLs from rendering an empty
-  // catalogue when matching products still exist.
-  if (page > lastPage) {
-    const correctedPage = lastPage;
-    const correctedFrom = (correctedPage - 1) * pageSize;
-    const { data: correctedData, error: correctedError } = await query.range(
-      correctedFrom,
-      correctedFrom + pageSize - 1,
-    );
-
-    if (correctedError) {
-      console.error("searchShop page correction failed:", correctedError.message);
-      return { items: [], total, page: correctedPage, pageSize };
+    const { data: brands, error: brandError } = await (supabase.from("brands") as any)
+      .select("id")
+      .in("slug", filters.brandSlugs);
+    if (brandError) {
+      console.error("searchShop brand lookup failed:", brandError.message);
+      return { items: [], total: 0, page, pageSize };
     }
-
-    return {
-      items: (correctedData ?? []).map((row: any) => toListItem(row)),
-      total,
-      page: correctedPage,
-      pageSize,
-    };
+    brandIds = (brands ?? []).map((brand: any) => brand.id);
+    if (brandIds.length === 0) return { items: [], total: 0, page, pageSize };
   }
 
-  const items = (data ?? []).map((row: any) => toListItem(row));
+  const queryTerm = filters.query?.trim().replace(/[%_]/g, "") || null;
+  const fetchPriceRows = async (offset: number, limit: number) => {
+    const { data, error } = await (supabase.rpc("search_storefront_products" as any, {
+      p_category_id: categoryId,
+      p_brand_ids: brandIds,
+      p_min_price: filters.minPrice ?? null,
+      p_max_price: filters.maxPrice ?? null,
+      p_query: queryTerm,
+      p_available_only: Boolean(filters.availableOnly),
+      p_sort: filters.sort ?? "featured",
+      p_limit: limit,
+      p_offset: offset,
+    }) as any);
+    if (error) {
+      console.error("searchShop price query failed:", error.message);
+      return { rows: null, error };
+    }
+    return { rows: data ?? [], error: null };
+  };
+
+  let priceRowsResult = await fetchPriceRows((page - 1) * pageSize, pageSize);
+  if (priceRowsResult.error) return { items: [], total: 0, page, pageSize };
+  let priceRows: any[] = priceRowsResult.rows ?? [];
+  let total = Number(priceRows[0]?.total_count ?? 0);
+
+  // An out-of-range URL has no page rows. Ask for one row from the first
+  // page to recover the count, then fetch the last valid page.
+  if (priceRows.length === 0 && page > 1) {
+    const firstPageResult = await fetchPriceRows(0, 1);
+    if (firstPageResult.error) return { items: [], total: 0, page, pageSize };
+    total = Number(firstPageResult.rows?.[0]?.total_count ?? 0);
+    if (total > 0) {
+      page = Math.max(1, Math.ceil(total / pageSize));
+      priceRowsResult = await fetchPriceRows((page - 1) * pageSize, pageSize);
+      if (priceRowsResult.error) return { items: [], total, page, pageSize };
+      priceRows = priceRowsResult.rows ?? [];
+    }
+  }
+
+  if (priceRows.length === 0) return { items: [], total, page, pageSize };
+
+  const ids = priceRows.map((row: any) => row.product_id);
+  const { data: products, error: productsError } = await (supabase
+    .from("products")
+    .select(productListSelect()) as any)
+    .eq("status", "published")
+    .in("id", ids);
+
+  if (productsError) {
+    console.error("searchShop product fetch failed:", productsError.message);
+    return { items: [], total, page, pageSize };
+  }
+
+  const productById = new Map((products ?? []).map((product: any) => [product.id, product]));
+  const priceById = new Map(priceRows.map((row: any) => [row.product_id, row]));
+  const items = ids
+    .map((id: string) => {
+      const product = productById.get(id);
+      if (!product) return null;
+      return toListItem({ ...product, catalogue_price: priceById.get(id) });
+    })
+    .filter((item: ProductListItem | null): item is ProductListItem => item !== null);
 
   return { items, total, page, pageSize };
 }
@@ -230,7 +232,6 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     .from("products")
     .select(`
       id, sku, slug, name, description, base_price, sale_price, condition,
-      catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants ),
       is_featured, warranty_text, seo_title, seo_description,
       brand:brands ( id, name, slug ),
       category:categories ( id, name, slug ),
@@ -276,6 +277,18 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     }))
     .sort((a: any, b: any) => a.display_order - b.display_order);
 
+  const activeVariants = (row.product_variants ?? [])
+    .filter((variant: any) => variant.status === "active")
+    .sort((a: any, b: any) => {
+      const aPrice = getValidSalePrice(a.sale_price, Number(a.price)) ?? Number(a.price);
+      const bPrice = getValidSalePrice(b.sale_price, Number(b.price)) ?? Number(b.price);
+      return aPrice - bPrice || Number(a.price) - Number(b.price) || a.created_at.localeCompare(b.created_at);
+    });
+  const startingVariant = activeVariants[0] ?? null;
+  const startingVariantPrice = startingVariant
+    ? getValidSalePrice(startingVariant.sale_price, Number(startingVariant.price)) ?? Number(startingVariant.price)
+    : null;
+
   const inventoryRows = (row.inventory ?? []).filter((i: any) => i.variant_id === null);
   const inventoryByVariant: Record<string, any> = {};
   for (const invRow of row.inventory ?? []) {
@@ -290,9 +303,9 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     description: row.description,
     base_price: Number(row.base_price),
     sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
-    display_price: Number((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.display_price ?? row.base_price),
-    regular_price: Number((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.regular_price ?? row.base_price),
-    has_active_variants: Boolean((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.has_active_variants),
+    display_price: Number(startingVariantPrice ?? getValidSalePrice(row.sale_price, Number(row.base_price)) ?? row.base_price),
+    regular_price: Number(startingVariant?.price ?? row.base_price),
+    has_active_variants: Boolean(startingVariant),
     condition: row.condition,
     is_featured: row.is_featured,
     warranty_text: row.warranty_text,
