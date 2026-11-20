@@ -71,18 +71,31 @@ export default async function ProductPage({ params }: { params: Params }) {
   const displayPrice = product.sale_price !== null && product.sale_price < product.base_price
     ? product.sale_price
     : product.base_price;
+  const activeSchemaVariants = product.variants.filter((variant) => variant.status === "active");
+  const schemaVariant =
+    activeSchemaVariants.find((variant) => variant.is_default) ?? activeSchemaVariants[0] ?? null;
+  const schemaPrice = schemaVariant
+    ? schemaVariant.sale_price !== null && schemaVariant.sale_price > 0 && schemaVariant.sale_price < schemaVariant.price
+      ? schemaVariant.sale_price
+      : schemaVariant.price
+    : displayPrice;
+  const schemaInventoryStatus = schemaVariant
+    ? product.inventory_by_variant[schemaVariant.id] ?? null
+    : product.inventory_status;
   const availability =
-    product.inventory_status === "in_stock" || product.inventory_status === "low_stock"
+    schemaInventoryStatus === "in_stock" || schemaInventoryStatus === "low_stock"
       ? "https://schema.org/InStock"
-      : product.inventory_status === "coming_soon"
+      : schemaInventoryStatus === "coming_soon"
         ? "https://schema.org/PreOrder"
-        : "https://schema.org/OutOfStock";
+        : schemaInventoryStatus === "out_of_stock" || schemaInventoryStatus === "discontinued"
+          ? "https://schema.org/OutOfStock"
+          : undefined;
 
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    sku: product.sku,
+    sku: schemaVariant?.sku ?? product.sku,
     description: product.description ?? undefined,
     brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
     image: product.images.map((img) => getPublicStorageUrl("product-images", img.storage_path)),
@@ -95,7 +108,7 @@ export default async function ProductPage({ params }: { params: Params }) {
     offers: {
       "@type": "Offer",
       priceCurrency: "MWK",
-      price: displayPrice,
+      price: schemaPrice,
       availability,
       url: `https://classiccomputers.mw/product/${product.slug}`,
     },
