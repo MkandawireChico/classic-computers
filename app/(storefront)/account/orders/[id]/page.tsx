@@ -84,6 +84,28 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </section>
       ) : null}
 
+      {order.paymentHistory.length > 0 ? (
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="payment-history-heading">
+          <h2 id="payment-history-heading" className="text-sm font-bold text-slate-950">Payment updates</h2>
+          <ol className="mt-4 space-y-3 border-l border-slate-200 pl-4">
+            {order.paymentHistory.map((event, index) => (
+              <li key={index} className="text-sm text-slate-600">
+                <p className="font-semibold capitalize text-slate-900">
+                  {event.from_status ? event.from_status.replace(/_/g, " ") + " → " : ""}
+                  {event.to_status.replace(/_/g, " ")}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                </p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            These updates show payment status changes. Contact our team for individual transaction or refund details.
+          </p>
+        </section>
+      ) : null}
+
       {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_18px_rgba(15,23,42,0.045)] sm:p-6">
           <h2 className="mb-2 text-sm font-bold text-slate-950">Delivery address</h2>
