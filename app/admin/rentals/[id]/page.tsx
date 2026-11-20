@@ -32,8 +32,15 @@ export default async function AdminRentalDetailPage({ params }: { params: { id: 
               <p className="mb-2 text-xs font-medium uppercase text-gray-500">History</p>
               <ol className="space-y-1 border-l border-surface-border pl-4 text-sm text-gray-600">
                 {rental.statusHistory.map((e, i) => (
-                  <li key={i}>
-                    {e.to_status} — {new Date(e.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                  <li key={i} className="py-1">
+                    <p className="font-medium text-slate-800">
+                      {e.from_status ? `${e.from_status.replace(/_/g, " ")} → ` : ""}{e.to_status.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {new Date(e.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                      {" · "}{e.changed_by_name ?? "System"}
+                    </p>
+                    {e.note ? <p className="mt-1 text-sm text-slate-600">{e.note}</p> : null}
                   </li>
                 ))}
               </ol>
