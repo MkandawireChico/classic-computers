@@ -196,9 +196,9 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       </fieldset>
 
       {categories.length > 0 ? (
-        <details className="border-b border-surface-border pb-4">
+        <details className="group border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-            <span className="flex items-center justify-between">Category <span aria-hidden="true" className="text-gray-400">+</span></span>
+            <span className="flex items-center justify-between">Category <span aria-hidden="true" className="text-gray-400 transition-transform group-open:rotate-180">⌄</span></span>
           </summary>
           <nav aria-label="Shop categories" className="mt-3 max-h-48 space-y-1 overflow-y-auto">
             {categories.map((category) => (
@@ -215,7 +215,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       ) : null}
 
       {brands.length > 0 ? (
-        <details className="border-b border-surface-border pb-4">
+        <details className="group border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Brand <span aria-hidden="true" className="text-gray-400">+</span></span>
           </summary>
@@ -236,7 +236,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
         </details>
       ) : null}
 
-      <details className="pb-2">
+      <details className="group pb-2">
         <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
           <span className="flex items-center justify-between">Starting price (MWK) <span aria-hidden="true" className="text-gray-400">+</span></span>
         </summary>
