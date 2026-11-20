@@ -31,9 +31,9 @@ export default async function NewBusinessQuotationPage() {
       id: variant.id,
       label: `${product.name} · ${variant.name || variant.sku || product.sku}`,
       description: `${product.name}${variant.name ? ` · ${variant.name}` : ""}`,
-      unitPrice: Number(variant.sale_price ?? variant.price),
+      unitPrice: Number(variant.sale_price ?? variant.price),\n      productId: product.id,\n      variantId: variant.id,
     }));
-    return [{ id: product.id, label: `${product.name} · ${product.sku}`, description: product.name, unitPrice: Number(product.sale_price ?? product.base_price) }];
+    return [{ id: product.id, label: `${product.name} · ${product.sku}`, description: product.name, unitPrice: Number(product.sale_price ?? product.base_price), productId: product.id }];
   });
 
   const rentalOptions = (rentalRows ?? []).flatMap((rental: any) => {
@@ -41,7 +41,7 @@ export default async function NewBusinessQuotationPage() {
     const variantName = rental.product_variants?.name;
     const label = `${productName}${variantName ? ` · ${variantName}` : ""}`;
     return [
-      rental.daily_rate ? { id: `${rental.id}:daily`, sourceId: rental.id, label: `${label} · Daily`, description: `${label} rental (daily rate)`, unitPrice: Number(rental.daily_rate) } : null,
+      rental.daily_rate ? { id: `${rental.id}:daily`, sourceId: rental.id, productId: rental.product_id, variantId: rental.variant_id ?? undefined, label: `${label} · Daily`, description: `${label} rental (daily rate)`, unitPrice: Number(rental.daily_rate) } : null,
       rental.weekly_rate ? { id: `${rental.id}:weekly`, sourceId: rental.id, label: `${label} · Weekly`, description: `${label} rental (weekly rate)`, unitPrice: Number(rental.weekly_rate) } : null,
       rental.monthly_rate ? { id: `${rental.id}:monthly`, sourceId: rental.id, label: `${label} · Monthly`, description: `${label} rental (monthly rate)`, unitPrice: Number(rental.monthly_rate) } : null,
     ].filter(Boolean);
