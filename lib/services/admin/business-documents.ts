@@ -263,3 +263,94 @@ export async function recordBusinessDocumentTransaction(input: unknown): Promise
   }
   return { success: true };
 }
+
+
+const businessQuotationSchema = z.object({
+  sourceType: z.enum(["order", "rental"]),
+  sourceId: z.string().uuid().optional(),
+  customerId: z.string().uuid().optional(),
+  customerName: z.string().trim().min(2).max(160),
+  customerEmail: z.string().trim().email().max(254).optional().or(z.literal("")),
+  customerPhone: z.string().trim().max(40).optional().or(z.literal("")),
+  billingAddress: z.string().trim().max(500).optional().default(""),
+  lines: z.array(lineSchema).min(1).max(40),
+  discountAmount: z.coerce.number().min(0).default(0),
+  discountReason: z.string().trim().max(300).optional().default(""),
+  notes: z.string().trim().max(2000).optional().default(""),
+  validUntil: z.string().date().optional(),
+});
+
+export async function createBusinessQuotation(input: unknown): Promise<ServiceResult & { documentId?: string; documentNumber?: number }> {
+  const parsed = businessQuotationSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Check the customer and quotation details." };
+  const d = parsed.data;
+
+  const permission = d.sourceType === "rental" ? "rentals.write" : "orders.write";
+  try {
+    await requirePermission(permission);
+  } catch (error) {
+    if (error instanceof AuthorizationError) return { success: false, error: "You don't have permission to create this quotation." };
+    throw error;
+  }
+
+  if (d.discountAmount > 0 && d.discountReason.length < 3) {
+    return { success: false, error: "A reason is required for every discount." };
+  }
+  let pricing;
+  try {
+    pricing = calculateDocumentPricing({ lines: d.lines, discountAmount: d.discountAmount, vatRate: 17.5, ppdaRate: 1 });
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Invalid quotation values." };
+  }
+
+  const supabase = createClient();
+  const { data: document, error } = await (supabase.from("business_documents") as any).insert({
+    document_type: "quotation",
+    source_type: d.sourceType,
+    source_id: d.sourceId || null,
+    customer_id: d.customerId || null,
+    customer_name: d.customerName,
+    customer_email: d.customerEmail || null,
+    customer_phone: d.customerPhone || null,
+    billing_address: d.billingAddress || null,
+    status: "draft",
+    subtotal: pricing.subtotal,
+    discount_amount: pricing.discountAmount,
+    discount_reason: d.discountAmount > 0 ? d.discountReason : null,
+    taxable_amount: pricing.taxableAmount,
+    vat_rate: pricing.vatRate,
+    vat_amount: pricing.vatAmount,
+    ppda_rate: pricing.ppdaRate,
+    ppda_amount: pricing.ppdaAmount,
+    grand_total: pricing.grandTotal,
+    notes: d.notes || null,
+    valid_until: d.validUntil || null,
+  }).select("id,document_number").single();
+
+  if (error || !document) {
+    console.error("createBusinessQuotation failed:", error?.message);
+    return { success: false, error: "Could not create the quotation. Check the document migration and customer details." };
+  }
+
+  const rows = d.lines.map((line, index) => ({
+    document_id: document.id,
+    description: line.description,
+    quantity: line.quantity,
+    unit_price: line.unitPrice,
+    line_total: Math.round(line.quantity * line.unitPrice * 100) / 100,
+    sort_order: index,
+  }));
+  const { error: lineError } = await (supabase.from("business_document_items") as any).insert(rows);
+  if (lineError) {
+    console.error("createBusinessQuotation line insert failed:", lineError.message);
+    return { success: false, error: "The quotation draft was created but its line items could not be saved. Contact an administrator before retrying." };
+  }
+
+  const { error: issueError } = await (supabase.from("business_documents") as any)
+    .update({ status: "issued", issued_at: new Date().toISOString() })
+    .eq("id", document.id)
+    .eq("status", "draft");
+  if (issueError) return { success: false, error: "The quotation draft exists but could not be issued." };
+
+  return { success: true, documentId: document.id, documentNumber: Number(document.document_number) };
+}
