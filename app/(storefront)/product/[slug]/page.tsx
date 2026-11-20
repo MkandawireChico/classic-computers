@@ -260,6 +260,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           </section>
         ) : null}
 
+        {ratingSummary.count > 0 ? (
         <section className="mt-8 sm:mt-10">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -335,15 +336,9 @@ export default async function ProductPage({ params }: { params: Params }) {
                 </div>
               ) : null}
             </div>
-          ) : (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-base font-bold text-slate-900">No approved reviews yet</h3>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                There are no published customer reviews for this product yet. Reviews from eligible customers appear here after moderation.
-              </p>
-            </div>
           )}
         </section>
+        ) : null}
 
         <RelatedProducts products={related} />
         </ProductVariantProvider>
