@@ -15,13 +15,15 @@ export function PurchasePanel({
   product,
   businessInfo,
   isAuthenticated,
-  initialInWishlist,
+  initialSavedVariantIds,
+  initialProductLevelSaved,
   rentalOffers = [],
 }: {
   product: ProductDetail;
   businessInfo: BusinessInfo | null;
   isAuthenticated: boolean;
-  initialInWishlist: boolean;
+  initialSavedVariantIds: string[];
+  initialProductLevelSaved: boolean;
   rentalOffers?: Array<{
     rentalProductId: string;
     productId: string;
@@ -189,7 +191,8 @@ export function PurchasePanel({
           <WishlistButton
             productId={product.id}
             variantId={effectiveVariantId}
-            initialInWishlist={initialInWishlist}
+            initialSavedVariantIds={initialSavedVariantIds}
+            initialProductLevelSaved={initialProductLevelSaved}
           />
         ) : (
           <Link
