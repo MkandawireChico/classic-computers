@@ -67,7 +67,10 @@ export default async function ProductPage({ params }: { params: Params }) {
     getProductRatingSummary(product.id),
   ]);
   const isAuthenticated = Boolean(user);
-  const initialInWishlist = wishlistEntries.some((w) => w.productId === product.id && w.variantId === null);
+  const initialSavedVariantIds = wishlistEntries
+    .filter((entry) => entry.productId === product.id && entry.variantId !== null)
+    .map((entry) => entry.variantId as string);
+  const initialProductLevelSaved = wishlistEntries.some((entry) => entry.productId === product.id && entry.variantId === null);
 
   const displayPrice = product.sale_price !== null && product.sale_price > 0 && product.sale_price < product.base_price
     ? product.sale_price
@@ -213,7 +216,8 @@ export default async function ProductPage({ params }: { params: Params }) {
                   product={product}
                   businessInfo={businessInfo}
                   isAuthenticated={isAuthenticated}
-                  initialInWishlist={initialInWishlist}
+                  initialSavedVariantIds={initialSavedVariantIds}
+                  initialProductLevelSaved={initialProductLevelSaved}
                   rentalOffers={rentalOffers}
                 />
               </div>
