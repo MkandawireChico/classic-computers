@@ -94,11 +94,11 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
     .order("created_at", { ascending: true });
 
   const [paymentResult, conditionResult] = await Promise.all([
-    (supabase.from("rental_payment_transactions") as any)
+    ((supabase as any).from("rental_payment_transactions") as any)
       .select("id, transaction_type, provider, amount, provider_reference, created_at, created_by")
       .eq("booking_id", id)
       .order("created_at", { ascending: true }),
-    (supabase.from("rental_condition_reports") as any)
+    ((supabase as any).from("rental_condition_reports") as any)
       .select("id, event_type, condition, notes, created_at, recorded_by")
       .eq("booking_id", id)
       .order("created_at", { ascending: true }),
