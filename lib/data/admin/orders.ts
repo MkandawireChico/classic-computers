@@ -79,6 +79,7 @@ export interface AdminOrderDetail {
   subtotal: number;
   discount_total: number;
   total: number;
+  currency: string;
   notes: string | null;
   internal_notes: string | null;
   guest_name: string | null;
@@ -99,6 +100,7 @@ export interface AdminOrderDetail {
   }>;
   statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
   paymentHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
+  paymentTransactions: Array<{ id: string; transaction_type: string; provider: string; amount: number; currency: string; provider_reference: string | null; created_at: string }>;
 }
 
 export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | null> {
@@ -108,7 +110,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     .from("orders") as any)
     .select(`
       id, order_number, created_at, order_status, payment_status, fulfillment_type, payment_method,
-      subtotal, discount_total, total, notes, internal_notes, guest_name, guest_phone, guest_email, customer_id,
+      subtotal, discount_total, total, currency, notes, internal_notes, guest_name, guest_phone, guest_email, customer_id,
       delivery_snapshot,
       customers ( profiles ( full_name, phone ) )
     `)
@@ -121,7 +123,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
   }
   if (!order) return null;
 
-  const [itemsResult, historyResult, paymentHistoryResult] = await Promise.all([
+  const [itemsResult, historyResult, paymentHistoryResult, transactionsResult] = await Promise.all([
     (supabase.from("order_items") as any)
       .select("id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total")
       .eq("order_id", id),
@@ -133,12 +135,17 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
       .select("from_status, to_status, created_at")
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
+    supabase.from("order_payment_transactions")
+      .select("id, transaction_type, provider, amount, currency, provider_reference, created_at")
+      .eq("order_id", id)
+      .order("created_at", { ascending: true }),
   ]);
-  if (itemsResult.error || historyResult.error || paymentHistoryResult.error) {
+  if (itemsResult.error || historyResult.error || paymentHistoryResult.error || transactionsResult.error) {
     console.error("getAdminOrderById related data failed:", {
       items: itemsResult.error?.message,
       history: historyResult.error?.message,
       paymentHistory: paymentHistoryResult.error?.message,
+      transactions: transactionsResult.error?.message,
     });
     throw new Error("Could not load the full order history. Please refresh the page and try again.");
   }
@@ -156,6 +163,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     subtotal: Number(order.subtotal),
     discount_total: Number(order.discount_total),
     total: Number(order.total),
+    currency: order.currency,
     notes: order.notes,
     internal_notes: order.internal_notes,
     guest_name: order.guest_name,
@@ -168,5 +176,6 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     items: items ?? [],
     statusHistory: history ?? [],
     paymentHistory: paymentHistoryResult.data ?? [],
+    paymentTransactions: transactionsResult.data ?? [],
   };
 }
