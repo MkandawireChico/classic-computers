@@ -1,9 +1,19 @@
 import "server-only";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { requirePermission, AuthorizationError } from "@/lib/auth/permissions";
+import { requirePermission, AuthorizationError, getMyPermissions } from "@/lib/auth/permissions";
 import { calculateDocumentPricing } from "@/lib/documents/pricing";
 import type { ServiceResult } from "@/lib/services/admin/repairs";
+
+
+async function hasDocumentWritePermission(sourceType: string): Promise<boolean> {
+  const keys = sourceType === "order" ? ["orders.write"]
+    : sourceType === "rental" ? ["rentals.write"]
+    : sourceType === "repair" ? ["repairs.write"]
+    : ["orders.write", "repairs.write", "rentals.write"];
+  const permissions = await getMyPermissions();
+  return keys.some((key) => permissions.has(key));
+}
 
 const lineSchema = z.object({
   description: z.string().trim().min(2).max(240),
@@ -133,13 +143,8 @@ export async function convertAcceptedQuotationToInvoice(input: unknown): Promise
     return { success: false, error: "Only customer-accepted quotations can become invoices." };
   }
 
-  const permission = quotation.source_type === "order" ? "orders.write"
-    : quotation.source_type === "rental" ? "rentals.write" : "repairs.write";
-  try {
-    await requirePermission(permission);
-  } catch (error) {
-    if (error instanceof AuthorizationError) return { success: false, error: "You don't have permission to invoice this quotation." };
-    throw error;
+  if (!(await hasDocumentWritePermission(quotation.source_type))) {
+    return { success: false, error: "You don't have permission to invoice this quotation." };
   }
 
   const { data: existing } = await (supabase.from("business_documents") as any)
@@ -236,13 +241,8 @@ export async function recordBusinessDocumentTransaction(input: unknown): Promise
     return { success: false, error: "Invoice not found." };
   }
 
-  const permission = document.source_type === "order" ? "orders.write"
-    : document.source_type === "rental" ? "rentals.write" : "repairs.write";
-  try {
-    await requirePermission(permission);
-  } catch (error) {
-    if (error instanceof AuthorizationError) return { success: false, error: "You don't have permission to record transactions for this invoice." };
-    throw error;
+  if (!(await hasDocumentWritePermission(document.source_type))) {
+    return { success: false, error: "You don't have permission to record transactions for this invoice." };
   }
 
   const { error } = await (supabase.from("business_document_transactions") as any).insert({
