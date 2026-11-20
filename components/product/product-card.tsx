@@ -20,7 +20,7 @@ export function ProductCard({
   const imageUrl = product.primary_image
     ? getPublicStorageUrl("product-images", product.primary_image.storage_path)
     : null;
-  const onSale = product.sale_price !== null && product.sale_price < product.base_price;
+  const onSale = product.sale_price !== null && product.sale_price > 0 && product.sale_price < product.base_price;
   const discountPercent = onSale
     ? Math.round((1 - (product.sale_price as number) / product.base_price) * 100)
     : null;
