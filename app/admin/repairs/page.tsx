@@ -33,7 +33,7 @@ export default async function AdminRepairsPage({
     <div>
       <AdminPageHeader eyebrow="Operations · Service desk" title="Repairs" description="Track incoming devices, diagnosis, approvals and completed work." />
 
-      <section aria-label="Repair operations overview" className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-3">
+      <section aria-label="Repair operations overview" className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
         {[
           { label: "Active repairs", value: overview.active, detail: "Not completed or cancelled", tone: "text-slate-950" },
           { label: "Awaiting approval", value: overview.awaitingApproval, detail: "Customer decision pending", tone: "text-amber-700" },
@@ -41,6 +41,8 @@ export default async function AdminRepairsPage({
           { label: "Unassigned", value: overview.unassigned, detail: "Active tickets without a technician", tone: "text-rose-700" },
           { label: "Older than 7 days", value: overview.agedOver7Days, detail: "Active tickets by booking date", tone: "text-amber-700" },
           { label: "Older than 14 days", value: overview.agedOver14Days, detail: "Priority ageing queue", tone: "text-rose-700" },
+          { label: "Completed in 30 days", value: overview.completedLast30Days, detail: "Recorded completions", tone: "text-emerald-700" },
+          { label: "Average turnaround", value: overview.averageTurnaroundDays === null ? "—" : overview.averageTurnaroundDays + "d", detail: "From booking to completion · last 30 days", tone: "text-slate-950" },
         ].map((metric) => (
           <div key={metric.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
