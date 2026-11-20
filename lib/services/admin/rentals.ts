@@ -268,7 +268,11 @@ export async function updateRentalInternalNotes(input: unknown): Promise<Service
   return { success: true };
 }
 
-const chargeSchema = z.object({ bookingId: z.string().uuid(), totalCharge: z.coerce.number().min(0) });
+const chargeSchema = z.object({
+  bookingId: z.string().uuid(),
+  totalCharge: z.coerce.number().min(0).finite()
+    .refine((value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-7, "Charge must have no more than two decimal places."),
+});
 
 export async function setRentalCharge(input: unknown): Promise<ServiceResult> {
   const guardResult = await guard();
@@ -278,6 +282,15 @@ export async function setRentalCharge(input: unknown): Promise<ServiceResult> {
   if (!parsed.success) return { success: false, error: "Invalid amount." };
 
   const supabase = createClient();
+  const { data: transactions, error: transactionError } = await (supabase.from("rental_payment_transactions") as any)
+    .select("transaction_type, amount")
+    .eq("booking_id", parsed.data.bookingId);
+  if (transactionError) return { success: false, error: "Could not verify existing rental payments before changing the charge." };
+  const verifiedNet = (transactions ?? []).reduce((sum: number, row: any) =>
+    sum + Number(row.amount) * (row.transaction_type === "refund" ? -1 : 1), 0);
+  if (parsed.data.totalCharge < verifiedNet) {
+    return { success: false, error: "The agreed charge cannot be lower than verified funds already received." };
+  }
   const { error } = await (supabase.from("rental_bookings") as any)
     .update({ total_charge: parsed.data.totalCharge })
     .eq("id", parsed.data.bookingId);
