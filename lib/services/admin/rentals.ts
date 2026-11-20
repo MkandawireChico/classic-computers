@@ -357,6 +357,7 @@ export async function recordRentalCondition(input: unknown): Promise<ServiceResu
   });
   if (error) {
     console.error("recordRentalCondition failed:", { bookingId: value.bookingId, code: error.code, message: error.message });
+    if (error.code === "23505") return { success: false, error: "A condition report for this inspection stage has already been recorded." };
     if (error.message.toLowerCase().includes("permission")) return { success: false, error: "You do not have permission to record equipment condition." };
     return { success: false, error: "Could not save the equipment condition report. Check the details and try again." };
   }
