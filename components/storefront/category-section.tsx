@@ -54,7 +54,7 @@ export async function CategorySection() {
                     View products <span aria-hidden="true">↗</span>
                   </span>
                 </span>
-                <span aria-hidden="true" className="relative flex h-24 w-24 items-center justify-center justify-self-end overflow-hidden rounded-lg bg-[#f2f6f8] sm:h-28 sm:w-28">
+                <span aria-hidden="true" className="relative flex h-24 w-24 items-center justify-center justify-self-end overflow-hidden rounded-lg bg-surface-muted sm:h-28 sm:w-28">
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
