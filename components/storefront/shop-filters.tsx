@@ -173,7 +173,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
             })}
             {searchParams.get("min") || searchParams.get("max") ? (
               <FilterChip
-                label={`Price: ${searchParams.get("min") || "0"} – ${searchParams.get("max") || "any"}`}
+                label={`Starting price: ${searchParams.get("min") || "0"} – ${searchParams.get("max") || "any"}`}
                 onRemove={() => removeParam("price")}
               />
             ) : null}
