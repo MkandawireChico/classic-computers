@@ -5,7 +5,7 @@ import { formatMoney } from "@/lib/format/money";
 
 export default async function AccountQuotationsPage() {
   const supabase = createClient();
-  const { data: documents, error } = await (supabase.from("business_documents") as any)
+  const { data: documents, error } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_number,source_type,status,grand_total,created_at,valid_until")
     .eq("document_type", "quotation")
     .order("created_at", { ascending: false });
