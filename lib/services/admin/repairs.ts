@@ -397,7 +397,7 @@ export async function addRepairWorkLog(input: unknown): Promise<ServiceResult> {
     return { success: false, error: "Work cannot be logged against a completed or cancelled repair." };
   }
 
-  const { error } = await (supabase.from("repair_work_logs") as any).insert({
+  const { error } = await (supabase.from("repair_work_logs" as any) as any).insert({
     ticket_id: parsed.data.ticketId,
     duration_minutes: parsed.data.durationMinutes,
     work_performed: parsed.data.workPerformed,
