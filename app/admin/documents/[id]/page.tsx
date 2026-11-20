@@ -8,7 +8,7 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   await requirePermission("repairs.read");
   const supabase = createClient();
   const { data: document } = await (supabase.from("business_documents") as any)
-    .select("id,document_type,document_number,source_type,source_id,customer_name,customer_email,customer_phone,billing_address,status,subtotal,discount_amount,discount_reason,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,terms,valid_until,issued_at,created_at")
+    .select("id,document_type,document_number,source_type,source_id,customer_name,customer_email,customer_phone,billing_address,status,subtotal,discount_amount,discount_reason,discount_authorized_by,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,terms,valid_until,issued_at,created_at")
     .eq("id", params.id)
     .maybeSingle();
   if (!document) notFound();
@@ -16,6 +16,9 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   if (document.source_type === "rental") await requirePermission("rentals.read");
   if (document.source_type === "repair") await requirePermission("repairs.read");
 
+  const { data: discountApprover } = document.discount_authorized_by
+    ? await (supabase.from("profiles") as any).select("full_name").eq("id", document.discount_authorized_by).maybeSingle()
+    : { data: null };
   const { data: items } = await (supabase.from("business_document_items") as any)
     .select("description,quantity,unit_price,line_total,sort_order")
     .eq("document_id", document.id)
@@ -91,7 +94,7 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
             <div className="w-full max-w-sm space-y-2 text-sm">
               <div className="flex justify-between"><span>Selling subtotal</span><span>{formatMoney(Number(document.subtotal))}</span></div>
               {Number(document.discount_amount) > 0 ? <div className="flex justify-between text-emerald-700"><span>Authorised discount</span><span>-{formatMoney(Number(document.discount_amount))}</span></div> : null}
-              {Number(document.discount_amount) > 0 && document.discount_reason ? <p className="text-right text-xs text-slate-500">Discount reason: {document.discount_reason}</p> : null}
+              {Number(document.discount_amount) > 0 && document.discount_reason ? <p className="text-right text-xs text-slate-500">Discount reason: {document.discount_reason}{discountApprover?.full_name ? ` · Authorised by ${discountApprover.full_name}` : ""}</p> : null}
               <div className="flex justify-between"><span>Taxable selling price</span><span>{formatMoney(Number(document.taxable_amount))}</span></div>
               <div className="flex justify-between"><span>VAT ({Number(document.vat_rate)}%)</span><span>{formatMoney(Number(document.vat_amount))}</span></div>
               <div className="flex justify-between"><span>PPDA ({Number(document.ppda_rate)}%)</span><span>{formatMoney(Number(document.ppda_amount))}</span></div>
