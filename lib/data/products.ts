@@ -81,7 +81,7 @@ function toListItem(row: any): ProductListItem {
     .sort((a: any, b: any) => {
       const aPrice = getValidSalePrice(a.sale_price, Number(a.price)) ?? Number(a.price);
       const bPrice = getValidSalePrice(b.sale_price, Number(b.price)) ?? Number(b.price);
-      return aPrice - bPrice || Number(a.price) - Number(b.price) || a.created_at.localeCompare(b.created_at);
+      return aPrice - bPrice || Number(a.price) - Number(b.price) || a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id);
     });
   const startingVariant = activeVariants[0] ?? null;
   const startingVariantPrice = startingVariant
@@ -198,7 +198,7 @@ export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
     }
   }
 
-  if (priceRows.length === 0) return { items: [], total, page, pageSize };
+  if (priceRows.length === 0) return { items: [], total, page: total === 0 ? 1 : page, pageSize };
 
   const ids = priceRows.map((row: any) => row.product_id);
   const { data: products, error: productsError } = await (supabase
