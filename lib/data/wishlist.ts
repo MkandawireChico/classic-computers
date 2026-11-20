@@ -59,14 +59,6 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
       const selectedVariant = variantId
         ? (p.product_variants ?? []).find((variant: any) => variant.id === variantId) ?? null
         : null;
-      const images = (p.product_images ?? []).filter((i: any) => i.variant_id === variantId);
-      const fallbackImages = (p.product_images ?? []).filter((i: any) => i.variant_id === null);
-      const primary = images.find((i: any) => i.is_primary) ?? images[0] ?? fallbackImages.find((i: any) => i.is_primary) ?? fallbackImages[0] ?? null;
-      const inventoryRows = (p.inventory ?? []).filter((i: any) => i.variant_id === variantId);
-      const price = selectedVariant ? Number(selectedVariant.price) : Number(p.base_price);
-      const salePrice = selectedVariant
-        ? (selectedVariant.sale_price === null ? null : Number(selectedVariant.sale_price))
-        : (p.sale_price === null ? null : Number(p.sale_price));
       const activeVariants = (p.product_variants ?? [])
         .filter((variant: any) => variant.status === "active")
         .sort((a: any, b: any) => {
@@ -79,13 +71,19 @@ export async function getWishlistWithProducts(): Promise<WishlistProductEntry[]>
           return aDisplay - bDisplay || aRegular - bRegular || a.created_at.localeCompare(b.created_at);
         });
       const startingVariant = activeVariants[0] ?? null;
-      const startingRegular = startingVariant ? Number(startingVariant.price) : Number(p.base_price);
-      const startingSale = startingVariant?.sale_price === null || startingVariant?.sale_price === undefined
-        ? null
-        : Number(startingVariant.sale_price);
-      const startingDisplay = startingSale !== null && startingSale > 0 && startingSale < startingRegular
-        ? startingSale
-        : startingRegular;
+      const priceVariant = selectedVariant ?? startingVariant;
+      const images = (p.product_images ?? []).filter((i: any) => i.variant_id === variantId);
+      const fallbackImages = (p.product_images ?? []).filter((i: any) => i.variant_id === null);
+      const primary = images.find((i: any) => i.is_primary)
+        ?? images[0]
+        ?? fallbackImages.find((i: any) => i.is_primary)
+        ?? fallbackImages[0]
+        ?? (variantId === null ? (p.product_images ?? []).find((i: any) => i.is_primary) ?? (p.product_images ?? [])[0] ?? null : null);
+      const inventoryRows = (p.inventory ?? []).filter((i: any) => i.variant_id === variantId);
+      const price = priceVariant ? Number(priceVariant.price) : Number(p.base_price);
+      const salePrice = priceVariant
+        ? (priceVariant.sale_price === null ? null : Number(priceVariant.sale_price))
+        : (p.sale_price === null ? null : Number(p.sale_price));
       const inventoryStatus = inventoryRows[0]?.status ?? null;
 
       const product: ProductListItem = {
