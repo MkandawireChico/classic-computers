@@ -163,6 +163,41 @@ export async function addRepairPart(input: unknown): Promise<ServiceResult> {
   const d = parsed.data;
 
   const supabase = createClient();
+  const { data: ticket } = await (supabase.from("repair_tickets") as any)
+    .select("id, status, ticket_number")
+    .eq("id", d.ticketId)
+    .maybeSingle();
+  if (!ticket) return { success: false, error: "Repair ticket not found." };
+  if (["completed", "cancelled"].includes(ticket.status)) {
+    return { success: false, error: "Parts cannot be added to a completed or cancelled repair." };
+  }
+
+  if (d.productId) {
+    const { data: product } = await (supabase.from("products") as any)
+      .select("id")
+      .eq("id", d.productId)
+      .maybeSingle();
+    if (!product) return { success: false, error: "The selected stock product was not found." };
+
+    if (d.variantId) {
+      const { data: variant } = await (supabase.from("product_variants") as any)
+        .select("id")
+        .eq("id", d.variantId)
+        .eq("product_id", d.productId)
+        .maybeSingle();
+      if (!variant) return { success: false, error: "The selected variant does not belong to this product." };
+    }
+
+    const { data: stockRecord, error: stockLookupError } = await (supabase.from("inventory") as any)
+      .select("id")
+      .eq("product_id", d.productId)
+      .is("variant_id", d.variantId ?? null)
+      .maybeSingle();
+    if (stockLookupError || !stockRecord) {
+      return { success: false, error: "No matching inventory record exists for this repair part." };
+    }
+  }
+
   const { data: part, error } = await (supabase.from("repair_parts") as any)
     .insert({
       ticket_id: d.ticketId,
@@ -182,7 +217,13 @@ export async function addRepairPart(input: unknown): Promise<ServiceResult> {
   // stops a duplicate submission from double-consuming (see
   // consumeRepairPartInventory below, which checks this column first).
   if (d.productId) {
-    await consumeRepairPartInventoryInternal(part.id, d.productId, d.variantId ?? null, d.quantity, d.ticketId);
+    const consumption = await consumeRepairPartInventoryInternal(
+      part.id, d.productId, d.variantId ?? null, d.quantity, d.ticketId,
+    );
+    if (!consumption.success) {
+      await (supabase.from("repair_parts") as any).delete().eq("id", part.id);
+      return consumption;
+    }
   }
 
   return { success: true };
@@ -194,15 +235,30 @@ async function consumeRepairPartInventoryInternal(
   variantId: string | null,
   quantity: number,
   ticketId: string,
-): Promise<void> {
+): Promise<ServiceResult> {
   const supabase = createClient();
+
+  const { data: existingMovement } = await (supabase.from("inventory_movements") as any)
+    .select("id")
+    .eq("reference_type", "repair_part")
+    .eq("reference_id", repairPartId)
+    .lt("quantity_delta", 0)
+    .maybeSingle();
+  if (existingMovement) {
+    const { error: linkError } = await (supabase.from("repair_parts") as any)
+      .update({ inventory_movement_id: existingMovement.id })
+      .eq("id", repairPartId);
+    return linkError
+      ? { success: false, error: "Stock was deducted, but the repair record could not be linked. Do not retry this part; ask an administrator to reconcile it." }
+      : { success: true };
+  }
 
   const { data: inventoryRow } = await (supabase.from("inventory") as any)
     .select("id")
     .eq("product_id", productId)
     .is("variant_id", variantId)
     .maybeSingle();
-  if (!inventoryRow) return;
+  if (!inventoryRow) return { success: false, error: "No matching inventory record exists for this repair part." };
 
   const { data: ticket } = await (supabase.from("repair_tickets") as any).select("ticket_number").eq("id", ticketId).maybeSingle();
 
@@ -219,18 +275,32 @@ async function consumeRepairPartInventoryInternal(
     p_note: `Used in repair ${ticket?.ticket_number ?? ticketId}`,
   } as any);
 
-  if (!error) {
-    const { data: movement } = await (supabase.from("inventory_movements") as any)
-      .select("id")
-      .eq("reference_type", "repair_part")
-      .eq("reference_id", repairPartId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (movement) {
-      await (supabase.from("repair_parts") as any).update({ inventory_movement_id: movement.id }).eq("id", repairPartId);
-    }
+  if (error) {
+    return {
+      success: false,
+      error: error.message.includes("check constraint")
+        ? "There is not enough stock for the requested repair part."
+        : "Could not deduct stock for this repair part.",
+    };
   }
+
+  const { data: movement } = await (supabase.from("inventory_movements") as any)
+    .select("id")
+    .eq("reference_type", "repair_part")
+    .eq("reference_id", repairPartId)
+    .lt("quantity_delta", 0)
+    .maybeSingle();
+  if (!movement) {
+    return { success: false, error: "Stock movement was not found after deduction. Do not retry this part; ask an administrator to reconcile it." };
+  }
+
+  const { error: linkError } = await (supabase.from("repair_parts") as any)
+    .update({ inventory_movement_id: movement.id })
+    .eq("id", repairPartId);
+  if (linkError) {
+    return { success: false, error: "Stock was deducted, but the repair record could not be linked. Do not retry this part; ask an administrator to reconcile it." };
+  }
+  return { success: true };
 }
 
 export async function removeRepairPart(partId: string, ticketId: string): Promise<ServiceResult> {
@@ -239,32 +309,38 @@ export async function removeRepairPart(partId: string, ticketId: string): Promis
 
   const supabase = createClient();
   const { data: part } = await (supabase.from("repair_parts") as any)
-    .select("product_id, variant_id, quantity, inventory_movement_id")
+    .select("ticket_id, product_id, variant_id, quantity, inventory_movement_id")
     .eq("id", partId)
+    .eq("ticket_id", ticketId)
     .maybeSingle();
+  if (!part) return { success: false, error: "Repair part not found." };
 
-  // If inventory was consumed for this part, return it via a proper
-  // 'return' movement before deleting the row — never silently drop the
-  // consumption from the ledger.
-  if (part?.inventory_movement_id && part.product_id) {
-    const { data: inventoryRow } = await (supabase.from("inventory") as any)
+  // Restore consumed stock before removing the part. If the movement fails,
+  // keep the part record so staff can retry without losing the audit link.
+  if (part.inventory_movement_id && part.product_id) {
+    const { data: inventoryRow, error: inventoryError } = await (supabase.from("inventory") as any)
       .select("id")
       .eq("product_id", part.product_id)
       .is("variant_id", part.variant_id)
       .maybeSingle();
-    if (inventoryRow) {
-      await supabase.rpc("apply_inventory_movement" as any, {
-        p_inventory_id: inventoryRow.id,
-        p_movement_type: "return",
-        p_quantity_delta: part.quantity,
-        p_reference_type: "repair_part",
-        p_reference_id: partId,
-        p_note: `Removed from repair ${ticketId}`,
-      } as any);
+    if (inventoryError || !inventoryRow) {
+      return { success: false, error: "Could not find the linked stock record. The repair part was kept for reconciliation." };
+    }
+
+    const { error: returnError } = await supabase.rpc("apply_inventory_movement" as any, {
+      p_inventory_id: inventoryRow.id,
+      p_movement_type: "return",
+      p_quantity_delta: part.quantity,
+      p_reference_type: "repair_part_return",
+      p_reference_id: partId,
+      p_note: `Removed from repair ${ticketId}`,
+    } as any);
+    if (returnError) {
+      return { success: false, error: "Could not restore the part to stock. The repair part was kept." };
     }
   }
 
-  const { error } = await (supabase.from("repair_parts") as any).delete().eq("id", partId);
+  const { error } = await (supabase.from("repair_parts") as any).delete().eq("id", partId).eq("ticket_id", ticketId);
   if (error) return { success: false, error: "Could not remove part." };
   return { success: true };
 }
