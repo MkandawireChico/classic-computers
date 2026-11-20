@@ -10,6 +10,7 @@ declare
   v_order_total numeric(12,2);
   v_order_currency text;
   v_order_status public.order_status_enum;
+  v_order_payment_status public.payment_status_enum;
   v_paid numeric(12,2);
   v_refunded numeric(12,2);
   v_net numeric(12,2);
@@ -34,8 +35,8 @@ begin
   new.currency := upper(trim(new.currency));
   new.provider_reference := nullif(trim(coalesce(new.provider_reference, '')), '');
 
-  select o.total, o.currency, o.order_status
-    into v_order_total, v_order_currency, v_order_status
+  select o.total, o.currency, o.order_status, o.payment_status
+    into v_order_total, v_order_currency, v_order_status, v_order_payment_status
     from public.orders o
     where o.id = new.order_id
     for update;
@@ -44,8 +45,18 @@ begin
     raise exception 'Order not found';
   end if;
 
-  if new.transaction_type = 'payment' and v_order_status in ('cancelled', 'refunded') then
-    raise exception 'A payment cannot be recorded against a cancelled or refunded order';
+  if new.transaction_type = 'payment' and v_order_status = 'cancelled' then
+    raise exception 'A payment cannot be recorded against a cancelled order';
+  end if;
+
+  if new.transaction_type = 'payment' and v_order_status = 'refunded' then
+    if v_order_payment_status not in ('paid', 'partial', 'refunded')
+      or exists (
+        select 1 from public.order_payment_transactions t
+        where t.order_id = new.order_id
+      ) then
+      raise exception 'Only a historical verified payment can be reconciled on a refunded order';
+    end if;
   end if;
 
   if upper(v_order_currency) <> new.currency then
