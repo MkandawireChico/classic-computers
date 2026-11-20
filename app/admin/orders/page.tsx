@@ -6,6 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
 import { formatMoney } from "@/lib/format/money";
 
+const PAYMENT_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
+  unpaid: "warning",
+  partial: "info",
+  paid: "success",
+  refunded: "neutral",
+};
+
 const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
   pending: "warning",
   confirmed: "info",
@@ -66,12 +73,37 @@ export default async function AdminOrdersPage({
           <option value="pickup">Pickup</option>
           <option value="delivery">Delivery</option>
         </select>
-        <button type="submit" className="rounded-card border border-surface-border px-3 py-1.5 text-sm hover:bg-surface-muted">
-          Filter
+        <button type="submit" className="rounded-card bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+          Apply filters
         </button>
+        <Link href="/admin/orders" className="rounded-card px-3 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900">
+          Clear
+        </Link>
       </form>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-3 md:hidden">
+        {result.items.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">No orders match these filters.</div>
+        ) : result.items.map((o) => (
+          <Link key={o.id} href={`/admin/orders/${o.id}`} className="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-200 hover:shadow-panel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="break-all text-sm font-extrabold text-slate-950">{o.order_number}</p>
+                <p className="mt-1 truncate text-xs text-slate-500">{o.customer_name ?? o.guest_name ?? "Customer details unavailable"}</p>
+              </div>
+              <p className="shrink-0 text-sm font-extrabold tabular-nums text-slate-950">{formatMoney(o.total)}</p>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Badge variant={STATUS_VARIANT[o.order_status] ?? "neutral"}>{o.order_status.replace(/_/g, " ")}</Badge>
+              <Badge variant={PAYMENT_VARIANT[o.payment_status] ?? "neutral"}>{o.payment_status}</Badge>
+              <span className="text-xs capitalize text-slate-500">{o.fulfillment_type}</span>
+            </div>
+            <p className="mt-3 text-[11px] text-slate-400">{new Date(o.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
         <table className="w-full min-w-[700px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
@@ -106,7 +138,7 @@ export default async function AdminOrdersPage({
                   <td className="p-3">
                     <Badge variant={STATUS_VARIANT[o.order_status] ?? "neutral"}>{o.order_status.replace(/_/g, " ")}</Badge>
                   </td>
-                  <td className="p-3 text-gray-600">{o.payment_status}</td>
+                  <td className="p-3"><Badge variant={PAYMENT_VARIANT[o.payment_status] ?? "neutral"}>{o.payment_status}</Badge></td>
                   <td className="p-3 text-gray-600 capitalize">{o.fulfillment_type}</td>
                 </tr>
               ))
