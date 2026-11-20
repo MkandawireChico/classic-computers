@@ -12,6 +12,9 @@ begin
   where id = coalesce(new.document_id, old.document_id)
   for update;
   if not found then raise exception 'Document not found.'; end if;
+  if tg_op = 'UPDATE' and new.document_id is distinct from old.document_id then
+    raise exception 'A quotation line cannot be moved between documents.';
+  end if;
   if v_document.status <> 'draft' then
     raise exception 'Issued documents are locked. Create a revision instead.';
   end if;
