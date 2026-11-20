@@ -20,9 +20,9 @@ export function ProductCard({
   const imageUrl = product.primary_image
     ? getPublicStorageUrl("product-images", product.primary_image.storage_path)
     : null;
-  const onSale = product.sale_price !== null && product.sale_price > 0 && product.sale_price < product.base_price;
+  const onSale = product.display_price > 0 && product.display_price < product.regular_price;
   const discountPercent = onSale
-    ? Math.round((1 - (product.sale_price as number) / product.base_price) * 100)
+    ? Math.round((1 - product.display_price / product.regular_price) * 100)
     : null;
 
   return (
@@ -77,13 +77,13 @@ export function ProductCard({
             <div className="flex min-w-0 flex-col">
               {onSale ? (
                 <>
-                  <span className={"font-extrabold text-brand-800 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{formatMoney(product.sale_price as number)}</span>
-                  <span className="text-xs font-medium text-slate-400 line-through">{formatMoney(product.base_price)}</span>
+                  <span className={"font-extrabold text-brand-800 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
+                  <span className="text-xs font-medium text-slate-400 line-through">{formatMoney(product.regular_price)}</span>
                 </>
               ) : (
-                <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{formatMoney(product.base_price)}</span>
+                <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
               )}
-              <span className="mt-1 text-[10px] font-medium text-slate-500">Excludes VAT and PPDA</span>
+              <span className="mt-1 text-[10px] font-medium text-slate-500">{product.has_active_variants ? "Starting configuration · " : ""}Excludes VAT and PPDA</span>
             </div>
             {product.condition !== "new" ? (
               <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-slate-600">{product.condition}</span>
