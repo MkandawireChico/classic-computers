@@ -90,6 +90,9 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
 export async function updateInternalNotes(orderId: string, internalNotes: string): Promise<ServiceResult> {
   const guardResult = await guard();
   if (guardResult) return guardResult;
+  if (!z.string().max(2000).safeParse(internalNotes).success || !z.string().uuid().safeParse(orderId).success) {
+    return { success: false, error: "Internal notes must be 2,000 characters or fewer." };
+  }
 
   const supabase = createClient();
   // internal_notes (0035) — separate from orders.notes, which is the
