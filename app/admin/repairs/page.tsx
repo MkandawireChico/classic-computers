@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/permissions";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { listAdminRepairs } from "@/lib/data/admin/repairs";
+import { getAdminRepairOverview, listAdminRepairs } from "@/lib/data/admin/repairs";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/storefront/pagination";
 
@@ -27,11 +27,28 @@ export default async function AdminRepairsPage({
   const query = typeof searchParams.q === "string" ? searchParams.q : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
 
-  const result = await listAdminRepairs({ status, query, page, pageSize: 25 });
+  const [result, overview] = await Promise.all([listAdminRepairs({ status, query, page, pageSize: 25 }), getAdminRepairOverview()]);
 
   return (
     <div>
       <AdminPageHeader eyebrow="Operations · Service desk" title="Repairs" description="Track incoming devices, diagnosis, approvals and completed work." />
+
+      <section aria-label="Repair operations overview" className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-3">
+        {[
+          { label: "Active repairs", value: overview.active, detail: "Not completed or cancelled", tone: "text-slate-950" },
+          { label: "Awaiting approval", value: overview.awaitingApproval, detail: "Customer decision pending", tone: "text-amber-700" },
+          { label: "Ready for pickup", value: overview.readyForPickup, detail: "Customer collection due", tone: "text-blue-700" },
+          { label: "Unassigned", value: overview.unassigned, detail: "Active tickets without a technician", tone: "text-rose-700" },
+          { label: "Older than 7 days", value: overview.agedOver7Days, detail: "Active tickets by booking date", tone: "text-amber-700" },
+          { label: "Older than 14 days", value: overview.agedOver14Days, detail: "Priority ageing queue", tone: "text-rose-700" },
+        ].map((metric) => (
+          <div key={metric.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
+            <p className={"mt-2 text-2xl font-bold tabular-nums " + metric.tone}>{metric.value.toLocaleString("en-MW")}</p>
+            <p className="mt-1 text-xs text-slate-500">{metric.detail}</p>
+          </div>
+        ))}
+      </section>
 
       <form className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" method="get">
         <input type="search" name="q" maxLength={100} defaultValue={query} placeholder="Ticket number…" className="rounded-card border border-surface-border px-3 py-1.5 text-sm" />
@@ -58,6 +75,7 @@ export default async function AdminRepairsPage({
                 <p className="text-xs font-bold uppercase tracking-wide text-brand-700">{r.ticket_number}</p>
                 <p className="mt-1 font-semibold text-slate-950">{r.device_type}</p>
                 <p className="mt-1 truncate text-sm text-slate-600">{r.customer_name ?? r.guest_name ?? "Customer not recorded"}</p>
+                <p className="mt-1 text-xs font-medium text-slate-500">{Math.max(0, Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000))} days since booking</p>
               </div>
               <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>{r.status.replace(/_/g, " ")}</Badge>
             </div>
@@ -78,12 +96,13 @@ export default async function AdminRepairsPage({
               <th className="p-3">Device</th>
               <th className="p-3">Status</th>
               <th className="p-3">Booked</th>
+              <th className="p-3">Age</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-border">
             {result.items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-gray-500">
+                <td colSpan={6} className="p-6 text-center text-gray-500">
                   No repairs found.
                 </td>
               </tr>
@@ -102,6 +121,11 @@ export default async function AdminRepairsPage({
                   </td>
                   <td className="p-3 text-gray-500">
                     {new Date(r.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre" })}
+                  </td>
+                  <td className="p-3">
+                    <span className={Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000) >= 14 ? "font-semibold text-rose-700" : Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000) >= 7 ? "font-semibold text-amber-700" : "text-slate-600"}>
+                      {Math.max(0, Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000))}d
+                    </span>
                   </td>
                 </tr>
               ))
