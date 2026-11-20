@@ -16,21 +16,11 @@ const ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
   refunded: [],
 };
 
-const PAYMENT_STATUS_TRANSITIONS: Record<string, string[]> = {
-  // Staff must verify receipt before marking an order paid.
-  unpaid: ["paid"],
-  // Partial payments are disabled until received amounts are recorded
-  // in a dedicated payment ledger.
-  partial: ["paid", "refunded"],
-  paid: ["refunded"],
-  refunded: [],
-};
-
 const statusSchema = z.object({
   orderId: z.string().uuid(),
   newStatus: z.enum([
     "pending", "confirmed", "processing", "ready_for_pickup",
-    "out_for_delivery", "completed", "cancelled", "refunded",
+    "out_for_delivery", "completed", "cancelled",
   ]),
 });
 
