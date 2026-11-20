@@ -14,7 +14,12 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
     const selectedVariantImages = selectedVariantId
       ? images.filter((image) => image.variant_id === selectedVariantId)
       : [];
-    return [...productImages, ...selectedVariantImages];
+    if (selectedVariantImages.length > 0) return [...productImages, ...selectedVariantImages];
+    if (productImages.length > 0) return productImages;
+    // Some catalogues have images attached only to variants. Keep the
+    // gallery useful when the selected configuration has no dedicated
+    // image instead of presenting an empty image state.
+    return images;
   }, [images, selectedVariantId]);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = visibleImages[Math.min(activeIndex, Math.max(visibleImages.length - 1, 0))] ?? null;
