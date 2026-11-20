@@ -24,6 +24,7 @@ export function PaymentTransactionForm({
   const [provider, setProvider] = useState(paymentMethod.replace(/_/g, " "));
   const [amount, setAmount] = useState("");
   const [reference, setReference] = useState("");
+  const [verified, setVerified] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +33,11 @@ export function PaymentTransactionForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
+
+    if (!verified) {
+      setError("Confirm you have verified this payment or refund in the provider account.");
+      return;
+    }
 
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > limit) {
@@ -64,6 +70,7 @@ export function PaymentTransactionForm({
       }
       setAmount("");
       setReference("");
+      setVerified(false);
       router.refresh();
     } catch {
       setError("We could not record this transaction. Please try again.");
@@ -88,7 +95,7 @@ export function PaymentTransactionForm({
           Transaction type
           <select
             value={transactionType}
-            onChange={(event) => setTransactionType(event.target.value as "payment" | "refund")}
+            onChange={(event) => { setTransactionType(event.target.value as "payment" | "refund"); setVerified(false); }}
             className="mt-1 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium"
           >
             <option value="payment">Payment received</option>
@@ -134,13 +141,25 @@ export function PaymentTransactionForm({
         </label>
       </div>
 
+      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+        <input
+          type="checkbox"
+          checked={verified}
+          onChange={(event) => setVerified(event.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-amber-400 text-brand-700 focus:ring-brand-500"
+        />
+        <span>
+          I have checked the provider account and confirmed this {transactionType === "payment" ? "payment was received" : "refund was processed"}.
+        </span>
+      </label>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-slate-500">
           {transactionType === "payment"
             ? "The order balance updates after the payment is recorded."
             : "Refunds reduce the verified amount received."}
         </p>
-        <Button type="submit" size="sm" isLoading={pending} disabled={limit <= 0 || !provider.trim()}>
+        <Button type="submit" size="sm" isLoading={pending} disabled={limit <= 0 || !provider.trim() || !verified}>
           {transactionType === "payment" ? "Record payment" : "Record refund"}
         </Button>
       </div>
