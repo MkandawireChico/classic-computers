@@ -10,7 +10,7 @@ import { PrintDocumentButton } from "@/components/admin/print-document-button";
 export default async function AdminBusinessDocumentPage({ params }: { params: { id: string } }) {
   const permissions = await getMyPermissions();
   const supabase = createClient();
-  const { data: document } = await ((supabase.from("business_documents") as any) as any)
+  const { data: document } = await (supabase.from("business_documents") as any)
     .select("id,document_type,document_number,source_type,source_id,customer_name,customer_email,customer_phone,billing_address,status,subtotal,discount_amount,discount_reason,discount_authorized_by,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,terms,valid_until,issued_at,created_at")
     .eq("id", params.id)
     .maybeSingle();
@@ -28,7 +28,7 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
   const { data: discountApprover } = document.discount_authorized_by
     ? await (supabase.from("profiles") as any).select("full_name").eq("id", document.discount_authorized_by).maybeSingle()
     : { data: null };
-  const { data: items } = await ((supabase.from("business_document_items") as any) as any)
+  const { data: items } = await (supabase.from("business_document_items") as any)
     .select("description,quantity,unit_price,line_total,sort_order")
     .eq("document_id", document.id)
     .order("sort_order", { ascending: true });
@@ -65,7 +65,10 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
     <main className="mx-auto max-w-4xl space-y-5 bg-white p-4 text-slate-900 sm:p-8 print:max-w-none print:p-0">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <p className="text-sm text-slate-500">Document preview · {document.status}</p>
-        <PrintDocumentButton />
+        <div className="flex flex-wrap items-center gap-2">
+          {canConvert ? <ConvertQuotationToInvoiceButton quotationId={document.id} /> : null}
+          <PrintDocumentButton />
+        </div>
       </div>
 
       <article className="border border-slate-200 bg-white print:border-0">
