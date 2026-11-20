@@ -18,7 +18,7 @@ const NEXT_STATUS: Record<string, string[]> = {
 };
 
 const NEXT_PAYMENT: Record<string, string[]> = {
-  unpaid: ["paid", "partial"],
+  unpaid: ["paid"],
   partial: ["paid", "refunded"],
   paid: ["refunded"],
   refunded: [],
@@ -102,7 +102,7 @@ export function OrderStatusControls({
           <div className="flex flex-wrap gap-2">
             {paymentOptions.map((s) => (
               <Button key={s} size="sm" variant="outline" isLoading={isPending} onClick={() => handlePayment(s)}>
-                {s === "paid" ? "Confirm payment received" : s === "partial" ? "Record partial payment" : "Record refund"}
+                {s === "paid" ? "Confirm payment received" : "Record refund"}
               </Button>
             ))}
           </div>
