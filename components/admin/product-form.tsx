@@ -228,6 +228,7 @@ export function ProductForm({
             onChange={(e) => update("basePrice", Number(e.target.value))}
             className="w-full rounded-card border border-surface-border px-3 py-2 text-sm"
           />
+          <p className="text-xs leading-5 text-gray-500">Used when the product has no active configurations. When active variants exist, the storefront uses the lowest active variant price as the starting price.</p>
         </div>
 
         <div className="space-y-1">
