@@ -105,7 +105,7 @@ create or replace function public.guard_business_document_item_write()
 returns trigger
 language plpgsql
 set search_path = public
-as $
+as $$
 declare
   v_document public.business_documents%rowtype;
 begin
@@ -121,7 +121,7 @@ begin
   new.line_total := round(new.quantity * new.unit_price, 2);
   return new;
 end;
-$;
+$$;
 
 create trigger guard_business_document_item_write_trigger
 before insert or update or delete on public.business_document_items
