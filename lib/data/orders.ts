@@ -36,6 +36,16 @@ export interface OrderPaymentEvent {
   created_at: string;
 }
 
+export interface OrderPaymentTransaction {
+  id: string;
+  transaction_type: string;
+  provider: string;
+  amount: number;
+  currency: string;
+  provider_reference: string | null;
+  created_at: string;
+}
+
 export interface DeliverySnapshot {
   full_name: string | null;
   phone: string | null;
@@ -60,6 +70,7 @@ export interface OrderDetail extends OrderListItem {
   items: OrderItemDetail[];
   statusHistory: OrderStatusEvent[];
   paymentHistory: OrderPaymentEvent[];
+  paymentTransactions: OrderPaymentTransaction[];
 }
 
 /**
@@ -108,7 +119,7 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
   }
   if (!order) return null;
 
-  const [itemsResult, historyResult, paymentHistoryResult] = await Promise.all([
+  const [itemsResult, historyResult, paymentHistoryResult, transactionsResult] = await Promise.all([
     (supabase.from("order_items") as any)
       .select("id, product_id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total, product:products(product_images(storage_path, alt_text, is_primary, display_order, variant_id))")
       .eq("order_id", orderId),
@@ -120,12 +131,17 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
       .select("from_status, to_status, created_at")
       .eq("order_id", orderId)
       .order("created_at", { ascending: true }),
+    supabase.from("order_payment_transactions")
+      .select("id, transaction_type, provider, amount, currency, provider_reference, created_at")
+      .eq("order_id", orderId)
+      .order("created_at", { ascending: true }),
   ]);
-  if (itemsResult.error || historyResult.error || paymentHistoryResult.error) {
+  if (itemsResult.error || historyResult.error || paymentHistoryResult.error || transactionsResult.error) {
     console.error("getMyOrderById related data failed:", {
       items: itemsResult.error?.message,
       history: historyResult.error?.message,
       paymentHistory: paymentHistoryResult.error?.message,
+      transactions: transactionsResult.error?.message,
     });
     throw new Error("Could not load the full order history. Please refresh the page and try again.");
   }
@@ -143,5 +159,5 @@ export async function getMyOrderById(orderId: string): Promise<OrderDetail | nul
       image_url: productImage ? getPublicStorageUrl("product-images", productImage.storage_path) : null,
     };
   });
-  return { ...order, items: orderItems, statusHistory: history ?? [], paymentHistory: paymentHistoryResult.data ?? [] };
+  return { ...order, items: orderItems, statusHistory: history ?? [], paymentHistory: paymentHistoryResult.data ?? [], paymentTransactions: transactionsResult.data ?? [] };
 }
