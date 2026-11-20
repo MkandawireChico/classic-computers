@@ -15,11 +15,11 @@ export async function CorporateSupplySection() {
   const promoUrl = promo ? getPublicStorageUrl("site-media", promo.storage_path) : null;
 
   return (
-    <section aria-labelledby="corporate-supply-heading" className="border-y border-slate-200 bg-[#f1f5f7]">
+    <section aria-labelledby="corporate-supply-heading" className="border-y border-slate-200 bg-surface-muted">
       <div className="section-shell grid gap-9 py-14 sm:py-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16 lg:py-20">
         <div>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-800">For businesses and institutions</p>
-          <h2 id="corporate-supply-heading" className="mt-4 max-w-xl text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-[#10243a] sm:text-4xl lg:text-5xl">
+          <h2 id="corporate-supply-heading" className="mt-4 max-w-xl text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] text-navy-900 sm:text-4xl lg:text-5xl">
             ICT supply for your organisation.
           </h2>
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-600 sm:text-base">
@@ -52,7 +52,7 @@ export async function CorporateSupplySection() {
               <div key={item.number} className="grid grid-cols-[38px_1fr] gap-3 py-5 first:pt-2 last:pb-2">
                 <span className="pt-1 font-mono text-xs font-bold text-brand-700">{item.number}</span>
                 <div>
-                  <h3 className="text-base font-bold text-[#10243a]">{item.title}</h3>
+                  <h3 className="text-base font-bold text-navy-900">{item.title}</h3>
                   <p className="mt-1 text-sm leading-6 text-slate-600">{item.detail}</p>
                 </div>
               </div>
