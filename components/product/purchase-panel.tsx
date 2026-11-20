@@ -108,7 +108,7 @@ export function PurchasePanel({
         </section>
       ) : null}
       <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{hasVariants ? "Selected configuration price" : "Catalogue price"}</p>
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{activeVariants.length > 0 ? "Selected configuration price" : "Catalogue price"}</p>
         <div className="flex flex-wrap items-baseline gap-2">
         {onSale ? (
           <>
