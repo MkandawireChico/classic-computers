@@ -70,6 +70,8 @@ export function StockAdjustForm({ inventoryId, onDone }: { inventoryId: string; 
         <label className="text-xs font-medium text-gray-700">Note</label>
         <input
           value={note}
+          required
+          placeholder="Reason for this stock change"
           maxLength={500}
           onChange={(e) => setNote(e.target.value)}
           className="rounded-card border border-surface-border px-2 py-1.5 text-sm"
@@ -77,7 +79,7 @@ export function StockAdjustForm({ inventoryId, onDone }: { inventoryId: string; 
       </div>
       <button
         type="submit"
-        disabled={isPending || delta === 0}
+        disabled={isPending || delta === 0 || note.trim().length < 3}
         className="h-9 rounded-card bg-brand-500 px-3 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
       >
         Apply
