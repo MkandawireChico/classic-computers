@@ -92,9 +92,12 @@ export default async function CategoryShopPage({
 
         <section aria-label="Products" className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <p className="text-sm font-semibold text-navy-900" aria-live="polite">
-              {result.total} product{result.total === 1 ? "" : "s"}
-            </p>
+            <div>
+              <p className="text-sm font-semibold text-navy-900" aria-live="polite">
+                {result.total} product{result.total === 1 ? "" : "s"}
+              </p>
+              <p className="mt-0.5 text-xs text-slate-500">Starting prices in MWK, excluding VAT and PPDA</p>
+            </div>
             <SortSelect />
           </div>
 
