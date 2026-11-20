@@ -112,7 +112,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
       {hasVerifiedTransactions ? (
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="verified-payments-heading">
           <h2 id="verified-payments-heading" className="text-sm font-bold text-slate-950">Verified payments and refunds</h2>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <PaymentDetail label="Net amount retained" value={formatMoney(totalReceived)} />
             <PaymentDetail label="Total refunded" value={formatMoney(totalRefunded)} />
             <PaymentDetail label="Order total" value={formatMoney(order.total)} />
