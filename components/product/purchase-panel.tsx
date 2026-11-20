@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/format/money";
 import { StockBadge } from "./stock-badge";
 import { AddToCartButton } from "./add-to-cart-button";
 import { WishlistButton } from "./wishlist-button";
 import { BuyNowLink } from "./buy-now-link";
+import { useProductVariant } from "./product-variant-context";
 import type { BusinessInfo } from "@/lib/data/site-settings";
 import type { ProductDetail } from "@/types/catalog";
 
@@ -42,7 +43,7 @@ export function PurchasePanel({
   );
   const defaultVariant =
     activeVariants.find((variant) => variant.is_default) ?? activeVariants[0] ?? null;
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(defaultVariant?.id ?? null);
+  const { selectedVariantId, setSelectedVariantId } = useProductVariant();
 
   // Resolve against the current active list. A stale/default discontinued
   // variant must never become the selected purchase configuration.
