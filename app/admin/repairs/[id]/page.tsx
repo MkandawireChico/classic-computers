@@ -55,10 +55,10 @@ export default async function AdminRepairDetailPage({ params }: { params: { id: 
           <CardHeader>
             <CardTitle>Customer</CardTitle>
           </CardHeader>
-          <p className="text-sm text-gray-900">{repair.customer_name ?? repair.guest_name ?? "—"}</p>
-          {repair.guest_phone ? <p className="text-sm text-gray-600">{repair.guest_phone}</p> : null}
-          {repair.guest_email ? <p className="text-sm text-gray-600">{repair.guest_email}</p> : null}
-          {!repair.customer_id ? <p className="mt-1 text-xs text-gray-400">Guest booking</p> : null}
+          <p className="font-semibold text-slate-950">{repair.customer_name ?? repair.guest_name ?? "Customer details unavailable"}</p>
+          {repair.guest_phone ? <a href={`tel:${repair.guest_phone}`} className="mt-2 inline-flex min-h-9 items-center rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-brand-700 hover:border-brand-300">{repair.guest_phone}</a> : <p className="mt-1 text-xs text-slate-500">No phone number recorded.</p>}
+          {repair.guest_email ? <a href={`mailto:${repair.guest_email}`} className="mt-2 block break-all text-sm font-medium text-brand-700 hover:text-brand-900">{repair.guest_email}</a> : null}
+          {!repair.customer_id ? <p className="mt-2 text-xs text-slate-500">Guest booking</p> : <p className="mt-2 text-xs text-slate-500">Registered customer</p>}
         </Card>
       </div>
     </div>
