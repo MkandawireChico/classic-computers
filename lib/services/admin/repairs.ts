@@ -332,7 +332,7 @@ export async function removeRepairPart(partId: string, ticketId: string): Promis
       return { success: false, error: "Could not find the linked stock record. The repair part was kept for reconciliation." };
     }
 
-    const [{ data: priorReturn }, { data: legacyReturn }] = await Promise.all([
+    const [priorReturnResult, legacyReturnResult] = await Promise.all([
       (supabase.from("inventory_movements") as any)
         .select("id")
         .eq("reference_type", "repair_part_return")
@@ -345,6 +345,11 @@ export async function removeRepairPart(partId: string, ticketId: string): Promis
         .eq("movement_type", "return")
         .maybeSingle(),
     ]);
+    if (priorReturnResult.error || legacyReturnResult.error) {
+      return { success: false, error: "Could not verify whether the part was already returned. The repair part was kept." };
+    }
+    const priorReturn = priorReturnResult.data;
+    const legacyReturn = legacyReturnResult.data;
     if (!priorReturn && !legacyReturn) {
       const { error: returnError } = await supabase.rpc("apply_inventory_movement" as any, {
         p_inventory_id: inventoryRow.id,
