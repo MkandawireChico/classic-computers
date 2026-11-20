@@ -3,6 +3,7 @@ import { requirePermission } from "@/lib/auth/permissions";
 import { getAdminRentalById } from "@/lib/data/admin/rentals";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { RentalDetailControls } from "@/components/admin/rental-detail-controls";
+import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 
 export default async function AdminRentalDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("rentals.read");
@@ -11,13 +12,13 @@ export default async function AdminRentalDetailPage({ params }: { params: { id: 
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{rental.product_name ?? "Rental"}</h1>
-        <p className="text-sm text-gray-500">
-            <span className="font-medium text-slate-900">Dates:</span>{" "}
-            <a className="text-brand-600 hover:underline">{rental.start_date} – {rental.end_date}</a> · Qty {rental.quantity}
-        </p>
-      </div>
+      <AdminDetailHeader
+        eyebrow="Operations · Equipment hire"
+        title={rental.product_name ?? "Rental booking"}
+        description={`Rental period: ${rental.start_date} to ${rental.end_date} · Quantity: ${rental.quantity}. Manage approval, handover, return and exceptions.`}
+        backHref="/admin/rentals"
+        backLabel="Back to rentals"
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
