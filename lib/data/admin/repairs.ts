@@ -149,3 +149,36 @@ export async function listTechnicians(): Promise<Array<{ id: string; name: strin
 
   return userIds.map((id: string) => ({ id, name: nameById.get(id) ?? null }));
 }
+
+
+export interface RepairStockOption {
+  inventory_id: string;
+  product_id: string;
+  variant_id: string | null;
+  product_name: string;
+  variant_name: string | null;
+  sku: string;
+  quantity_on_hand: number;
+}
+
+export async function listRepairStockOptions(): Promise<RepairStockOption[]> {
+  const supabase = createClient();
+  const { data, error } = await (supabase.from("inventory") as any)
+    .select("id, product_id, variant_id, quantity_on_hand, products ( name, sku ), product_variants ( name, sku )")
+    .gt("quantity_on_hand", 0)
+    .order("updated_at", { ascending: false })
+    .limit(300);
+  if (error) {
+    console.error("listRepairStockOptions failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map((row: any) => ({
+    inventory_id: row.id,
+    product_id: row.product_id,
+    variant_id: row.variant_id,
+    product_name: row.products?.name ?? "Stock item",
+    variant_name: row.product_variants?.name ?? null,
+    sku: row.product_variants?.sku ?? row.products?.sku ?? "",
+    quantity_on_hand: row.quantity_on_hand,
+  }));
+}
