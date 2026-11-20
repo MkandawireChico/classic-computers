@@ -113,7 +113,7 @@ export default async function AdminOrdersPage({
       </div>
 
       <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
-        <table className="w-full min-w-[700px] text-sm">
+        <table className="w-full min-w-[820px] text-sm">
           <thead className="bg-surface-muted text-left text-xs uppercase text-gray-500">
             <tr>
               <th className="p-3">Order</th>
