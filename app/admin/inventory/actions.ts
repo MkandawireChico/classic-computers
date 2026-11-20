@@ -9,7 +9,14 @@ const adjustSchema = z.object({
   inventoryId: z.string().uuid(),
   movementType: z.enum(["opening", "adjustment", "damage", "lost", "correction", "return"]),
   quantityDelta: z.coerce.number().int().refine((v) => v !== 0, "Quantity change cannot be zero"),
-  note: z.string().max(500).optional(),
+  note: z.string().trim().min(3, "Add a short reason for the stock movement.").max(500),
+}).superRefine((value, ctx) => {
+  if (["opening", "return"].includes(value.movementType) && value.quantityDelta < 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Opening stock and returns must increase stock.", path: ["quantityDelta"] });
+  }
+  if (["damage", "lost"].includes(value.movementType) && value.quantityDelta > 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Damage and lost stock must reduce stock.", path: ["quantityDelta"] });
+  }
 });
 
 export async function adjustInventoryAction(input: unknown) {
@@ -40,7 +47,7 @@ export async function adjustInventoryAction(input: unknown) {
     p_quantity_delta: d.quantityDelta,
     p_reference_type: "manual_admin_adjustment",
     p_reference_id: null,
-    p_note: d.note || null,
+    p_note: d.note,
   } as any);
 
   if (error) {
