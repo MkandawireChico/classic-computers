@@ -33,7 +33,7 @@ export default async function WishlistPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {entries.map(({ wishlistItemId, variantId, variantName, price, salePrice, inventoryStatus, product }) => (
+          {entries.map(({ wishlistItemId, variantId, price, salePrice, inventoryStatus, product }) => (
             <div key={wishlistItemId} className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300">
               <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100">
                 {product.primary_image ? (
