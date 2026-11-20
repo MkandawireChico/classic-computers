@@ -164,26 +164,70 @@ export async function updateRentalStatus(input: unknown): Promise<ServiceResult>
       inventoryRowQuery = inventoryRowQuery.is("variant_id", null);
     }
 
-    const { data: inventoryRow } = await inventoryRowQuery.maybeSingle();
-
-    if (inventoryRow) {
-      const delta = inventoryEffect.sign * booking.quantity;
-      const { error: movementError } = await supabase.rpc("apply_inventory_movement" as any, {
-        p_inventory_id: inventoryRow.id,
-        p_movement_type: inventoryEffect.movementType,
-        p_quantity_delta: delta,
-        p_reference_type: "rental_booking",
-        p_reference_id: bookingId,
-        p_note: `Rental ${newStatus} (booking ${bookingId})`,
-      } as any);
-      if (movementError) {
-        return { success: false, error: "Could not record the inventory movement for this rental." };
-      }
+    const { data: inventoryRow, error: inventoryLookupError } = await inventoryRowQuery.maybeSingle();
+    if (inventoryLookupError) {
+      return { success: false, error: "Could not verify the rental stock record. No status change was made." };
     }
+    if (!inventoryRow) {
+      return { success: false, error: "This rental has no matching inventory record. Add or correct its stock record before processing handover or return." };
+    }
+
+    const delta = inventoryEffect.sign * booking.quantity;
+    const { error: movementError } = await supabase.rpc("apply_inventory_movement" as any, {
+      p_inventory_id: inventoryRow.id,
+      p_movement_type: inventoryEffect.movementType,
+      p_quantity_delta: delta,
+      p_reference_type: "rental_booking",
+      p_reference_id: bookingId,
+      p_note: `Rental ${newStatus} (booking ${bookingId})`,
+    } as any);
+    if (movementError) {
+      return { success: false, error: movementError.message.includes("check constraint")
+        ? "There is not enough available stock to complete this rental handover."
+        : "Could not record the inventory movement. No status change was made." };
+    }
+
+    // The stock movement and status update use separate existing database
+    // operations. Use a conditional status update to prevent two staff
+    // members processing the same transition at once. If another update
+    // wins the race, compensate the stock movement before returning.
+    const { data: updatedBooking, error: statusError } = await (supabase.from("rental_bookings") as any)
+      .update({ status: newStatus })
+      .eq("id", bookingId)
+      .eq("status", booking.status)
+      .select("id")
+      .maybeSingle();
+
+    if (statusError || !updatedBooking) {
+      if (inventoryEffect.sign !== 0) {
+        const compensationType = inventoryEffect.sign < 0 ? "rental_return" : "rental_checkout";
+        const { error: compensationError } = await supabase.rpc("apply_inventory_movement" as any, {
+          p_inventory_id: inventoryRow.id,
+          p_movement_type: compensationType,
+          p_quantity_delta: -delta,
+          p_reference_type: "rental_booking_compensation",
+          p_reference_id: bookingId,
+          p_note: `Compensation for unsuccessful ${newStatus} transition`,
+        } as any);
+        if (compensationError) {
+          console.error("Rental stock compensation failed:", compensationError.message);
+          return { success: false, error: "The rental status was not changed, but stock compensation failed. Stop processing this booking and reconcile its inventory ledger." };
+        }
+      }
+      return { success: false, error: "Another staff member updated this rental. Refresh the page before trying again." };
+    }
+    return { success: true };
   }
 
-  const { error } = await (supabase.from("rental_bookings") as any).update({ status: newStatus }).eq("id", bookingId);
-  if (error) return { success: false, error: "Could not update rental status." };
+  const { data: updatedBooking, error } = await (supabase.from("rental_bookings") as any)
+    .update({ status: newStatus })
+    .eq("id", bookingId)
+    .eq("status", booking.status)
+    .select("id")
+    .maybeSingle();
+  if (error || !updatedBooking) {
+    return { success: false, error: "Another staff member updated this rental. Refresh the page before trying again." };
+  }
   return { success: true };
 }
 
