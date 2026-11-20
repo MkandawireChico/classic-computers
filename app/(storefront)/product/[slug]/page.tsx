@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   const isAuthenticated = Boolean(user);
   const initialInWishlist = wishlistEntries.some((w) => w.productId === product.id && w.variantId === null);
 
-  const displayPrice = product.sale_price !== null && product.sale_price < product.base_price
+  const displayPrice = product.sale_price !== null && product.sale_price > 0 && product.sale_price < product.base_price
     ? product.sale_price
     : product.base_price;
   const activeSchemaVariants = product.variants.filter((variant) => variant.status === "active");
