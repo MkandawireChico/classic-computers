@@ -26,3 +26,12 @@ export async function updateInternalNotesAction(orderId: string, notes: string) 
   if (result.success) revalidatePath(`/admin/orders/${orderId}`);
   return result;
 }
+
+export async function recordPaymentTransactionAction(input: unknown) {
+  const result = await orderService.recordPaymentTransaction(input);
+  if (result.success && typeof input === "object" && input && "orderId" in input) {
+    revalidatePath(`/admin/orders/${(input as any).orderId}`);
+    revalidatePath("/admin/orders");
+  }
+  return result;
+}
