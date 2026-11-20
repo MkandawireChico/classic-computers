@@ -339,6 +339,8 @@ export async function createBusinessQuotation(input: unknown): Promise<ServiceRe
     unit_price: line.unitPrice,
     line_total: Math.round(line.quantity * line.unitPrice * 100) / 100,
     sort_order: index,
+    product_id: line.productId || null,
+    variant_id: line.variantId || null,
   }));
   const { error: lineError } = await (supabase.from("business_document_items") as any).insert(rows);
   if (lineError) {
