@@ -113,8 +113,8 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
   const [{ data: updates }, { data: parts }, { data: workLogs }, { data: quotations }] = await Promise.all([
     (supabase.from("repair_updates") as any).select("id, note, is_internal, created_at").eq("ticket_id", id).order("created_at"),
     (supabase.from("repair_parts") as any).select("id, part_name, cost, quantity, product_id, variant_id, inventory_movement_id").eq("ticket_id", id),
-    (supabase.from("repair_work_logs") as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
-    (supabase.from("business_documents") as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
+    (supabase.from("repair_work_logs" as any) as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
+    (supabase.from("business_documents" as any) as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
   ]);
   const technicianIds = [...new Set((workLogs ?? []).map((entry: any) => entry.technician_id).filter(Boolean))];
   const { data: technicianProfiles } = technicianIds.length
