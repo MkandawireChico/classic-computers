@@ -59,9 +59,7 @@ export function OrderStatusControls({
     if (isPending) return;
     const confirmation = newPaymentStatus === "paid"
       ? "Confirm you have checked the bank or mobile-money transaction and matched the amount and order reference. Only continue after funds are received."
-      : newPaymentStatus === "refunded"
-        ? "Confirm the refund has been processed and verified."
-        : "Record this order as partially paid? Confirm the received amount with your payment records first.";
+      : "Confirm the refund has been processed and verified.";
     if (!window.confirm(confirmation)) return;
     setError(null);
     setIsPending(true);
