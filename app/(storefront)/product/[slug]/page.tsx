@@ -141,7 +141,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f7f9]">
+    <div className="min-h-screen bg-surface-muted">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       {/* eslint-disable-next-line react/no-danger */}
@@ -253,7 +253,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         {product.specifications.length > 0 ? (
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 sm:mt-10 sm:rounded-3xl sm:p-7">
             <div className="mb-4 flex items-center gap-3">
-              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-cyan-500" />
+              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-brand-500" />
               <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Specifications</h2>
             </div>
             <SpecificationsTable specifications={product.specifications} />
@@ -309,7 +309,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                           ))}
                         </div>
                         {review.verified_purchase ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-2 py-0.5 text-xs font-semibold text-cyan-800">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-800">
                             Verified
                           </span>
                         ) : null}
