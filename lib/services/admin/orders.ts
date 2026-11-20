@@ -34,11 +34,6 @@ const statusSchema = z.object({
   ]),
 });
 
-const paymentSchema = z.object({
-  orderId: z.string().uuid(),
-  newPaymentStatus: z.enum(["unpaid", "paid", "partial", "refunded"]),
-});
-
 async function guard(): Promise<ServiceResult | null> {
   try {
     await requirePermission("orders.write");
@@ -93,48 +88,6 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
   }
   if (!updated) {
     return { success: false, error: "Another staff member changed this order. Refresh the page and review its current status." };
-  }
-  return { success: true };
-}
-
-export async function updatePaymentStatus(input: unknown): Promise<ServiceResult> {
-  const guardResult = await guard();
-  if (guardResult) return guardResult;
-
-  const parsed = paymentSchema.safeParse(input);
-  if (!parsed.success) return { success: false, error: "Invalid payment status." };
-  const { orderId, newPaymentStatus } = parsed.data;
-
-  const supabase = createClient();
-  const { data: order, error: lookupError } = await (supabase.from("orders") as any)
-    .select("payment_status")
-    .eq("id", orderId)
-    .maybeSingle();
-  if (lookupError) {
-    console.error("Order payment status lookup failed:", lookupError.message);
-    return { success: false, error: "Could not load the current payment status." };
-  }
-  if (!order) return { success: false, error: "Order not found." };
-
-  const allowed = PAYMENT_STATUS_TRANSITIONS[order.payment_status] ?? [];
-  if (!allowed.includes(newPaymentStatus)) {
-    return { success: false, error: `Cannot move payment status from "${order.payment_status}" to "${newPaymentStatus}".` };
-  }
-
-  // Compare-and-set avoids accepting a payment transition based on a stale
-  // status if another staff member has already recorded a payment update.
-  const { data: updated, error } = await (supabase.from("orders") as any)
-    .update({ payment_status: newPaymentStatus })
-    .eq("id", orderId)
-    .eq("payment_status", order.payment_status)
-    .select("id")
-    .maybeSingle();
-  if (error) {
-    console.error("Order payment status update failed:", { orderId, code: error.code, message: error.message });
-    return { success: false, error: "Could not update payment status. Check database permissions and try again." };
-  }
-  if (!updated) {
-    return { success: false, error: "Another staff member changed this payment status. Refresh the page and review the current status." };
   }
   return { success: true };
 }
