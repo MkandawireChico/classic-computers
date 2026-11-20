@@ -257,6 +257,31 @@ export function RepairDetailControls({
         </div>
       </div>
 
+      <section className="rounded-xl border border-slate-200 bg-white p-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Status timeline</p>
+        {repair.statusHistory.length === 0 ? (
+          <p className="text-sm text-slate-500">No status history is available. Apply the repair status-history migration to start recording transitions.</p>
+        ) : (
+          <ol className="space-y-3">
+            {repair.statusHistory.map((entry) => (
+              <li key={entry.id} className="flex gap-3">
+                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-900">
+                    {entry.from_status ? entry.from_status.replace(/_/g, " ") + " → " : "Initial status · "}
+                    {entry.to_status.replace(/_/g, " ")}
+                  </p>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {new Date(entry.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                    {entry.changed_by_name ? " · " + entry.changed_by_name : ""}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
       <div>
         <p className="mb-2 text-xs font-medium uppercase text-gray-500">Notes &amp; history</p>
         <div className="space-y-2">
