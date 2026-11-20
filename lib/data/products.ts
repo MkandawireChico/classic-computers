@@ -39,7 +39,8 @@ function productListSelect(requireMatchingInventory = false) {
   brand:brands ( id, name, slug ),
   category:categories ( id, name, slug ),
   product_images ( id, storage_path, alt_text, display_order, is_primary, variant_id ),
-  ${inventoryRelation} ( status, variant_id ),\n  catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants )
+  ${inventoryRelation} ( status, variant_id ),
+  catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants )
 `;
 }
 
@@ -72,6 +73,10 @@ function toListItem(row: any): ProductListItem {
     else status = allInventoryRows[0].status;
   }
 
+  const cataloguePrice = Array.isArray(row.catalogue_price)
+    ? row.catalogue_price[0]
+    : row.catalogue_price;
+
   return {
     id: row.id,
     sku: row.sku,
@@ -79,6 +84,9 @@ function toListItem(row: any): ProductListItem {
     name: row.name,
     base_price: Number(row.base_price),
     sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
+    display_price: Number(cataloguePrice?.display_price ?? row.base_price),
+    regular_price: Number(cataloguePrice?.regular_price ?? row.base_price),
+    has_active_variants: Boolean(cataloguePrice?.has_active_variants),
     condition: row.condition,
     is_featured: row.is_featured,
     brand: row.brand ?? null,
@@ -222,6 +230,7 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     .from("products")
     .select(`
       id, sku, slug, name, description, base_price, sale_price, condition,
+      catalogue_price:storefront_product_prices!inner ( display_price, regular_price, has_active_variants ),
       is_featured, warranty_text, seo_title, seo_description,
       brand:brands ( id, name, slug ),
       category:categories ( id, name, slug ),
@@ -281,6 +290,9 @@ export const getProductBySlug = cache(async function getProductBySlug(slug: stri
     description: row.description,
     base_price: Number(row.base_price),
     sale_price: getValidSalePrice(row.sale_price, Number(row.base_price)),
+    display_price: Number((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.display_price ?? row.base_price),
+    regular_price: Number((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.regular_price ?? row.base_price),
+    has_active_variants: Boolean((Array.isArray(row.catalogue_price) ? row.catalogue_price[0] : row.catalogue_price)?.has_active_variants),
     condition: row.condition,
     is_featured: row.is_featured,
     warranty_text: row.warranty_text,
