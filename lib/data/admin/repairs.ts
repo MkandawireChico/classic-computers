@@ -86,7 +86,7 @@ export interface AdminRepairDetail {
   loggedMinutes: number;
   internalLabourRate: number | null;
   latestQuotation: { document_number: number; status: string; taxable_amount: number; grand_total: number } | null;
-  finalInvoice: { id: string; document_number: number; status: string; taxable_amount: number; grand_total: number; paid: number; refunded: number; outstanding: number } | null;
+  finalInvoice: { id: string; document_number: number; status: string; invoice_count: number; taxable_amount: number; grand_total: number; latest_taxable_amount: number; paid: number; refunded: number; outstanding: number } | null;
   parts: Array<{
     id: string;
     part_name: string;
@@ -117,7 +117,7 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     (supabase.from("repair_parts") as any).select("id, part_name, cost, quantity, product_id, variant_id, inventory_movement_id").eq("ticket_id", id),
     (supabase.from("repair_work_logs" as any) as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
     (supabase.from("business_documents" as any) as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
-    (supabase.from("business_documents" as any) as any).select("id,document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "invoice").order("created_at", { ascending: false }).limit(1),
+    (supabase.from("business_documents" as any) as any).select("id,document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "invoice").order("created_at", { ascending: false }),
   ]);
   const { data: repairSettings } = await (supabase.from("site_settings") as any)
     .select("value").eq("key", "repair_settings").maybeSingle();
@@ -135,23 +135,28 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     technician_name: technicianNames.get(entry.technician_id) ?? null,
   }));
   const latest = quotations?.[0] ?? null;
-  const invoice = invoices?.[0] ?? null;
+  const invoiceRows = invoices ?? [];
   let finalInvoice = null;
-  if (invoice) {
+  if (invoiceRows.length > 0) {
+    const invoiceIds = invoiceRows.map((row: any) => row.id);
     const { data: transactions } = await (supabase.from("business_document_transactions" as any) as any)
-      .select("transaction_type,amount").eq("document_id", invoice.id);
+      .select("document_id,transaction_type,amount").in("document_id", invoiceIds);
     const paid = (transactions ?? []).filter((row: any) => row.transaction_type === "payment").reduce((sum: number, row: any) => sum + Number(row.amount), 0);
     const refunded = (transactions ?? []).filter((row: any) => row.transaction_type === "refund").reduce((sum: number, row: any) => sum + Number(row.amount), 0);
-    const grandTotal = Number(invoice.grand_total);
+    const taxableAmount = invoiceRows.reduce((sum: number, row: any) => sum + Number(row.taxable_amount), 0);
+    const grandTotal = invoiceRows.reduce((sum: number, row: any) => sum + Number(row.grand_total), 0);
+    const latestInvoice = invoiceRows[0];
     finalInvoice = {
-      id: invoice.id,
-      document_number: Number(invoice.document_number),
-      status: invoice.status,
-      taxable_amount: Number(invoice.taxable_amount),
+      id: latestInvoice.id,
+      document_number: Number(latestInvoice.document_number),
+      status: latestInvoice.status,
+      invoice_count: invoiceRows.length,
+      taxable_amount: taxableAmount,
       grand_total: grandTotal,
+      latest_taxable_amount: Number(latestInvoice.taxable_amount),
       paid,
       refunded,
-      outstanding: Math.max(0, grandTotal - paid),
+      outstanding: Math.max(0, grandTotal - paid + refunded),
     };
   }
 
