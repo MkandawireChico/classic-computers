@@ -8,6 +8,7 @@ create table if not exists public.repair_status_history (
   from_status public.repair_status_enum,
   to_status public.repair_status_enum not null,
   changed_by uuid references auth.users(id) on delete set null,
+  is_baseline boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -37,15 +38,15 @@ as $$
 begin
   if tg_op = 'INSERT' then
     insert into public.repair_status_history (
-      ticket_id, from_status, to_status, changed_by, created_at
+      ticket_id, from_status, to_status, changed_by, is_baseline, created_at
     ) values (
-      new.id, null, new.status, auth.uid(), coalesce(new.created_at, now())
+      new.id, null, new.status, auth.uid(), false, coalesce(new.created_at, now())
     );
   elsif old.status is distinct from new.status then
     insert into public.repair_status_history (
-      ticket_id, from_status, to_status, changed_by
+      ticket_id, from_status, to_status, changed_by, is_baseline
     ) values (
-      new.id, old.status, new.status, auth.uid()
+      new.id, old.status, new.status, auth.uid(), false
     );
   end if;
   return new;
@@ -60,13 +61,15 @@ create trigger record_repair_status_history_trigger
 -- Snapshot current state for pre-existing tickets. These rows establish the
 -- earliest known state only; they do not claim to record historical changes.
 insert into public.repair_status_history (
-  ticket_id, from_status, to_status, changed_by, created_at
+  ticket_id, from_status, to_status, changed_by, is_baseline, created_at
 )
-select t.id, null, t.status, null, t.created_at
+select t.id, null, t.status, null, true, t.created_at
 from public.repair_tickets t
 where not exists (
   select 1 from public.repair_status_history h where h.ticket_id = t.id
 );
+
+revoke all on function public.record_repair_status_history() from public, anon, authenticated;
 
 comment on table public.repair_status_history is
   'Append-only repair status transitions. Existing ticket rows backfilled as baseline snapshots; pre-migration transitions are not known.';
