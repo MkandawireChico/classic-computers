@@ -373,3 +373,36 @@ export async function removeRepairPart(partId: string, ticketId: string): Promis
   if (error) return { success: false, error: "Could not remove part." };
   return { success: true };
 }
+
+const workLogSchema = z.object({
+  ticketId: z.string().uuid(),
+  durationMinutes: z.coerce.number().int().min(1).max(1440),
+  workPerformed: z.string().trim().min(3).max(2000),
+  workDate: z.string().date(),
+});
+
+export async function addRepairWorkLog(input: unknown): Promise<ServiceResult> {
+  const parsed = workLogSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Enter a valid work description and duration." };
+  const actionGuard = await assertCanActOnTicket(parsed.data.ticketId);
+  if (actionGuard) return actionGuard;
+
+  const supabase = createClient();
+  const { data: ticket } = await (supabase.from("repair_tickets") as any)
+    .select("status,assigned_technician_id")
+    .eq("id", parsed.data.ticketId)
+    .maybeSingle();
+  if (!ticket) return { success: false, error: "Repair ticket not found." };
+  if (["completed", "cancelled"].includes(ticket.status)) {
+    return { success: false, error: "Work cannot be logged against a completed or cancelled repair." };
+  }
+
+  const { error } = await (supabase.from("repair_work_logs") as any).insert({
+    ticket_id: parsed.data.ticketId,
+    duration_minutes: parsed.data.durationMinutes,
+    work_performed: parsed.data.workPerformed,
+    work_date: parsed.data.workDate,
+  });
+  if (error) return { success: false, error: "Could not save the work log. Check the repair work-log migration." };
+  return { success: true };
+}
