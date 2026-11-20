@@ -44,6 +44,7 @@ export function RepairDetailControls({
   const [quote, setQuote] = useState(repair.quote_amount ?? 0);
   const [partForm, setPartForm] = useState({ partName: "", cost: 0, quantity: 1 });
   const [stockInventoryId, setStockInventoryId] = useState("");
+  const selectedStockOption = stockOptions.find((option) => option.inventory_id === stockInventoryId) ?? null;
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
     if (isPending) return;
@@ -224,8 +225,10 @@ export function RepairDetailControls({
               ))}
             </select>
           </div>
-          {stockInventoryId ? (
-            <p className="text-xs text-amber-700">Adding this part deducts the requested quantity from inventory and records the movement against this repair.</p>
+          {selectedStockOption ? (
+            <p className="text-xs text-amber-700">
+              {selectedStockOption.quantity_on_hand} units currently available. Adding this part deducts the requested quantity from stock.
+            </p>
           ) : null}
           <div className="flex flex-wrap items-end gap-2">
           <input
@@ -255,7 +258,7 @@ export function RepairDetailControls({
           <Button
             size="sm"
             isLoading={isPending}
-            disabled={isPending || !partForm.partName.trim() || !Number.isFinite(partForm.cost) || partForm.cost < 0 || !Number.isInteger(partForm.quantity) || partForm.quantity < 1}
+            disabled={isPending || !partForm.partName.trim() || !Number.isFinite(partForm.cost) || partForm.cost < 0 || !Number.isInteger(partForm.quantity) || partForm.quantity < 1 || Boolean(selectedStockOption && partForm.quantity > selectedStockOption.quantity_on_hand)}
             onClick={() =>
               run(async () => {
                 if (!partForm.partName.trim()) return { success: false, error: "Part name is required." };
@@ -264,8 +267,8 @@ export function RepairDetailControls({
                   partName: partForm.partName,
                   cost: partForm.cost,
                   quantity: partForm.quantity,
-                  productId: stockOptions.find((option) => option.inventory_id === stockInventoryId)?.product_id ?? null,
-                  variantId: stockOptions.find((option) => option.inventory_id === stockInventoryId)?.variant_id ?? null,
+                  productId: selectedStockOption?.product_id ?? null,
+                  variantId: selectedStockOption?.variant_id ?? null,
                 });
                 if (result.success) {
                   setPartForm({ partName: "", cost: 0, quantity: 1 });
