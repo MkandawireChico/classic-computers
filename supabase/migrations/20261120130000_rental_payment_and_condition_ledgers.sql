@@ -143,3 +143,27 @@ comment on table public.rental_payment_transactions is
   'Append-only ledger of staff-verified rental payments and refunds. Amounts are validated against the agreed charge under a booking row lock.';
 comment on table public.rental_condition_reports is
   'Append-only staff condition records captured at rental checkout, return, damage or loss.';
+
+
+create or replace function public.audit_rental_condition_report()
+returns trigger language plpgsql security definer set search_path = ''
+as $$
+begin
+  perform public.log_audit_event(
+    'rental.condition_recorded',
+    'rental_booking',
+    new.booking_id,
+    jsonb_build_object(
+      'condition_report_id', new.id,
+      'event_type', new.event_type,
+      'condition', new.condition,
+      'notes', new.notes
+    )
+  );
+  return new;
+end;
+$$;
+create trigger audit_rental_condition_report_trigger
+  after insert on public.rental_condition_reports
+  for each row execute function public.audit_rental_condition_report();
+revoke all on function public.audit_rental_condition_report() from public, anon, authenticated;
