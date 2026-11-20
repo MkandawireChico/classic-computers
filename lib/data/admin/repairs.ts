@@ -81,6 +81,10 @@ export interface AdminRepairDetail {
   guest_email: string | null;
   created_at: string;
   updates: Array<{ id: string; note: string; is_internal: boolean; created_at: string }>;
+  workLogs: Array<{ id: string; work_date: string; duration_minutes: number; work_performed: string; technician_name: string | null }>;
+  partsCostTotal: number;
+  loggedMinutes: number;
+  latestQuotation: { document_number: number; status: string; taxable_amount: number; grand_total: number } | null;
   parts: Array<{
     id: string;
     part_name: string;
@@ -106,10 +110,24 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     .maybeSingle();
   if (error || !ticket) return null;
 
-  const [{ data: updates }, { data: parts }] = await Promise.all([
+  const [{ data: updates }, { data: parts }, { data: workLogs }, { data: quotations }] = await Promise.all([
     (supabase.from("repair_updates") as any).select("id, note, is_internal, created_at").eq("ticket_id", id).order("created_at"),
     (supabase.from("repair_parts") as any).select("id, part_name, cost, quantity, product_id, variant_id, inventory_movement_id").eq("ticket_id", id),
+    (supabase.from("repair_work_logs") as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
+    (supabase.from("business_documents") as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
   ]);
+  const technicianIds = [...new Set((workLogs ?? []).map((entry: any) => entry.technician_id).filter(Boolean))];
+  const { data: technicianProfiles } = technicianIds.length
+    ? await (supabase.from("profiles") as any).select("id,full_name").in("id", technicianIds)
+    : { data: [] as any[] };
+  const technicianNames = new Map((technicianProfiles ?? []).map((profile: any) => [profile.id, profile.full_name]));
+  const normalizedParts = (parts ?? []).map((part: any) => ({ ...part, cost: Number(part.cost), quantity: Number(part.quantity) }));
+  const normalizedWorkLogs = (workLogs ?? []).map((entry: any) => ({
+    ...entry,
+    duration_minutes: Number(entry.duration_minutes),
+    technician_name: technicianNames.get(entry.technician_id) ?? null,
+  }));
+  const latest = quotations?.[0] ?? null;
 
   return {
     id: ticket.id,
@@ -131,7 +149,16 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     guest_email: ticket.guest_email,
     created_at: ticket.created_at,
     updates: updates ?? [],
-    parts: (parts ?? []).map((p: any) => ({ ...p, cost: Number(p.cost) })),
+    workLogs: normalizedWorkLogs,
+    parts: normalizedParts,
+    partsCostTotal: normalizedParts.reduce((total: number, part: any) => total + part.cost * part.quantity, 0),
+    loggedMinutes: normalizedWorkLogs.reduce((total: number, entry: any) => total + entry.duration_minutes, 0),
+    latestQuotation: latest ? {
+      document_number: Number(latest.document_number),
+      status: latest.status,
+      taxable_amount: Number(latest.taxable_amount),
+      grand_total: Number(latest.grand_total),
+    } : null,
   };
 }
 
