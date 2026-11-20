@@ -37,7 +37,7 @@ export function ProductCard({
           {imageUrl ? (
             <Image
               src={imageUrl}
-              alt={product.primary_image?.alt_text ?? product.name}
+              alt={product.primary_image?.alt_text?.trim() || product.name}
               fill
               sizes={isCatalog
                 ? "(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 33vw"
