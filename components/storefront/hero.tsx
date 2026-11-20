@@ -58,7 +58,7 @@ export async function Hero() {
               <div className={`relative w-full overflow-hidden rounded-[1.5rem] border border-white bg-white shadow-[0_28px_70px_-38px_rgba(15,35,55,0.42)] ${isHomepageBanner ? "aspect-[16/10]" : "aspect-[5/4]"}`}>
                 <Image
                   src={imageUrl}
-                  alt={media?.alt_text ?? "Classic Computers and its technology services in Blantyre"}
+                  alt={media?.alt_text?.trim() || "Classic Computers and its technology services in Blantyre"}
                   fill
                   priority
                   sizes="(max-width: 1023px) 100vw, 56vw"
