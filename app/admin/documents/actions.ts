@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMyPermissions } from "@/lib/auth/permissions";
-import { convertAcceptedQuotationToInvoice, recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
+import { convertAcceptedQuotationToInvoice, createBusinessQuotation, recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
 
 export async function convertQuotationToInvoiceAction(quotationId: string) {
   const result = await convertAcceptedQuotationToInvoice({ quotationId });
@@ -62,4 +62,13 @@ export async function recordStaffQuotationDecision(documentId: string, decision:
   revalidatePath(`/admin/documents/${documentId}`);
   revalidatePath("/admin/documents");
   return { success: true as const };
+}
+
+
+export async function createBusinessQuotationAction(input: unknown) {
+  const result = await createBusinessQuotation(input);
+  if (result.success) {
+    revalidatePath("/admin/documents");
+  }
+  return result;
 }
