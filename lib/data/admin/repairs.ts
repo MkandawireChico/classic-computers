@@ -68,6 +68,8 @@ export interface AdminRepairOverview {
   unassigned: number;
   agedOver7Days: number;
   agedOver14Days: number;
+  completedLast30Days: number;
+  averageTurnaroundDays: number | null;
 }
 
 export async function getAdminRepairOverview(): Promise<AdminRepairOverview> {
@@ -95,7 +97,27 @@ export async function getAdminRepairOverview(): Promise<AdminRepairOverview> {
     count((query) => query.in("status", activeStatuses).lt("created_at", fourteenDaysAgo)),
   ]);
 
-  return { active, awaitingApproval, readyForPickup, unassigned, agedOver7Days, agedOver14Days };
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: completions, error: completionError } = await (supabase.from("repair_status_history" as any) as any)
+    .select("ticket_id,created_at").eq("to_status", "completed").gte("created_at", thirtyDaysAgo);
+  let completedLast30Days = 0;
+  let averageTurnaroundDays: number | null = null;
+  if (!completionError && completions?.length) {
+    const ticketIds = [...new Set(completions.map((row: any) => row.ticket_id))];
+    const { data: tickets } = await (supabase.from("repair_tickets") as any).select("id,created_at").in("id", ticketIds);
+    const createdAtById = new Map((tickets ?? []).map((ticket: any) => [ticket.id, new Date(ticket.created_at).getTime()]));
+    const durations = completions.map((row: any) => {
+      const start = createdAtById.get(row.ticket_id);
+      return typeof start === "number" ? (new Date(row.created_at).getTime() - start) / 86400000 : null;
+    }).filter((value: number | null): value is number => value !== null && value >= 0);
+    completedLast30Days = durations.length;
+    averageTurnaroundDays = durations.length
+      ? Math.round((durations.reduce((sum: number, value: number) => sum + value, 0) / durations.length) * 10) / 10
+      : null;
+  } else if (completionError) {
+    console.error("getAdminRepairOverview status history unavailable:", completionError.message);
+  }
+  return { active, awaitingApproval, readyForPickup, unassigned, agedOver7Days, agedOver14Days, completedLast30Days, averageTurnaroundDays };
 }
 
 export interface AdminRepairDetail {
@@ -118,6 +140,7 @@ export interface AdminRepairDetail {
   guest_email: string | null;
   created_at: string;
   updates: Array<{ id: string; note: string; is_internal: boolean; created_at: string }>;
+  statusHistory: Array<{ id: string; from_status: string | null; to_status: string; changed_by_name: string | null; created_at: string }>;
   workLogs: Array<{ id: string; work_date: string; duration_minutes: number; work_performed: string; technician_name: string | null }>;
   partsCostTotal: number;
   loggedMinutes: number;
@@ -149,20 +172,24 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     .maybeSingle();
   if (error || !ticket) return null;
 
-  const [{ data: updates }, { data: parts }, { data: workLogs }, { data: quotations }, { data: invoices }] = await Promise.all([
+  const [{ data: updates }, { data: parts }, { data: workLogs }, { data: quotations }, { data: invoices }, { data: statusHistory, error: statusHistoryError }] = await Promise.all([
     (supabase.from("repair_updates") as any).select("id, note, is_internal, created_at").eq("ticket_id", id).order("created_at"),
     (supabase.from("repair_parts") as any).select("id, part_name, cost, quantity, product_id, variant_id, inventory_movement_id").eq("ticket_id", id),
     (supabase.from("repair_work_logs" as any) as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
     (supabase.from("business_documents" as any) as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
     (supabase.from("business_documents" as any) as any).select("id,document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "invoice").order("created_at", { ascending: false }),
+    (supabase.from("repair_status_history" as any) as any).select("id,from_status,to_status,changed_by,created_at").eq("ticket_id", id).order("created_at", { ascending: false }),
   ]);
+  if (statusHistoryError) console.error("Repair status history unavailable:", statusHistoryError.message);
   const { data: repairSettings } = await (supabase.from("site_settings") as any)
     .select("value").eq("key", "repair_settings").maybeSingle();
   const configuredRate = Number(repairSettings?.value?.internal_labour_rate_mwk_per_hour);
   const internalLabourRate = Number.isFinite(configuredRate) && configuredRate > 0 ? configuredRate : null;
   const technicianIds = [...new Set((workLogs ?? []).map((entry: any) => entry.technician_id).filter(Boolean))];
-  const { data: technicianProfiles } = technicianIds.length
-    ? await (supabase.from("profiles") as any).select("id,full_name").in("id", technicianIds)
+  const statusActorIds = [...new Set((statusHistory ?? []).map((entry: any) => entry.changed_by).filter(Boolean))];
+  const profileIds = [...new Set([...technicianIds, ...statusActorIds])];
+  const { data: technicianProfiles } = profileIds.length
+    ? await (supabase.from("profiles") as any).select("id,full_name").in("id", profileIds)
     : { data: [] as any[] };
   const technicianNames = new Map((technicianProfiles ?? []).map((profile: any) => [profile.id, profile.full_name]));
   const normalizedParts = (parts ?? []).map((part: any) => ({ ...part, cost: Number(part.cost), quantity: Number(part.quantity) }));
@@ -217,6 +244,13 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     guest_email: ticket.guest_email,
     created_at: ticket.created_at,
     updates: updates ?? [],
+    statusHistory: (statusHistory ?? []).map((entry: any) => ({
+      id: entry.id,
+      from_status: entry.from_status,
+      to_status: entry.to_status,
+      changed_by_name: technicianNames.get(entry.changed_by) ?? null,
+      created_at: entry.created_at,
+    })),
     workLogs: normalizedWorkLogs,
     parts: normalizedParts,
     partsCostTotal: normalizedParts.reduce((total: number, part: any) => total + part.cost * part.quantity, 0),
