@@ -64,6 +64,8 @@ export default async function CategoryShopPage({
 
   const filters = parseShopSearchParams(searchParams, { categorySlug: category.slug });
   const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 24 }), getBrands(), getCategories()]);
+  const requestedPage = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
+  if (searchParams.page !== undefined && requestedPage !== result.page) redirect(categoryPageHref(category.slug, searchParams, result.page));
 
   return (
     <main className="min-h-screen bg-slate-50/60">
