@@ -29,8 +29,8 @@ export default function HomePage() {
       <Hero />
       <CategorySection />
       <FeaturedProductsSection />
-      <CorporateSupplySection />
       <ServicesSection />
+      <CorporateSupplySection />
       <ReviewsSection />
       <LocationSection />
     </>
