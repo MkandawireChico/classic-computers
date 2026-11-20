@@ -59,7 +59,7 @@ export function AddToCartButton({
     <div className="flex-1">
       <Button
         variant={buyNow ? "outline" : "primary"}
-        className={`min-h-12 w-full rounded-lg font-bold shadow-sm transition-colors ${buyNow ? "border border-brand-300 bg-white text-brand-800 hover:bg-brand-50" : "bg-[#123653] text-white hover:bg-brand-800"}`}
+        className={`min-h-12 w-full rounded-lg font-bold shadow-sm transition-colors ${buyNow ? "border border-brand-300 bg-white text-brand-800 hover:bg-brand-50" : "bg-navy-900 text-white hover:bg-brand-800"}`}
         onClick={handleClick}
         isLoading={isPending}
         disabled={disabled || isPending}
