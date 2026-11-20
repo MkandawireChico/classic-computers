@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { searchShop } from "@/lib/data/products";
 import { getBrands } from "@/lib/data/brands";
 import { getCategories } from "@/lib/data/categories";
@@ -33,6 +34,8 @@ export default async function ShopPage({
 }) {
   const filters = parseShopSearchParams(searchParams);
   const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 24 }), getBrands(), getCategories()]);
+  const requestedPage = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
+  if (searchParams.page !== undefined && requestedPage !== result.page) redirect(pageHref(searchParams, result.page));
   const hasActiveFilters = Boolean(
     filters.query || filters.brandSlugs?.length || filters.minPrice !== undefined || filters.maxPrice !== undefined || filters.availableOnly,
   );
