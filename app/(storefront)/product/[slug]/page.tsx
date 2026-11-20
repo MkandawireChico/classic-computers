@@ -236,7 +236,6 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
           </div>
         </div>
-        </ProductVariantProvider>
 
         {product.description ? (
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:mt-10 sm:rounded-3xl sm:p-7">
@@ -344,6 +343,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         </section>
 
         <RelatedProducts products={related} />
+        </ProductVariantProvider>
       </div>
     </div>
   );
