@@ -10,6 +10,7 @@ import { VariantsManager } from "@/components/admin/variants-manager";
 import { SpecificationsManager } from "@/components/admin/specifications-manager";
 import { ImagesManager } from "@/components/admin/images-manager";
 import { RentalSettingsManager } from "@/components/admin/rental-settings-manager";
+import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 
 export default async function EditProductPage({ params }: { params: { id: string } }) {
   try {
@@ -52,10 +53,13 @@ export default async function EditProductPage({ params }: { params: { id: string
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{product.name}</h1>
-        <p className="text-sm text-gray-500">SKU {product.sku}</p>
-      </div>
+      <AdminDetailHeader
+        eyebrow="Commerce · Catalogue"
+        title={product.name}
+        description={`SKU ${product.sku}. Manage product information, variants, specifications, images and rental settings.`}
+        backHref="/admin/products"
+        backLabel="Back to products"
+      />
 
       <Card>
         <CardHeader>
