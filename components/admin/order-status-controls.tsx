@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { updateOrderStatusAction, updatePaymentStatusAction } from "@/app/admin/orders/actions";
+import { updateOrderStatusAction } from "@/app/admin/orders/actions";
 
 const NEXT_STATUS: Record<string, string[]> = {
   pending: ["confirmed", "cancelled"],
@@ -17,28 +17,18 @@ const NEXT_STATUS: Record<string, string[]> = {
   refunded: [],
 };
 
-const NEXT_PAYMENT: Record<string, string[]> = {
-  unpaid: ["paid"],
-  partial: ["paid", "refunded"],
-  paid: ["refunded"],
-  refunded: [],
-};
-
 export function OrderStatusControls({
   orderId,
   currentStatus,
-  currentPaymentStatus,
 }: {
   orderId: string;
   currentStatus: string;
-  currentPaymentStatus: string;
 }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const statusOptions = NEXT_STATUS[currentStatus] ?? [];
-  const paymentOptions = NEXT_PAYMENT[currentPaymentStatus] ?? [];
 
   async function handleStatus(newStatus: string) {
     if (isPending) return;
@@ -50,25 +40,6 @@ export function OrderStatusControls({
       else router.refresh();
     } catch {
       setError("We could not update the order status. Please try again.");
-    } finally {
-      setIsPending(false);
-    }
-  }
-
-  async function handlePayment(newPaymentStatus: string) {
-    if (isPending) return;
-    const confirmation = newPaymentStatus === "paid"
-      ? "Confirm you have checked the bank or mobile-money transaction and matched the amount and order reference. Only continue after funds are received."
-      : "Confirm the refund has been processed and verified.";
-    if (!window.confirm(confirmation)) return;
-    setError(null);
-    setIsPending(true);
-    try {
-      const result = await updatePaymentStatusAction({ orderId, newPaymentStatus });
-      if (!result.success) setError(result.error);
-      else router.refresh();
-    } catch {
-      setError("We could not update the payment status. Please try again.");
     } finally {
       setIsPending(false);
     }
@@ -93,19 +64,6 @@ export function OrderStatusControls({
         <p className="text-xs text-gray-500">This order status is final.</p>
       )}
 
-      {paymentOptions.length > 0 ? (
-        <div>
-          <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Payment verification</p>
-          <p className="mb-3 text-xs leading-5 text-slate-500">Verify the transaction in your bank or mobile-money account before recording a payment outcome. This action updates the order record.</p>
-          <div className="flex flex-wrap gap-2">
-            {paymentOptions.map((s) => (
-              <Button key={s} size="sm" variant="outline" isLoading={isPending} onClick={() => handlePayment(s)}>
-                {s === "paid" ? "Confirm payment received" : "Record refund"}
-              </Button>
-            ))}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
