@@ -268,6 +268,13 @@ The development server is available at <http://localhost:3000>. Local Auth
 emails are captured by Supabase's local mail testing service; they are not sent
 to real customer addresses.
 
+When using a hosted Supabase development project from localhost, set
+`NEXT_PUBLIC_SITE_URL=http://localhost:3000` in `.env.local` and add
+`http://localhost:3000/**` to the Supabase project's Auth redirect URL allow
+list. Development builds now force auth callback URLs to localhost unless an
+explicit localhost or 127.0.0.1 origin is configured. Production builds keep
+using the configured production origin.
+
 For a hosted Supabase development project, use its project URL and anon key.
 Apply migrations only to a database you are authorized to change.
 
