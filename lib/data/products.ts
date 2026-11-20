@@ -156,7 +156,7 @@ export async function searchShop(filters: ShopFilters): Promise<ShopResult> {
       return { items: [], total: 0, page, pageSize };
     }
     brandIds = (brands ?? []).map((brand: any) => brand.id);
-    if (brandIds.length === 0) return { items: [], total: 0, page, pageSize };
+    if (!brandIds || brandIds.length === 0) return { items: [], total: 0, page, pageSize };
   }
 
   const queryTerm = filters.query?.trim().replace(/[%_]/g, "") || null;
