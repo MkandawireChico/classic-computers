@@ -109,6 +109,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             paymentStatus={order.payment_status}
             total={order.total}
             notes={order.notes}
+            hasVerifiedTransactions={order.paymentTransactions.length > 0}
           />
           {needsLegacyReconciliation ? (
             <Card>
