@@ -238,7 +238,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
 
       <details open className="pb-2">
         <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-          <span className="flex items-center justify-between">Price (MWK) <span aria-hidden="true" className="text-gray-400">+</span></span>
+          <span className="flex items-center justify-between">Starting price (MWK) <span aria-hidden="true" className="text-gray-400">+</span></span>
         </summary>
         <form onSubmit={submitPriceRange} className="mt-3 space-y-3">
           <div className="grid grid-cols-2 gap-2">
