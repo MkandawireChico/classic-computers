@@ -65,7 +65,7 @@ export default async function OrdersPage() {
                     {new Date(order.created_at).toLocaleDateString("en-MW", { timeZone: "Africa/Blantyre", year: "numeric", month: "long", day: "numeric" })}
                   </p>
                   <div className="mt-2">
-                    <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" ? "neutral" : "warning"}>
+                    <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" || order.payment_status === "partially_refunded" ? "neutral" : "warning"}>
                       Payment {order.payment_status.replace(/_/g, " ")}
                     </Badge>
                   </div>
