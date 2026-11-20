@@ -38,6 +38,10 @@ export function OrderStatusControls({
 
   async function handleStatus(newStatus: string) {
     if (isPending) return;
+    if (newStatus === "cancelled") {
+      const confirmed = window.confirm("Cancel this order? Check the payment and fulfilment records before continuing.");
+      if (!confirmed) return;
+    }
     setError(null);
     setIsPending(true);
     try {
@@ -60,7 +64,14 @@ export function OrderStatusControls({
           <p className="mb-1 text-xs font-medium uppercase text-gray-500">Move order to</p>
           <div className="flex flex-wrap gap-2">
             {statusOptions.map((s) => (
-              <Button key={s} size="sm" variant="outline" isLoading={isPending} onClick={() => handleStatus(s)}>
+              <Button
+                key={s}
+                size="sm"
+                variant={s === "cancelled" ? "danger" : "outline"}
+                isLoading={isPending}
+                disabled={isPending}
+                onClick={() => handleStatus(s)}
+              >
                 {s.replace(/_/g, " ")}
               </Button>
             ))}
