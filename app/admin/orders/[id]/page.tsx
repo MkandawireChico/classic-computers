@@ -70,20 +70,30 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             </div>
           </Card>
 
-          {order.fulfillment_type === "delivery" && order.delivery_snapshot ? (
+          {order.fulfillment_type === "delivery" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Delivery address (recorded at order time)</CardTitle>
+                <CardTitle>Delivery details</CardTitle>
               </CardHeader>
-              <div className="text-sm text-gray-700">
-                {order.delivery_snapshot.full_name ? <p>{order.delivery_snapshot.full_name}</p> : null}
-                {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
-                {order.delivery_snapshot.line2 ? <p>{order.delivery_snapshot.line2}</p> : null}
-                <p>{[order.delivery_snapshot.city, order.delivery_snapshot.district].filter(Boolean).join(", ")}</p>
-                {order.delivery_snapshot.phone ? <p>{order.delivery_snapshot.phone}</p> : null}
-              </div>
+              {order.delivery_snapshot ? (
+                <div className="space-y-1 text-sm text-slate-700">
+                  {order.delivery_snapshot.full_name ? <p className="font-semibold text-slate-950">{order.delivery_snapshot.full_name}</p> : null}
+                  {order.delivery_snapshot.line1 ? <p>{order.delivery_snapshot.line1}</p> : null}
+                  {order.delivery_snapshot.line2 ? <p>{order.delivery_snapshot.line2}</p> : null}
+                  <p>{[order.delivery_snapshot.city, order.delivery_snapshot.district].filter(Boolean).join(", ") || "Location not recorded"}</p>
+                  {order.delivery_snapshot.phone ? <a href={`tel:${order.delivery_snapshot.phone}`} className="mt-2 inline-flex font-semibold text-brand-700 hover:text-brand-900">{order.delivery_snapshot.phone}</a> : null}
+                  <p className="pt-2 text-xs text-slate-500">Address snapshot captured when the order was placed.</p>
+                </div>
+              ) : (
+                <p className="text-sm leading-6 text-amber-800">No delivery address snapshot is available for this historical order. Contact the customer before arranging dispatch.</p>
+              )}
             </Card>
-          ) : null}
+          ) : (
+            <Card>
+              <CardHeader><CardTitle>Collection method</CardTitle></CardHeader>
+              <p className="text-sm leading-6 text-slate-600">Customer selected pickup. Move the order to Ready for pickup after preparation and stock checks are complete.</p>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
