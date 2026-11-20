@@ -69,6 +69,19 @@ export default async function OrdersPage() {
                       Payment {order.payment_status.replace(/_/g, " ")}
                     </Badge>
                   </div>
+                  <p className="mt-2 text-xs font-semibold text-slate-600">
+                    {order.outstanding_balance === null
+                      ? "Historical payment balance needs review"
+                      : order.outstanding_balance > 0
+                        ? `Outstanding: ${formatMoney(order.outstanding_balance)}`
+                        : order.total_refunded > 0
+                          ? `Refunded: ${formatMoney(order.total_refunded)}`
+                          : order.payment_status === "paid" && order.has_verified_transactions
+                            ? "Payment verified in full"
+                            : order.payment_status === "unpaid"
+                              ? "Payment pending"
+                              : "No balance due"}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-base font-bold text-slate-950 sm:text-lg">{formatMoney(order.total)}</p>
