@@ -28,6 +28,28 @@ export async function listInventory(filters: InventoryFilters) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  let matchingProductIds: string[] | null = null;
+  const term = filters.query?.trim();
+  if (term) {
+    const [nameMatches, skuMatches, variantMatches] = await Promise.all([
+      (supabase.from("products") as any).select("id").ilike("name", `%${term}%`),
+      (supabase.from("products") as any).select("id").ilike("sku", `%${term}%`),
+      (supabase.from("product_variants") as any).select("product_id").ilike("sku", `%${term}%`),
+    ]);
+    if (nameMatches.error || skuMatches.error || variantMatches.error) {
+      console.error("listInventory search failed:", nameMatches.error?.message ?? skuMatches.error?.message ?? variantMatches.error?.message);
+      return { items: [] as AdminInventoryRow[], total: 0, page, pageSize };
+    }
+    matchingProductIds = Array.from(new Set([
+      ...(nameMatches.data ?? []).map((row: any) => row.id),
+      ...(skuMatches.data ?? []).map((row: any) => row.id),
+      ...(variantMatches.data ?? []).map((row: any) => row.product_id),
+    ]));
+    if (matchingProductIds.length === 0) {
+      return { items: [] as AdminInventoryRow[], total: 0, page, pageSize };
+    }
+  }
+
   let query = (supabase.from("inventory") as any)
     .select(
       `
@@ -40,6 +62,7 @@ export async function listInventory(filters: InventoryFilters) {
     .order("updated_at", { ascending: false });
 
   if (filters.status) query = query.eq("status", filters.status);
+  if (matchingProductIds) query = query.in("product_id", matchingProductIds);
 
   const { data, error, count } = await query.range(from, to);
   if (error) {
@@ -59,13 +82,6 @@ export async function listInventory(filters: InventoryFilters) {
     status: row.status,
     updated_at: row.updated_at,
   }));
-
-  if (filters.query && filters.query.trim()) {
-    const term = filters.query.trim().toLowerCase();
-    items = items.filter(
-      (i) => i.product_name.toLowerCase().includes(term) || i.sku.toLowerCase().includes(term),
-    );
-  }
 
   return { items, total: count ?? items.length, page, pageSize };
 }
