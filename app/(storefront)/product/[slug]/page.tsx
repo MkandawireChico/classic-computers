@@ -124,14 +124,14 @@ export default async function ProductPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/60">
+    <div className="min-h-screen bg-[#f5f7f9]">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-      <div className="section-shell py-6 sm:py-8 lg:py-10">
-        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+      <div className="section-shell py-5 sm:py-8 lg:py-10">
+        <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium sm:mb-7 sm:text-sm">
           <Link href="/shop" className="rounded px-1 font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             Shop
           </Link>
@@ -147,11 +147,11 @@ export default async function ProductPage({ params }: { params: Params }) {
           <span aria-current="page" className="min-w-0 text-slate-600">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.12fr)_minmax(390px,0.88fr)] lg:gap-10">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-8 xl:gap-10">
           <div className="min-w-0">
-            <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-3 shadow-sm sm:p-5">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm sm:rounded-3xl sm:p-5">
               <div className="mb-4 flex items-center justify-between gap-3 px-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Product view</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Product images</p>
                 {product.condition !== "new" ? (
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                     {product.condition}
@@ -162,7 +162,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               </div>
               <ProductGallery images={product.images} productName={product.name} productId={product.id} />
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 sm:mt-4 sm:rounded-2xl">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Product reference</p>
                 <p className="mt-1 font-mono text-xs font-semibold text-slate-700">{product.sku}</p>
@@ -175,7 +175,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
 
           <div className="min-w-0 lg:sticky lg:top-28">
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:p-8">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-7 lg:p-8">
               <div className="mb-6">
                 <div className="mb-3 flex flex-wrap items-center gap-2">
                   {product.brand ? (
@@ -223,7 +223,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         </div>
 
         {product.description ? (
-          <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:mt-10 sm:p-7">
+          <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:mt-10 sm:rounded-3xl sm:p-7">
             <div className="mb-4 flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-brand-600" />
               <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Description</h2>
@@ -233,7 +233,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         ) : null}
 
         {product.specifications.length > 0 ? (
-          <section className="mt-8 sm:mt-10">
+          <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 sm:mt-10 sm:rounded-3xl sm:p-7">
             <div className="mb-4 flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-cyan-500" />
               <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Specifications</h2>
