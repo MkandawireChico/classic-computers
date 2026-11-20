@@ -83,6 +83,15 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           </p>
         </section>
       ) : null}
+      {!hasVerifiedTransactions && ["paid", "partial", "refunded"].includes(order.payment_status) ? (
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <p className="text-sm font-bold text-slate-900">Payment record</p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            The payment status is available, but detailed transaction history is not available for this order. Contact our team if you need payment or refund confirmation.
+          </p>
+        </section>
+      ) : null}
+
       {order.payment_status === "refunded" ? (
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
           <p className="text-sm font-bold text-slate-900">Payment marked as refunded</p>
