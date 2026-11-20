@@ -44,13 +44,14 @@ export default async function InventoryDetailPage({ params }: { params: { id: st
           <p className="text-sm text-gray-500">No movements recorded yet.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[500px] text-sm">
+            <table className="w-full min-w-[680px] text-sm">
               <thead className="text-left text-xs uppercase text-gray-500">
                 <tr>
                   <th className="p-2">Date</th>
                   <th className="p-2">Type</th>
                   <th className="p-2">Change</th>
                   <th className="p-2">Reference</th>
+                  <th className="p-2">Recorded by</th>
                   <th className="p-2">Note</th>
                 </tr>
               </thead>
@@ -67,7 +68,11 @@ export default async function InventoryDetailPage({ params }: { params: { id: st
                       {m.quantity_delta > 0 ? "+" : ""}
                       {m.quantity_delta}
                     </td>
-                    <td className="p-2 text-gray-500">{m.reference_type ?? "—"}</td>
+                    <td className="p-2 text-gray-500">
+                      <span className="block">{m.reference_type ?? "Manual"}</span>
+                      {m.reference_id ? <span className="block max-w-[150px] truncate font-mono text-[10px]" title={m.reference_id}>{m.reference_id}</span> : null}
+                    </td>
+                    <td className="p-2 text-gray-600">{m.actor_name ?? "Staff member"}</td>
                     <td className="p-2 text-gray-600">{m.note ?? "—"}</td>
                   </tr>
                 ))}
