@@ -30,13 +30,13 @@ export function SortSelect() {
   }
 
   return (
-    <label className="flex min-h-10 items-center gap-2 text-sm text-gray-700">
+    <label className="flex min-h-10 w-full items-center justify-between gap-2 text-sm text-gray-700 sm:w-auto sm:justify-start">
       <span className="shrink-0 font-medium">Sort by</span>
       <select
         value={current}
         onChange={(e) => handleChange(e.target.value)}
         aria-label="Sort products"
-        className="h-10 min-w-36 rounded-md border border-surface-border bg-white px-3 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
+        className="h-10 min-w-0 flex-1 rounded-md border border-surface-border bg-white px-3 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 sm:min-w-36 sm:flex-none"
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
