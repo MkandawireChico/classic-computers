@@ -8,11 +8,16 @@ import { OrderStatusControls } from "@/components/admin/order-status-controls";
 import { InternalNotesEditor } from "@/components/admin/internal-notes-editor";
 import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
 import { AdminOrderPaymentCard } from "@/components/admin/admin-order-payment-card";
+import { PaymentTransactionForm } from "@/components/admin/payment-transaction-form";
 
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("orders.read");
   const order = await getAdminOrderById(params.id);
   if (!order) notFound();
+
+  const totalReceived = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : -Number(transaction.amount)), 0);
+  const outstandingBalance = Math.max(order.total - totalReceived, 0);
+  const refundableBalance = Math.max(totalReceived, 0);
 
   return (
     <div className="space-y-6">
@@ -106,6 +111,42 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           />
           <Card>
             <CardHeader>
+              <CardTitle>Payment balance</CardTitle>
+            </CardHeader>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between text-slate-600"><span>Verified net received</span><strong className="text-slate-900">{formatMoney(totalReceived)}</strong></div>
+              <div className="flex justify-between text-slate-600"><span>Outstanding</span><strong className="text-slate-900">{formatMoney(outstandingBalance)}</strong></div>
+              <div className="flex justify-between text-slate-600"><span>Available to refund</span><strong className="text-slate-900">{formatMoney(refundableBalance)}</strong></div>
+            </div>
+          </Card>
+          <PaymentTransactionForm
+            orderId={order.id}
+            currency={order.currency}
+            paymentMethod={order.payment_method}
+            outstanding={outstandingBalance}
+            refundable={refundableBalance}
+          />
+          <Card>
+            <CardHeader><CardTitle>Verified transactions</CardTitle></CardHeader>
+            {order.paymentTransactions.length === 0 ? (
+              <p className="text-sm text-gray-500">No verified payment or refund transactions recorded.</p>
+            ) : (
+              <ol className="space-y-3">
+                {order.paymentTransactions.map((transaction) => (
+                  <li key={transaction.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-semibold capitalize text-slate-900">{transaction.transaction_type} · {transaction.provider}</span>
+                      <strong className={transaction.transaction_type === "refund" ? "text-rose-700" : "text-emerald-700"}>{transaction.transaction_type === "refund" ? "−" : "+"}{formatMoney(Number(transaction.amount))}</strong>
+                    </div>
+                    {transaction.provider_reference ? <p className="mt-1 text-xs text-slate-500">Reference: {transaction.provider_reference}</p> : null}
+                    <p className="mt-1 text-xs text-slate-500">{new Date(transaction.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</p>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </Card>
+          <Card>
+            <CardHeader>
               <CardTitle>Payment status history</CardTitle>
             </CardHeader>
             {order.paymentHistory.length === 0 ? (
@@ -136,7 +177,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             <div className="mb-3 flex gap-2">
               <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
             </div>
-            <OrderStatusControls orderId={order.id} currentStatus={order.order_status} currentPaymentStatus={order.payment_status} />
+            <OrderStatusControls orderId={order.id} currentStatus={order.order_status} />
           </Card>
 
           <Card>
