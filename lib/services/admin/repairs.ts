@@ -221,7 +221,12 @@ export async function addRepairPart(input: unknown): Promise<ServiceResult> {
       part.id, d.productId, d.variantId ?? null, d.quantity, d.ticketId,
     );
     if (!consumption.success) {
-      await (supabase.from("repair_parts") as any).delete().eq("id", part.id);
+      // Keep the part row whenever a stock movement might already exist.
+      // Deleting it would sever the audit reference and make retries unsafe.
+      if (!consumption.error.startsWith("Stock was deducted") &&
+          !consumption.error.startsWith("Stock movement was not found")) {
+        await (supabase.from("repair_parts") as any).delete().eq("id", part.id);
+      }
       return consumption;
     }
   }
@@ -291,7 +296,7 @@ async function consumeRepairPartInventoryInternal(
     .lt("quantity_delta", 0)
     .maybeSingle();
   if (!movement) {
-    return { success: false, error: "Stock movement was not found after deduction. Do not retry this part; ask an administrator to reconcile it." };
+    return { success: false, error: "Stock was deducted, but its movement record could not be linked. Do not retry this part; ask an administrator to reconcile it." };
   }
 
   const { error: linkError } = await (supabase.from("repair_parts") as any)
@@ -327,16 +332,26 @@ export async function removeRepairPart(partId: string, ticketId: string): Promis
       return { success: false, error: "Could not find the linked stock record. The repair part was kept for reconciliation." };
     }
 
-    const { error: returnError } = await supabase.rpc("apply_inventory_movement" as any, {
-      p_inventory_id: inventoryRow.id,
-      p_movement_type: "return",
-      p_quantity_delta: part.quantity,
-      p_reference_type: "repair_part_return",
-      p_reference_id: partId,
-      p_note: `Removed from repair ${ticketId}`,
-    } as any);
-    if (returnError) {
-      return { success: false, error: "Could not restore the part to stock. The repair part was kept." };
+    const { data: priorReturn, error: returnLookupError } = await (supabase.from("inventory_movements") as any)
+      .select("id")
+      .eq("reference_type", "repair_part_return")
+      .eq("reference_id", partId)
+      .maybeSingle();
+    if (returnLookupError) {
+      return { success: false, error: "Could not verify whether the part was already returned. The repair part was kept." };
+    }
+    if (!priorReturn) {
+      const { error: returnError } = await supabase.rpc("apply_inventory_movement" as any, {
+        p_inventory_id: inventoryRow.id,
+        p_movement_type: "return",
+        p_quantity_delta: part.quantity,
+        p_reference_type: "repair_part_return",
+        p_reference_id: partId,
+        p_note: `Removed from repair ${ticketId}`,
+      } as any);
+      if (returnError) {
+        return { success: false, error: "Could not restore the part to stock. The repair part was kept." };
+      }
     }
   }
 
