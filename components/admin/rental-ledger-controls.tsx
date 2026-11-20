@@ -35,6 +35,8 @@ export function RentalLedgerControls({ rental }: { rental: AdminRentalDetail }) 
   const refundable = Math.max(net, 0);
   const recordedEvents = new Set(rental.conditionReports.map((row) => row.event_type));
   const availableEvents = ["checkout", "return", "damage", "loss"].filter((event) => !recordedEvents.has(event));
+  const selectedEvent = availableEvents.includes(eventType) ? eventType : availableEvents[0] ?? "checkout";
+  const hasRefund = refunded > 0;
   const latestReport = rental.conditionReports[rental.conditionReports.length - 1];
 
   async function submitPayment(event: FormEvent<HTMLFormElement>) {
@@ -64,7 +66,7 @@ export function RentalLedgerControls({ rental }: { rental: AdminRentalDetail }) 
     setPending(true); setError(null);
     try {
       const result = await recordRentalConditionAction({
-        bookingId: rental.id, eventType, condition, notes: conditionNotes,
+        bookingId: rental.id, eventType: selectedEvent, condition, notes: conditionNotes,
       });
       if (!result.success) { setError(result.error); return; }
       setConditionNotes(""); router.refresh();
@@ -105,8 +107,9 @@ export function RentalLedgerControls({ rental }: { rental: AdminRentalDetail }) 
             <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} className="mt-0.5 h-4 w-4" />
             <span>I checked the provider account and confirmed this {type === "payment" ? "payment was received" : "refund was processed"}.</span>
           </label>
-          <Button type="submit" size="sm" isLoading={pending} disabled={pending || !verified || (type === "payment" ? outstanding === null || outstanding <= 0 : refundable <= 0)}>{type === "payment" ? "Record verified payment" : "Record verified refund"}</Button>
+          <Button type="submit" size="sm" isLoading={pending} disabled={pending || !verified || (type === "payment" ? outstanding === null || outstanding <= 0 || hasRefund : refundable <= 0)}>{type === "payment" ? "Record verified payment" : "Record verified refund"}</Button>
         </form>
+        {type === "payment" && hasRefund ? <p className="mt-2 text-xs text-amber-800">Further payments are disabled after a refund has been recorded.</p> : null}
         {rental.paymentTransactions.length ? (
           <ol className="mt-4 space-y-2 border-t border-slate-100 pt-3">
             {rental.paymentTransactions.map((row) => <li key={row.id} className="flex flex-wrap justify-between gap-2 text-xs">
@@ -123,7 +126,7 @@ export function RentalLedgerControls({ rental }: { rental: AdminRentalDetail }) 
         {availableEvents.length ? (
           <form onSubmit={submitCondition} className="mt-4 space-y-3">
             <label className="block text-xs font-semibold text-slate-700">Inspection type
-              <select value={eventType} onChange={(e) => setEventType(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm">
+              <select value={selectedEvent} onChange={(e) => setEventType(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm">
                 {availableEvents.map((event) => <option key={event} value={event}>{EVENT_LABELS[event]}</option>)}
               </select>
             </label>
