@@ -106,6 +106,31 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           />
           <Card>
             <CardHeader>
+              <CardTitle>Payment status history</CardTitle>
+            </CardHeader>
+            {order.paymentHistory.length === 0 ? (
+              <p className="text-sm text-gray-500">No payment status changes recorded.</p>
+            ) : (
+              <ol className="space-y-3 border-l border-surface-border pl-4">
+                {order.paymentHistory.map((event, index) => (
+                  <li key={index} className="text-sm text-gray-600">
+                    <p className="font-semibold capitalize text-gray-900">
+                      {event.from_status ? event.from_status.replace(/_/g, " ") + " → " : ""}
+                      {event.to_status.replace(/_/g, " ")}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      {new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
+            <p className="mt-3 text-xs leading-5 text-slate-500">
+              This history records status changes only. Individual payment amounts, provider references and refund transactions are not yet stored as ledger entries.
+            </p>
+          </Card>
+          <Card>
+            <CardHeader>
               <CardTitle>Order progress</CardTitle>
             </CardHeader>
             <div className="mb-3 flex gap-2">
