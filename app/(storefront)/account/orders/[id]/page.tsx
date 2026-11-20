@@ -14,11 +14,13 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   if (!order) notFound();
   const reviewStatuses = await getMyReviewStatuses({ orderIds: [order.id] });
   const paymentProvider = getManualPaymentProviderFromNotes(order.payment_method, order.notes);
-  const totalReceived = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : -Number(transaction.amount)), 0);
-  const outstandingBalance = Math.max(order.total - totalReceived, 0);
+  const totalPaid = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : 0), 0);
+  const totalRefunded = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "refund" ? Number(transaction.amount) : 0), 0);
+  const totalReceived = totalPaid - totalRefunded;
+  const outstandingBalance = totalRefunded > 0 ? 0 : Math.max(order.total - totalReceived, 0);
   const hasVerifiedTransactions = order.paymentTransactions.length > 0;
   const shouldShowPaymentInstructions = Boolean(paymentProvider)
-    && (order.payment_status === "unpaid" || (order.payment_status === "partial" && hasVerifiedTransactions && outstandingBalance > 0));
+    && (order.payment_status === "unpaid" || (order.payment_status === "partial" && hasVerifiedTransactions && totalRefunded === 0 && outstandingBalance > 0));
   const amountToSend = order.payment_status === "partial" ? outstandingBalance : order.total;
   const isBankProvider = paymentProvider && "accountNumber" in paymentProvider;
   const walletNumber = paymentProvider && "walletNumber" in paymentProvider ? paymentProvider.walletNumber : null;
@@ -42,7 +44,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
       />
       <div className="flex flex-wrap gap-2">
         <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
-        <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" ? "neutral" : "warning"}>{order.payment_status.replace(/_/g, " ")}</Badge>
+        <Badge variant={order.payment_status === "paid" ? "success" : order.payment_status === "refunded" || order.payment_status === "partially_refunded" ? "neutral" : "warning"}>{order.payment_status.replace(/_/g, " ")}</Badge>
         <Badge variant="neutral">{order.fulfillment_type === "pickup" ? "Pickup" : "Delivery"}</Badge>
       </div>
 
@@ -92,6 +94,14 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </section>
       ) : null}
 
+      {order.payment_status === "partially_refunded" ? (
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <p className="text-sm font-bold text-slate-900">Partial refund recorded</p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            We have recorded a refund of {formatMoney(totalRefunded)}. No further payment is due for this order. Contact our team if you need the transaction details.
+          </p>
+        </section>
+      ) : null}
       {order.payment_status === "refunded" ? (
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
           <p className="text-sm font-bold text-slate-900">Payment marked as refunded</p>
@@ -103,7 +113,8 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="verified-payments-heading">
           <h2 id="verified-payments-heading" className="text-sm font-bold text-slate-950">Verified payments and refunds</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <PaymentDetail label="Net amount received" value={formatMoney(totalReceived)} />
+            <PaymentDetail label="Net amount retained" value={formatMoney(totalReceived)} />
+            <PaymentDetail label="Total refunded" value={formatMoney(totalRefunded)} />
             <PaymentDetail label="Order total" value={formatMoney(order.total)} />
             <PaymentDetail label="Outstanding balance" value={formatMoney(outstandingBalance)} />
           </div>
