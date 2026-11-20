@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requirePermission } from "@/lib/auth/permissions";
+import { getMyPermissions } from "@/lib/auth/permissions";
 import { convertAcceptedQuotationToInvoice, recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
 
 export async function convertQuotationToInvoiceAction(quotationId: string) {
@@ -43,13 +43,12 @@ export async function recordStaffQuotationDecision(documentId: string, decision:
     return { success: false as const, error: "This quotation is not awaiting a decision." };
   }
 
-  const permission = document.source_type === "order" ? "orders.write"
-    : document.source_type === "rental" ? "rentals.write" : "repairs.write";
-  try {
-    await requirePermission(permission);
-  } catch {
-    return { success: false as const, error: "You don't have permission to record this decision." };
-  }
+  const permissions = await getMyPermissions();
+  const allowed = document.source_type === "order" ? permissions.has("orders.write")
+    : document.source_type === "rental" ? permissions.has("rentals.write")
+    : document.source_type === "repair" ? permissions.has("repairs.write")
+    : ["orders.write", "repairs.write", "rentals.write"].some((key) => permissions.has(key));
+  if (!allowed) return { success: false as const, error: "You don't have permission to record this decision." };
 
   const { error } = await (supabase.from("business_document_decisions") as any).insert({
     document_id: document.id,
