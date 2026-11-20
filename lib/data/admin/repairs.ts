@@ -84,6 +84,7 @@ export interface AdminRepairDetail {
   workLogs: Array<{ id: string; work_date: string; duration_minutes: number; work_performed: string; technician_name: string | null }>;
   partsCostTotal: number;
   loggedMinutes: number;
+  internalLabourRate: number | null;
   latestQuotation: { document_number: number; status: string; taxable_amount: number; grand_total: number } | null;
   parts: Array<{
     id: string;
@@ -116,6 +117,10 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     (supabase.from("repair_work_logs" as any) as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
     (supabase.from("business_documents" as any) as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
   ]);
+  const { data: repairSettings } = await (supabase.from("site_settings") as any)
+    .select("value").eq("key", "repair_settings").maybeSingle();
+  const configuredRate = Number(repairSettings?.value?.internal_labour_rate_mwk_per_hour);
+  const internalLabourRate = Number.isFinite(configuredRate) && configuredRate > 0 ? configuredRate : null;
   const technicianIds = [...new Set((workLogs ?? []).map((entry: any) => entry.technician_id).filter(Boolean))];
   const { data: technicianProfiles } = technicianIds.length
     ? await (supabase.from("profiles") as any).select("id,full_name").in("id", technicianIds)
@@ -153,6 +158,7 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     parts: normalizedParts,
     partsCostTotal: normalizedParts.reduce((total: number, part: any) => total + part.cost * part.quantity, 0),
     loggedMinutes: normalizedWorkLogs.reduce((total: number, entry: any) => total + entry.duration_minutes, 0),
+    internalLabourRate,
     latestQuotation: latest ? {
       document_number: Number(latest.document_number),
       status: latest.status,
