@@ -267,7 +267,7 @@ export function RepairDetailControls({
             type="number"
             min="0"
             step="0.01"
-            placeholder="Cost"
+            placeholder="Unit cost"
             value={partForm.cost}
             onChange={(e) => setPartForm((f) => ({ ...f, cost: Number(e.target.value) }))}
             className="w-24 rounded-card border border-surface-border px-2 py-1.5 text-sm"
