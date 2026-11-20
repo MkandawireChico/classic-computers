@@ -92,7 +92,7 @@ export function PurchasePanel({
         </section>
       ) : null}
       <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Catalogue price</p>
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{hasVariants ? "Selected configuration price" : "Catalogue price"}</p>
         <div className="flex flex-wrap items-baseline gap-2">
         {onSale ? (
           <>
@@ -103,6 +103,11 @@ export function PurchasePanel({
             <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
         )}
         </div>
+        {hasVariants && product.display_price < effectivePrice ? (
+          <p className="mt-2 text-xs font-semibold text-brand-800">
+            Starting configurations from {formatMoney(product.display_price)}
+          </p>
+        ) : null}
         <p className="mt-2 text-xs leading-5 text-slate-600">Displayed price excludes VAT and PPDA. These are calculated separately on quotations and invoices.</p>
       </div>
 
