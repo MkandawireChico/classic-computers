@@ -17,6 +17,18 @@ interface Params {
   category: string;
 }
 
+function categoryPageHref(categorySlug: string, searchParams: Record<string, string | string[] | undefined>, page: number): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (Array.isArray(value)) value.forEach((item) => params.append(key, item));
+    else if (typeof value === "string") params.set(key, value);
+  }
+  if (page <= 1) params.delete("page");
+  else params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/shop/${categorySlug}?${query}` : `/shop/${categorySlug}`;
+}
+
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const normalizedCategory = normalizeShopCategorySlug(params.category);
   const category = await getCategoryBySlug(normalizedCategory);
@@ -90,9 +102,9 @@ export default async function CategoryShopPage({
             <nav aria-label="Category catalogue pages" className="mt-8 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs font-medium text-slate-500">Showing {((result.page - 1) * result.pageSize) + 1}–{Math.min(result.page * result.pageSize, result.total)} of {result.total} products</p>
               <div className="flex items-center justify-between gap-2 sm:justify-end">
-                {result.page > 1 ? <Link href={`/shop/${category.slug}?page=${result.page - 1}`} rel="prev" className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700">Previous</Link> : <span className="px-3 text-sm text-slate-300">Previous</span>}
+                {result.page > 1 ? <Link href={categoryPageHref(category.slug, searchParams, result.page - 1)} rel="prev" className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700">Previous</Link> : <span className="px-3 text-sm text-slate-300">Previous</span>}
                 <span className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
-                {result.page < Math.ceil(result.total / result.pageSize) ? <Link href={`/shop/${category.slug}?page=${result.page + 1}`} rel="next" className="inline-flex min-h-10 items-center rounded-lg bg-[#123653] px-4 text-sm font-semibold text-white">Next</Link> : <span className="px-4 text-sm text-slate-300">Next</span>}
+                {result.page < Math.ceil(result.total / result.pageSize) ? <Link href={categoryPageHref(category.slug, searchParams, result.page + 1)} rel="next" className="inline-flex min-h-10 items-center rounded-lg bg-[#123653] px-4 text-sm font-semibold text-white">Next</Link> : <span className="px-4 text-sm text-slate-300">Next</span>}
               </div>
             </nav>
           ) : null}
