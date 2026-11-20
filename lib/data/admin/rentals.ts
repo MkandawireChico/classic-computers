@@ -70,7 +70,7 @@ export interface AdminRentalDetail extends AdminRentalListItem {
   guest_email: string | null;
   customer_id: string | null;
   statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string; changed_by_name: string | null; note: string | null }>;
-  paymentTransactions: Array<{ id: string; transaction_type: string; provider: string; amount: number; provider_reference: string | null; created_at: string }>;
+  paymentTransactions: Array<{ id: string; transaction_type: string; provider: string; amount: number; provider_reference: string | null; created_at: string; recorded_by_name: string | null }>;
   conditionReports: Array<{ id: string; event_type: string; condition: string; notes: string; created_at: string; recorded_by_name: string | null }>;
 }
 
@@ -95,7 +95,7 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
 
   const [paymentResult, conditionResult] = await Promise.all([
     (supabase.from("rental_payment_transactions") as any)
-      .select("id, transaction_type, provider, amount, provider_reference, created_at")
+      .select("id, transaction_type, provider, amount, provider_reference, created_at, created_by")
       .eq("booking_id", id)
       .order("created_at", { ascending: true }),
     (supabase.from("rental_condition_reports") as any)
@@ -112,7 +112,11 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
   const { data: profiles } = actorIds.length
     ? await (supabase.from("profiles") as any).select("id, full_name").in("id", actorIds)
     : { data: [] };
-  const reportActorIds = Array.from(new Set((conditionResult.data ?? []).map((entry: any) => entry.recorded_by).filter(Boolean)));
+  const paymentActorIds = (paymentResult.data ?? []).map((entry: any) => entry.created_by).filter(Boolean);
+  const reportActorIds = Array.from(new Set([
+    ...(conditionResult.data ?? []).map((entry: any) => entry.recorded_by),
+    ...paymentActorIds,
+  ].filter(Boolean)));
   const { data: reportProfiles } = reportActorIds.length
     ? await (supabase.from("profiles") as any).select("id, full_name").in("id", reportActorIds)
     : { data: [] };
@@ -144,7 +148,11 @@ export async function getAdminRentalById(id: string): Promise<AdminRentalDetail 
       changed_by_name: entry.changed_by ? actorNames.get(entry.changed_by) ?? null : null,
       note: entry.note ?? null,
     })),
-    paymentTransactions: (paymentResult.data ?? []).map((entry: any) => ({ ...entry, amount: Number(entry.amount) })),
+    paymentTransactions: (paymentResult.data ?? []).map((entry: any) => ({
+      ...entry,
+      amount: Number(entry.amount),
+      recorded_by_name: entry.created_by ? reportActorNames.get(entry.created_by) ?? "Staff member" : "System",
+    })),
     conditionReports: (conditionResult.data ?? []).map((entry: any) => ({
       ...entry,
       recorded_by_name: entry.recorded_by ? reportActorNames.get(entry.recorded_by) ?? "Staff member" : "System",
