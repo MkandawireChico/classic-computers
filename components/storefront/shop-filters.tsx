@@ -36,8 +36,10 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
     Number(availableOnly);
 
   useEffect(() => {
-    setFiltersOpen(activeFilterCount > 0);
-  }, [activeFilterCount]);
+    // Searching alone should not force the filter drawer open. Only
+    // explicitly selected facets expand the controls automatically.
+    setFiltersOpen(selectedFacetCount > 0);
+  }, [selectedFacetCount]);
 
   function updateParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
