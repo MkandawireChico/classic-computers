@@ -61,9 +61,46 @@ export function RepairDetailControls({
     });
   }
 
+  const loggedHours = Math.floor(repair.loggedMinutes / 60);
+  const loggedRemainder = repair.loggedMinutes % 60;
+  const partsBalance = repair.latestQuotation
+    ? repair.latestQuotation.taxable_amount - repair.partsCostTotal
+    : null;
+
   return (
     <div className="space-y-6">
       {error ? <Alert variant="danger">{error}</Alert> : null}
+
+      <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Repair cost overview</p>
+            <h3 className="mt-1 text-base font-semibold text-slate-900">Parts, labour time and selling price</h3>
+          </div>
+          {repair.latestQuotation ? <Badge variant={repair.latestQuotation.status === "accepted" ? "success" : "info"}>Quotation #{repair.latestQuotation.document_number} · {repair.latestQuotation.status.replace(/_/g, " ")}</Badge> : <Badge variant="warning">No quotation</Badge>}
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
+            <p className="text-xs text-slate-500">Internal parts cost</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{formatMoney(repair.partsCostTotal)}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
+            <p className="text-xs text-slate-500">Technician time logged</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{loggedHours}h {loggedRemainder}m</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
+            <p className="text-xs text-slate-500">Customer selling price, before tax</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{repair.latestQuotation ? formatMoney(repair.latestQuotation.taxable_amount) : "Not quoted"}</p>
+          </div>
+        </div>
+        {partsBalance !== null ? (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 text-sm">
+            <span className="font-medium text-slate-700">Selling price less parts cost</span>
+            <span className="font-semibold tabular-nums text-slate-900">{formatMoney(partsBalance)}</span>
+          </div>
+        ) : null}
+        <p className="mt-2 text-xs leading-5 text-slate-500">This is a preliminary contribution after recorded parts only. Technician time is shown separately. Labour cost, other overheads and any final invoice adjustments are not included.</p>
+      </section>
 
       <div>
         <p className="mb-1 text-xs font-medium uppercase text-gray-500">Status</p>
