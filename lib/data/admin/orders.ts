@@ -9,6 +9,9 @@ export interface AdminOrderListItem {
   payment_status: string;
   fulfillment_type: string;
   total: number;
+  verified_received: number;
+  outstanding_balance: number | null;
+  ledger_recorded: boolean;
   customer_name: string | null;
   guest_name: string | null;
 }
@@ -53,17 +56,51 @@ export async function listAdminOrders(filters: AdminOrderFilters) {
     throw new Error("Could not load orders. Please refresh the page and try again.");
   }
 
-  const items: AdminOrderListItem[] = (data ?? []).map((row: any) => ({
-    id: row.id,
-    order_number: row.order_number,
-    created_at: row.created_at,
-    order_status: row.order_status,
-    payment_status: row.payment_status,
-    fulfillment_type: row.fulfillment_type,
-    total: Number(row.total),
-    customer_name: row.customers?.profiles?.full_name ?? null,
-    guest_name: row.guest_name,
-  }));
+  const rows = data ?? [];
+  const orderIds = rows.map((row: any) => row.id);
+  const transactionResult = orderIds.length
+    ? await supabase.from("order_payment_transactions")
+        .select("order_id, transaction_type, amount")
+        .in("order_id", orderIds)
+    : { data: [], error: null };
+
+  if (transactionResult.error) {
+    console.error("listAdminOrders payment reconciliation failed:", transactionResult.error.message);
+    throw new Error("Could not load order payment balances. Please refresh the page and try again.");
+  }
+
+  const totals = new Map<string, number>();
+  const ledgerOrders = new Set<string>();
+  for (const transaction of transactionResult.data ?? []) {
+    ledgerOrders.add(transaction.order_id);
+    const amount = Number(transaction.amount) * (transaction.transaction_type === "refund" ? -1 : 1);
+    totals.set(transaction.order_id, (totals.get(transaction.order_id) ?? 0) + amount);
+  }
+
+  const items: AdminOrderListItem[] = rows.map((row: any) => {
+    const ledgerRecorded = ledgerOrders.has(row.id);
+    const verifiedReceived = totals.get(row.id) ?? 0;
+    // Older paid/partial/refunded orders predate the transaction ledger.
+    // Their actual balance is unknown until staff reconcile verified evidence.
+    const outstandingBalance = !ledgerRecorded && row.payment_status !== "unpaid"
+      ? null
+      : Math.max(Number(row.total) - verifiedReceived, 0);
+
+    return {
+      id: row.id,
+      order_number: row.order_number,
+      created_at: row.created_at,
+      order_status: row.order_status,
+      payment_status: row.payment_status,
+      fulfillment_type: row.fulfillment_type,
+      total: Number(row.total),
+      verified_received: verifiedReceived,
+      outstanding_balance: outstandingBalance,
+      ledger_recorded: ledgerRecorded,
+      customer_name: row.customers?.profiles?.full_name ?? null,
+      guest_name: row.guest_name,
+    };
+  });
 
   return { items, total: count ?? items.length, page, pageSize };
 }
