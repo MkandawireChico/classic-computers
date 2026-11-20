@@ -244,7 +244,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:mt-10 sm:rounded-3xl sm:p-7">
             <div className="mb-4 flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-brand-600" />
-              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Description</h2>
+              <h2 className="text-xl font-extrabold text-navy-900 sm:text-2xl">Description</h2>
             </div>
             <p className="whitespace-pre-line text-sm leading-7 text-slate-700 sm:text-base">{product.description}</p>
           </section>
@@ -254,7 +254,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-5 sm:mt-10 sm:rounded-3xl sm:p-7">
             <div className="mb-4 flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-brand-500" />
-              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Specifications</h2>
+              <h2 className="text-xl font-extrabold text-navy-900 sm:text-2xl">Specifications</h2>
             </div>
             <SpecificationsTable specifications={product.specifications} />
           </section>
@@ -265,7 +265,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
-              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Customer Reviews</h2>
+              <h2 className="text-xl font-extrabold text-navy-900 sm:text-2xl">Customer Reviews</h2>
             </div>
             <Link
               href="/reviews"
@@ -278,7 +278,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-4xl font-extrabold text-slate-900">{ratingSummary.averageRating}</div>
+                    <div className="text-4xl font-extrabold text-navy-900">{ratingSummary.averageRating}</div>
                     <div className="flex text-amber-500" aria-label={`${ratingSummary.averageRating} out of 5 stars`}>
                       {Array.from({ length: 5 }).map((_, i) => (
                         <span key={i} aria-hidden="true">
@@ -314,12 +314,12 @@ export default async function ProductPage({ params }: { params: Params }) {
                           </span>
                         ) : null}
                       </div>
-                      {review.title ? <h3 className="mt-2 text-sm font-semibold text-slate-900">{review.title}</h3> : null}
+                      {review.title ? <h3 className="mt-2 text-sm font-semibold text-navy-900">{review.title}</h3> : null}
                       {review.comment ? <p className="mt-1 text-sm text-slate-600">{review.comment}</p> : null}
                       <ReviewPhotos images={review.images} />
                       {review.admin_response ? (
                         <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
-                          <p className="font-semibold text-slate-900">Response from Classic Computers:</p>
+                          <p className="font-semibold text-navy-900">Response from Classic Computers:</p>
                           <p className="mt-1 text-slate-600">{review.admin_response}</p>
                         </div>
                       ) : null}
