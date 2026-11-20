@@ -12,7 +12,7 @@ const NEXT_STATUS: Record<string, string[]> = {
   processing: ["ready_for_pickup", "out_for_delivery", "cancelled"],
   ready_for_pickup: ["completed", "cancelled"],
   out_for_delivery: ["completed", "cancelled"],
-  completed: ["refunded"],
+  completed: [],
   cancelled: [],
   refunded: [],
 };
