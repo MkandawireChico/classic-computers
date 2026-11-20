@@ -221,20 +221,33 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </div>
       </section>
 
-      {order.statusHistory.length > 0 ? (
-        <div className="mt-8">
-          <h2 className="mb-3 text-base font-bold text-slate-950">Status history</h2>
-          <ol className="space-y-3 border-l border-slate-200 pl-4">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="order-updates-heading">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-700">Order fulfilment</p>
+            <h2 id="order-updates-heading" className="mt-1 text-base font-bold text-slate-950">Order updates</h2>
+          </div>
+          <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
+        </div>
+        {order.statusHistory.length > 0 ? (
+          <ol className="mt-5 space-y-4 border-l border-slate-200 pl-4">
             {order.statusHistory.map((event, index) => (
-              <li key={index} className="text-sm text-gray-600">
-                <span className="font-medium text-gray-900 capitalize">{event.to_status.replace(/_/g, " ")}</span>
-                {" — "}
-                {new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+              <li key={index} className="relative text-sm">
+                <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-brand-600 ring-1 ring-brand-200" />
+                <p className="font-semibold capitalize text-slate-950">{event.to_status.replace(/_/g, " ")}</p>
+                {event.from_status ? (
+                  <p className="mt-0.5 text-xs text-slate-500">Moved from {event.from_status.replace(/_/g, " ")}</p>
+                ) : null}
+                <p className="mt-1 text-xs text-slate-500">
+                  {new Date(event.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}
+                </p>
               </li>
             ))}
           </ol>
-        </div>
-      ) : null}
+        ) : (
+          <p className="mt-4 text-sm leading-6 text-slate-600">Your order has been received. Updates will appear here as our team processes the purchase.</p>
+        )}
+      </section>
     </div>
   );
 }
