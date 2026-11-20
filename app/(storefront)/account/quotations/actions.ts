@@ -12,7 +12,7 @@ export async function submitQuotationDecision(documentId: string, decision: "acc
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false as const, error: "Sign in to respond to this quotation." };
 
-  const { error } = await (supabase.from("business_document_decisions") as any).insert({
+  const { error } = await ((supabase as any).from("business_document_decisions") as any).insert({
     document_id: documentId,
     customer_id: user.id,
     decision,
