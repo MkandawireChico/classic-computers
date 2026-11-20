@@ -46,7 +46,7 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
 
   const supabase = createClient();
   const { data: order, error: lookupError } = await (supabase.from("orders") as any)
-    .select("order_status")
+    .select("order_status, fulfillment_type")
     .eq("id", orderId)
     .maybeSingle();
   if (lookupError) {
@@ -56,8 +56,13 @@ export async function updateOrderStatus(input: unknown): Promise<ServiceResult> 
   if (!order) return { success: false, error: "Order not found." };
 
   const allowed = ORDER_STATUS_TRANSITIONS[order.order_status] ?? [];
-  if (!allowed.includes(newStatus)) {
-    return { success: false, error: `Cannot move an order from "${order.order_status}" to "${newStatus}".` };
+  const fulfillmentAllowed = newStatus === "ready_for_pickup"
+    ? order.fulfillment_type === "pickup"
+    : newStatus === "out_for_delivery"
+      ? order.fulfillment_type === "delivery"
+      : true;
+  if (!allowed.includes(newStatus) || !fulfillmentAllowed) {
+    return { success: false, error: `Cannot move this ${order.fulfillment_type} order from "${order.order_status}" to "${newStatus}".` };
   }
 
   // The audit_order_status_trigger (0017) automatically writes an
