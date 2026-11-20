@@ -50,12 +50,12 @@ export default async function ShopPage({
         </header>
 
         <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
-          <aside aria-label="Shop filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32">
+          <aside aria-label="Shop filters" className="h-fit lg:sticky lg:top-32 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
             <ShopFilters brands={brands} categories={categories} />
           </aside>
 
           <section aria-label="Products" className="min-w-0">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <div className="mb-4 flex flex-col items-stretch justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center">
               <div>
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
                   {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
