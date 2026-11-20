@@ -129,7 +129,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
       .select("from_status, to_status, created_at")
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
-    (supabase.from("order_payment_history") as any)
+    ((supabase.from as any)("order_payment_history"))
       .select("from_status, to_status, created_at")
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
