@@ -28,7 +28,10 @@ export function parseShopSearchParams(
   const validPriceRange = validMin === undefined || validMax === undefined || validMin <= validMax;
   const minPrice = validPriceRange ? validMin : undefined;
   const maxPrice = validPriceRange ? validMax : undefined;
-  const page = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
+  const requestedPage = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
+  const page = requestedPage !== undefined && Number.isSafeInteger(requestedPage) && requestedPage > 0
+    ? requestedPage
+    : 1;
   const query = readSingleValue(searchParams.q) ?? readSingleValue(searchParams.query) ?? overrides.query;
 
   return {
