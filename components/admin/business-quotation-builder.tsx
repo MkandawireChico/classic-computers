@@ -28,7 +28,10 @@ export function BusinessQuotationBuilder({ products, rentals, customers, allowSa
   const [pending, startTransition] = useTransition();
 
   const options = sourceType === "order" ? products : rentals;
-  const sourceId = sourceType === "rental" ? lines.map((line) => options.find((option) => option.id === line.optionId)?.sourceId).find(Boolean) : undefined;
+  const selectedSourceIds = sourceType === "rental"
+    ? Array.from(new Set(lines.map((line) => options.find((option) => option.id === line.optionId)?.sourceId).filter(Boolean)))
+    : [];
+  const sourceId = selectedSourceIds.length === 1 ? selectedSourceIds[0] : undefined;
   const totals = useMemo(() => {
     try {
       return calculateDocumentPricing({ lines, discountAmount, vatRate: 17.5, ppdaRate: 1 });
