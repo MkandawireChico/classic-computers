@@ -46,7 +46,7 @@ export default async function AdminRepairsPage({
         ].map((metric) => (
           <div key={metric.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
-            <p className={"mt-2 text-2xl font-bold tabular-nums " + metric.tone}>{metric.value.toLocaleString("en-MW")}</p>
+            <p className={"mt-2 text-2xl font-bold tabular-nums " + metric.tone}>{typeof metric.value === "number" ? metric.value.toLocaleString("en-MW") : metric.value}</p>
             <p className="mt-1 text-xs text-slate-500">{metric.detail}</p>
           </div>
         ))}
