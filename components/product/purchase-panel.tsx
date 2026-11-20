@@ -74,7 +74,19 @@ export function PurchasePanel({
     return offer.variantId === null || offer.variantId === undefined;
   }) ?? null;
   const rentalPrice = rentalOffer?.dailyRate ?? rentalOffer?.weeklyRate ?? rentalOffer?.monthlyRate ?? null;
-  const quickSpecifications = product.specifications.slice(0, 4);
+  const quickSpecifications = useMemo(() => {
+    const byKey = new Map(product.specifications
+      .filter((spec) => spec.variant_id === null)
+      .map((spec) => [spec.key, spec]));
+    if (selectedVariantId) {
+      product.specifications
+        .filter((spec) => spec.variant_id === selectedVariantId)
+        .forEach((spec) => byKey.set(spec.key, spec));
+    }
+    return [...byKey.values()]
+      .sort((a, b) => a.display_order - b.display_order)
+      .slice(0, 4);
+  }, [product.specifications, selectedVariantId]);
 
   return (
     <div className="space-y-4 sm:space-y-5">
