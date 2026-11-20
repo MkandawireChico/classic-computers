@@ -283,6 +283,83 @@ export async function listTechnicians(): Promise<Array<{ id: string; name: strin
 }
 
 
+export interface AdminRepairTechnicianPerformance {
+  id: string;
+  name: string | null;
+  activeTickets: number;
+  completedLast30Days: number;
+  loggedMinutesLast30Days: number;
+}
+
+export async function getAdminRepairTechnicianPerformance(): Promise<AdminRepairTechnicianPerformance[]> {
+  const supabase = createClient();
+  const technicians = await listTechnicians();
+  if (technicians.length === 0) return [];
+
+  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const ids = technicians.map((technician) => technician.id);
+  const [ticketResult, completionResult] = await Promise.all([
+    (supabase.from("repair_tickets") as any)
+      .select("assigned_technician_id,status")
+      .in("assigned_technician_id", ids),
+    (supabase.from("repair_status_history" as any) as any)
+      .select("ticket_id,created_at")
+      .eq("to_status", "completed")
+      .eq("is_baseline", false)
+      .gte("created_at", since),
+  ]);
+
+  if (ticketResult.error) console.error("Technician repair assignments unavailable:", ticketResult.error.message);
+  if (completionResult.error) console.error("Technician repair completions unavailable:", completionResult.error.message);
+
+  const activeStatuses = new Set(["checked_in", "diagnosing", "quoted", "awaiting_approval", "in_progress", "ready_for_pickup"]);
+  const activeByTechnician = new Map<string, number>();
+  const technicianByTicket = new Map<string, string>();
+  const { data: ticketRows } = await (supabase.from("repair_tickets") as any)
+    .select("id,assigned_technician_id,status")
+    .in("assigned_technician_id", ids);
+  for (const ticket of ticketRows ?? []) {
+    if (!ticket.assigned_technician_id) continue;
+    technicianByTicket.set(ticket.id, ticket.assigned_technician_id);
+    if (activeStatuses.has(ticket.status)) {
+      activeByTechnician.set(ticket.assigned_technician_id, (activeByTechnician.get(ticket.assigned_technician_id) ?? 0) + 1);
+    }
+  }
+
+  const completedByTechnician = new Map<string, number>();
+  for (const completion of completionResult.data ?? []) {
+    const technicianId = technicianByTicket.get(completion.ticket_id);
+    if (technicianId) completedByTechnician.set(technicianId, (completedByTechnician.get(technicianId) ?? 0) + 1);
+  }
+
+  const minutesByTechnician = new Map<string, number>();
+  let offset = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data: logs, error } = await (supabase.from("repair_work_logs" as any) as any)
+      .select("technician_id,duration_minutes")
+      .in("technician_id", ids)
+      .gte("created_at", since)
+      .range(offset, offset + pageSize - 1);
+    if (error) {
+      console.error("Technician work logs unavailable:", error.message);
+      break;
+    }
+    for (const log of logs ?? []) {
+      minutesByTechnician.set(log.technician_id, (minutesByTechnician.get(log.technician_id) ?? 0) + Number(log.duration_minutes || 0));
+    }
+    if (!logs || logs.length < pageSize) break;
+    offset += pageSize;
+  }
+
+  return technicians.map((technician) => ({
+    ...technician,
+    activeTickets: activeByTechnician.get(technician.id) ?? 0,
+    completedLast30Days: completedByTechnician.get(technician.id) ?? 0,
+    loggedMinutesLast30Days: minutesByTechnician.get(technician.id) ?? 0,
+  })).sort((a, b) => b.activeTickets - a.activeTickets || b.loggedMinutesLast30Days - a.loggedMinutesLast30Days);
+}
+
 export interface RepairStockOption {
   inventory_id: string;
   product_id: string;
