@@ -9,6 +9,18 @@ import { ShopSearch } from "@/components/storefront/shop-search";
 import { SortSelect } from "@/components/storefront/sort-select";
 import { parseShopSearchParams } from "@/lib/shop-params";
 
+function pageHref(searchParams: Record<string, string | string[] | undefined>, page: number): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (Array.isArray(value)) value.forEach((item) => params.append(key, item));
+    else if (typeof value === "string") params.set(key, value);
+  }
+  if (page <= 1) params.delete("page");
+  else params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/shop?${query}` : "/shop";
+}
+
 export const metadata: Metadata = {
   title: "Shop",
   description: "Browse the products currently listed by Classic Computers LLC in Blantyre.",
@@ -20,7 +32,7 @@ export default async function ShopPage({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const filters = parseShopSearchParams(searchParams);
-  const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: 1, pageSize: 1000 }), getBrands(), getCategories()]);
+  const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 24 }), getBrands(), getCategories()]);
   const hasActiveFilters = Boolean(
     filters.query || filters.brandSlugs?.length || filters.minPrice !== undefined || filters.maxPrice !== undefined || filters.availableOnly,
   );
@@ -96,6 +108,39 @@ export default async function ShopPage({
                 </div>
               </div>
             )}
+
+        {result.total > result.pageSize ? (
+          <nav aria-label="Catalogue pages" className="mt-8 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs font-medium text-slate-500">
+              Showing {((result.page - 1) * result.pageSize) + 1}–{Math.min(result.page * result.pageSize, result.total)} of {result.total} products
+            </p>
+            <div className="flex items-center justify-between gap-2 sm:justify-end">
+              {result.page > 1 ? (
+                <Link
+                  href={pageHref(searchParams, result.page - 1)}
+                  rel="prev"
+                  className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                >
+                  Previous
+                </Link>
+              ) : (
+                <span className="inline-flex min-h-10 items-center rounded-lg border border-slate-100 px-3 text-sm font-semibold text-slate-300" aria-disabled="true">Previous</span>
+              )}
+              <span className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
+              {result.page < Math.ceil(result.total / result.pageSize) ? (
+                <Link
+                  href={pageHref(searchParams, result.page + 1)}
+                  rel="next"
+                  className="inline-flex min-h-10 items-center rounded-lg bg-[#123653] px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                >
+                  Next
+                </Link>
+              ) : (
+                <span className="inline-flex min-h-10 items-center rounded-lg border border-slate-100 px-4 text-sm font-semibold text-slate-300" aria-disabled="true">Next</span>
+              )}
+            </div>
+          </nav>
+        ) : null}
 
           </section>
         </div>
