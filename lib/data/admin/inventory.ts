@@ -94,7 +94,7 @@ export interface MovementRow {
   reference_id: string | null;
   note: string | null;
   created_at: string;
-  actor_email: string | null;
+  actor_name: string | null;
 }
 
 export async function getInventoryDetail(inventoryId: string) {
@@ -118,7 +118,14 @@ export async function getInventoryMovements(inventoryId: string, limit = 50): Pr
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  return (data ?? []).map((row: any) => ({
+  const rows = data ?? [];
+  const actorIds = Array.from(new Set(rows.map((row: any) => row.created_by).filter(Boolean)));
+  const { data: profiles } = actorIds.length
+    ? await (supabase.from("profiles") as any).select("id, full_name").in("id", actorIds)
+    : { data: [] };
+  const actorNames = new Map((profiles ?? []).map((profile: any) => [profile.id, profile.full_name]));
+
+  return rows.map((row: any) => ({
     id: row.id,
     movement_type: row.movement_type,
     quantity_delta: row.quantity_delta,
@@ -126,6 +133,6 @@ export async function getInventoryMovements(inventoryId: string, limit = 50): Pr
     reference_id: row.reference_id,
     note: row.note,
     created_at: row.created_at,
-    actor_email: null, // resolving created_by -> auth.users.email would need an admin-client join; left as a known simplification, see PHASE_5 report
+    actor_name: row.created_by ? actorNames.get(row.created_by) ?? "Staff member" : "System",
   }));
 }
