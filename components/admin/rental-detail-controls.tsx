@@ -27,11 +27,16 @@ export function RentalDetailControls({ rental }: { rental: AdminRentalDetail }) 
   const [charge, setCharge] = useState(rental.total_charge ?? 0);
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
+    if (isPending) return;
     setError(null);
     startTransition(async () => {
-      const result = await fn();
-      if (!result.success) setError(result.error ?? "Something went wrong.");
-      else router.refresh();
+      try {
+        const result = await fn();
+        if (!result.success) setError(result.error ?? "Something went wrong.");
+        else router.refresh();
+      } catch {
+        setError("The rental update failed. Refresh the page and try again.");
+      }
     });
   }
 
@@ -51,9 +56,22 @@ export function RentalDetailControls({ rental }: { rental: AdminRentalDetail }) 
               <Button
                 key={s}
                 size="sm"
-                variant="outline"
+                variant={s === "cancelled" || s === "damaged" || s === "lost" ? "danger" : "outline"}
                 isLoading={isPending}
-                onClick={() => run(() => updateRentalStatusAction({ bookingId: rental.id, newStatus: s }))}
+                disabled={isPending}
+                onClick={() => {
+                  const message = s === "cancelled"
+                    ? "Cancel this rental request?"
+                    : s === "active"
+                      ? "Confirm handover? This action deducts the rental quantity from stock."
+                      : s === "returned"
+                        ? "Confirm the equipment has been returned? This action restores the rental quantity to stock."
+                        : s === "damaged" || s === "lost"
+                          ? `Mark this equipment as ${s}? Review the stock impact before continuing.`
+                          : null;
+                  if (message && !window.confirm(message)) return;
+                  run(() => updateRentalStatusAction({ bookingId: rental.id, newStatus: s }));
+                }}
               >
                 {s}
               </Button>
@@ -71,8 +89,8 @@ export function RentalDetailControls({ rental }: { rental: AdminRentalDetail }) 
       <div>
         <p className="mb-1 text-xs font-medium uppercase text-gray-500">Charge (MWK)</p>
         <div className="flex items-center gap-2">
-          <input type="number" value={charge} onChange={(e) => setCharge(Number(e.target.value))} className="w-32 rounded-card border border-surface-border px-2 py-1.5 text-sm" />
-          <Button size="sm" variant="outline" isLoading={isPending} onClick={() => run(() => setRentalChargeAction({ bookingId: rental.id, totalCharge: charge }))}>
+          <input type="number" min="0" step="0.01" value={charge} onChange={(e) => setCharge(Number(e.target.value))} className="w-32 rounded-card border border-surface-border px-2 py-1.5 text-sm" />
+          <Button size="sm" variant="outline" disabled={isPending || !Number.isFinite(charge) || charge < 0} isLoading={isPending} onClick={() => run(() => setRentalChargeAction({ bookingId: rental.id, totalCharge: charge }))}>
             Save
           </Button>
         </div>
@@ -87,10 +105,13 @@ export function RentalDetailControls({ rental }: { rental: AdminRentalDetail }) 
 
       <div>
         <p className="mb-1 text-xs font-medium uppercase text-gray-500">Internal notes (staff only — never shown to the customer)</p>
-        <textarea value={internalNotes} onChange={(e) => setInternalNotes(e.target.value)} rows={3} className="w-full rounded-card border border-surface-border px-2 py-1.5 text-sm" />
-        <Button size="sm" className="mt-1" isLoading={isPending} onClick={() => run(() => updateRentalInternalNotesAction({ bookingId: rental.id, notes: internalNotes }))}>
-          Save internal note
-        </Button>
+        <textarea value={internalNotes} maxLength={1000} onChange={(e) => setInternalNotes(e.target.value)} rows={4} className="w-full rounded-card border border-surface-border px-2 py-1.5 text-sm" />
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-xs text-slate-500">{internalNotes.length}/1,000</span>
+          <Button size="sm" disabled={isPending || internalNotes.length > 1000} className="mt-1" isLoading={isPending} onClick={() => run(() => updateRentalInternalNotesAction({ bookingId: rental.id, notes: internalNotes }))}>
+            Save internal note
+          </Button>
+        </div>
       </div>
     </div>
   );
