@@ -234,7 +234,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             ) : null}
 
             <div className="mt-4">
-              <ProductEnquiry product={product} businessInfo={businessInfo} showWhatsApp={false} />
+              <ProductEnquiry product={product} businessInfo={businessInfo} />
             </div>
           </div>
           </div>
