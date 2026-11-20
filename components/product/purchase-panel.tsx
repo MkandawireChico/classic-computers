@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/format/money";
 import { StockBadge } from "./stock-badge";
@@ -49,6 +49,12 @@ export function PurchasePanel({
   const selectedVariant =
     activeVariants.find((variant) => variant.id === selectedVariantId) ?? defaultVariant;
   const effectiveVariantId = selectedVariant?.id ?? null;
+
+  useEffect(() => {
+    if (selectedVariantId !== effectiveVariantId) {
+      setSelectedVariantId(effectiveVariantId);
+    }
+  }, [selectedVariantId, effectiveVariantId, setSelectedVariantId]);
 
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
