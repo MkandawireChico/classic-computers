@@ -123,7 +123,7 @@ export function BusinessQuotationBuilder({ products, rentals, customers, allowSa
             <input value={line.description} onChange={(e) => updateLine(index, { description: e.target.value })} maxLength={240} placeholder="Item description" className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="text-xs font-semibold text-slate-600">{sourceType === "rental" ? "Number of rate periods" : "Quantity"}<input type="number" min="0.01" step="0.01" value={line.quantity} onChange={(e) => updateLine(index, { quantity: Number(e.target.value) })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>
-              <label className="text-xs font-semibold text-slate-600">Unit selling price (MWK, excl. VAT)<input type="number" min="0" step="0.01" value={line.unitPrice} onChange={(e) => updateLine(index, { unitPrice: Number(e.target.value) })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>
+              <label className="text-xs font-semibold text-slate-600">Unit selling price (MWK, excl. VAT)<input type="number" min="0" step="0.01" readOnly={Boolean(line.optionId)} value={line.unitPrice} onChange={(e) => updateLine(index, { unitPrice: Number(e.target.value) })} className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm ${line.optionId ? "border-slate-200 bg-slate-50 text-slate-500" : "border-slate-200"}`} /></label>
             </div>
           </div>
         ))}
