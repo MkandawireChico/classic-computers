@@ -9,6 +9,10 @@ export interface OrderListItem {
   order_status: string;
   payment_status: string;
   total: number;
+  verified_received: number;
+  total_refunded: number;
+  outstanding_balance: number | null;
+  has_verified_transactions: boolean;
   items: Array<{ product_id: string; product_name_snapshot: string }>;
 }
 
@@ -93,7 +97,49 @@ export async function getMyOrders(): Promise<OrderListItem[]> {
     console.error("getMyOrders failed:", error.message);
     throw new Error("Could not load your orders. Please refresh the page and try again.");
   }
-  return (data ?? []).map((order: any) => ({ ...order, items: order.order_items ?? [] }));
+
+  const orders = data ?? [];
+  const orderIds = orders.map((order: any) => order.id);
+  const transactionResult = orderIds.length
+    ? await supabase.from("order_payment_transactions")
+        .select("order_id, transaction_type, amount")
+        .in("order_id", orderIds)
+    : { data: [], error: null };
+
+  if (transactionResult.error) {
+    console.error("getMyOrders payment summary failed:", transactionResult.error.message);
+    throw new Error("Could not load your payment summaries. Please refresh the page and try again.");
+  }
+
+  const totals = new Map<string, { paid: number; refunded: number }>();
+  for (const transaction of transactionResult.data ?? []) {
+    const current = totals.get(transaction.order_id) ?? { paid: 0, refunded: 0 };
+    if (transaction.transaction_type === "refund") current.refunded += Number(transaction.amount);
+    else current.paid += Number(transaction.amount);
+    totals.set(transaction.order_id, current);
+  }
+
+  return orders.map((order: any) => {
+    const ledger = totals.get(order.id);
+    const hasVerifiedTransactions = Boolean(ledger);
+    const paid = ledger?.paid ?? 0;
+    const refunded = ledger?.refunded ?? 0;
+    const verifiedReceived = paid - refunded;
+    const outstandingBalance = !hasVerifiedTransactions && order.payment_status !== "unpaid"
+      ? null
+      : refunded > 0
+        ? 0
+        : Math.max(Number(order.total) - verifiedReceived, 0);
+
+    return {
+      ...order,
+      verified_received: verifiedReceived,
+      total_refunded: refunded,
+      outstanding_balance: outstandingBalance,
+      has_verified_transactions: hasVerifiedTransactions,
+      items: order.order_items ?? [],
+    };
+  });
 }
 
 /**
