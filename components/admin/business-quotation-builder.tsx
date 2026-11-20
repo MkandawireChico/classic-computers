@@ -11,9 +11,9 @@ type Option = { id: string; label: string; description: string; unitPrice: numbe
 type Customer = { id: string; name: string; phone: string | null };
 type Line = { description: string; quantity: number; unitPrice: number; optionId: string };
 
-export function BusinessQuotationBuilder({ products, rentals, customers }: { products: Option[]; rentals: Option[]; customers: Customer[] }) {
+export function BusinessQuotationBuilder({ products, rentals, customers, allowSales, allowRentals }: { products: Option[]; rentals: Option[]; customers: Customer[]; allowSales: boolean; allowRentals: boolean }) {
   const router = useRouter();
-  const [sourceType, setSourceType] = useState<"order" | "rental">("order");
+  const [sourceType, setSourceType] = useState<"order" | "rental">(allowSales ? "order" : "rental");
   const [customerId, setCustomerId] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -85,8 +85,8 @@ export function BusinessQuotationBuilder({ products, rentals, customers }: { pro
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="font-bold text-slate-950">Quotation type</h2>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Button type="button" size="sm" variant={sourceType === "order" ? "primary" : "outline"} onClick={() => { setSourceType("order"); setLines([{ description: "", quantity: 1, unitPrice: 0, optionId: "" }]); }}>Product sales</Button>
-          <Button type="button" size="sm" variant={sourceType === "rental" ? "primary" : "outline"} onClick={() => { setSourceType("rental"); setLines([{ description: "", quantity: 1, unitPrice: 0, optionId: "" }]); }}>Equipment rental</Button>
+          <Button type="button" size="sm" disabled={!allowSales} variant={sourceType === "order" ? "primary" : "outline"} onClick={() => { setSourceType("order"); setLines([{ description: "", quantity: 1, unitPrice: 0, optionId: "" }]); }}>Product sales</Button>
+          <Button type="button" size="sm" disabled={!allowRentals} variant={sourceType === "rental" ? "primary" : "outline"} onClick={() => { setSourceType("rental"); setLines([{ description: "", quantity: 1, unitPrice: 0, optionId: "" }]); }}>Equipment rental</Button>
         </div>
         <p className="mt-2 text-xs text-slate-500">Catalogue prices and rental rates are VAT-exclusive. Tax is added below.</p>
       </section>
