@@ -7,7 +7,7 @@ import { QuotationDecisionControls } from "@/components/storefront/quotation-dec
 
 export default async function AccountQuotationDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
-  const { data: document } = await (supabase.from("business_documents") as any)
+  const { data: document } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_type,document_number,source_type,status,customer_name,subtotal,discount_amount,discount_reason,taxable_amount,vat_rate,vat_amount,ppda_rate,ppda_amount,grand_total,notes,valid_until,issued_at,created_at")
     .eq("id", params.id)
     .eq("document_type", "quotation")
@@ -15,8 +15,8 @@ export default async function AccountQuotationDetailPage({ params }: { params: {
   if (!document) notFound();
 
   const [{ data: items }, { data: decision }] = await Promise.all([
-    (supabase.from("business_document_items") as any).select("description,quantity,unit_price,line_total,sort_order").eq("document_id", document.id).order("sort_order", { ascending: true }),
-    (supabase.from("business_document_decisions") as any).select("decision,comment,created_at").eq("document_id", document.id).maybeSingle(),
+    ((supabase as any).from("business_document_items") as any).select("description,quantity,unit_price,line_total,sort_order").eq("document_id", document.id).order("sort_order", { ascending: true }),
+    ((supabase as any).from("business_document_decisions") as any).select("decision,comment,created_at").eq("document_id", document.id).maybeSingle(),
   ]);
   const expired = Boolean(document.valid_until && document.valid_until < new Date().toISOString().slice(0, 10));
   const awaitingResponse = document.status === "issued" && !expired;
