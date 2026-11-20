@@ -11,7 +11,7 @@ export default async function AdminDocumentsPage() {
   if (!readable) notFound();
 
   const supabase = createClient();
-  const { data: documents, error } = await (supabase.from("business_documents") as any)
+  const { data: documents, error } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_type,document_number,source_type,customer_name,status,grand_total,created_at")
     .order("created_at", { ascending: false })
     .limit(100);
