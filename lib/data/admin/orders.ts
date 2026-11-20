@@ -98,6 +98,7 @@ export interface AdminOrderDetail {
     line_total: number;
   }>;
   statusHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
+  paymentHistory: Array<{ from_status: string | null; to_status: string; created_at: string }>;
 }
 
 export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | null> {
@@ -120,7 +121,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
   }
   if (!order) return null;
 
-  const [itemsResult, historyResult] = await Promise.all([
+  const [itemsResult, historyResult, paymentHistoryResult] = await Promise.all([
     (supabase.from("order_items") as any)
       .select("id, product_name_snapshot, sku_snapshot, unit_price, quantity, discount_amount, line_total")
       .eq("order_id", id),
@@ -128,11 +129,16 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
       .select("from_status, to_status, created_at")
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
+    (supabase.from("order_payment_history") as any)
+      .select("from_status, to_status, created_at")
+      .eq("order_id", id)
+      .order("created_at", { ascending: true }),
   ]);
-  if (itemsResult.error || historyResult.error) {
+  if (itemsResult.error || historyResult.error || paymentHistoryResult.error) {
     console.error("getAdminOrderById related data failed:", {
       items: itemsResult.error?.message,
       history: historyResult.error?.message,
+      paymentHistory: paymentHistoryResult.error?.message,
     });
     throw new Error("Could not load the full order history. Please refresh the page and try again.");
   }
@@ -161,5 +167,6 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     delivery_snapshot: order.delivery_snapshot,
     items: items ?? [],
     statusHistory: history ?? [],
+    paymentHistory: paymentHistoryResult.data ?? [],
   };
 }
