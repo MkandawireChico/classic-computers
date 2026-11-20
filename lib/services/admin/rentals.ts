@@ -152,6 +152,24 @@ export async function updateRentalStatus(input: unknown): Promise<ServiceResult>
     return { success: false, error: `Cannot move from "${booking.status}" to "${newStatus}".` };
   }
 
+  const requiredConditionEvent: Record<string, string> = {
+    active: "checkout",
+    returned: "return",
+    damaged: "damage",
+    lost: "loss",
+  };
+  const conditionEvent = requiredConditionEvent[newStatus];
+  if (conditionEvent) {
+    const { data: report, error: reportError } = await (supabase.from("rental_condition_reports") as any)
+      .select("id")
+      .eq("booking_id", bookingId)
+      .eq("event_type", conditionEvent)
+      .limit(1)
+      .maybeSingle();
+    if (reportError) return { success: false, error: "Could not verify the required equipment condition report. No status change was made." };
+    if (!report) return { success: false, error: `Record the equipment ${conditionEvent} condition before changing this rental status.` };
+  }
+
   const inventoryEffect = INVENTORY_EFFECT[newStatus];
   if (inventoryEffect && booking.rental_products?.product_id) {
     let inventoryRowQuery = (supabase.from("inventory") as any)
@@ -264,5 +282,70 @@ export async function setRentalCharge(input: unknown): Promise<ServiceResult> {
     .update({ total_charge: parsed.data.totalCharge })
     .eq("id", parsed.data.bookingId);
   if (error) return { success: false, error: "Could not set charge." };
+  return { success: true };
+}
+
+const rentalPaymentSchema = z.object({
+  bookingId: z.string().uuid(),
+  transactionType: z.enum(["payment", "refund"]),
+  provider: z.string().trim().min(1).max(80),
+  amount: z.number().positive().finite().refine((value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-7),
+  providerReference: z.string().trim().max(120).optional().or(z.literal("")),
+});
+
+export async function recordRentalPayment(input: unknown): Promise<ServiceResult> {
+  const guardResult = await guard();
+  if (guardResult) return guardResult;
+  const parsed = rentalPaymentSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Enter a valid transaction type, provider and amount." };
+  const value = parsed.data;
+  const supabase = createClient();
+  const { error } = await (supabase.from("rental_payment_transactions") as any).insert({
+    booking_id: value.bookingId,
+    transaction_type: value.transactionType,
+    provider: value.provider,
+    amount: value.amount,
+    currency: "MWK",
+    provider_reference: value.providerReference || null,
+  });
+  if (error) {
+    console.error("recordRentalPayment failed:", { bookingId: value.bookingId, code: error.code, message: error.message });
+    const message = error.message.toLowerCase();
+    if (message.includes("set the agreed rental charge")) return { success: false, error: "Set the agreed rental charge before recording a payment." };
+    if (message.includes("exceeds the outstanding")) return { success: false, error: "This amount exceeds the outstanding rental balance." };
+    if (message.includes("exceeds verified rental")) return { success: false, error: "The refund exceeds verified rental payments." };
+    if (message.includes("after a refund")) return { success: false, error: "Further payments are blocked after a refund has been recorded." };
+    if (message.includes("duplicate key")) return { success: false, error: "This provider reference has already been recorded." };
+    if (message.includes("permission")) return { success: false, error: "You do not have permission to record rental payments." };
+    return { success: false, error: "Could not record this transaction. Check the details and try again." };
+  }
+  return { success: true };
+}
+
+const conditionSchema = z.object({
+  bookingId: z.string().uuid(),
+  eventType: z.enum(["checkout", "return", "damage", "loss"]),
+  condition: z.enum(["excellent", "good", "fair", "damaged", "missing"]),
+  notes: z.string().trim().min(3).max(1500),
+});
+
+export async function recordRentalCondition(input: unknown): Promise<ServiceResult> {
+  const guardResult = await guard();
+  if (guardResult) return guardResult;
+  const parsed = conditionSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Choose a condition and enter notes of at least 3 characters." };
+  const value = parsed.data;
+  const supabase = createClient();
+  const { error } = await (supabase.from("rental_condition_reports") as any).insert({
+    booking_id: value.bookingId,
+    event_type: value.eventType,
+    condition: value.condition,
+    notes: value.notes,
+  });
+  if (error) {
+    console.error("recordRentalCondition failed:", { bookingId: value.bookingId, code: error.code, message: error.message });
+    if (error.message.toLowerCase().includes("permission")) return { success: false, error: "You do not have permission to record equipment condition." };
+    return { success: false, error: "Could not save the equipment condition report. Check the details and try again." };
+  }
   return { success: true };
 }
