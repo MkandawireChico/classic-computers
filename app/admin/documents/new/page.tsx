@@ -17,8 +17,9 @@ export default async function NewBusinessQuotationPage() {
       .limit(250),
     permissions.has("rentals.write")
       ? (supabase.from("rental_products") as any)
-        .select("id,product_id,variant_id,daily_rate,weekly_rate,monthly_rate,products(name,sku),product_variants(name,sku,status)")
+        .select("id,product_id,variant_id,daily_rate,weekly_rate,monthly_rate,products(name,sku,status),product_variants(name,sku,status)")
         .eq("is_available", true)
+        .eq("products.status", "published")
       : Promise.resolve({ data: [] }),
     permissions.has("customers.read")
       ? (supabase.from("customers") as any).select("id,profiles(full_name,phone)").order("created_at", { ascending: false }).limit(250)
@@ -37,6 +38,7 @@ export default async function NewBusinessQuotationPage() {
   });
 
   const rentalOptions = (rentalRows ?? []).flatMap((rental: any) => {
+    if (rental.products?.status !== "published" || (rental.variant_id && rental.product_variants?.status !== "active")) return [];
     const productName = rental.products?.name ?? "Rental equipment";
     const variantName = rental.product_variants?.name;
     const label = `${productName}${variantName ? ` · ${variantName}` : ""}`;
