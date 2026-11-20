@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getApprovedReviews, getReviewStats } from "@/lib/data/reviews";
-import { getCurrentUser } from "@/lib/auth/current-user";
 import type { ReviewType } from "@/types/catalog";
 import { RatingBreakdown } from "./rating-breakdown";
 import { ReviewPhotos } from "./review-photos";
@@ -20,12 +19,12 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export async function ReviewCategorySection({ reviewType }: { reviewType: ReviewType }) {
-  const [reviews, stats, user] = await Promise.all([
+  const [reviews, stats] = await Promise.all([
     getApprovedReviews(3, reviewType),
     getReviewStats(),
-    getCurrentUser(),
   ]);
   const category = stats.byType[reviewType];
+  if (category.count === 0) return null;
   const labels = LABELS[reviewType];
 
   return (
@@ -75,21 +74,6 @@ export async function ReviewCategorySection({ reviewType }: { reviewType: Review
               </article>
             ))}
           </div>
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 sm:p-8">
-          <p className="font-semibold text-slate-900">No approved {reviewType} reviews yet</p>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-            Have you completed a transaction with us? {user
-              ? "Write a review after your transaction is complete."
-              : "Sign in to share honest feedback after your transaction is complete."}
-          </p>
-          <Link
-            href={user ? "/account/reviews/write" : "/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite"}
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-4 text-sm font-bold text-white hover:bg-brand-800"
-          >
-            {user ? "Write a review" : "Sign in to write a review"}
-          </Link>
         </div>
       )}
     </section>
