@@ -78,15 +78,15 @@ export function PurchasePanel({
     specifications
       .filter((spec) => spec.variant_id === null)
       .forEach((spec) => byKey.set(spec.key, spec));
-    if (selectedVariantId) {
+    if (effectiveVariantId) {
       specifications
-        .filter((spec) => spec.variant_id === selectedVariantId)
+        .filter((spec) => spec.variant_id === effectiveVariantId)
         .forEach((spec) => byKey.set(spec.key, spec));
     }
     return [...byKey.values()]
       .sort((a, b) => a.display_order - b.display_order)
       .slice(0, 4);
-  }, [specifications, selectedVariantId]);
+  }, [specifications, effectiveVariantId]);
 
   return (
     <div className="space-y-4 sm:space-y-5">
