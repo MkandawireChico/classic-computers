@@ -25,7 +25,7 @@ export async function LocationSection() {
           <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
             <Image
               src={storePhotoUrl}
-              alt={storePhoto?.alt_text ?? "Classic Computers store in Blantyre"}
+              alt={storePhoto?.alt_text?.trim() || "Classic Computers store in Blantyre"}
               fill
               sizes="(max-width: 1023px) 100vw, 52vw"
               className="object-cover"
