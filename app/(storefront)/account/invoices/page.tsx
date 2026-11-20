@@ -5,7 +5,7 @@ import { formatMoney } from "@/lib/format/money";
 
 export default async function AccountInvoicesPage() {
   const supabase = createClient();
-  const { data: invoices, error } = await (supabase.from("business_documents") as any)
+  const { data: invoices, error } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_number,source_type,status,grand_total,created_at")
     .eq("document_type", "invoice")
     .order("created_at", { ascending: false });
