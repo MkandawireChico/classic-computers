@@ -61,6 +61,10 @@ begin
 
   v_net := v_paid - v_refunded;
 
+  if new.transaction_type = 'payment' and v_refunded > 0 then
+    raise exception 'Additional payments are not accepted after a refund has been recorded';
+  end if;
+
   if new.transaction_type = 'payment' and v_net + new.amount > v_order_total then
     raise exception 'Payment exceeds the outstanding order balance';
   end if;
