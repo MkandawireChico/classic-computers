@@ -68,12 +68,16 @@ export async function updateRepairStatus(input: unknown): Promise<ServiceResult>
 
   const supabase = createClient();
   const { data: ticket } = await (supabase.from("repair_tickets") as any)
-    .select("status")
+    .select("status,quote_amount,quote_approved_at")
     .eq("id", parsed.data.ticketId)
     .maybeSingle();
   if (!ticket) return { success: false, error: "Repair not found." };
 
   const allowed = REPAIR_STATUS_TRANSITIONS[ticket.status] ?? [];
+  if (parsed.data.newStatus === "in_progress" && Number(ticket.quote_amount ?? 0) > 0 && !ticket.quote_approved_at) {
+    return { success: false, error: "Record the customer's approval of the repair quotation before starting work." };
+  }
+
   if (!allowed.includes(parsed.data.newStatus)) {
     return { success: false, error: `Cannot move from "${ticket.status}" to "${parsed.data.newStatus}".` };
   }
