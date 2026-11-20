@@ -33,7 +33,7 @@ export default async function WishlistPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {entries.map(({ wishlistItemId, variantId, price, salePrice, inventoryStatus, product }) => (
+          {entries.map(({ wishlistItemId, variantId, variantName, price, salePrice, inventoryStatus, product }) => (
             <div key={wishlistItemId} className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300">
               <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100">
                 {product.primary_image ? (
@@ -52,6 +52,7 @@ export default async function WishlistPage() {
                 <Link href={`/product/${product.slug}`} className="text-base font-bold text-slate-900 hover:text-brand-600">
                   {product.name}
                 </Link>
+                {variantName ? <p className="mt-1 text-xs font-medium text-slate-500">Configuration: {variantName}</p> : null}
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="text-lg font-bold text-slate-900">
                     {product.has_active_variants && variantId === null ? "From " : ""}
@@ -62,6 +63,7 @@ export default async function WishlistPage() {
                   ) : null}
                   <StockBadge status={inventoryStatus as any} />
                 </div>
+                <p className="mt-1 text-[10px] font-medium text-slate-500">Excludes VAT and PPDA</p>
               </div>
               <div className="mt-4 flex gap-2">
                 <Link
