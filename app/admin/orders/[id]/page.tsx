@@ -18,6 +18,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
   const totalReceived = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : -Number(transaction.amount)), 0);
   const outstandingBalance = Math.max(order.total - totalReceived, 0);
   const refundableBalance = Math.max(totalReceived, 0);
+  const needsLegacyReconciliation = order.paymentTransactions.length === 0 && order.payment_status !== "unpaid";
 
   return (
     <div className="space-y-6">
@@ -109,6 +110,14 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             total={order.total}
             notes={order.notes}
           />
+          {needsLegacyReconciliation ? (
+            <Card>
+              <CardHeader><CardTitle>Historical payment record needs reconciliation</CardTitle></CardHeader>
+              <p className="text-sm leading-6 text-amber-800">
+                This order has a historical “{order.payment_status}” status but no verified transaction entries. Confirm the original payment in the provider account, then record the verified amount below. Do not issue a refund until the payment has been reconciled.
+              </p>
+            </Card>
+          ) : null}
           <Card>
             <CardHeader>
               <CardTitle>Payment balance</CardTitle>
@@ -167,7 +176,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
               </ol>
             )}
             <p className="mt-3 text-xs leading-5 text-slate-500">
-              This history records status changes only. Individual payment amounts, provider references and refund transactions are not yet stored as ledger entries.
+              This history records payment-status changes. Verified payment amounts, provider references and refunds appear in the transaction ledger above.
             </p>
           </Card>
           <Card>
