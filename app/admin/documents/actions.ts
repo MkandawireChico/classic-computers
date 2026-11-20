@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/auth/permissions";
 import { convertAcceptedQuotationToInvoice, recordBusinessDocumentTransaction } from "@/lib/services/admin/business-documents";
 
 export async function convertQuotationToInvoiceAction(quotationId: string) {
@@ -21,4 +23,44 @@ export async function recordBusinessDocumentTransactionAction(input: unknown) {
     revalidatePath("/admin/documents");
   }
   return result;
+}
+
+
+export async function recordStaffQuotationDecision(documentId: string, decision: "accepted" | "rejected", comment: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(documentId) || !["accepted", "rejected"].includes(decision) || comment.trim().length < 3 || comment.length > 1000) {
+    return { success: false as const, error: "Record the customer's decision and how approval was received." };
+  }
+
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false as const, error: "Sign in to record the decision." };
+
+  const { data: document } = await (supabase.from("business_documents") as any)
+    .select("id,document_type,source_type,status,customer_id")
+    .eq("id", documentId)
+    .maybeSingle();
+  if (!document || document.document_type !== "quotation" || document.status !== "issued") {
+    return { success: false as const, error: "This quotation is not awaiting a decision." };
+  }
+
+  const permission = document.source_type === "order" ? "orders.write"
+    : document.source_type === "rental" ? "rentals.write" : "repairs.write";
+  try {
+    await requirePermission(permission);
+  } catch {
+    return { success: false as const, error: "You don't have permission to record this decision." };
+  }
+
+  const { error } = await (supabase.from("business_document_decisions") as any).insert({
+    document_id: document.id,
+    customer_id: document.customer_id,
+    decision,
+    decision_channel: "staff_recorded",
+    recorded_by: user.id,
+    comment: comment.trim(),
+  });
+  if (error) return { success: false as const, error: "The decision was not saved. Check whether a response already exists." };
+  revalidatePath(`/admin/documents/${documentId}`);
+  revalidatePath("/admin/documents");
+  return { success: true as const };
 }
