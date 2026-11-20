@@ -31,18 +31,18 @@ export function ProductCard({
         href={"/product/" + product.slug}
         productId={product.id}
         trackSearchResult={searchResult}
-        className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-brand-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+        className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-200 hover:border-brand-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
       >
-        <div className="relative aspect-square w-full overflow-hidden border-b border-slate-100 bg-white">
+        <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white sm:aspect-square">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt={product.primary_image?.alt_text ?? product.name}
               fill
               sizes={isCatalog
-                ? "(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"}
-              className="object-contain p-4 transition-transform duration-300 group-hover:scale-[1.025] sm:p-6"
+                ? "(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                : "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"}
+              className="object-contain p-5 transition-transform duration-300 group-hover:scale-[1.025] sm:p-6"
             />
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2 bg-slate-50 text-slate-300">
@@ -59,7 +59,7 @@ export function ProductCard({
           </div>
         </div>
 
-        <div className={"flex flex-1 flex-col gap-3 " + (isCatalog ? "p-3.5 sm:p-4" : "p-5")}>
+        <div className={"flex flex-1 flex-col gap-3 " + (isCatalog ? "p-4 sm:p-4" : "p-5")}>
           <div className="flex min-h-4 items-center justify-between gap-2">
             {product.brand
               ? <span className="truncate text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 sm:text-[11px]">{product.brand.name}</span>
@@ -69,7 +69,7 @@ export function ProductCard({
               : null}
           </div>
 
-          <h3 className={"line-clamp-2 font-semibold leading-snug text-navy-950 " + (isCatalog ? "min-h-10 text-sm sm:text-[15px]" : "text-base")}>
+          <h3 className={"line-clamp-2 font-semibold leading-snug text-navy-950 " + (isCatalog ? "min-h-10 text-[15px] sm:text-base" : "text-base")}>
             {product.name}
           </h3>
 
@@ -77,11 +77,11 @@ export function ProductCard({
             <div className="flex min-w-0 flex-col">
               {onSale ? (
                 <>
-                  <span className={"font-extrabold text-brand-800 " + (isCatalog ? "text-base sm:text-lg" : "text-xl")}>{formatMoney(product.sale_price as number)}</span>
+                  <span className={"font-extrabold text-brand-800 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{formatMoney(product.sale_price as number)}</span>
                   <span className="text-xs font-medium text-slate-400 line-through">{formatMoney(product.base_price)}</span>
                 </>
               ) : (
-                <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-base sm:text-lg" : "text-xl")}>{formatMoney(product.base_price)}</span>
+                <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{formatMoney(product.base_price)}</span>
               )}
             </div>
             {product.condition !== "new" ? (
@@ -89,7 +89,7 @@ export function ProductCard({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 border-t border-slate-50 pt-2">
             <StockBadge status={product.inventory_status} />
             <span className="text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">View details <span aria-hidden="true">↗</span></span>
           </div>
