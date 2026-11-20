@@ -122,6 +122,40 @@ export function RepairDetailControls({
         <p className="mt-2 text-xs leading-5 text-slate-500">Estimate uses the latest quotation before tax, recorded parts cost and configured labour rate. Excludes overheads, unlogged work, warranty costs and later invoice adjustments. Not an accounting profit figure.</p>
       </section>
 
+      <section className="rounded-xl border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Invoice reconciliation</p>
+            <h3 className="mt-1 text-base font-semibold text-slate-900">Final customer billing and receipts</h3>
+          </div>
+          {repair.finalInvoice ? <Badge variant={repair.finalInvoice.status === "paid" ? "success" : repair.finalInvoice.status === "partially_paid" ? "warning" : "info"}>Invoice #{repair.finalInvoice.document_number} · {repair.finalInvoice.status.replace(/_/g, " ")}</Badge> : <Badge variant="warning">No invoice issued</Badge>}
+        </div>
+        {repair.finalInvoice ? (
+          <>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Invoiced before tax</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.taxable_amount)}</p></div>
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Invoice total</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.grand_total)}</p></div>
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Verified received</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.paid)}</p></div>
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">Refunded</p><p className="mt-1 font-semibold tabular-nums">{formatMoney(repair.finalInvoice.refunded)}</p></div>
+            </div>
+            <div className="mt-3 flex flex-wrap justify-between gap-2 border-t border-slate-200 pt-3 text-sm">
+              <span className="font-medium text-slate-700">Outstanding invoice balance</span>
+              <span className="font-semibold tabular-nums">{formatMoney(repair.finalInvoice.outstanding)}</span>
+            </div>
+            {totalRecordedCost !== null ? (
+              <div className="mt-3 flex flex-wrap justify-between gap-2 text-sm">
+                <span className="font-medium text-slate-700">Invoiced taxable amount less recorded parts and labour</span>
+                <span className="font-semibold tabular-nums">{formatMoney(repair.finalInvoice.taxable_amount - totalRecordedCost)}</span>
+              </div>
+            ) : <p className="mt-3 text-xs text-slate-500">Cost comparison needs an approved internal labour rate.</p>}
+            <p className="mt-2 text-xs leading-5 text-slate-500">Payment figures include tax because receipts are matched against the invoice grand total. Cost comparison uses the taxable selling amount before VAT and PPDA. Refunds are shown separately and are not allocated against taxable revenue in this estimate.</p>
+            <a href={`/admin/documents/${repair.finalInvoice.id}`} className="mt-3 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-900">Open invoice and transaction ledger</a>
+          </>
+        ) : (
+          <p className="mt-3 text-sm text-slate-600">An invoice will appear here after an accepted repair quotation is converted into an invoice.</p>
+        )}
+      </section>
+
       <div>
         <p className="mb-1 text-xs font-medium uppercase text-gray-500">Status</p>
         <div className="flex flex-wrap gap-2">
