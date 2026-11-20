@@ -69,6 +69,8 @@ export function VariantsManager({ product }: { product: AdminProductDetail }) {
     <div className="space-y-3">
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
+      <p className="text-xs leading-5 text-gray-500">The storefront uses the lowest-priced active configuration as the product starting price. Product base price applies only when no active configurations exist.</p>
+
       {product.variants.length === 0 ? (
         <p className="text-sm text-gray-500">
           No variants — this product uses its own base price and product-level stock (
