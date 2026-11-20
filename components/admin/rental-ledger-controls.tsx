@@ -113,7 +113,7 @@ export function RentalLedgerControls({ rental }: { rental: AdminRentalDetail }) 
         {rental.paymentTransactions.length ? (
           <ol className="mt-4 space-y-2 border-t border-slate-100 pt-3">
             {rental.paymentTransactions.map((row) => <li key={row.id} className="flex flex-wrap justify-between gap-2 text-xs">
-              <span className="text-slate-600">{row.transaction_type} · {row.provider}{row.provider_reference ? ` · ${row.provider_reference}` : ""}</span>
+              <span className="text-slate-600">{row.transaction_type} · {row.provider}{row.provider_reference ? ` · ${row.provider_reference}` : ""} · {row.recorded_by_name ?? "Staff member"}</span>
               <strong className={row.transaction_type === "refund" ? "text-rose-700" : "text-emerald-700"}>{row.transaction_type === "refund" ? "−" : "+"}{formatMoney(row.amount)}</strong>
             </li>)}
           </ol>
