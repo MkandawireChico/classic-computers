@@ -274,8 +274,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               View all reviews
             </Link>
           </div>
-          {ratingSummary.count > 0 ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
@@ -335,8 +334,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   ))}
                 </div>
               ) : null}
-            </div>
-          )}
+          </div>
         </section>
         ) : null}
 
