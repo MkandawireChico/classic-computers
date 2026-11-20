@@ -11,6 +11,7 @@ const PAYMENT_VARIANT: Record<string, "neutral" | "success" | "warning" | "dange
   partial: "info",
   paid: "success",
   refunded: "neutral",
+  partially_refunded: "neutral",
 };
 
 const STATUS_VARIANT: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
