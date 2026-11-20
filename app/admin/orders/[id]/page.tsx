@@ -7,6 +7,7 @@ import { formatMoney } from "@/lib/format/money";
 import { OrderStatusControls } from "@/components/admin/order-status-controls";
 import { InternalNotesEditor } from "@/components/admin/internal-notes-editor";
 import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
+import { AdminOrderPaymentCard } from "@/components/admin/admin-order-payment-card";
 
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("orders.read");
@@ -97,13 +98,18 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
         </div>
 
         <div className="space-y-6">
+          <AdminOrderPaymentCard
+            paymentMethod={order.payment_method}
+            paymentStatus={order.payment_status}
+            total={order.total}
+            notes={order.notes}
+          />
           <Card>
             <CardHeader>
-              <CardTitle>Status</CardTitle>
+              <CardTitle>Order progress</CardTitle>
             </CardHeader>
             <div className="mb-3 flex gap-2">
               <Badge variant="info">{order.order_status.replace(/_/g, " ")}</Badge>
-              <Badge variant="neutral">{order.payment_status}</Badge>
             </div>
             <OrderStatusControls orderId={order.id} currentStatus={order.order_status} currentPaymentStatus={order.payment_status} />
           </Card>
