@@ -43,11 +43,16 @@ export function RepairDetailControls({
   const [partForm, setPartForm] = useState({ partName: "", cost: 0, quantity: 1 });
 
   function run(fn: () => Promise<{ success: boolean; error?: string }>) {
+    if (isPending) return;
     setError(null);
     startTransition(async () => {
-      const result = await fn();
-      if (!result.success) setError(result.error ?? "Something went wrong.");
-      else router.refresh();
+      try {
+        const result = await fn();
+        if (!result.success) setError(result.error ?? "Something went wrong.");
+        else router.refresh();
+      } catch {
+        setError("The repair update failed. Refresh the page and try again.");
+      }
     });
   }
 
@@ -62,9 +67,18 @@ export function RepairDetailControls({
             <Button
               key={s}
               size="sm"
-              variant="outline"
+              variant={s === "cancelled" ? "danger" : "outline"}
               isLoading={isPending}
-              onClick={() => run(() => updateRepairStatusAction({ ticketId: repair.id, newStatus: s }))}
+              disabled={isPending}
+              onClick={() => {
+                const message = s === "cancelled"
+                  ? "Cancel this repair ticket? Confirm the device has not been handed back or left in an active repair."
+                  : s === "completed"
+                    ? "Mark this repair as completed? Confirm the device is ready for handover."
+                    : null;
+                if (message && !window.confirm(message)) return;
+                run(() => updateRepairStatusAction({ ticketId: repair.id, newStatus: s }));
+              }}
             >
               {s.replace(/_/g, " ")}
             </Button>
@@ -94,11 +108,13 @@ export function RepairDetailControls({
         <div className="flex items-center gap-2">
           <input
             type="number"
+            min="0"
+            step="0.01"
             value={quote}
             onChange={(e) => setQuote(Number(e.target.value))}
             className="w-32 rounded-card border border-surface-border px-2 py-1.5 text-sm"
           />
-          <Button size="sm" variant="outline" isLoading={isPending} onClick={() => run(() => setRepairQuoteAction({ ticketId: repair.id, quoteAmount: quote }))}>
+          <Button size="sm" variant="outline" disabled={isPending || !Number.isFinite(quote) || quote < 0} isLoading={isPending} onClick={() => run(() => setRepairQuoteAction({ ticketId: repair.id, quoteAmount: quote }))}>
             Set quote
           </Button>
         </div>
@@ -109,11 +125,13 @@ export function RepairDetailControls({
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          rows={2}
+          rows={3}
+          maxLength={1000}
           placeholder="Diagnosis, progress note, etc."
           className="w-full rounded-card border border-surface-border px-2 py-1.5 text-sm"
         />
-        <div className="mt-1 flex items-center justify-between">
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-xs text-slate-500">{note.length}/1,000</span>
           <label className="flex items-center gap-2 text-xs text-gray-600">
             <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
             Internal only (never shown to customer)
@@ -121,6 +139,7 @@ export function RepairDetailControls({
           <Button
             size="sm"
             isLoading={isPending}
+            disabled={isPending || !note.trim()}
             onClick={() =>
               run(async () => {
                 const result = await addRepairUpdateAction({ ticketId: repair.id, note, isInternal });
@@ -184,6 +203,8 @@ export function RepairDetailControls({
           />
           <input
             type="number"
+            min="0"
+            step="0.01"
             placeholder="Cost"
             value={partForm.cost}
             onChange={(e) => setPartForm((f) => ({ ...f, cost: Number(e.target.value) }))}
@@ -191,6 +212,8 @@ export function RepairDetailControls({
           />
           <input
             type="number"
+            min="1"
+            step="1"
             placeholder="Qty"
             value={partForm.quantity}
             onChange={(e) => setPartForm((f) => ({ ...f, quantity: Number(e.target.value) }))}
@@ -199,9 +222,10 @@ export function RepairDetailControls({
           <Button
             size="sm"
             isLoading={isPending}
+            disabled={isPending || !partForm.partName.trim() || !Number.isFinite(partForm.cost) || partForm.cost < 0 || !Number.isInteger(partForm.quantity) || partForm.quantity < 1}
             onClick={() =>
               run(async () => {
-                if (!partForm.partName) return { success: false, error: "Part name is required." };
+                if (!partForm.partName.trim()) return { success: false, error: "Part name is required." };
                 const result = await addRepairPartAction({
                   ticketId: repair.id,
                   partName: partForm.partName,
