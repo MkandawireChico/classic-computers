@@ -16,8 +16,11 @@ export default async function AdminDocumentsPage() {
     .order("created_at", { ascending: false })
     .limit(100);
 
+  const canCreate = ["orders.write", "rentals.write"].some((key) => permissions.has(key));
+
   return (
     <div className="space-y-6">
+      {canCreate ? <div className="flex justify-end"><Link href="/admin/documents/new" className="inline-flex min-h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white hover:bg-slate-800">New quotation +</Link></div> : null}
       <AdminDetailHeader eyebrow="Commerce · Customer documents" title="Quotations & invoices" description="Review issued quotations and invoices across repairs, sales and rentals." />
       {error ? <p className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">Documents could not be loaded. Confirm the document migration is installed.</p> : null}
       {!documents?.length ? <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center"><h2 className="font-bold text-slate-950">No documents yet</h2><p className="mt-1 text-sm text-slate-600">New quotations and invoices will appear here.</p></div> : (
