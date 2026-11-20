@@ -4,6 +4,7 @@ import { getAdminRepairById, listTechnicians, listRepairStockOptions } from "@/l
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { RepairDetailControls } from "@/components/admin/repair-detail-controls";
 import { AdminDetailHeader } from "@/components/admin/admin-detail-header";
+import { RepairQuotationBuilder } from "@/components/admin/repair-quotation-builder";
 
 export default async function AdminRepairDetailPage({ params }: { params: { id: string } }) {
   await requirePermission("repairs.read");
@@ -65,6 +66,7 @@ export default async function AdminRepairDetailPage({ params }: { params: { id: 
           {!repair.customer_id ? <p className="mt-2 text-xs text-slate-500">Guest booking</p> : <p className="mt-2 text-xs text-slate-500">Registered customer</p>}
         </Card>
       </div>
+      <RepairQuotationBuilder ticketId={repair.id} />
     </div>
   );
 }
