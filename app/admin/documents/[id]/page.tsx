@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getMyPermissions } from "@/lib/auth/permissions";
 import { ConvertQuotationToInvoiceButton } from "@/components/admin/convert-quotation-to-invoice-button";
+import { InvoiceTransactionControls } from "@/components/admin/invoice-transaction-controls";
 import { createClient } from "@/lib/supabase/server";
 import { formatMoney } from "@/lib/format/money";
 import { PrintDocumentButton } from "@/components/admin/print-document-button";
@@ -30,6 +31,21 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
     .select("description,quantity,unit_price,line_total,sort_order")
     .eq("document_id", document.id)
     .order("sort_order", { ascending: true });
+  const { data: transactions } = document.document_type === "invoice"
+    ? await (supabase.from("business_document_transactions") as any)
+      .select("id,transaction_type,amount,provider,provider_reference,notes,created_at")
+      .eq("document_id", document.id)
+      .order("created_at", { ascending: false })
+    : { data: [] };
+  const paid = (transactions ?? []).filter((row: any) => row.transaction_type === "payment").reduce((sum: number, row: any) => sum + Number(row.amount), 0);
+  const refunded = (transactions ?? []).filter((row: any) => row.transaction_type === "refund").reduce((sum: number, row: any) => sum + Number(row.amount), 0);
+  const outstanding = Math.max(0, Number(document.grand_total) - paid);
+  const refundable = Math.max(0, paid - refunded);
+  const canRecordTransactions = document.document_type === "invoice" && (
+    document.source_type === "order" ? permissions.has("orders.write")
+    : document.source_type === "rental" ? permissions.has("rentals.write")
+    : permissions.has("repairs.write")
+  );
   const isQuotation = document.document_type === "quotation";
   const date = new Date(document.issued_at ?? document.created_at).toLocaleDateString("en-GB", { timeZone: "Africa/Blantyre" });
 
@@ -125,6 +141,25 @@ export default async function AdminBusinessDocumentPage({ params }: { params: { 
           </footer>
         </div>
       </article>
+      {document.document_type === "invoice" ? (
+        <section className="space-y-4 print:hidden">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="font-bold text-slate-950">Payment summary</h2>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <div><p className="text-xs text-slate-500">Verified received</p><p className="mt-1 font-bold tabular-nums">{formatMoney(paid)}</p></div>
+              <div><p className="text-xs text-slate-500">Refunded</p><p className="mt-1 font-bold tabular-nums">{formatMoney(refunded)}</p></div>
+              <div><p className="text-xs text-slate-500">Outstanding</p><p className="mt-1 font-bold tabular-nums">{formatMoney(outstanding)}</p></div>
+            </div>
+            {transactions?.length ? <div className="mt-4 divide-y divide-slate-100 border-t border-slate-100">
+              {transactions.map((row: any) => <div key={row.id} className="flex flex-wrap justify-between gap-3 py-3 text-sm">
+                <div><p className="font-semibold capitalize text-slate-800">{row.transaction_type} · {row.provider}</p><p className="text-xs text-slate-500">{row.provider_reference} · {new Date(row.created_at).toLocaleString("en-GB", { timeZone: "Africa/Blantyre" })}</p>{row.notes ? <p className="mt-1 text-xs text-slate-500">{row.notes}</p> : null}</div>
+                <p className="font-bold tabular-nums">{row.transaction_type === "refund" ? "-" : ""}{formatMoney(Number(row.amount))}</p>
+              </div>)}
+            </div> : <p className="mt-3 text-sm text-slate-500">No payment transactions recorded.</p>}
+          </div>
+          {canRecordTransactions ? <InvoiceTransactionControls documentId={document.id} outstanding={outstanding} refundable={refundable} hasRefund={refunded > 0} /> : null}
+        </section>
+      ) : null}
       <style>{`@media print { @page { size: A4; margin: 10mm; } body { background: #fff !important; } }`}</style>
     </main>
   );
