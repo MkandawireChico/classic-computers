@@ -35,7 +35,7 @@ export async function recordStaffQuotationDecision(documentId: string, decision:
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false as const, error: "Sign in to record the decision." };
 
-  const { data: document } = await (supabase.from("business_documents") as any)
+  const { data: document } = await ((supabase as any).from("business_documents") as any)
     .select("id,document_type,source_type,status,customer_id")
     .eq("id", documentId)
     .maybeSingle();
@@ -50,7 +50,7 @@ export async function recordStaffQuotationDecision(documentId: string, decision:
     : ["orders.write", "repairs.write", "rentals.write"].some((key) => permissions.has(key));
   if (!allowed) return { success: false as const, error: "You don't have permission to record this decision." };
 
-  const { error } = await (supabase.from("business_document_decisions") as any).insert({
+  const { error } = await ((supabase as any).from("business_document_decisions") as any).insert({
     document_id: document.id,
     customer_id: document.customer_id,
     decision,
