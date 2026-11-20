@@ -57,6 +57,12 @@ export function OrderStatusControls({
 
   async function handlePayment(newPaymentStatus: string) {
     if (isPending) return;
+    const confirmation = newPaymentStatus === "paid"
+      ? "Confirm you have checked the bank or mobile-money transaction and matched the amount and order reference. Only continue after funds are received."
+      : newPaymentStatus === "refunded"
+        ? "Confirm the refund has been processed and verified."
+        : "Record this order as partially paid? Confirm the received amount with your payment records first.";
+    if (!window.confirm(confirmation)) return;
     setError(null);
     setIsPending(true);
     try {
@@ -91,11 +97,12 @@ export function OrderStatusControls({
 
       {paymentOptions.length > 0 ? (
         <div>
-          <p className="mb-1 text-xs font-medium uppercase text-gray-500">Mark payment as</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Payment verification</p>
+          <p className="mb-3 text-xs leading-5 text-slate-500">Verify the transaction in your bank or mobile-money account before recording a payment outcome. This action updates the order record.</p>
           <div className="flex flex-wrap gap-2">
             {paymentOptions.map((s) => (
               <Button key={s} size="sm" variant="outline" isLoading={isPending} onClick={() => handlePayment(s)}>
-                {s}
+                {s === "paid" ? "Confirm payment received" : s === "partial" ? "Record partial payment" : "Record refund"}
               </Button>
             ))}
           </div>
