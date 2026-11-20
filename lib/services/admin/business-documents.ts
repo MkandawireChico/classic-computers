@@ -49,7 +49,7 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
 
   const supabase = createClient();
   const { data: ticket, error: ticketError } = await (supabase.from("repair_tickets") as any)
-    .select("id,ticket_number,customer_id,guest_name,guest_phone,guest_email,device_type,brand,model,status")
+    .select("id,ticket_number,customer_id,guest_name,guest_phone,guest_email,device_type,brand,model,status,customers ( profiles ( full_name ) )")
     .eq("id", d.ticketId)
     .maybeSingle();
   if (ticketError || !ticket) return { success: false, error: "Repair ticket not found." };
@@ -63,7 +63,7 @@ export async function createRepairQuotation(input: unknown): Promise<ServiceResu
       source_type: "repair",
       source_id: ticket.id,
       customer_id: ticket.customer_id,
-      customer_name: ticket.guest_name || ticket.customer_name || "Customer",
+      customer_name: ticket.guest_name || ticket.customers?.profiles?.full_name || "Customer",
       customer_email: ticket.guest_email,
       customer_phone: ticket.guest_phone,
       status: "draft",
