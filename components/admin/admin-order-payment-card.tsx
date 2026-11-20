@@ -8,6 +8,7 @@ const PAYMENT_VARIANT: Record<string, "neutral" | "success" | "warning" | "dange
   partial: "info",
   paid: "success",
   refunded: "neutral",
+  partially_refunded: "neutral",
 };
 
 export function AdminOrderPaymentCard({
