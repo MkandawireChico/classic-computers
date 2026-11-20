@@ -99,7 +99,7 @@ export async function getAdminRepairOverview(): Promise<AdminRepairOverview> {
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { data: completions, error: completionError } = await (supabase.from("repair_status_history" as any) as any)
-    .select("ticket_id,created_at").eq("to_status", "completed").gte("created_at", thirtyDaysAgo);
+    .select("ticket_id,created_at").eq("to_status", "completed").eq("is_baseline", false).gte("created_at", thirtyDaysAgo);
   let completedLast30Days = 0;
   let averageTurnaroundDays: number | null = null;
   if (!completionError && completions?.length) {
@@ -140,7 +140,7 @@ export interface AdminRepairDetail {
   guest_email: string | null;
   created_at: string;
   updates: Array<{ id: string; note: string; is_internal: boolean; created_at: string }>;
-  statusHistory: Array<{ id: string; from_status: string | null; to_status: string; changed_by_name: string | null; created_at: string }>;
+  statusHistory: Array<{ id: string; from_status: string | null; to_status: string; changed_by_name: string | null; is_baseline: boolean; created_at: string }>;
   workLogs: Array<{ id: string; work_date: string; duration_minutes: number; work_performed: string; technician_name: string | null }>;
   partsCostTotal: number;
   loggedMinutes: number;
@@ -178,7 +178,7 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
     (supabase.from("repair_work_logs" as any) as any).select("id, technician_id, work_date, duration_minutes, work_performed").eq("ticket_id", id).order("work_date", { ascending: false }).order("created_at", { ascending: false }),
     (supabase.from("business_documents" as any) as any).select("document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "quotation").order("created_at", { ascending: false }).limit(1),
     (supabase.from("business_documents" as any) as any).select("id,document_number,status,taxable_amount,grand_total").eq("source_type", "repair").eq("source_id", id).eq("document_type", "invoice").order("created_at", { ascending: false }),
-    (supabase.from("repair_status_history" as any) as any).select("id,from_status,to_status,changed_by,created_at").eq("ticket_id", id).order("created_at", { ascending: false }),
+    (supabase.from("repair_status_history" as any) as any).select("id,from_status,to_status,changed_by,is_baseline,created_at").eq("ticket_id", id).order("created_at", { ascending: false }),
   ]);
   if (statusHistoryError) console.error("Repair status history unavailable:", statusHistoryError.message);
   const { data: repairSettings } = await (supabase.from("site_settings") as any)
@@ -249,6 +249,7 @@ export async function getAdminRepairById(id: string): Promise<AdminRepairDetail 
       from_status: entry.from_status,
       to_status: entry.to_status,
       changed_by_name: technicianNames.get(entry.changed_by) ?? null,
+      is_baseline: Boolean(entry.is_baseline),
       created_at: entry.created_at,
     })),
     workLogs: normalizedWorkLogs,
