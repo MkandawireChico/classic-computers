@@ -53,3 +53,11 @@ export async function removeRepairPartAction(partId: string, ticketId: string) {
   }
   return result;
 }
+
+export async function addRepairWorkLogAction(input: unknown) {
+  const result = await repairService.addRepairWorkLog(input);
+  if (result.success && typeof input === "object" && input && "ticketId" in input) {
+    revalidatePath(`/admin/repairs/${(input as any).ticketId}`);
+  }
+  return result;
+}
