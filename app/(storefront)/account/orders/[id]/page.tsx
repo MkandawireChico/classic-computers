@@ -14,6 +14,12 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   if (!order) notFound();
   const reviewStatuses = await getMyReviewStatuses({ orderIds: [order.id] });
   const paymentProvider = getManualPaymentProviderFromNotes(order.payment_method, order.notes);
+  const totalReceived = order.paymentTransactions.reduce((sum, transaction) => sum + (transaction.transaction_type === "payment" ? Number(transaction.amount) : -Number(transaction.amount)), 0);
+  const outstandingBalance = Math.max(order.total - totalReceived, 0);
+  const hasVerifiedTransactions = order.paymentTransactions.length > 0;
+  const shouldShowPaymentInstructions = Boolean(paymentProvider)
+    && (order.payment_status === "unpaid" || (order.payment_status === "partial" && hasVerifiedTransactions && outstandingBalance > 0));
+  const amountToSend = order.payment_status === "partial" ? outstandingBalance : order.total;
   const isBankProvider = paymentProvider && "accountNumber" in paymentProvider;
   const walletNumber = paymentProvider && "walletNumber" in paymentProvider ? paymentProvider.walletNumber : null;
   const paymentCopyDetails = paymentProvider
@@ -23,7 +29,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         isBankProvider ? `Account number: ${paymentProvider.accountNumber}` : `Wallet number: ${walletNumber}`,
         ...(isBankProvider ? [`Branch: ${paymentProvider.branch}`] : []),
         `Order: ${order.order_number}`,
-        `Total: ${formatMoney(order.total)}`,
+        `Amount to send: ${formatMoney(amountToSend)}`,
       ].join("\n")
     : null;
 
@@ -40,14 +46,14 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         <Badge variant="neutral">{order.fulfillment_type === "pickup" ? "Pickup" : "Delivery"}</Badge>
       </div>
 
-      {paymentProvider && paymentCopyDetails && order.payment_status === "unpaid" ? (
+      {paymentProvider && paymentCopyDetails && shouldShowPaymentInstructions ? (
         <section className="rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="order-payment-heading">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-800">Payment still required</p>
           <h2 id="order-payment-heading" className="mt-1 text-lg font-bold text-slate-950">
             Pay using {paymentProvider.name}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Send the exact order total below. Include your order number as the payment reference where possible. Your order stays unpaid until our team verifies the transaction.
+            Send the outstanding amount below. Include your order number as the payment reference where possible. Your order status updates after our team verifies the transaction.
           </p>
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <PaymentDetail label="Account holder" value={paymentProvider.accountHolder} />
@@ -59,7 +65,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
             ) : null}
             {walletNumber ? <PaymentDetail label="Wallet number" value={walletNumber} /> : null}
             <PaymentDetail label="Order number" value={order.order_number} />
-            <PaymentDetail label="Amount to send" value={formatMoney(order.total)} />
+            <PaymentDetail label="Amount to send" value={formatMoney(amountToSend)} />
           </dl>
           <div className="mt-4 flex flex-wrap gap-2">
             {isBankProvider ? <CopyPaymentValue value={paymentProvider.accountNumber} label="account number" /> : null}
@@ -69,7 +75,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </section>
       ) : null}
 
-      {order.payment_status === "partial" ? (
+      {order.payment_status === "partial" && !hasVerifiedTransactions ? (
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6" aria-live="polite">
           <p className="text-sm font-bold text-amber-950">Partial payment recorded</p>
           <p className="mt-1 text-sm leading-6 text-amber-900">
@@ -81,6 +87,31 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
           <p className="text-sm font-bold text-slate-900">Payment marked as refunded</p>
           <p className="mt-1 text-sm leading-6 text-slate-600">Contact our team if you need the refund transaction details.</p>
+        </section>
+      ) : null}
+
+      {hasVerifiedTransactions ? (
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="verified-payments-heading">
+          <h2 id="verified-payments-heading" className="text-sm font-bold text-slate-950">Verified payments and refunds</h2>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <PaymentDetail label="Net amount received" value={formatMoney(totalReceived)} />
+            <PaymentDetail label="Order total" value={formatMoney(order.total)} />
+            <PaymentDetail label="Outstanding balance" value={formatMoney(outstandingBalance)} />
+          </div>
+          <ol className="mt-4 space-y-3">
+            {order.paymentTransactions.map((transaction) => (
+              <li key={transaction.id} className="flex flex-wrap items-start justify-between gap-3 border-t border-slate-100 pt-3 text-sm">
+                <div>
+                  <p className="font-semibold capitalize text-slate-900">{transaction.transaction_type} · {transaction.provider}</p>
+                  {transaction.provider_reference ? <p className="mt-1 text-xs text-slate-500">Reference: {transaction.provider_reference}</p> : null}
+                  <p className="mt-1 text-xs text-slate-500">{new Date(transaction.created_at).toLocaleString("en-MW", { timeZone: "Africa/Blantyre" })}</p>
+                </div>
+                <p className={transaction.transaction_type === "refund" ? "font-semibold text-rose-700" : "font-semibold text-emerald-700"}>
+                  {transaction.transaction_type === "refund" ? "−" : "+"}{formatMoney(Number(transaction.amount))}
+                </p>
+              </li>
+            ))}
+          </ol>
         </section>
       ) : null}
 
