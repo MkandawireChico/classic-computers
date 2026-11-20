@@ -17,8 +17,10 @@ const ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
 };
 
 const PAYMENT_STATUS_TRANSITIONS: Record<string, string[]> = {
-  // Partial payments are not enabled until the system records received amounts
-  // in a dedicated payment ledger. Never mark an untracked partial receipt.
+  // Staff must verify receipt before marking an order paid.
+  unpaid: ["paid"],
+  // Partial payments are disabled until received amounts are recorded
+  // in a dedicated payment ledger.
   partial: ["paid", "refunded"],
   paid: ["refunded"],
   refunded: [],
