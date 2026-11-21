@@ -76,7 +76,7 @@ export default async function CategoryShopPage({
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
         <span className="text-slate-700">{categoryName}</span>
       </nav>
-      <header className="rounded-3xl bg-gradient-to-br from-[#17344d] via-[#1d4562] to-[#17617b] px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
+      <header className="rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-brand-900 px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Browse by category</p>
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{categoryName}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Explore available {categoryName.toLowerCase()} from Classic Computers, Blantyre.</p>
@@ -96,7 +96,11 @@ export default async function CategoryShopPage({
               <p className="text-sm font-semibold text-navy-900" aria-live="polite">
                 {result.total} product{result.total === 1 ? "" : "s"}
               </p>
-              <p className="mt-0.5 text-xs text-slate-500">Starting prices in MWK, excluding VAT and PPDA</p>
+              <p className="mt-0.5 text-xs text-slate-500">
+                {result.total > 0
+                  ? `Showing ${((result.page - 1) * result.pageSize) + 1}–${Math.min(result.page * result.pageSize, result.total)} · Prices in MWK, excluding VAT and PPDA`
+                  : "Prices in MWK, excluding VAT and PPDA"}
+              </p>
             </div>
             <SortSelect />
           </div>
@@ -109,7 +113,7 @@ export default async function CategoryShopPage({
               <div className="flex items-center justify-between gap-2 sm:justify-end">
                 {result.page > 1 ? <Link href={categoryPageHref(category.slug, searchParams, result.page - 1)} rel="prev" className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700">Previous</Link> : <span className="px-3 text-sm text-slate-300">Previous</span>}
                 <span className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
-                {result.page < Math.ceil(result.total / result.pageSize) ? <Link href={categoryPageHref(category.slug, searchParams, result.page + 1)} rel="next" className="inline-flex min-h-10 items-center rounded-lg bg-[#123653] px-4 text-sm font-semibold text-white">Next</Link> : <span className="px-4 text-sm text-slate-300">Next</span>}
+                {result.page < Math.ceil(result.total / result.pageSize) ? <Link href={categoryPageHref(category.slug, searchParams, result.page + 1)} rel="next" className="inline-flex min-h-10 items-center rounded-lg bg-navy-900 px-4 text-sm font-semibold text-white">Next</Link> : <span className="px-4 text-sm text-slate-300">Next</span>}
               </div>
             </nav>
           ) : null}
