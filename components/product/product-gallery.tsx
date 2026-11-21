@@ -72,7 +72,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
           alt={active!.alt_text?.trim() || productName}
           fill
           priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
+          sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1279px) 52vw, 600px"
           className="object-contain p-5 sm:p-8"
         />
         {visibleImages.length > 1 ? (

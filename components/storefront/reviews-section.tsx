@@ -64,7 +64,7 @@ export async function ReviewsSection() {
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
                   <span className="font-semibold capitalize text-slate-600">{review.review_type} review</span>
                   <time dateTime={review.created_at}>
-                    {new Date(review.created_at).toLocaleDateString("en-MW", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}
+                    {new Date(review.created_at).toLocaleDateString("en-MW", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Blantyre" })}
                   </time>
                 </div>
                 {review.title ? <p className="mt-3 break-words font-semibold text-navy-900">{review.title}</p> : null}
