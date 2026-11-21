@@ -28,6 +28,15 @@ export async function ReviewsSection() {
             <p className="section-description">
               {stats.totalReviews} approved customer {stats.totalReviews === 1 ? "review" : "reviews"} across products and services.
             </p>
+            {stats.totalReviews > 0 ? (
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-sm text-slate-600">
+                <span className="font-bold text-navy-900">
+                  {(Object.values(stats.byType).reduce((sum, item) => sum + item.averageRating * item.count, 0) / stats.totalReviews).toFixed(1)} / 5
+                </span>
+                <span aria-hidden="true" className="text-amber-500">★★★★★</span>
+                <span>Based on approved customer reviews</span>
+              </div>
+            ) : null}
           </div>
           <Link
             href="/reviews"
@@ -51,7 +60,13 @@ export async function ReviewsSection() {
                   </span>
                 ) : null}
               </div>
-              {review.title ? <p className="mt-4 break-words font-semibold text-navy-900">{review.title}</p> : null}
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                <span className="font-semibold capitalize text-slate-600">{review.review_type} review</span>
+                <time dateTime={review.created_at}>
+                  {new Date(review.created_at).toLocaleDateString("en-MW", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}
+                </time>
+              </div>
+              {review.title ? <p className="mt-3 break-words font-semibold text-navy-900">{review.title}</p> : null}
               {review.comment ? <blockquote className="mt-2 flex-1 break-words text-sm leading-7 text-slate-600">{review.comment}</blockquote> : <div className="flex-1" />}
               <ReviewPhotos images={review.images} />
               {review.admin_response ? (
