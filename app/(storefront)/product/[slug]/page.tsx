@@ -282,11 +282,11 @@ export default async function ProductPage({ params }: { params: Params }) {
         ) : null}
 
         {ratingSummary.count > 0 ? (
-        <section id="customer-reviews" className="mt-8 scroll-mt-28 sm:mt-10">
+        <section id="customer-reviews" aria-labelledby="customer-reviews-heading" className="mt-8 scroll-mt-28 sm:mt-10">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
-              <h2 className="text-xl font-extrabold text-navy-900 sm:text-2xl">Customer Reviews</h2>
+              <h2 id="customer-reviews-heading" className="text-xl font-extrabold text-navy-900 sm:text-2xl">Customer Reviews</h2>
             </div>
             <Link
               href="/reviews"
@@ -320,7 +320,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               {reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map((review) => (
-                    <article key={review.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                    <article key={review.id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4">
                       <div className="flex items-center gap-2">
                         <div className="flex text-amber-500" aria-label={`${review.rating} out of 5 stars`}>
                           {Array.from({ length: 5 }).map((_, i) => (
@@ -335,22 +335,22 @@ export default async function ProductPage({ params }: { params: Params }) {
                           </span>
                         ) : null}
                       </div>
-                      {review.title ? <h3 className="mt-2 text-sm font-semibold text-navy-900">{review.title}</h3> : null}
-                      {review.comment ? <p className="mt-1 text-sm text-slate-600">{review.comment}</p> : null}
+                      {review.title ? <h3 className="mt-2 break-words text-sm font-semibold text-navy-900">{review.title}</h3> : null}
+                      {review.comment ? <p className="mt-1 break-words text-sm leading-6 text-slate-600">{review.comment}</p> : null}
                       <ReviewPhotos images={review.images} />
                       {review.admin_response ? (
                         <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
                           <p className="font-semibold text-navy-900">Response from Classic Computers:</p>
-                          <p className="mt-1 text-slate-600">{review.admin_response}</p>
+                          <p className="mt-1 break-words leading-6 text-slate-600">{review.admin_response}</p>
                         </div>
                       ) : null}
-                      <p className="mt-2 text-xs text-slate-500">
+                      <time dateTime={review.created_at} className="mt-2 block text-xs text-slate-500">
                         {new Date(review.created_at).toLocaleDateString("en-MW", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
                         })}
-                      </p>
+                      </time>
                     </article>
                   ))}
                 </div>
