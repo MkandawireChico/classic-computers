@@ -45,7 +45,7 @@ export default async function ShopPage({
     <main className="min-h-screen bg-surface-muted">
       <div className="section-shell py-6 sm:py-9 lg:py-11">
         <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
-          <Link href="/" className="hover:text-brand-700">Home</Link>
+          <Link href="/" className="rounded-sm hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Home</Link>
           <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
           <span aria-current="page" className="text-slate-700">Shop</span>
         </nav>
@@ -89,7 +89,7 @@ export default async function ShopPage({
         ) : null}
 
         <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
-          <aside aria-label="Shop filters" className="h-fit lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
+          <aside aria-label="Shop filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
             <ShopFilters brands={brands} categories={categories} />
           </aside>
 

@@ -87,15 +87,15 @@ export default async function CategoryShopPage({
       </header>
 
       <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
-        <aside aria-label="Filters" className="h-fit lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
+        <aside aria-label="Filters" className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
           <ShopFilters brands={brands} categories={categories} />
         </aside>
 
         <section aria-label="Products" className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-navy-900" aria-live="polite">
-                {result.total} product{result.total === 1 ? "" : "s"}
+              <p className="text-sm font-semibold text-navy-900" aria-live="polite" aria-atomic="true">
+                {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found` }
               </p>
               <p className="mt-0.5 text-xs text-slate-500">
                 {result.total > 0
@@ -107,7 +107,7 @@ export default async function CategoryShopPage({
           </div>
 
           {result.items.length > 0 ? (
-            <ProductGrid products={result.items} mode="catalog" />
+            <ProductGrid products={result.items} mode="catalog" searchResults={Boolean(filters.query)} />
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center sm:px-10">
               <h2 className="text-lg font-bold text-navy-950">
