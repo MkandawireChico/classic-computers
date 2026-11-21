@@ -24,6 +24,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
   useEffect(() => {
     setMinPrice(searchParams.get("min") ?? "");
     setMaxPrice(searchParams.get("max") ?? "");
+    setPriceError("");
   }, [searchParams]);
   const activeFilterCount =
     selectedBrands.size +
@@ -77,8 +78,10 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
 
   function submitPriceRange(e: FormEvent) {
     e.preventDefault();
-    const min = minPrice.trim() ? Number(minPrice) : undefined;
-    const max = maxPrice.trim() ? Number(maxPrice) : undefined;
+    const minValue = minPrice.trim();
+    const maxValue = maxPrice.trim();
+    const min = minValue ? Number(minValue) : undefined;
+    const max = maxValue ? Number(maxValue) : undefined;
     if ((min !== undefined && (!Number.isFinite(min) || min < 0)) || (max !== undefined && (!Number.isFinite(max) || max < 0))) {
       setPriceError("Enter valid non-negative prices.");
       return;
@@ -89,9 +92,9 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
     }
     setPriceError("");
     updateParams((params) => {
-      if (minPrice) params.set("min", minPrice);
+      if (minValue) params.set("min", minValue);
       else params.delete("min");
-      if (maxPrice) params.set("max", maxPrice);
+      if (maxValue) params.set("max", maxValue);
       else params.delete("max");
     });
   }
@@ -122,7 +125,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
         className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-brand-100 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
         aria-label={`Remove ${label} filter`}
       >
-        {label}<span aria-hidden="true" className="text-sm leading-none">×</span>
+        <span className="min-w-0 max-w-[min(15rem,65vw)] truncate">{label}</span><span aria-hidden="true" className="shrink-0 text-sm leading-none">×</span>
       </button>
     );
   }
