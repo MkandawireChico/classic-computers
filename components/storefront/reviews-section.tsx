@@ -26,7 +26,9 @@ export async function ReviewsSection() {
             <p className="section-kicker">Customer feedback</p>
             <h2 id="reviews-heading" className="section-heading">What customers say</h2>
             <p className="section-description">
-              {stats.totalReviews} approved customer {stats.totalReviews === 1 ? "review" : "reviews"} across products and services.
+              {stats.totalReviews > 0
+                ? `${stats.totalReviews} approved customer ${stats.totalReviews === 1 ? "review" : "reviews"} across products and services.`
+                : "Feedback from customers who have completed a purchase, rental or repair."}
             </p>
             {stats.totalReviews > 0 ? (
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-sm text-slate-600">
@@ -87,10 +89,16 @@ export async function ReviewsSection() {
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center sm:px-10">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-700">Your feedback matters</p>
-            <h3 className="mt-3 text-xl font-bold text-navy-900">No approved reviews published yet.</h3>
+            <h3 className="mt-3 text-xl font-bold text-navy-900">Be the first to share your experience.</h3>
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
-              Customer reviews appear here after moderation. If you have completed a purchase, rental or repair with us, sign in to check whether you are eligible to share feedback.
+              We publish customer feedback after moderation. If you have completed a purchase, rental or repair with Classic Computers, sign in to your account to check your review options.
             </p>
+            <Link
+              href="/account"
+              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+              Sign in to your account
+            </Link>
           </div>
         )}
       </div>
