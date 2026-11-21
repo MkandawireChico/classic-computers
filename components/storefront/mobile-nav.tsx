@@ -25,8 +25,7 @@ export function MobileNav({
     ["/rentals", "/repairs", "/student-deals", "/corporate"].includes(link.href),
   );
   const infoLinks = [
-    ...links.filter((link) => ["/about", "/contact"].includes(link.href)),
-    { href: "/reviews", label: "Customer reviews" },
+    ...links.filter((link) => ["/about", "/contact", "/reviews"].includes(link.href)),
   ];
 
   useEffect(() => {
