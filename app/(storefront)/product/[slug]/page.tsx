@@ -254,12 +254,12 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
         </div>
 
-        {(product.description || product.specifications.length > 0 || ratingSummary.count > 0 || related.length > 0) ? (
+        {(product.description || product.specifications.length > 0 || related.length > 0 || ratingSummary.count === 0 || ratingSummary.count > 0) ? (
           <nav aria-label="On this page" className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
             <span className="mr-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">On this page</span>
             {product.description ? <a href="#product-description" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Overview</a> : null}
             {product.specifications.length > 0 ? <a href="#product-specifications" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Specifications</a> : null}
-            {ratingSummary.count > 0 ? <a href="#customer-reviews" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Customer reviews</a> : null}
+            <a href="#customer-reviews" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Customer reviews</a>
             {related.length > 0 ? <a href="#related-products" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Related products</a> : null}
           </nav>
         ) : null}
@@ -361,6 +361,26 @@ export default async function ProductPage({ params }: { params: Params }) {
               ) : null}
           </div>
         </section>
+        ) : null}
+
+        {ratingSummary.count === 0 ? (
+          <section id="customer-reviews" aria-labelledby="customer-reviews-heading" className="mt-8 scroll-mt-28 sm:mt-10">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <span aria-hidden="true" className="h-8 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                <h2 id="customer-reviews-heading" className="text-xl font-extrabold text-navy-900 sm:text-2xl">Customer Reviews</h2>
+              </div>
+              <Link href="/reviews" className="shrink-0 rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+                Review information
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center sm:px-8">
+              <p className="text-sm font-bold text-navy-900">No approved reviews for this product yet.</p>
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
+                Customer feedback appears here after moderation. Visit our reviews page for information about eligibility and sharing your experience.
+              </p>
+            </div>
+          </section>
         ) : null}
 
         <RelatedProducts products={related} />
