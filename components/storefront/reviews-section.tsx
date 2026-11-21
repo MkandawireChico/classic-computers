@@ -19,7 +19,7 @@ export async function ReviewsSection() {
   ]);
 
   return (
-    <section aria-labelledby="reviews-heading" className="border-y border-slate-100 bg-slate-50/80">
+    <section aria-labelledby="reviews-heading" className="border-y border-surface-border bg-surface-muted">
       <div className="section-shell py-14 sm:py-16 lg:py-20">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-3">
@@ -91,12 +91,6 @@ export async function ReviewsSection() {
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
               Customer reviews appear here after moderation. If you have completed a purchase, rental or repair with us, sign in to check whether you are eligible to share feedback.
             </p>
-            <Link
-              href="/reviews"
-              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-900 px-5 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-            >
-              Review information
-            </Link>
           </div>
         )}
       </div>
