@@ -257,10 +257,10 @@ export default async function ProductPage({ params }: { params: Params }) {
         {(product.description || product.specifications.length > 0 || ratingSummary.count > 0 || related.length > 0) ? (
           <nav aria-label="On this page" className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
             <span className="mr-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">On this page</span>
-            {product.description ? <a href="#product-description" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Overview</a> : null}
-            {product.specifications.length > 0 ? <a href="#product-specifications" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Specifications</a> : null}
-            {ratingSummary.count > 0 ? <a href="#customer-reviews" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Customer reviews</a> : null}
-            {related.length > 0 ? <a href="#related-products" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Related products</a> : null}
+            {product.description ? <a href="#product-description" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Overview</a> : null}
+            {product.specifications.length > 0 ? <a href="#product-specifications" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Specifications</a> : null}
+            {ratingSummary.count > 0 ? <a href="#customer-reviews" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Customer reviews</a> : null}
+            {related.length > 0 ? <a href="#related-products" className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-navy-900 transition-colors hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Related products</a> : null}
           </nav>
         ) : null}
 
@@ -352,6 +352,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
+                          timeZone: "Africa/Blantyre",
                         })}
                       </time>
                     </article>

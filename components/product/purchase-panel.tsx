@@ -59,7 +59,8 @@ export function PurchasePanel({
   const hasActiveConfiguration = !hasVariants || Boolean(selectedVariant);
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
-  const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
+  const hasValidRegularPrice = Number.isFinite(price) && price > 0;
+  const onSale = salePrice !== null && Number.isFinite(salePrice) && salePrice > 0 && hasValidRegularPrice && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
   const hasValidPrice = Number.isFinite(effectivePrice) && effectivePrice > 0;
   const hasPurchasableConfiguration = hasActiveConfiguration && hasValidPrice;
@@ -126,7 +127,7 @@ export function PurchasePanel({
                 <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
               )}
             </div>
-            {hasVariants && product.display_price < effectivePrice ? (
+            {hasVariants && Number.isFinite(product.display_price) && product.display_price > 0 && product.display_price < effectivePrice ? (
               <p className="mt-2 text-xs font-semibold text-brand-800">
                 Starting configurations from {formatMoney(product.display_price)}
               </p>
@@ -163,7 +164,7 @@ export function PurchasePanel({
             id="variant"
             value={effectiveVariantId ?? ""}
             onChange={(e) => setSelectedVariantId(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
           >
             {activeVariants.map((variant) => {
               const status = product.inventory_by_variant[variant.id] ?? null;
