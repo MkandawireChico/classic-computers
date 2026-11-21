@@ -30,10 +30,10 @@ export async function Hero() {
               Find laptops, computers and ICT equipment. Get help with equipment rentals, repairs and technology supply for your organisation.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/shop" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-xl bg-navy-900 px-7 py-3.5 text-sm font-extrabold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+              <Link href="/shop" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-navy-900 px-7 py-3.5 text-sm font-extrabold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
                 Explore the catalogue <span aria-hidden="true" className="text-lg">↗</span>
               </Link>
-              <Link href="/corporate/enquire" className="inline-flex min-h-13 items-center justify-center rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-sm font-bold text-navy-900 transition-colors hover:border-brand-400 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+              <Link href="/corporate/enquire" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-sm font-bold text-navy-900 transition-colors hover:border-brand-400 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
                 Request a business quote
               </Link>
             </div>
