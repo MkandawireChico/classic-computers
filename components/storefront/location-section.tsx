@@ -73,7 +73,7 @@ export async function LocationSection() {
           <div className="mt-5 grid grid-cols-1 gap-2.5 md:grid-cols-3">
             {businessInfo.phone ? (
               <a
-                href={`tel:${businessInfo.phone.replace(/[^\\d+]/g, "")}`}
+                href={`tel:${businessInfo.phone.replace(/[^\d+]/g, "")}`}
                 aria-label={`Call Classic Computers at ${businessInfo.phone}`}
                 className="group flex min-h-[68px] min-w-0 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
               >
