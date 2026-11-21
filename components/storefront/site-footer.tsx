@@ -59,8 +59,8 @@ export async function SiteFooter() {
 
   return (
     <footer className="border-t border-slate-200 bg-[#f1f5f7] text-slate-700">
-      <div className="section-shell grid gap-10 py-11 sm:py-14 lg:grid-cols-[1.25fr_0.7fr_0.85fr_1fr] lg:gap-12">
-        <section className="min-w-0">
+      <div className="section-shell grid grid-cols-1 gap-9 py-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 sm:py-14 lg:grid-cols-[1.25fr_0.7fr_0.85fr_1fr] lg:gap-12">
+        <section className="min-w-0 sm:col-span-2 lg:col-span-1">
           <p className="text-xl font-extrabold tracking-tight text-[#10243a]">Classic <span className="text-brand-700">Computers</span></p>
           <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600">
             Computers, ICT equipment and practical technology support for individuals, students and organisations.
@@ -101,18 +101,18 @@ export async function SiteFooter() {
       <div className="border-t border-slate-200 bg-white">
         <div className="section-shell flex flex-col gap-3 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Classic Computers LLC. Blantyre, Malawi.</p>
-          <div aria-label="Contact details" className="flex flex-wrap gap-x-5 gap-y-2">
+          <div aria-label="Contact details" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">
             {contactPhones.map((phone) => (
               <a
                 key={phone}
                 href={`tel:${phone.replace(/[^\d+]/g, "")}`}
                 aria-label={`Call Classic Computers at ${phone}`}
-                className="font-semibold text-slate-600 hover:text-brand-800"
+                className="max-w-full break-words font-semibold text-slate-600 hover:text-brand-800"
               >
                 {phone}
               </a>
             ))}
-            {businessInfo?.email ? <a href={`mailto:${businessInfo.email}`} className="font-semibold text-slate-600 hover:text-brand-800">{businessInfo.email}</a> : null}
+            {businessInfo?.email ? <a href={`mailto:${businessInfo.email}`} className="max-w-full break-all font-semibold text-slate-600 hover:text-brand-800">{businessInfo.email}</a> : null}
             {businessInfo?.whatsapp ? <a href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-600 hover:text-brand-800">WhatsApp</a> : null}
           </div>
         </div>
