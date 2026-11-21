@@ -96,19 +96,6 @@ export function PurchasePanel({
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      {quickSpecifications.length > 0 ? (
-        <section aria-label="Key product specifications" className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Key specifications</p>
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-            {quickSpecifications.map((spec) => (
-              <div key={spec.key} className="min-w-0">
-                <dt className="text-[11px] font-medium text-slate-500">{spec.label}</dt>
-                <dd className="mt-0.5 break-words text-sm font-bold text-navy-950">{spec.value}{spec.unit ? " " + spec.unit : ""}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      ) : null}
       <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{activeVariants.length > 0 ? "Selected configuration price" : "Catalogue price"}</p>
         <div className="flex flex-wrap items-baseline gap-2">
@@ -188,6 +175,20 @@ export function PurchasePanel({
         />
         </div>
       </div>
+
+      {quickSpecifications.length > 0 ? (
+        <section aria-label="Key product specifications" className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Key specifications</p>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+            {quickSpecifications.map((spec) => (
+              <div key={spec.key} className="min-w-0">
+                <dt className="text-[11px] font-medium text-slate-500">{spec.label}</dt>
+                <dd className="mt-0.5 break-words text-sm font-bold text-navy-950">{spec.value}{spec.unit ? " " + spec.unit : ""}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ) : null}
 
       <div className="flex flex-col gap-2 sm:flex-row">
         {isAuthenticated ? (

@@ -39,7 +39,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
       <div
         role="img"
         aria-label={`No product image available for ${productName}`}
-        className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 text-sm font-medium text-slate-500"
+        className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-surface-muted text-sm font-medium text-slate-500"
       >
         Product image coming soon
       </div>
@@ -48,7 +48,7 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
 
   return (
     <section aria-label={`Images of ${productName}`} className="min-w-0">
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-100 bg-surface-muted">
         <Image
           key={active!.id}
           src={getPublicStorageUrl("product-images", active!.storage_path)}

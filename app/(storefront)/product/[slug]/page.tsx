@@ -208,6 +208,17 @@ export default async function ProductPage({ params }: { params: Params }) {
                   ) : null}
                 </div>
                 <h1 className="text-[1.8rem] font-extrabold leading-[1.12] tracking-tight text-navy-950 sm:text-4xl">{product.name}</h1>
+                {ratingSummary.count > 0 ? (
+                  <a
+                    href="#customer-reviews"
+                    className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                    aria-label={"Rated " + ratingSummary.averageRating + " out of 5 from " + ratingSummary.count + " customer reviews. Read reviews."}
+                  >
+                    <span aria-hidden="true" className="text-amber-600">★</span>
+                    <span>{ratingSummary.averageRating} / 5</span>
+                    <span className="text-amber-800/80">({ratingSummary.count} {ratingSummary.count === 1 ? "review" : "reviews"})</span>
+                  </a>
+                ) : null}
                 <ProductInterestTracker productId={product.id} categoryId={product.category?.id ?? null} />
               </div>
 
@@ -261,7 +272,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         ) : null}
 
         {ratingSummary.count > 0 ? (
-        <section className="mt-8 sm:mt-10">
+        <section id="customer-reviews" className="mt-8 scroll-mt-28 sm:mt-10">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
