@@ -61,7 +61,9 @@ export function PurchasePanel({
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
   const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
-  const availabilityMessage = currentStatus === "out_of_stock"
+  const availabilityMessage = hasVariants && !selectedVariant
+    ? null
+    : currentStatus === "out_of_stock"
     ? "This configuration is currently out of stock. Contact our team to ask about restocking or alternatives."
     : currentStatus === "coming_soon"
       ? "This configuration is not available yet. Contact our team for an availability update."
