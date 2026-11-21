@@ -70,10 +70,48 @@ export async function LocationSection() {
             ) : null}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm">
-            {businessInfo.phone ? <a href={`tel:${businessInfo.phone}`} aria-label={`Call Classic Computers at ${businessInfo.phone}`} className="inline-flex min-h-8 items-center font-bold text-brand-800 underline-offset-4 hover:text-brand-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">{businessInfo.phone}</a> : null}
-            {businessInfo.email ? <a href={`mailto:${businessInfo.email}`} aria-label={`Email Classic Computers at ${businessInfo.email}`} className="inline-flex min-h-8 items-center font-bold text-brand-800 underline-offset-4 hover:text-brand-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">{businessInfo.email}</a> : null}
-            {businessInfo.whatsapp ? <a href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" aria-label="Message Classic Computers on WhatsApp" className="inline-flex min-h-9 items-center rounded-lg border border-green-200 bg-green-50 px-3 font-bold text-green-800 transition-colors hover:border-green-300 hover:bg-green-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2">WhatsApp</a> : null}
+          <div className="mt-6 max-w-xl space-y-2" aria-label="Contact Classic Computers">
+            {businessInfo.phone ? (
+              <a
+                href={`tel:${businessInfo.phone}`}
+                aria-label={`Call Classic Computers at ${businessInfo.phone}`}
+                className="group flex min-h-[68px] w-full min-w-0 items-center justify-between gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:px-5"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Phone</span>
+                  <span className="mt-1 block break-words text-sm font-bold text-navy-900">{businessInfo.phone}</span>
+                </span>
+                <span className="shrink-0 text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">Call <span aria-hidden="true">↗</span></span>
+              </a>
+            ) : null}
+            {businessInfo.email ? (
+              <a
+                href={`mailto:${businessInfo.email}`}
+                aria-label={`Email Classic Computers at ${businessInfo.email}`}
+                className="group flex min-h-[68px] w-full min-w-0 items-center justify-between gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:px-5"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Email</span>
+                  <span className="mt-1 block break-all text-sm font-bold text-navy-900">{businessInfo.email}</span>
+                </span>
+                <span className="shrink-0 text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">Email us <span aria-hidden="true">↗</span></span>
+              </a>
+            ) : null}
+            {businessInfo.whatsapp ? (
+              <a
+                href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Message Classic Computers on WhatsApp at ${businessInfo.whatsapp}`}
+                className="group flex min-h-[68px] w-full min-w-0 items-center justify-between gap-4 rounded-lg border border-green-200 bg-green-50/70 px-4 py-3 transition-colors hover:border-green-300 hover:bg-green-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 sm:px-5"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-green-800/75">WhatsApp</span>
+                  <span className="mt-1 block break-words text-sm font-bold text-green-900">{businessInfo.whatsapp}</span>
+                </span>
+                <span className="shrink-0 text-xs font-bold text-green-800 transition-colors group-hover:text-green-950">Message us <span aria-hidden="true">↗</span></span>
+              </a>
+            ) : null}
           </div>
           <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
             Contact our team
