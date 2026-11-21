@@ -41,7 +41,7 @@ export default async function ShopPage({
   );
 
   return (
-    <main className="min-h-screen bg-[#f4f7f9]">
+    <main className="min-h-screen bg-surface-muted">
       <div className="section-shell py-6 sm:py-9 lg:py-11">
         <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
           <Link href="/" className="hover:text-brand-700">Home</Link>
@@ -53,7 +53,7 @@ export default async function ShopPage({
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-700">Classic Computers catalogue</p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <h1 className="text-3xl font-extrabold tracking-[-0.045em] text-[#10243a] sm:text-4xl">Shop computers and ICT equipment.</h1>
+              <h1 className="text-3xl font-extrabold tracking-[-0.045em] text-navy-900 sm:text-4xl">Shop computers and ICT equipment.</h1>
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
                 Compare products, check availability and find equipment for home, study or work.
               </p>
@@ -134,7 +134,7 @@ export default async function ShopPage({
                 <Link
                   href={pageHref(searchParams, result.page + 1)}
                   rel="next"
-                  className="inline-flex min-h-10 items-center rounded-lg bg-[#123653] px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  className="inline-flex min-h-10 items-center rounded-lg bg-navy-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 >
                   Next
                 </Link>
