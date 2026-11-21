@@ -167,6 +167,12 @@ export function PurchasePanel({
           >
             {activeVariants.map((variant) => {
               const status = product.inventory_by_variant[variant.id] ?? null;
+              const regularPrice = Number(variant.price);
+              const validRegularPrice = Number.isFinite(regularPrice) && regularPrice > 0;
+              const salePrice = Number(variant.sale_price);
+              const validSalePrice = variant.sale_price !== null && Number.isFinite(salePrice) && salePrice > 0 && salePrice < regularPrice;
+              const optionPrice = validSalePrice ? salePrice : regularPrice;
+              const priceLabel = validRegularPrice ? formatMoney(optionPrice) : "Pricing on request";
               const availabilityLabel =
                 status === "out_of_stock" ? " · Out of stock" :
                 status === "coming_soon" ? " · Coming soon" :
@@ -175,7 +181,7 @@ export function PurchasePanel({
                 status === "in_stock" ? " · In stock" : " · Availability unconfirmed";
               return (
                 <option key={variant.id} value={variant.id}>
-                  {variant.name} — {formatMoney(variant.sale_price !== null && variant.sale_price > 0 && variant.sale_price < variant.price ? variant.sale_price : variant.price)}{availabilityLabel}
+                  {variant.name} — {priceLabel}{availabilityLabel}
                 </option>
               );
             })}

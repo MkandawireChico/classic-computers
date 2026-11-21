@@ -83,6 +83,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       ? schemaVariant.sale_price
       : schemaVariant.price
     : displayPrice;
+  const hasSchemaPrice = Number.isFinite(schemaPrice) && schemaPrice > 0;
   const schemaInventoryStatus = schemaVariant
     ? product.inventory_by_variant[schemaVariant.id] ?? null
     : product.inventory_status;
@@ -109,13 +110,15 @@ export default async function ProductPage({ params }: { params: Params }) {
         : product.condition === "refurbished"
           ? "https://schema.org/RefurbishedCondition"
           : "https://schema.org/UsedCondition",
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "MWK",
-      price: schemaPrice,
-      availability,
-      url: `https://classiccomputers.mw/product/${product.slug}`,
-    },
+    offers: hasSchemaPrice && (!product.variants.length || Boolean(schemaVariant))
+      ? {
+          "@type": "Offer",
+          priceCurrency: "MWK",
+          price: schemaPrice,
+          availability,
+          url: `https://classiccomputers.mw/product/${product.slug}`,
+        }
+      : undefined,
   };
 
   const breadcrumbJsonLd = {

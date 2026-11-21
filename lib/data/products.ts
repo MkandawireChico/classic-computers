@@ -340,6 +340,8 @@ export async function getRelatedProducts(categoryId: string, excludeProductId: s
     .eq("status", "published")
     .eq("category_id", categoryId)
     .neq("id", excludeProductId)
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) {
