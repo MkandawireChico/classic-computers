@@ -56,11 +56,13 @@ export function PurchasePanel({
     }
   }, [selectedVariantId, effectiveVariantId, setSelectedVariantId]);
 
-  const hasPurchasableConfiguration = !hasVariants || Boolean(selectedVariant);
+  const hasActiveConfiguration = !hasVariants || Boolean(selectedVariant);
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
   const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
+  const hasValidPrice = Number.isFinite(effectivePrice) && effectivePrice > 0;
+  const hasPurchasableConfiguration = hasActiveConfiguration && hasValidPrice;
 
   // Phase 4 correction (item 3): the SELECTED variant's own inventory
   // status is authoritative for a product that has variants — a product
@@ -134,7 +136,7 @@ export function PurchasePanel({
         ) : (
           <div role="status" className="mt-2">
             <p className="text-lg font-bold text-navy-900">Pricing on request</p>
-            <p className="mt-1 text-xs leading-5 text-slate-600">There are no active configurations listed for online purchase.</p>
+            <p className="mt-1 text-xs leading-5 text-slate-600">{hasActiveConfiguration ? "Contact our team for a current price before ordering." : "There are no active configurations listed for online purchase. Contact our team for assistance."}</p>
           </div>
         )}
       </div>

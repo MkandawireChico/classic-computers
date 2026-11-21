@@ -69,11 +69,11 @@ export default async function CategoryShopPage({
   if (searchParams.page !== undefined && requestedPage !== result.page) redirect(categoryPageHref(category.slug, searchParams, result.page));
 
   return (
-    <main className="min-h-screen bg-slate-50/60">
+    <main className="min-h-screen bg-surface-muted">
       <div className="section-shell py-6 sm:py-9 lg:py-11">
       <CategoryInterestTracker categoryId={category.id} />
       <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
-        <Link href="/shop" className="hover:text-brand-700">Shop</Link>
+        <Link href="/shop" className="rounded-sm hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Shop</Link>
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
         <span aria-current="page" className="text-slate-700">{categoryName}</span>
       </nav>
@@ -117,8 +117,8 @@ export default async function CategoryShopPage({
                 {hasActiveFilters ? "Try a different search, remove a filter or return to the full category." : "Please check back soon or contact our team for help finding a product."}
               </p>
               <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
-                {hasActiveFilters ? <Link href={"/shop/" + category.slug} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-950 px-5 text-sm font-semibold text-white hover:bg-navy-800">Clear search and filters</Link> : null}
-                <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-navy-900 hover:bg-slate-50">Contact the team</Link>
+                {hasActiveFilters ? <Link href={"/shop/" + category.slug} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-950 px-5 text-sm font-semibold text-white hover:bg-navy-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Clear search and filters</Link> : null}
+                <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-navy-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Contact the team</Link>
               </div>
             </div>
           )}
