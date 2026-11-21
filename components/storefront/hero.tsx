@@ -46,7 +46,7 @@ export async function Hero() {
                 <span className="block text-xs font-extrabold text-navy-900 transition-colors group-hover:text-brand-800 sm:text-sm">Rent</span>
                 <span className="mt-1 block text-[10px] leading-4 text-slate-500 sm:text-xs">Short-term equipment</span>
               </Link>
-              <Link href="/repairs" className="group min-w-0 border-l border-slate-300 pl-3">
+              <Link href="/repairs" className="group min-w-0 rounded-sm border-l border-slate-300 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                 <span className="block text-xs font-extrabold text-navy-900 transition-colors group-hover:text-brand-800 sm:text-sm">Repair</span>
                 <span className="mt-1 block text-[10px] leading-4 text-slate-500 sm:text-xs">Technical support</span>
               </Link>

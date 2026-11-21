@@ -96,7 +96,7 @@ export default async function ShopPage({
           <section aria-label="Products" className="min-w-0">
             <div className="mb-4 flex flex-col items-stretch justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center">
               <div>
-                <p className="text-sm font-semibold text-navy-900" aria-live="polite">
+                <p className="text-sm font-semibold text-navy-900" aria-live="polite" aria-atomic="true">
                   {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
                 </p>
                 <p className="mt-0.5 text-xs text-slate-500">

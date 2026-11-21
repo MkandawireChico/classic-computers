@@ -73,7 +73,7 @@ export default async function CategoryShopPage({
       <div className="section-shell py-6 sm:py-9 lg:py-11">
       <CategoryInterestTracker categoryId={category.id} />
       <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
-        <Link href="/shop" className="rounded-sm hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Shop</Link>
+        <Link href="/shop" className="rounded-sm hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Shop</Link>
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
         <span aria-current="page" className="text-slate-700">{categoryName}</span>
       </nav>

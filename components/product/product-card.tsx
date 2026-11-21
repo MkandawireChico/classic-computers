@@ -21,7 +21,8 @@ export function ProductCard({
     ? getPublicStorageUrl("product-images", product.primary_image.storage_path)
     : null;
   const hasListedPrice = Number.isFinite(product.display_price) && product.display_price > 0;
-  const onSale = hasListedPrice && product.regular_price > 0 && product.display_price < product.regular_price;
+  const hasRegularPrice = Number.isFinite(product.regular_price) && product.regular_price > 0;
+  const onSale = hasListedPrice && hasRegularPrice && product.display_price < product.regular_price;
   const discountPercent = onSale
     ? Math.round((1 - product.display_price / product.regular_price) * 100)
     : null;
@@ -42,12 +43,12 @@ export function ProductCard({
               alt={product.primary_image?.alt_text?.trim() || product.name}
               fill
               sizes={isCatalog
-                ? "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 38vw, 30vw"
+                ? "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 38vw, 25vw"
                 : "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"}
               className="object-contain p-5 transition-transform duration-300 group-hover:scale-[1.025] sm:p-6"
             />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 bg-slate-50 text-slate-300">
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-surface-muted text-slate-300">
               <svg width="48" height="42" viewBox="0 0 40 32" fill="none" aria-hidden="true">
                 <rect x="2" y="2" width="36" height="24" rx="2" stroke="currentColor" strokeWidth="2" />
                 <path d="M14 30h12M20 26v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
