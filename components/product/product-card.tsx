@@ -33,7 +33,7 @@ export function ProductCard({
         trackSearchResult={searchResult}
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-200 hover:border-brand-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
       >
-        <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white sm:aspect-square">
+        <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-slate-100 bg-surface-muted sm:aspect-square">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -83,16 +83,21 @@ export function ProductCard({
               ) : (
                 <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
               )}
-              <span className="mt-1 text-[10px] font-medium text-slate-500">{product.has_active_variants ? "Starting price · " : ""}Excludes VAT and PPDA</span>
+              <span className="mt-1 text-[11px] font-medium text-slate-500">{product.has_active_variants ? "Starting price · " : ""}Excludes VAT and PPDA</span>
             </div>
             {product.condition !== "new" ? (
               <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-slate-600">{product.condition}</span>
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-2 border-t border-slate-50 pt-2">
+          <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
             <StockBadge status={product.inventory_status} />
-            <span className="text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">View details <span aria-hidden="true">↗</span></span>
+            <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">
+              View product
+              <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5">
+                <path d="M3.25 8h9.5m-4-4 4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </div>
         </div>
       </TrackedProductLink>
