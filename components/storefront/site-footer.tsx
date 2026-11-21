@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getBusinessInfo, getHours } from "@/lib/data/site-settings";
-import { getApprovedReviews } from "@/lib/data/reviews";
 
 const FOOTER_COLUMNS = [
   {
@@ -26,6 +25,7 @@ const FOOTER_COLUMNS = [
       { href: "/about", label: "About us" },
       { href: "/contact", label: "Contact" },
       { href: "/faq", label: "FAQ" },
+      { href: "/reviews", label: "Customer reviews" },
       { href: "/delivery", label: "Delivery and collection" },
       { href: "/warranty", label: "Warranty" },
       { href: "/returns", label: "Returns" },
@@ -36,16 +36,10 @@ const FOOTER_COLUMNS = [
 ];
 
 export async function SiteFooter() {
-  const [businessInfo, hours, publishedReviews] = await Promise.all([
+  const [businessInfo, hours] = await Promise.all([
     getBusinessInfo(),
     getHours(),
-    getApprovedReviews(1),
   ]);
-  const footerColumns = FOOTER_COLUMNS.map((column) =>
-    column.title === "Shop" && publishedReviews.length > 0
-      ? { ...column, links: [...column.links, { href: "/reviews", label: "Customer reviews" }] }
-      : column,
-  );
   const directionsUrl = businessInfo?.address
     ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${businessInfo.name}, ${businessInfo.address}`)}`
     : null;
@@ -82,7 +76,7 @@ export async function SiteFooter() {
           </div>
         </section>
 
-        {footerColumns.map((column) => (
+        {FOOTER_COLUMNS.map((column) => (
           <nav key={column.title} aria-label={column.title} className="min-w-0">
             <h2 className="mb-4 text-xs font-extrabold uppercase tracking-[0.16em] text-[#17344d]">{column.title}</h2>
             <ul className="space-y-2.5">
