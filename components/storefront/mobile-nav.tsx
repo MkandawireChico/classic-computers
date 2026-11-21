@@ -24,7 +24,10 @@ export function MobileNav({
   const serviceLinks = links.filter((link) =>
     ["/rentals", "/repairs", "/student-deals", "/corporate"].includes(link.href),
   );
-  const infoLinks = links.filter((link) => ["/about", "/contact"].includes(link.href));
+  const infoLinks = [
+    ...links.filter((link) => ["/about", "/contact"].includes(link.href)),
+    { href: "/reviews", label: "Customer reviews" },
+  ];
 
   useEffect(() => {
     setPortalRoot(document.body);
