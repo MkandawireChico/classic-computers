@@ -63,12 +63,12 @@ export function ProductCard({
         </div>
 
         <div className={"flex flex-1 flex-col gap-3 " + (isCatalog ? "p-4 sm:p-4" : "p-5")}>
-          <div className="flex min-h-4 items-center justify-between gap-2">
+          <div className="flex min-h-4 min-w-0 items-center gap-2">
             {product.brand
-              ? <span className="truncate text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 sm:text-[11px]">{product.brand.name}</span>
-              : <span />}
+              ? <span className="min-w-0 flex-1 truncate text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 sm:text-[11px]">{product.brand.name}</span>
+              : <span className="min-w-0 flex-1" />}
             {isCatalog && product.category
-              ? <span className="truncate text-[10px] font-medium text-slate-400">{formatCategoryName(product.category.name)}</span>
+              ? <span className="min-w-0 max-w-[45%] truncate text-right text-[10px] font-medium text-slate-400">{formatCategoryName(product.category.name)}</span>
               : null}
           </div>
 
@@ -76,17 +76,17 @@ export function ProductCard({
             {product.name}
           </h3>
 
-          <div className="mt-auto flex items-end justify-between gap-2 border-t border-slate-100 pt-3">
+          <div className="mt-auto flex min-w-0 items-end justify-between gap-2 border-t border-slate-100 pt-3">
             <div className="flex min-w-0 flex-col">
               {hasListedPrice ? (
                 <>
                   {onSale ? (
                     <>
-                      <span className={"font-extrabold text-brand-800 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
+                      <span className={"break-words font-extrabold text-brand-800 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
                       <span className="text-xs font-medium text-slate-400 line-through">{formatMoney(product.regular_price)}</span>
                     </>
                   ) : (
-                    <span className={"font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
+                    <span className={"break-words font-extrabold text-navy-950 " + (isCatalog ? "text-lg sm:text-xl" : "text-xl")}>{product.has_active_variants ? "From " : ""}{formatMoney(product.display_price)}</span>
                   )}
                   <span className="mt-1 text-[11px] font-medium text-slate-500">{product.has_active_variants ? "Starting price · " : ""}Excludes VAT and PPDA</span>
                 </>
@@ -102,7 +102,7 @@ export function ProductCard({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 border-t border-slate-100 pt-3">
             <StockBadge status={product.inventory_status} />
             <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-brand-800 transition-colors group-hover:text-brand-950">
               View product
