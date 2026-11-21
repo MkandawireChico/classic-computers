@@ -64,6 +64,7 @@ export default async function CategoryShopPage({
 
   const filters = parseShopSearchParams(searchParams, { categorySlug: category.slug });
   const [result, brands, categories] = await Promise.all([searchShop({ ...filters, page: filters.page ?? 1, pageSize: filters.pageSize ?? 24 }), getBrands(), getCategories()]);
+  const hasActiveFilters = Boolean(filters.query || filters.brandSlugs?.length || filters.minPrice !== undefined || filters.maxPrice !== undefined || filters.availableOnly);
   const requestedPage = typeof searchParams.page === "string" ? Number(searchParams.page) : undefined;
   if (searchParams.page !== undefined && requestedPage !== result.page) redirect(categoryPageHref(category.slug, searchParams, result.page));
 
@@ -105,14 +106,29 @@ export default async function CategoryShopPage({
             <SortSelect />
           </div>
 
-          <ProductGrid products={result.items} mode="catalog" emptyMessage={`No ${categoryName.toLowerCase()} available right now.`} />
+          {result.items.length > 0 ? (
+            <ProductGrid products={result.items} mode="catalog" />
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center sm:px-10">
+              <h2 className="text-lg font-bold text-navy-950">
+                {hasActiveFilters ? "No products match those filters" : "No " + categoryName.toLowerCase() + " available right now"}
+              </h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                {hasActiveFilters ? "Try a different search, remove a filter or return to the full category." : "Please check back soon or contact our team for help finding a product."}
+              </p>
+              <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+                {hasActiveFilters ? <Link href={"/shop/" + category.slug} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-950 px-5 text-sm font-semibold text-white hover:bg-navy-800">Clear search and filters</Link> : null}
+                <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-navy-900 hover:bg-slate-50">Contact the team</Link>
+              </div>
+            </div>
+          )}
 
           {result.total > result.pageSize ? (
             <nav aria-label="Category catalogue pages" className="mt-8 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs font-medium text-slate-500">Showing {((result.page - 1) * result.pageSize) + 1}–{Math.min(result.page * result.pageSize, result.total)} of {result.total} products</p>
               <div className="flex items-center justify-between gap-2 sm:justify-end">
                 {result.page > 1 ? <Link href={categoryPageHref(category.slug, searchParams, result.page - 1)} rel="prev" className="inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Previous</Link> : <span aria-disabled="true" className="inline-flex min-h-10 items-center rounded-lg border border-slate-100 px-3 text-sm font-semibold text-slate-300">Previous</span>}
-                <span className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
+                <span aria-current="page" className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
                 {result.page < Math.ceil(result.total / result.pageSize) ? <Link href={categoryPageHref(category.slug, searchParams, result.page + 1)} rel="next" className="inline-flex min-h-10 items-center rounded-lg bg-navy-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">Next</Link> : <span aria-disabled="true" className="inline-flex min-h-10 items-center rounded-lg border border-slate-100 px-4 text-sm font-semibold text-slate-300">Next</span>}
               </div>
             </nav>
