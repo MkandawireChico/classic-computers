@@ -1,5 +1,6 @@
 import { getApprovedReviews, getReviewStats } from "@/lib/data/reviews";
 import { getBusinessInfo } from "@/lib/data/site-settings";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import Link from "next/link";
 import { ReviewPhotos } from "./review-photos";
 
@@ -14,10 +15,11 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export async function ReviewsSection() {
-  const [reviews, stats, businessInfo] = await Promise.all([
+  const [reviews, stats, businessInfo, user] = await Promise.all([
     getApprovedReviews(3),
     getReviewStats(),
     getBusinessInfo(),
+    getCurrentUser(),
   ]);
   const whatsappNumber = businessInfo?.whatsapp?.replace(/\D/g, "") ?? "";
   const feedbackMessage = encodeURIComponent("Hello Classic Computers, I would like to share feedback about my customer experience.");
@@ -99,10 +101,10 @@ export async function ReviewsSection() {
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Link
-                href="/account"
+                href={user ? "/account/reviews/write" : "/sign-in?redirectTo=%2Faccount%2Freviews%2Fwrite"}
                 className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
               >
-                Sign in to submit a review
+                {user ? "Write a review" : "Sign in to submit a review"}
               </Link>
               {whatsappNumber ? (
                 <a
