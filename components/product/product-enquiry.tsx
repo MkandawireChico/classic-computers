@@ -24,7 +24,7 @@ export function ProductEnquiry({
       <div className="mb-3">
         <h2 className="text-sm font-bold text-slate-900">Have a question about this product?</h2>
         <p className="mt-1 text-xs leading-5 text-slate-600">
-          Ask about specifications, compatibility or availability. Use the purchase options above to place an order.
+          Ask about specifications, compatibility, pricing or availability. Our team will help you choose the right option.
         </p>
       </div>
       <div className={`grid w-full gap-2 sm:gap-3 ${showBoth ? "grid-cols-2" : "grid-cols-1"}`}>

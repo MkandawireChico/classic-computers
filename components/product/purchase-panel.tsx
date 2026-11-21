@@ -108,7 +108,7 @@ export function PurchasePanel({
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
+      <div aria-live="polite" aria-atomic="true" className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
           {hasVariants ? selectedVariant ? "Selected configuration price" : "Configuration pricing" : "Catalogue price"}
         </p>
@@ -186,25 +186,32 @@ export function PurchasePanel({
         </div>
       ) : null}
 
-      <div>
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Purchase options</p>
-          <span className="text-[11px] text-slate-500">Select how you want to proceed</span>
+      {hasPurchasableConfiguration ? (
+        <div>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Purchase options</p>
+            <span className="text-[11px] text-slate-500">Select how you want to proceed</span>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <AddToCartButton
+              productId={product.id}
+              variantId={effectiveVariantId}
+              disabled={!canOrder}
+            />
+            <AddToCartButton
+              productId={product.id}
+              variantId={effectiveVariantId}
+              disabled={!canOrder}
+              buyNow
+            />
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <AddToCartButton
-          productId={product.id}
-          variantId={effectiveVariantId}
-          disabled={!canOrder}
-        />
-        <AddToCartButton
-          productId={product.id}
-          variantId={effectiveVariantId}
-          disabled={!canOrder}
-          buyNow
-        />
+      ) : (
+        <div role="status" className="rounded-xl border border-slate-200 bg-surface-muted px-4 py-3">
+          <p className="text-sm font-bold text-navy-900">Online ordering is unavailable</p>
+          <p className="mt-1 text-xs leading-5 text-slate-600">Contact our team to ask about this product or suitable alternatives.</p>
         </div>
-      </div>
+      )}
 
       {quickSpecifications.length > 0 ? (
         <section aria-label="Key product specifications" className="rounded-xl border border-slate-200 bg-white p-4">
