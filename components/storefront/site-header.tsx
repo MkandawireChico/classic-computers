@@ -31,17 +31,17 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
       <div className="section-shell flex h-[4.5rem] items-center justify-between gap-3 lg:h-[4.75rem]">
-        <Link href="/" aria-label="Classic Computers home" className="flex min-w-0 shrink items-center gap-2.5 sm:gap-3">
+        <Link href="/" aria-label="Classic Computers home" className="flex min-w-0 shrink items-center gap-2 sm:gap-3">
           {logoUrl ? (
-            <span className="relative block h-10 w-[3.8rem] shrink-0 overflow-hidden sm:h-11 sm:w-[4.5rem]">
+            <span className="relative block h-9 w-12 shrink-0 overflow-hidden sm:h-11 sm:w-[4.5rem]">
               <Image src={logoUrl} alt="" fill sizes="72px" className="object-contain object-left" />
             </span>
           ) : (
-            <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-950 text-sm font-black tracking-tight text-white">CC</span>
+            <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-950 text-sm font-black tracking-tight text-white sm:h-10 sm:w-10">CC</span>
           )}
           <span className="min-w-0 leading-none">
-            <span className="block whitespace-nowrap text-[11px] font-black uppercase tracking-[0.12em] text-navy-950 sm:text-[13px] sm:tracking-[0.15em]">Classic Computers</span>
-            <span className="mt-1.5 block text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500 sm:text-[10px]">Blantyre, Malawi</span>
+            <span className="block whitespace-nowrap text-[10px] font-black uppercase tracking-[0.07em] text-navy-950 sm:text-[13px] sm:tracking-[0.15em]">Classic Computers</span>
+            <span className="mt-1.5 block text-[8px] font-semibold uppercase tracking-[0.12em] text-slate-500 sm:text-[10px] sm:tracking-[0.16em]">Blantyre, Malawi</span>
           </span>
         </Link>
 
@@ -49,11 +49,11 @@ export async function SiteHeader() {
           <div className="w-full max-w-md"><SearchBox /></div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
           <Link
             href="/cart"
             aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy-800 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
           >
             <CartIcon />
             {cartCount > 0 ? <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-700 px-1 text-[10px] font-bold text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}
