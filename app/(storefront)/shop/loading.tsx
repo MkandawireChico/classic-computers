@@ -22,9 +22,9 @@ export default function ShopLoading() {
             <div className="h-5 w-28 animate-pulse rounded bg-slate-200 motion-reduce:animate-none" />
             <div className="h-10 w-40 animate-pulse rounded-md bg-slate-100 motion-reduce:animate-none" />
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3 xl:gap-6">
             {Array.from({ length: 8 }, (_, index) => (
-              <div key={index} className="overflow-hidden rounded-md border border-surface-border bg-white">
+              <div key={index} className="overflow-hidden rounded-xl border border-surface-border bg-white">
                 <div className="aspect-[4/3] animate-pulse bg-slate-100 motion-reduce:animate-none" />
                 <div className="space-y-3 p-3 sm:p-4">
                   <div className="h-3 w-16 animate-pulse rounded bg-slate-200 motion-reduce:animate-none" />
