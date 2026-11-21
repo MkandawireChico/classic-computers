@@ -157,7 +157,7 @@ export default async function ShopPage({
               ) : (
                 <span className="inline-flex min-h-10 items-center rounded-lg border border-slate-100 px-3 text-sm font-semibold text-slate-300" aria-disabled="true">Previous</span>
               )}
-              <span className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
+              <span aria-current="page" className="px-2 text-xs font-semibold tabular-nums text-slate-600">Page {result.page} of {Math.ceil(result.total / result.pageSize)}</span>
               {result.page < Math.ceil(result.total / result.pageSize) ? (
                 <Link
                   href={pageHref(searchParams, result.page + 1)}
