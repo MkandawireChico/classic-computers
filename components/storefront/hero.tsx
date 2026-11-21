@@ -38,11 +38,11 @@ export async function Hero() {
               </Link>
             </div>
             <div className="mt-9 grid grid-cols-3 gap-3 border-t border-slate-300 pt-5">
-              <Link href="/shop" className="group min-w-0">
+              <Link href="/shop" className="group min-w-0 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                 <span className="block text-xs font-extrabold text-navy-900 transition-colors group-hover:text-brand-800 sm:text-sm">Shop</span>
                 <span className="mt-1 block text-[10px] leading-4 text-slate-500 sm:text-xs">Browse equipment</span>
               </Link>
-              <Link href="/rentals" className="group min-w-0 border-l border-slate-300 pl-3">
+              <Link href="/rentals" className="group min-w-0 rounded-sm border-l border-slate-300 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                 <span className="block text-xs font-extrabold text-navy-900 transition-colors group-hover:text-brand-800 sm:text-sm">Rent</span>
                 <span className="mt-1 block text-[10px] leading-4 text-slate-500 sm:text-xs">Short-term equipment</span>
               </Link>
@@ -72,7 +72,7 @@ export async function Hero() {
                   <p className="max-w-md text-3xl font-extrabold leading-tight tracking-tight text-navy-900 sm:text-4xl">Computers, equipment and practical technology support.</p>
                   <p className="mt-4 max-w-md text-sm leading-6 text-slate-600">Visit our shop or contact the team for help choosing equipment for your needs.</p>
                 </div>
-                <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center gap-2 self-start border-b-2 border-brand-600 text-sm font-bold text-brand-800 hover:text-brand-950">
+                <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center gap-2 self-start rounded-sm border-b-2 border-brand-600 text-sm font-bold text-brand-800 hover:text-brand-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                   Find our shop <span aria-hidden="true">↗</span>
                 </Link>
               </div>

@@ -1,15 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getCategories } from "@/lib/data/categories";
-import { getFeaturedProducts } from "@/lib/data/products";
+import type { CategorySummary, ProductListItem } from "@/types/catalog";
 import { formatCategoryName } from "@/lib/format/category";
 import { getPublicStorageUrl } from "@/lib/storage";
 
-export async function CategorySection() {
-  const [allCategories, featuredProducts] = await Promise.all([
-    getCategories(),
-    getFeaturedProducts(16),
-  ]);
+export function CategorySection({
+  categories: allCategories,
+  featuredProducts,
+}: {
+  categories: CategorySummary[];
+  featuredProducts: ProductListItem[];
+}) {
   const categories = allCategories.filter(
     (category) => category.parent_id === null && category.name.trim() !== "" && category.slug.trim() !== "",
   );

@@ -6,6 +6,8 @@ import { CorporateSupplySection } from "@/components/storefront/corporate-supply
 import { ServicesSection } from "@/components/storefront/services-section";
 import { ReviewsSection } from "@/components/storefront/reviews-section";
 import { LocationSection } from "@/components/storefront/location-section";
+import { getCategories } from "@/lib/data/categories";
+import { getFeaturedProducts } from "@/lib/data/products";
 
 export const metadata: Metadata = {
   title: "Laptops, Computers & ICT Equipment in Blantyre",
@@ -23,12 +25,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [categories, featuredProducts] = await Promise.all([
+    getCategories(),
+    getFeaturedProducts(16),
+  ]);
+
   return (
     <>
       <Hero />
-      <CategorySection />
-      <FeaturedProductsSection />
+      <CategorySection categories={categories} featuredProducts={featuredProducts} />
+      <FeaturedProductsSection products={featuredProducts.slice(0, 4)} />
       <ServicesSection />
       <CorporateSupplySection />
       <ReviewsSection />

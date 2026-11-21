@@ -67,10 +67,12 @@ function toListItem(row: any): ProductListItem {
   const productLevelRow = allInventoryRows.find((i) => i.variant_id === null);
   let status: string | null = productLevelRow?.status ?? null;
   if (!status && allInventoryRows.length > 0) {
-    if (allInventoryRows.some((i) => i.status === "in_stock")) status = "in_stock";
-    else if (allInventoryRows.some((i) => i.status === "low_stock")) status = "low_stock";
-    else if (allInventoryRows.some((i) => i.status === "coming_soon")) status = "coming_soon";
-    else status = allInventoryRows[0].status;
+    const variantStatuses = allInventoryRows.map((row) => row.status);
+    if (variantStatuses.includes("in_stock")) status = "in_stock";
+    else if (variantStatuses.includes("low_stock")) status = "low_stock";
+    else if (variantStatuses.includes("coming_soon")) status = "coming_soon";
+    else if (variantStatuses.includes("out_of_stock")) status = "out_of_stock";
+    else if (variantStatuses.includes("discontinued")) status = "discontinued";
   }
 
   const cataloguePrice = Array.isArray(row.catalogue_price)

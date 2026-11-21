@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { getFeaturedProducts } from "@/lib/data/products";
 import { ProductGrid } from "@/components/product/product-grid";
 
-export async function FeaturedProductsSection() {
+export function FeaturedProductsSection({ products }: { products: import("@/types/catalog").ProductListItem[] }) {
   // Keep the homepage focused. The full catalogue is one click away.
-  const products = await getFeaturedProducts(4);
   if (products.length === 0) return null;
 
   return (

@@ -56,7 +56,7 @@ export async function LocationSection() {
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">Address</p>
                 <p className="mt-1 text-sm font-semibold leading-6 text-slate-800">{businessInfo.address}</p>
                 {directionsUrl ? (
-                  <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-8 items-center text-sm font-bold text-brand-800 underline underline-offset-4 hover:text-brand-950">
+                  <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-8 items-center rounded-sm text-sm font-bold text-brand-800 underline underline-offset-4 hover:text-brand-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                     Get directions ↗
                   </a>
                 ) : null}
@@ -75,7 +75,7 @@ export async function LocationSection() {
             {businessInfo.email ? <a href={`mailto:${businessInfo.email}`} aria-label={`Email Classic Computers at ${businessInfo.email}`} className="inline-flex min-h-8 items-center font-bold text-brand-800 underline-offset-4 hover:text-brand-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">{businessInfo.email}</a> : null}
             {businessInfo.whatsapp ? <a href={`https://wa.me/${businessInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" aria-label="Message Classic Computers on WhatsApp" className="inline-flex min-h-8 items-center font-bold text-brand-800 underline-offset-4 hover:text-brand-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">WhatsApp</a> : null}
           </div>
-          <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50">
+          <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
             Contact our team
           </Link>
         </div>
