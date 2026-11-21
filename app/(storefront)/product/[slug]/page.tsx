@@ -161,7 +161,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             </>
           ) : null}
           <span aria-hidden="true" className="text-slate-300">/</span>
-          <span aria-current="page" className="min-w-0 text-slate-600">{product.name}</span>
+          <span aria-current="page" className="min-w-0 break-words text-slate-600">{product.name}</span>
         </nav>
 
         <ProductVariantProvider initialVariantId={schemaVariant?.id ?? null}>
@@ -207,7 +207,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                     </span>
                   ) : null}
                 </div>
-                <h1 className="text-[1.8rem] font-extrabold leading-[1.12] tracking-tight text-navy-950 sm:text-4xl">{product.name}</h1>
+                <h1 className="break-words text-[1.8rem] font-extrabold leading-[1.12] tracking-tight text-navy-950 sm:text-4xl">{product.name}</h1>
                 {ratingSummary.count > 0 ? (
                   <a
                     href="#customer-reviews"

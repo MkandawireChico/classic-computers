@@ -47,7 +47,22 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
   }
 
   return (
-    <section aria-label={`Images of ${productName}`} className="min-w-0">
+    <section
+      aria-label={`Images of ${productName}`}
+      aria-keyshortcuts={visibleImages.length > 1 ? "ArrowLeft ArrowRight" : undefined}
+      tabIndex={visibleImages.length > 1 ? 0 : -1}
+      onKeyDown={(event) => {
+        if (visibleImages.length < 2) return;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          selectImage((activeIndex - 1 + visibleImages.length) % visibleImages.length);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          selectImage((activeIndex + 1) % visibleImages.length);
+        }
+      }}
+      className="min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-4"
+    >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-100 bg-surface-muted">
         <Image
           key={active!.id}
