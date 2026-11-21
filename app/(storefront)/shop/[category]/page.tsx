@@ -74,7 +74,7 @@ export default async function CategoryShopPage({
       <nav aria-label="Breadcrumb" className="mb-5 text-xs font-medium text-slate-500">
         <Link href="/shop" className="hover:text-brand-700">Shop</Link>
         <span aria-hidden="true" className="mx-2 text-slate-300">/</span>
-        <span className="text-slate-700">{categoryName}</span>
+        <span aria-current="page" className="text-slate-700">{categoryName}</span>
       </nav>
       <header className="rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-brand-900 px-5 py-7 text-white shadow-elevated sm:px-8 sm:py-9">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Browse by category</p>

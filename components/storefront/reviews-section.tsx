@@ -4,7 +4,7 @@ import { ReviewPhotos } from "./review-photos";
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <div aria-label={`${rating} out of 5 stars`} className="flex gap-0.5 text-amber-500">
+    <div role="img" aria-label={`${rating} out of 5 stars`} className="flex shrink-0 gap-0.5 text-amber-500">
       {Array.from({ length: 5 }).map((_, i) => (
         <span key={i} aria-hidden="true">{i < rating ? "★" : "☆"}</span>
       ))}
@@ -39,8 +39,8 @@ export async function ReviewsSection() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review) => (
-            <figure key={review.id} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-panel sm:p-6">
-              <div className="flex items-center justify-between gap-3">
+            <figure key={review.id} className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-panel sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <Stars rating={review.rating} />
                 {review.verified_purchase ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-800">
@@ -51,13 +51,13 @@ export async function ReviewsSection() {
                   </span>
                 ) : null}
               </div>
-              {review.title ? <p className="mt-4 font-semibold text-navy-900">{review.title}</p> : null}
-              {review.comment ? <blockquote className="mt-2 flex-1 text-sm leading-7 text-slate-600">{review.comment}</blockquote> : <div className="flex-1" />}
+              {review.title ? <p className="mt-4 break-words font-semibold text-navy-900">{review.title}</p> : null}
+              {review.comment ? <blockquote className="mt-2 flex-1 break-words text-sm leading-7 text-slate-600">{review.comment}</blockquote> : <div className="flex-1" />}
               <ReviewPhotos images={review.images} />
               {review.admin_response ? (
-                <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
+                <div className="mt-4 min-w-0 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
                   <p className="font-semibold text-navy-900">Response from Classic Computers</p>
-                  <p className="mt-1 leading-relaxed">{review.admin_response}</p>
+                  <p className="mt-1 break-words leading-relaxed">{review.admin_response}</p>
                 </div>
               ) : null}
               {review.product ? (
