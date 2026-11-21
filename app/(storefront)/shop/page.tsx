@@ -9,6 +9,7 @@ import { ShopFilters } from "@/components/storefront/shop-filters";
 import { ShopSearch } from "@/components/storefront/shop-search";
 import { SortSelect } from "@/components/storefront/sort-select";
 import { parseShopSearchParams } from "@/lib/shop-params";
+import { formatCategoryName } from "@/lib/format/category";
 
 function pageHref(searchParams: Record<string, string | string[] | undefined>, page: number): string {
   const params = new URLSearchParams();
@@ -64,6 +65,29 @@ export default async function ShopPage({
           </div>
         </header>
 
+        {categories.length > 0 ? (
+          <section aria-labelledby="shop-category-heading" className="mt-6 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h2 id="shop-category-heading" className="text-sm font-bold text-navy-900">Browse by category</h2>
+                <p className="mt-0.5 text-xs text-slate-500">Find equipment by the type of product you need.</p>
+              </div>
+              <span className="hidden text-xs font-medium text-slate-400 sm:inline">{categories.length} categories</span>
+            </div>
+            <nav aria-label="Product categories" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/shop/${category.slug}`}
+                  className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  {formatCategoryName(category.name)}
+                </Link>
+              ))}
+            </nav>
+          </section>
+        ) : null}
+
         <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
           <aside aria-label="Shop filters" className="h-fit lg:sticky lg:top-32 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
             <ShopFilters brands={brands} categories={categories} />
@@ -75,7 +99,11 @@ export default async function ShopPage({
                 <p className="text-sm font-semibold text-navy-900" aria-live="polite">
                   {result.total === 0 ? "No matching products" : `${result.total} product${result.total === 1 ? "" : "s"} found`}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-500">Starting prices in MWK, excluding VAT and PPDA</p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {result.total > 0
+                    ? `Showing ${((result.page - 1) * result.pageSize) + 1}–${Math.min(result.page * result.pageSize, result.total)} · Prices in MWK, excluding VAT and PPDA`
+                    : "Prices in MWK, excluding VAT and PPDA"}
+                </p>
               </div>
               <SortSelect />
             </div>
