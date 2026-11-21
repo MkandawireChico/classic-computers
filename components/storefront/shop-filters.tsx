@@ -196,7 +196,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       </fieldset>
 
       {categories.length > 0 ? (
-        <details open={selectedBrands.size > 0} className="group border-b border-surface-border pb-4">
+        <details open={pathname !== "/shop"} className="group border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Category <span aria-hidden="true" className="text-gray-400 transition-transform group-open:rotate-180">⌄</span></span>
           </summary>
@@ -220,7 +220,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       ) : null}
 
       {brands.length > 0 ? (
-        <details className="group border-b border-surface-border pb-4">
+        <details open={selectedBrands.size > 0} className="group border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Brand <span aria-hidden="true" className="text-gray-400 transition-transform group-open:rotate-180">⌄</span></span>
           </summary>
