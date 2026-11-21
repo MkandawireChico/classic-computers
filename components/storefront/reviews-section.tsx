@@ -1,4 +1,5 @@
 import { getApprovedReviews, getReviewStats } from "@/lib/data/reviews";
+import { getBusinessInfo } from "@/lib/data/site-settings";
 import Link from "next/link";
 import { ReviewPhotos } from "./review-photos";
 
@@ -13,10 +14,13 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export async function ReviewsSection() {
-  const [reviews, stats] = await Promise.all([
+  const [reviews, stats, businessInfo] = await Promise.all([
     getApprovedReviews(3),
     getReviewStats(),
+    getBusinessInfo(),
   ]);
+  const whatsappNumber = businessInfo?.whatsapp?.replace(/\\D/g, "") ?? "";
+  const feedbackMessage = encodeURIComponent("Hello Classic Computers, I would like to share feedback about my customer experience.");
 
   return (
     <section aria-labelledby="reviews-heading" className="border-y border-surface-border bg-surface-muted">
@@ -93,12 +97,35 @@ export async function ReviewsSection() {
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
               We publish customer feedback after moderation. If you have completed a purchase, rental or repair with Classic Computers, sign in to your account to check your review options.
             </p>
-            <Link
-              href="/account"
-              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-            >
-              Sign in to your account
-            </Link>
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/account"
+                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-700 px-5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+              >
+                Sign in to submit a review
+              </Link>
+              {whatsappNumber ? (
+                <a
+                  href={`https://wa.me/${whatsappNumber}?text=${feedbackMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                >
+                  Share feedback on WhatsApp
+                </a>
+              ) : null}
+              {businessInfo?.email ? (
+                <a
+                  href={`mailto:${businessInfo.email}?subject=${encodeURIComponent("Customer feedback")}`}
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+                >
+                  Email us
+                </a>
+              ) : null}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              You are also welcome to share feedback with our team in store.
+            </p>
           </div>
         )}
       </div>
