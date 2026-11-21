@@ -40,7 +40,7 @@ export function ProductCard({
               alt={product.primary_image?.alt_text?.trim() || product.name}
               fill
               sizes={isCatalog
-                ? "(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                ? "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 38vw, 30vw"
                 : "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"}
               className="object-contain p-5 transition-transform duration-300 group-hover:scale-[1.025] sm:p-6"
             />

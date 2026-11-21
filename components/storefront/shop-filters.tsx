@@ -196,7 +196,7 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
       </fieldset>
 
       {categories.length > 0 ? (
-        <details className="group border-b border-surface-border pb-4">
+        <details open={selectedBrands.size > 0} className="group border-b border-surface-border pb-4">
           <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             <span className="flex items-center justify-between">Category <span aria-hidden="true" className="text-gray-400 transition-transform group-open:rotate-180">⌄</span></span>
           </summary>
@@ -205,7 +205,12 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
               <Link
                 key={category.id}
                 href={`/shop/${category.slug}`}
-                className="block rounded px-2 py-1.5 text-sm text-gray-700 hover:bg-surface-muted hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                aria-current={pathname === `/shop/${category.slug}` ? "page" : undefined}
+                className={`block rounded px-2 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
+                  pathname === `/shop/${category.slug}`
+                    ? "bg-brand-50 font-semibold text-brand-800"
+                    : "text-gray-700 hover:bg-surface-muted hover:text-brand-700"
+                }`}
               >
                 {formatCategoryName(category.name)}
               </Link>
@@ -236,9 +241,9 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
         </details>
       ) : null}
 
-      <details className="group pb-2">
+      <details open={Boolean(searchParams.get("min") || searchParams.get("max"))} className="group pb-2">
         <summary className="cursor-pointer list-none text-sm font-semibold text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-          <span className="flex items-center justify-between">Starting price (MWK) <span aria-hidden="true" className="text-gray-400">+</span></span>
+          <span className="flex items-center justify-between">Starting price (MWK) <span aria-hidden="true" className="text-gray-400 transition-transform group-open:rotate-45">+</span></span>
         </summary>
         <form onSubmit={submitPriceRange} className="mt-3 space-y-3">
           <div className="grid grid-cols-2 gap-2">
