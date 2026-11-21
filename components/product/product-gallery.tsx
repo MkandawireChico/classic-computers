@@ -52,7 +52,9 @@ export function ProductGallery({ images, productName, productId }: { images: Pro
       aria-keyshortcuts={visibleImages.length > 1 ? "ArrowLeft ArrowRight" : undefined}
       tabIndex={visibleImages.length > 1 ? 0 : -1}
       onKeyDown={(event) => {
-        if (visibleImages.length < 2) return;
+        // Keep arrow-key image navigation scoped to the gallery itself.
+        // Focused buttons and other controls retain their normal keyboard behaviour.
+        if (event.target !== event.currentTarget || visibleImages.length < 2) return;
         if (event.key === "ArrowLeft") {
           event.preventDefault();
           selectImage((activeIndex - 1 + visibleImages.length) % visibleImages.length);

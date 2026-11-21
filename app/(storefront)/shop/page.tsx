@@ -89,7 +89,7 @@ export default async function ShopPage({
         ) : null}
 
         <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[245px_minmax(0,1fr)] lg:gap-8">
-          <aside aria-label="Shop filters" className="h-fit lg:sticky lg:top-32 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
+          <aside aria-label="Shop filters" className="h-fit lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
             <ShopFilters brands={brands} categories={categories} />
           </aside>
 

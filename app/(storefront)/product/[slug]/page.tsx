@@ -192,7 +192,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             </div>
           </div>
 
-          <div className="min-w-0 lg:sticky lg:top-28">
+          <div className="min-w-0 lg:self-start">
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-7 lg:p-8">
               <div className="mb-6">
                 <div className="mb-3 flex flex-wrap items-center gap-2">
