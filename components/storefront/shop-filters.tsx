@@ -250,30 +250,43 @@ export function ShopFilters({ brands, categories = [] }: { brands: BrandSummary[
             <label className="space-y-1 text-xs text-gray-500">
               <span>Minimum</span>
               <input
+                id="shop-min-price"
                 type="number"
                 min="0"
-                max={maxPrice || undefined}
+                step="1"
                 inputMode="numeric"
                 placeholder="Min"
                 value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
+                aria-invalid={Boolean(priceError)}
+                aria-describedby={priceError ? "shop-price-error" : undefined}
+                onChange={(e) => {
+                  setMinPrice(e.target.value);
+                  setPriceError("");
+                }}
                 className="h-10 w-full rounded-md border border-surface-border bg-white px-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </label>
             <label className="space-y-1 text-xs text-gray-500">
               <span>Maximum</span>
               <input
+                id="shop-max-price"
                 type="number"
-                min={minPrice || "0"}
+                min="0"
+                step="1"
                 inputMode="numeric"
                 placeholder="Max"
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
+                aria-invalid={Boolean(priceError)}
+                aria-describedby={priceError ? "shop-price-error" : undefined}
+                onChange={(e) => {
+                  setMaxPrice(e.target.value);
+                  setPriceError("");
+                }}
                 className="h-10 w-full rounded-md border border-surface-border bg-white px-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </label>
           </div>
-          {priceError ? <p role="alert" className="text-xs font-medium text-red-700">{priceError}</p> : null}
+          {priceError ? <p id="shop-price-error" role="alert" className="text-xs font-medium text-red-700">{priceError}</p> : null}
           <Button type="submit" size="sm" variant="outline" className="w-full">Apply price</Button>
         </form>
       </details>

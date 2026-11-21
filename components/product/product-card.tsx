@@ -31,6 +31,7 @@ export function ProductCard({
         href={"/product/" + product.slug}
         productId={product.id}
         trackSearchResult={searchResult}
+        ariaLabel={`View ${product.name}`}
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-200 hover:border-brand-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
       >
         <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-slate-100 bg-surface-muted sm:aspect-square">

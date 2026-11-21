@@ -9,12 +9,14 @@ export function TrackedProductLink({
   productId,
   trackSearchResult,
   className,
+  ariaLabel,
   children,
 }: {
   href: string;
   productId: string;
   trackSearchResult: boolean;
   className: string;
+  ariaLabel?: string;
   children: ReactNode;
 }) {
   return (
@@ -26,6 +28,7 @@ export function TrackedProductLink({
         }
       }}
       className={className}
+      aria-label={ariaLabel}
     >
       {children}
     </Link>
