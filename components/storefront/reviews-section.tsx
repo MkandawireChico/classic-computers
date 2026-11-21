@@ -19,7 +19,7 @@ export async function ReviewsSection() {
     getReviewStats(),
     getBusinessInfo(),
   ]);
-  const whatsappNumber = businessInfo?.whatsapp?.replace(/\\D/g, "") ?? "";
+  const whatsappNumber = businessInfo?.whatsapp?.replace(/\D/g, "") ?? "";
   const feedbackMessage = encodeURIComponent("Hello Classic Computers, I would like to share feedback about my customer experience.");
 
   return (
