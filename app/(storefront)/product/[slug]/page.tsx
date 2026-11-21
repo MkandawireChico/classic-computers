@@ -283,14 +283,14 @@ export default async function ProductPage({ params }: { params: Params }) {
 
         {ratingSummary.count > 0 ? (
         <section id="customer-reviews" aria-labelledby="customer-reviews-heading" className="mt-8 scroll-mt-28 sm:mt-10">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span aria-hidden="true" className="h-8 w-1.5 rounded-full bg-amber-500" />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span aria-hidden="true" className="h-8 w-1.5 shrink-0 rounded-full bg-amber-500" />
               <h2 id="customer-reviews-heading" className="text-xl font-extrabold text-navy-900 sm:text-2xl">Customer Reviews</h2>
             </div>
             <Link
               href="/reviews"
-              className="rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              className="shrink-0 rounded-sm text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
               View all reviews
             </Link>

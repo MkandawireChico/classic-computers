@@ -8,7 +8,7 @@ export function RatingBreakdown({
   total: number;
 }) {
   return (
-    <div aria-label="Rating distribution" className="space-y-2">
+    <div role="group" aria-label="Rating distribution" className="space-y-2">
       {([5, 4, 3, 2, 1] as const).map((rating) => {
         const count = distribution[rating];
         const width = total ? (count / total) * 100 : 0;
