@@ -55,15 +55,15 @@ export function SpecificationsTable({ specifications }: { specifications: Produc
           <h3 className="border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-navy-900">
             {group.title}
           </h3>
-          <table className="w-full text-sm leading-6">
+          <table className="w-full table-fixed text-sm leading-6">
             <caption className="sr-only">{group.title} specifications</caption>
             <tbody>
               {group.items.map((spec, index) => (
                 <tr key={spec.key} className={index % 2 === 1 ? "bg-slate-50/70" : "bg-white"}>
-                  <th scope="row" className="w-[42%] px-4 py-3 text-left align-top font-medium text-slate-600">
+                  <th scope="row" className="w-[42%] break-words px-3 py-3 text-left align-top font-medium text-slate-600 sm:px-4">
                     {spec.label}
                   </th>
-                  <td className="px-4 py-3 font-semibold text-slate-900">
+                  <td className="break-words px-3 py-3 font-semibold text-slate-900 sm:px-4">
                     {spec.value}{spec.unit ? ` ${spec.unit}` : ""}
                   </td>
                 </tr>
