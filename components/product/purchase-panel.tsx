@@ -61,17 +61,6 @@ export function PurchasePanel({
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
   const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
-  const availabilityMessage = hasVariants && !selectedVariant
-    ? null
-    : currentStatus === "out_of_stock"
-    ? "This configuration is currently out of stock. Contact our team to ask about restocking or alternatives."
-    : currentStatus === "coming_soon"
-      ? "This configuration is not available yet. Contact our team for an availability update."
-      : currentStatus === "discontinued"
-        ? "This configuration has been discontinued. Contact our team for suitable alternatives."
-        : currentStatus === null
-          ? "Availability has not been confirmed for this configuration. Please contact our team before ordering."
-          : null;
 
   // Phase 4 correction (item 3): the SELECTED variant's own inventory
   // status is authoritative for a product that has variants — a product
@@ -84,6 +73,17 @@ export function PurchasePanel({
       : null
     : product.inventory_status;
   const canOrder = currentStatus === "in_stock" || currentStatus === "low_stock";
+  const availabilityMessage = hasVariants && !selectedVariant
+    ? null
+    : currentStatus === "out_of_stock"
+      ? "This configuration is currently out of stock. Contact our team to ask about restocking or alternatives."
+      : currentStatus === "coming_soon"
+        ? "This configuration is not available yet. Contact our team for an availability update."
+        : currentStatus === "discontinued"
+          ? "This configuration has been discontinued. Contact our team for suitable alternatives."
+          : currentStatus === null
+            ? "Availability has not been confirmed for this configuration. Please contact our team before ordering."
+            : null;
   const rentalOffer = rentalOffers.find((offer) => {
     if (effectiveVariantId) {
       return offer.variantId === effectiveVariantId;
