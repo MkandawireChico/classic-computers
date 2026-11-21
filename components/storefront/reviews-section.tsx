@@ -13,10 +13,10 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export async function ReviewsSection() {
-  const reviews = await getApprovedReviews(3);
-  if (reviews.length === 0) return null;
-
-  const stats = await getReviewStats();
+  const [reviews, stats] = await Promise.all([
+    getApprovedReviews(3),
+    getReviewStats(),
+  ]);
 
   return (
     <section aria-labelledby="reviews-heading" className="border-y border-slate-100 bg-slate-50/80">
@@ -46,43 +46,59 @@ export async function ReviewsSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((review) => (
-            <figure key={review.id} className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-panel sm:p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <Stars rating={review.rating} />
-                {review.verified_purchase ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-800">
-                    <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    Verified
-                  </span>
-                ) : null}
-              </div>
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-                <span className="font-semibold capitalize text-slate-600">{review.review_type} review</span>
-                <time dateTime={review.created_at}>
-                  {new Date(review.created_at).toLocaleDateString("en-MW", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}
-                </time>
-              </div>
-              {review.title ? <p className="mt-3 break-words font-semibold text-navy-900">{review.title}</p> : null}
-              {review.comment ? <blockquote className="mt-2 flex-1 break-words text-sm leading-7 text-slate-600">{review.comment}</blockquote> : <div className="flex-1" />}
-              <ReviewPhotos images={review.images} />
-              {review.admin_response ? (
-                <div className="mt-4 min-w-0 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
-                  <p className="font-semibold text-navy-900">Response from Classic Computers</p>
-                  <p className="mt-1 break-words leading-relaxed">{review.admin_response}</p>
+        {reviews.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {reviews.map((review) => (
+              <figure key={review.id} className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-panel sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <Stars rating={review.rating} />
+                  {review.verified_purchase ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-800">
+                      <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Verified
+                    </span>
+                  ) : null}
                 </div>
-              ) : null}
-              {review.product ? (
-                <figcaption className="mt-5 border-t border-slate-100 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  {review.product.name}
-                </figcaption>
-              ) : null}
-            </figure>
-          ))}
-        </div>
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                  <span className="font-semibold capitalize text-slate-600">{review.review_type} review</span>
+                  <time dateTime={review.created_at}>
+                    {new Date(review.created_at).toLocaleDateString("en-MW", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}
+                  </time>
+                </div>
+                {review.title ? <p className="mt-3 break-words font-semibold text-navy-900">{review.title}</p> : null}
+                {review.comment ? <blockquote className="mt-2 flex-1 break-words text-sm leading-7 text-slate-600">{review.comment}</blockquote> : <div className="flex-1" />}
+                <ReviewPhotos images={review.images} />
+                {review.admin_response ? (
+                  <div className="mt-4 min-w-0 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
+                    <p className="font-semibold text-navy-900">Response from Classic Computers</p>
+                    <p className="mt-1 break-words leading-relaxed">{review.admin_response}</p>
+                  </div>
+                ) : null}
+                {review.product ? (
+                  <figcaption className="mt-5 border-t border-slate-100 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    {review.product.name}
+                  </figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center sm:px-10">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-700">Your feedback matters</p>
+            <h3 className="mt-3 text-xl font-bold text-navy-900">No approved reviews published yet.</h3>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
+              Customer reviews appear here after moderation. If you have completed a purchase, rental or repair with us, sign in to check whether you are eligible to share feedback.
+            </p>
+            <Link
+              href="/reviews"
+              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-900 px-5 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+              Review information
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

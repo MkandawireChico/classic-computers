@@ -1,7 +1,6 @@
 import { getPublicReviewsPage, getReviewStats } from "@/lib/data/reviews";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { redirect } from "next/navigation";
 import { Pagination } from "@/components/storefront/pagination";
 import { RatingBreakdown } from "@/components/storefront/rating-breakdown";
 import type { ReviewType } from "@/types/catalog";
@@ -35,7 +34,6 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
     getReviewStats(),
     getCurrentUser(),
   ]);
-  if (stats.totalReviews === 0) redirect("/");
 
   const categories = reviewType ? [reviewType] : REVIEW_TYPES;
   const distribution = categories.reduce(
@@ -50,7 +48,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
   const distributionTotal = Object.values(distribution).reduce((sum, count) => sum + count, 0);
 
   return (
-    <main className="min-h-screen bg-[#f4f6f7]"><div className="section-shell py-10 sm:py-14 lg:py-16">
+    <main className="min-h-screen bg-surface-muted"><div className="section-shell py-10 sm:py-14 lg:py-16">
       <div className="mx-auto max-w-4xl">
         <header className="mb-8 space-y-4 rounded-[1.5rem] border border-slate-200 bg-gradient-to-br from-brand-50 via-white to-cyan-50 p-6 text-navy-900 shadow-sm sm:p-8">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-800">Customer feedback</p>
@@ -127,7 +125,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Sear
                 : "Try changing the review type or star rating to see other approved reviews."}
             </p>
             {user ? (
-              <Link href="/account/reviews/write" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0b2238] px-4 text-sm font-bold text-white hover:bg-cyan-800">
+              <Link href="/account/reviews/write" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-navy-900 px-4 text-sm font-bold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
                 Write a review
               </Link>
             ) : (
