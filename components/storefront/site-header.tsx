@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { href: "/student-deals", label: "Student deals" },
   { href: "/corporate", label: "Corporate" },
   { href: "/contact", label: "Contact" },
+  { href: "/reviews", label: "Reviews" },
 ];
 
 export async function SiteHeader() {
