@@ -56,10 +56,20 @@ export function PurchasePanel({
     }
   }, [selectedVariantId, effectiveVariantId, setSelectedVariantId]);
 
+  const hasPurchasableConfiguration = !hasVariants || Boolean(selectedVariant);
   const price = selectedVariant?.price ?? product.base_price;
   const salePrice = selectedVariant ? selectedVariant.sale_price : product.sale_price;
   const onSale = salePrice !== null && salePrice > 0 && salePrice < price;
   const effectivePrice = onSale ? (salePrice as number) : price;
+  const availabilityMessage = currentStatus === "out_of_stock"
+    ? "This configuration is currently out of stock. Contact our team to ask about restocking or alternatives."
+    : currentStatus === "coming_soon"
+      ? "This configuration is not available yet. Contact our team for an availability update."
+      : currentStatus === "discontinued"
+        ? "This configuration has been discontinued. Contact our team for suitable alternatives."
+        : currentStatus === null
+          ? "Availability has not been confirmed for this configuration. Please contact our team before ordering."
+          : null;
 
   // Phase 4 correction (item 3): the SELECTED variant's own inventory
   // status is authoritative for a product that has variants — a product
@@ -97,28 +107,46 @@ export function PurchasePanel({
   return (
     <div className="space-y-4 sm:space-y-5">
       <div className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-4 sm:px-5">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{activeVariants.length > 0 ? "Selected configuration price" : "Catalogue price"}</p>
-        <div className="flex flex-wrap items-baseline gap-2">
-        {onSale ? (
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+          {hasVariants ? selectedVariant ? "Selected configuration price" : "Configuration pricing" : "Catalogue price"}
+        </p>
+        {hasPurchasableConfiguration ? (
           <>
-            <span className="text-3xl font-extrabold text-brand-700">{formatMoney(salePrice as number)}</span>
-            <span className="text-base font-medium text-slate-500 line-through">{formatMoney(price)}</span>
+            <div className="flex flex-wrap items-baseline gap-2">
+              {onSale ? (
+                <>
+                  <span className="text-3xl font-extrabold text-brand-700">{formatMoney(salePrice as number)}</span>
+                  <span className="text-base font-medium text-slate-500 line-through">{formatMoney(price)}</span>
+                </>
+              ) : (
+                <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
+              )}
+            </div>
+            {hasVariants && product.display_price < effectivePrice ? (
+              <p className="mt-2 text-xs font-semibold text-brand-800">
+                Starting configurations from {formatMoney(product.display_price)}
+              </p>
+            ) : null}
+            <p className="mt-2 text-xs leading-5 text-slate-600">Displayed price excludes VAT and PPDA. These are calculated separately on quotations and invoices.</p>
           </>
         ) : (
-            <span className="text-3xl font-extrabold text-navy-900">{formatMoney(price)}</span>
+          <div role="status" className="mt-2">
+            <p className="text-lg font-bold text-navy-900">Pricing on request</p>
+            <p className="mt-1 text-xs leading-5 text-slate-600">There are no active configurations listed for online purchase.</p>
+          </div>
         )}
-        </div>
-        {hasVariants && product.display_price < effectivePrice ? (
-          <p className="mt-2 text-xs font-semibold text-brand-800">
-            Starting configurations from {formatMoney(product.display_price)}
-          </p>
-        ) : null}
-        <p className="mt-2 text-xs leading-5 text-slate-600">Displayed price excludes VAT and PPDA. These are calculated separately on quotations and invoices.</p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Availability</p>
-        <StockBadge status={currentStatus} />
+      <div className="border-b border-slate-100 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Availability</p>
+          <StockBadge status={currentStatus} />
+        </div>
+        {availabilityMessage ? (
+          <p role="status" className="mt-3 rounded-lg border border-slate-200 bg-surface-muted px-3 py-2.5 text-xs leading-5 text-slate-700">
+            {availabilityMessage}
+          </p>
+        ) : null}
       </div>
 
       {hasVariants ? (
